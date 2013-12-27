@@ -20,8 +20,11 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
+use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * Implementation of the password grant model
@@ -36,32 +39,55 @@ use ZfrOAuth2\Server\Service\ClientService;
 class PasswordGrant extends AbstractGrant
 {
     /**
+     * Access token service (used to create access token)
+     *
+     * @var AccessTokenService
+     */
+    protected $accessTokenService;
+
+    /**
+     * Refresh token service (used to create refresh token)
+     *
+     * @var RefreshTokenService
+     */
+    protected $refreshTokenService;
+
+    /**
      * Callable that is used to verify the username and password
+     *
+     * This callable MUST return an object that implement the TokenOwnerInterface, or
+     * null if no identity can be matched with the given credentials
      *
      * @var callable
      */
     protected $callback;
 
     /**
-     * @param ClientService $clientService
-     * @param callable      $callback
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
+     * @param callable            $callback
      */
-    public function __construct(ClientService $clientService, callable $callback)
-    {
-        parent::__construct($clientService);
-        $this->callback = $callback;
+    public function __construct(
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService,
+        callable $callback
+    ) {
+        $this->accessTokenService  = $accessTokenService;
+        $this->refreshTokenService = $refreshTokenService;
+        $this->callback            = $callback;
     }
 
     /**
      * Validate the request according to the current grant
      *
      * @param  HttpRequest $request
+     * @param  Client|null $client
      * @return HttpResponse
+     * @throws OAuth2Exception
      */
-    public function createResponse(HttpRequest $request)
+    public function createResponse(HttpRequest $request, Client $client = null)
     {
         $this->validateGrantType($request);
-        $this->validateClient($request);
 
         // Validate the user using its username and password
         $username = $request->getPost('username');
@@ -71,11 +97,32 @@ class PasswordGrant extends AbstractGrant
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
         }
 
-        if (!$this->callback($username, $password)) {
+        $owner = $this->callback($username, $password);
+
+        if (!$owner instanceof TokenOwnerInterface) {
             throw OAuth2Exception::invalidGrant('Either username or password are incorrect');
         }
 
-        // Everything is okey, we can start access token generation!
+        // Everything is okey, we can start tokens generation!
+        $accessToken  = $this->accessTokenService->createToken($client, $owner);
+        $refreshToken = $this->refreshTokenService->createToken($client, $owner);
+
+        // We can generate the response!
+        // Headers are added according to the spec (http://tools.ietf.org/html/rfc6749#section-5.1)
+        $response = new HttpResponse();
+        $response->getHeaders()->addHeaderLine('Cache-Control', 'no-store')
+                               ->addHeaderLine('Pragma', 'no-cache');
+
+        $data = [
+            'access_token'  => $accessToken->getToken(),
+            'token_type'    => 'Bearer',
+            'expires_in'    => $accessToken->getExpiresIn(),
+            'refresh_token' => $refreshToken->getToken()
+        ];
+
+        $response->setContent(json_encode($data));
+
+        return $response;
     }
 
     /**

@@ -16,41 +16,55 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Grant;
+namespace ZfrOAuth2\Server\Service;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use ZfrOAuth2\Server\Entity\Client;
+use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
+use ZfrOAuth2\Server\Entity\AbstractToken;
 
 /**
- * Interface that all authorization grant type should implement
+ * Abstract token service
  *
- * @link    http://tools.ietf.org/html/rfc6749#section-1.3
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface GrantInterface
+abstract class AbstractTokenService
 {
     /**
-     * Create a response according to the grant
-     *
-     * @param  HttpRequest $request
-     * @param  Client|null $client
-     * @return HttpResponse
+     * @var ObjectManager
      */
-    public function createResponse(HttpRequest $request, Client $client = null);
+    protected $objectManager;
 
     /**
-     * Get the grant type
-     *
-     * @return string
+     * @var ObjectRepository
      */
-    public function getGrantType();
+    protected $tokenRepository;
 
     /**
-     * Get the response type
+     * Default token TTL
      *
-     * @return string|null
+     * @var int
      */
-    public function getResponseType();
+    protected $defaultTokenTTL = 0;
+
+    /**
+     * @param ObjectManager    $objectManager
+     * @param ObjectRepository $tokenRepository
+     */
+    public function __construct(ObjectManager $objectManager, ObjectRepository $tokenRepository)
+    {
+        $this->objectManager   = $objectManager;
+        $this->tokenRepository = $tokenRepository;
+    }
+
+    /**
+     * Get a token using its identifier (the token itself)
+     *
+     * @param  string $token
+     * @return AbstractToken|null
+     */
+    public function getToken($token)
+    {
+        return $this->tokenRepository->find($token);
+    }
 }

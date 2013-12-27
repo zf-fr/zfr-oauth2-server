@@ -21,8 +21,6 @@ namespace ZfrOAuth2\Server\Entity;
 /**
  * Access token entity
  *
- * An access token is generated
- *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */

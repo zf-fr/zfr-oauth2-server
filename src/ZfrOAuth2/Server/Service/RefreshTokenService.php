@@ -19,33 +19,33 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
- * Service that allows to perform various operation on access tokens
+ * Service that allows to perform various operation on refresh tokens
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AccessTokenService extends AbstractTokenService
+class RefreshTokenService extends AbstractTokenService
 {
     /**
-     * Override default token TTL for access token
+     * Override default token TTL for refresh token
      *
      * @var int
      */
-    protected $defaultTokenTTL = 3600;
+    protected $defaultTokenTTL = 604800;
 
     /**
-     * Create a new access token
+     * Create a new refresh token
      *
      * @param  Client              $client
      * @param  TokenOwnerInterface $owner
      * @param  DateTime            $expiresAt
      * @param  string              $scope
-     * @return AccessToken
+     * @return RefreshToken
      */
     public function createToken(Client $client, TokenOwnerInterface $owner, DateTime $expiresAt = null, $scope = '')
     {
@@ -54,16 +54,16 @@ class AccessTokenService extends AbstractTokenService
             $expiresAt->setTimestamp(time() + $this->defaultTokenTTL);
         }
 
-        $accessToken = new AccessToken();
-        $accessToken->setClient($client);
-        $accessToken->setOwner($owner);
-        $accessToken->setExpiresAt($expiresAt);
-        $accessToken->setScope($scope);
+        $refreshToken = new RefreshToken();
+        $refreshToken->setClient($client);
+        $refreshToken->setOwner($owner);
+        $refreshToken->setExpiresAt($expiresAt);
+        $refreshToken->setScope($scope);
 
-        // Persist the access token
-        $this->objectManager->persist($accessToken);
+        // Persist the token
+        $this->objectManager->persist($refreshToken);
         $this->objectManager->flush();
 
-        return $accessToken;
+        return $refreshToken;
     }
 }

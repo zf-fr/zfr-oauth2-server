@@ -19,8 +19,6 @@
 namespace ZfrOAuth2\Server\Grant;
 
 use Zend\Http\Request as HttpRequest;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
@@ -31,19 +29,6 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
  */
 abstract class AbstractGrant implements GrantInterface
 {
-    /**
-     * @var ClientService
-     */
-    protected $clientService;
-
-    /**
-     * @param ClientService $clientService
-     */
-    public function __construct(ClientService $clientService)
-    {
-        $this->clientService = $clientService;
-    }
-
     /**
      * Validate the given grant type against the used authorization grant
      *
@@ -66,42 +51,5 @@ abstract class AbstractGrant implements GrantInterface
                 $expectedGrantType
             ));
         }
-    }
-
-    /**
-     * Validate the client
-     *
-     * In some cases, the client secret is optional (for instance when using unsecured clients)
-     *
-     * @param  HttpRequest $request
-     * @param  bool        $optionalSecret
-     * @return void
-     * @throws OAuth2Exception
-     */
-    protected function validateClient(HttpRequest $request, $optionalSecret = false)
-    {
-        // We first try to get the Authorization header, as this is the recommended way according to the spec
-        if ($header = $request->getHeader('Authorization')) {
-            // The value is "Basic xxx", we are interested in the last part
-            $parts = explode(' ', $header->getFieldValue());
-            $value = base64_decode(end($parts));
-
-            list($id, $secret) = explode(':', $value);
-        } else {
-            $id     = $request->getPost('client_id');
-            $secret = $request->getPost('client_secret');
-        }
-
-        if (!$optionalSecret && !$secret) {
-            throw OAuth2Exception::invalidClient('Client secret is missing');
-        }
-
-        $client = $this->clientService->getClient($id, $secret);
-
-        if (null === $client) {
-            throw OAuth2Exception::invalidClient('Client cannot be found');
-        }
-
-        // @TODO: validate grant type
     }
 }

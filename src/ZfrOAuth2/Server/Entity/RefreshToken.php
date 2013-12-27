@@ -19,10 +19,11 @@
 namespace ZfrOAuth2\Server\Entity;
 
 /**
+ * Refresh token entity
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class RefreshToken
+class RefreshToken extends AbstractToken
 {
-
 }
