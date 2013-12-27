@@ -33,7 +33,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ClientCredentialsGrant extends AbstractGrant
+class ClientCredentialsGrant implements GrantInterface
 {
     /**
      * Access token service (used to create access token)

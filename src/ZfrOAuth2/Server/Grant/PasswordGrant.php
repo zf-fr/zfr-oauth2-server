@@ -36,7 +36,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class PasswordGrant extends AbstractGrant
+class PasswordGrant implements GrantInterface
 {
     /**
      * Access token service (used to create access token)
