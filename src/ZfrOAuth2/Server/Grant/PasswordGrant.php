@@ -78,11 +78,7 @@ class PasswordGrant extends AbstractGrant
     }
 
     /**
-     * Validate the request according to the current grant
-     *
-     * @param  HttpRequest $request
-     * @param  Client|null $client
-     * @return HttpResponse
+     * {@inheritDoc}
      * @throws OAuth2Exception
      */
     public function createResponse(HttpRequest $request, Client $client = null)
@@ -108,19 +104,13 @@ class PasswordGrant extends AbstractGrant
         $refreshToken = $this->refreshTokenService->createToken($client, $owner);
 
         // We can generate the response!
-        // Headers are added according to the spec (http://tools.ietf.org/html/rfc6749#section-5.1)
         $response = new HttpResponse();
-        $response->getHeaders()->addHeaderLine('Cache-Control', 'no-store')
-                               ->addHeaderLine('Pragma', 'no-cache');
-
-        $data = [
+        $response->setContent(json_encode([
             'access_token'  => $accessToken->getToken(),
             'token_type'    => 'Bearer',
             'expires_in'    => $accessToken->getExpiresIn(),
             'refresh_token' => $refreshToken->getToken()
-        ];
-
-        $response->setContent(json_encode($data));
+        ]));
 
         return $response;
     }

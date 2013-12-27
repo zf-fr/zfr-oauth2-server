@@ -24,7 +24,7 @@ use Exception;
  * This class allow to create authorization exception.
  *
  * In this class, the normalized "error" code is set as the code parameter of the exception, while the
- * message is the "error_description"
+ * message is the "error_description".
  *
  * @link    http://tools.ietf.org/html/rfc6749#section-5.2
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -32,6 +32,15 @@ use Exception;
  */
 class OAuth2Exception extends Exception implements ExceptionInterface
 {
+    /**
+     * @param  string $description
+     * @return OAuth2Exception
+     */
+    static public function accessDenied($description)
+    {
+        return new self($description, 'access_denied');
+    }
+
     /**
      * @param  string $description
      * @return OAuth2Exception
@@ -63,6 +72,33 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
+    static public function invalidScope($description)
+    {
+        return new self($description, 'invalid_scope');
+    }
+
+    /**
+     * @param  string $description
+     * @return OAuth2Exception
+     */
+    static public function serverError($description)
+    {
+        return new self($description, 'server_error');
+    }
+
+    /**
+     * @param  string $description
+     * @return OAuth2Exception
+     */
+    static public function temporarilyUnavailable($description)
+    {
+        return new self($description, 'temporarily_unavailable');
+    }
+
+    /**
+     * @param  string $description
+     * @return OAuth2Exception
+     */
     static public function unauthorizedClient($description)
     {
         return new self($description, 'unauthorized_client');
@@ -81,8 +117,8 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function invalidScope($description)
+    static public function unsupportedResponseType($description)
     {
-        return new self($description, 'invalid_scope');
+        return new self($description, 'unsupported_response_type');
     }
 }

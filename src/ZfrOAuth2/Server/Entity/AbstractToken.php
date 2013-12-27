@@ -148,6 +148,16 @@ abstract class AbstractToken
     }
 
     /**
+     * Is the token expired?
+     *
+     * @return bool
+     */
+    public function isExpired()
+    {
+        return $this->expiresAt < new DateTime('now');
+    }
+
+    /**
      * Set the scope of this token (can set multiple scopes by separating them using a space)
      *
      * @param  string $scope

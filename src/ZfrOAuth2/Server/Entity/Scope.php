@@ -16,44 +16,53 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Grant;
-
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use ZfrOAuth2\Server\Entity\Client;
+namespace ZfrOAuth2\Server\Entity;
 
 /**
- * Interface that all authorization grant type should implement
+ * A scope is associated to a token and define the "permissions" of the token
  *
- * Please note that the grants DOES NOT authenticate the client. This is done in the authorization
- * server. You must therefore make sure that the grants are only called from the authorization server
- *
- * @link    http://tools.ietf.org/html/rfc6749#section-1.3
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface GrantInterface
+class Scope
 {
     /**
-     * Create a response according to the grant
-     *
-     * @param  HttpRequest $request
-     * @param  Client|null $client
-     * @return HttpResponse
+     * @var int
      */
-    public function createResponse(HttpRequest $request, Client $client = null);
+    protected $id;
 
     /**
-     * Get the grant type
+     * @var string
+     */
+    protected $name;
+
+    /**
+     * Get the scope id
+     *
+     * @return int
+     */
+    public function getId()
+    {
+        return $this->id;
+    }
+
+    /**
+     * Set the scope's name
+     *
+     * @param string $name
+     */
+    public function setName($name)
+    {
+        $this->name = (string) $name;
+    }
+
+    /**
+     * Get the scope's name
      *
      * @return string
      */
-    public function getGrantType();
-
-    /**
-     * Get the response type
-     *
-     * @return string|null
-     */
-    public function getResponseType();
+    public function getName()
+    {
+        return $this->name;
+    }
 }
