@@ -18,7 +18,9 @@
 
 namespace ZfrOAuth2\Server\Service;
 
+use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Zend\Crypt\Password\Bcrypt;
 use ZfrOAuth2\Server\Entity\Client;
 
 /**
@@ -30,24 +32,70 @@ use ZfrOAuth2\Server\Entity\Client;
 class ClientService
 {
     /**
+     * @var ObjectManager
+     */
+    protected $objectManager;
+
+    /**
+     * @var ObjectRepository
+     */
+    protected $clientRepository;
+
+    /**
+     * @var Bcrypt
+     */
+    protected $bcrypt;
+
+    /**
+     * @param ObjectManager    $objectManager
      * @param ObjectRepository $clientRepository
      */
-    public function __construct(ObjectRepository $clientRepository)
+    public function __construct(ObjectManager $objectManager, ObjectRepository $clientRepository)
     {
+        $this->objectManager    = $objectManager;
         $this->clientRepository = $clientRepository;
+        $this->bcrypt           = new Bcrypt();
     }
 
     /**
-     * Get the client using its id and secret (optional)
+     * Register a new client
+     *
+     * @param  Client $client
+     * @return void
+     */
+    public function registerClient(Client $client)
+    {
+        // Before registering the client, we encrypt the secret (if any)
+        $secret = $client->getSecret();
+
+        if (!empty($secret)) {
+            $client->setSecret($this->bcrypt->create($secret));
+        }
+
+        $this->objectManager->persist($client);
+        $this->objectManager->flush();
+    }
+
+    /**
+     * Get the client using its id
      *
      * @param  string      $id
-     * @param  string|null $secret
      * @return Client|null
      */
-    public function getClient($id, $secret = null)
+    public function getClient($id)
     {
-        $criteria = ['id' => $id, 'secret' => $secret];
+        return $this->clientRepository->findOneBy(['id' => $id]);
+    }
 
-        return $this->clientRepository->findOneBy(array_filter($criteria));
+    /**
+     * Check if the client is valid by checking the secret
+     *
+     * @param  Client $client
+     * @param  string $secret
+     * @return bool
+     */
+    public function isClientValid(Client $client, $secret)
+    {
+        return $this->bcrypt->verify($secret, $client->getSecret());
     }
 }

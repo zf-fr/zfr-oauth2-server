@@ -23,6 +23,7 @@ use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServiceAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
+use ZfrOAuth2\Server\Service\ClientService;
 
 /**
  * The authorization server main role is to create access tokens or refresh tokens
@@ -33,6 +34,11 @@ use ZfrOAuth2\Server\Grant\GrantInterface;
 class AuthorizationServer
 {
     /**
+     * @var ClientService
+     */
+    protected $clientService;
+
+    /**
      * A list of grant interfaces
      *
      * @var GrantInterface[]
@@ -40,10 +46,13 @@ class AuthorizationServer
     protected $grants = [];
 
     /**
+     * @param ClientService    $clientService
      * @param GrantInterface[] $grants
      */
-    public function __construct(array $grants)
+    public function __construct(ClientService $clientService, array $grants)
     {
+        $this->clientService = $clientService;
+
         foreach ($grants as $grant) {
             if ($grant instanceof AuthorizationServiceAwareInterface) {
                 $grant->setAuthorizationServer($this);
@@ -51,6 +60,37 @@ class AuthorizationServer
 
             $this->grants[$grant::GRANT_TYPE] = $grant;
         }
+    }
+
+    /**
+     * Check if the authorization server supports this grant
+     *
+     * @param  string $grantType
+     * @return bool
+     */
+    public function hasGrant($grantType)
+    {
+        return isset($this->grants[$grantType]);
+    }
+
+    /**
+     * Get the grant by its name
+     *
+     * @param  string $grantType
+     * @return GrantInterface
+     * @throws OAuth2Exception If grant type is not registered by this authorization server
+     */
+    public function getGrant($grantType)
+    {
+        if ($this->hasGrant($grantType)) {
+            return $this->grants[$grantType];
+        }
+
+        // If we reach here... then no grant was found. Not good!
+        throw OAuth2Exception::unsupportedGrantType(sprintf(
+            'Grant type "%s" is not supported by this server',
+            $grantType
+        ));
     }
 
     /**
@@ -88,11 +128,14 @@ class AuthorizationServer
     /**
      * Validate the client
      *
+     * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
+     * not need to authenticate them
+     *
      * @param  HttpRequest $request
-     * @param  bool        $optionalSecret
+     * @param  bool        $allowPublicClients
      * @throws Exception\OAuth2Exception
      */
-    public function validateClient(HttpRequest $request, $optionalSecret = false)
+    protected function validateClient(HttpRequest $request, $allowPublicClients)
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
         if ($header = $request->getHeader('Authorization')) {
@@ -106,48 +149,18 @@ class AuthorizationServer
             $secret = $request->getPost('client_secret');
         }
 
-        if (!$optionalSecret && !$secret) {
+        // If the grant type we are issuing does not allow public clients, and that the secret is
+        // missing, then we have an error...
+        if (!$allowPublicClients && !$secret) {
             throw OAuth2Exception::invalidClient('Client secret is missing');
         }
 
-        $client = $this->clientService->getClient($id, $secret);
+        $client = $this->clientService->getClient($id);
 
-        if (null === $client) {
-            throw OAuth2Exception::invalidClient('Client cannot be found');
+        // We delegate all the checks to the client service
+        if (null === $client || $this->clientService->isClientValid($client, $secret)) {
+            throw OAuth2Exception::invalidClient('Client cannot authenticated');
         }
-
-        // @TODO: validate grant type
-    }
-
-    /**
-     * Check if the authorization server supports this grant
-     *
-     * @param  string $grantType
-     * @return bool
-     */
-    public function hasGrant($grantType)
-    {
-        return isset($this->grants[$grantType]);
-    }
-
-    /**
-     * Get the grant by its name
-     *
-     * @param  string $grantType
-     * @return GrantInterface
-     * @throws OAuth2Exception If grant type is not registered by this authorization server
-     */
-    public function getGrant($grantType)
-    {
-        if ($this->hasGrant($grantType)) {
-            return $this->grants[$grantType];
-        }
-
-        // If we reach here... then no grant was found. Not good!
-        throw OAuth2Exception::unsupportedGrantType(sprintf(
-            'Grant type "%s" is not supported by this server',
-            $grantType
-        ));
     }
 
     /**
@@ -157,7 +170,7 @@ class AuthorizationServer
      * @param  OAuth2Exception $exception
      * @return HttpResponse
      */
-    private function createResponseFromOAuthException(OAuth2Exception $exception)
+    protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
         $response = new HttpResponse();
         $response->setStatusCode(400);

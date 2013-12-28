@@ -26,7 +26,8 @@ namespace ZfrOAuth2\Server\Entity;
  *
  * There are two types of clients: the public and confidential ones. Some grants absolutely require a client,
  * while other don't need it. The reason is that for public clients (like a JavaScript application), the secret
- * cannot be kept, well, secret! To create a public client, you just need to let an empty secret
+ * cannot be kept, well, secret! To create a public client, you just need to let an empty secret. More
+ * info about that: http://tools.ietf.org/html/rfc6749#section-2.1
  *
  * Note that the client implements TokenOwnerInterface, because in the "ClientCredentials" grant type, the
  * owner of the tokens is actually the client itself
@@ -37,7 +38,7 @@ namespace ZfrOAuth2\Server\Entity;
 class Client implements TokenOwnerInterface
 {
     /**
-     * @var int
+     * @var mixed
      */
     protected $id;
 
@@ -64,7 +65,7 @@ class Client implements TokenOwnerInterface
     /**
      * Get the client id
      *
-     * @return int
+     * @return mixed
      */
     public function getId()
     {
