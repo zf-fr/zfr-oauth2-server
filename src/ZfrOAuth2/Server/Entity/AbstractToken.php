@@ -21,7 +21,7 @@ namespace ZfrOAuth2\Server\Entity;
 use DateTime;
 
 /**
- * Provide basic functionality for both access and refresh tokens
+ * Provide basic functionality for both access tokens, refresh tokens and authorization codes
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT

@@ -19,6 +19,7 @@
 namespace ZfrOAuth2\Server;
 
 use Zend\Http\Request as HttpRequest;
+use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
@@ -54,13 +55,8 @@ class ResourceServer
      */
     public function isRequestValid(HttpRequest $request)
     {
+        // We extract the token and get the actual instance from storage
         $accessToken = $this->extractAccessToken($request);
-
-        if (null === $accessToken) {
-            return false;
-        }
-
-        // We can get the actual instance from storage
         $accessToken = $this->accessTokenService->getToken($accessToken);
 
         // It must exist and must not be outdated, otherwise it's wrong!
@@ -78,16 +74,18 @@ class ResourceServer
      *
      * @param  HttpRequest $request
      * @return string|null
+     * @throws InvalidAccessTokenException If no access token could be found
      */
     private function extractAccessToken(HttpRequest $request)
     {
         // Header value is expected to be "Bearer xxx"
         $parts = explode(' ', $request->getHeader('Authorization')->getFieldValue());
+        $token = end($parts); // Access token is the last value
 
-        if (count($parts) < 2) {
-            return null;
+        if (count($parts) < 2 || empty($token)) {
+            throw new InvalidAccessTokenException('No access token could be found');
         }
 
-        return end($parts);
+        return $token;
     }
 }
