@@ -124,7 +124,7 @@ abstract class AbstractToken
      */
     public function setExpiresAt(DateTime $expiresAt)
     {
-        $this->expiresAt = $expiresAt;
+        $this->expiresAt = clone $expiresAt;
     }
 
     /**
@@ -134,7 +134,7 @@ abstract class AbstractToken
      */
     public function getExpiresAt()
     {
-        return $this->expiresAt;
+        return clone $this->expiresAt;
     }
 
     /**

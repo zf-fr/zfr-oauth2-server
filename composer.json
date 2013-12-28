@@ -30,7 +30,7 @@
   },
   "autoload": {
     "psr-0": {
-      "ZfcOAuth2Server\\": "src/"
+      "ZfrOAuth2\\": "src/"
     }
   }
 }
