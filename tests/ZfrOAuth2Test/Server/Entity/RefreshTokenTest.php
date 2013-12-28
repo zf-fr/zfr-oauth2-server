@@ -20,15 +20,15 @@ namespace ZfrOAuth2Test\Server\Entity;
 
 use DateInterval;
 use DateTime;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\Client;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Entity\AccessToken
+ * @cover \ZfrOAuth2\Server\Entity\RefreshToken
  */
-class AccessTokenTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
     public function testGettersAndSetters()
     {
@@ -36,16 +36,16 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $client    = new Client();
         $expiresAt = new DateTime();
 
-        $accessToken = new AccessToken();
-        $accessToken->setScope('scope');
-        $accessToken->setClient($client);
-        $accessToken->setExpiresAt($expiresAt);
-        $accessToken->setOwner($owner);
+        $refreshToken = new RefreshToken();
+        $refreshToken->setScope('scope');
+        $refreshToken->setClient($client);
+        $refreshToken->setExpiresAt($expiresAt);
+        $refreshToken->setOwner($owner);
 
-        $this->assertEquals('scope', $accessToken->getScope());
-        $this->assertSame($client, $accessToken->getClient());
-        $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
-        $this->assertSame($owner, $accessToken->getOwner());
+        $this->assertEquals('scope', $refreshToken->getScope());
+        $this->assertSame($client, $refreshToken->getClient());
+        $this->assertEquals($expiresAt, $refreshToken->getExpiresAt());
+        $this->assertSame($owner, $refreshToken->getOwner());
     }
 
     public function testCalculateExpiresIn()
@@ -53,11 +53,11 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $expiresAt = new DateTime();
         $expiresAt->add(new DateInterval('PT60S'));
 
-        $accessToken = new AccessToken();
-        $accessToken->setExpiresAt($expiresAt);
+        $refreshToken = new RefreshToken();
+        $refreshToken->setExpiresAt($expiresAt);
 
-        $this->assertFalse($accessToken->isExpired());
-        $this->assertEquals(60, $accessToken->getExpiresIn());
+        $this->assertFalse($refreshToken->isExpired());
+        $this->assertEquals(60, $refreshToken->getExpiresIn());
     }
 
     public function testCanCheckIfATokenIsExpired()
@@ -65,9 +65,9 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $expiresAt = new DateTime();
         $expiresAt->sub(new DateInterval('PT60S'));
 
-        $accessToken = new AccessToken();
-        $accessToken->setExpiresAt($expiresAt);
+        $refreshToken = new RefreshToken();
+        $refreshToken->setExpiresAt($expiresAt);
 
-        $this->assertTrue($accessToken->isExpired());
+        $this->assertTrue($refreshToken->isExpired());
     }
 }

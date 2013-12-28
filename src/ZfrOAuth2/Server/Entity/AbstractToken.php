@@ -138,13 +138,13 @@ abstract class AbstractToken
     }
 
     /**
-     * Compute in how many seconds does the token expire
+     * Compute in how many seconds does the token expire (if expired, will return a negative value)
      *
      * @return int
      */
     public function getExpiresIn()
     {
-        return (new DateTime('now'))->getTimestamp() - $this->expiresAt->getTimestamp();
+        return $this->expiresAt->getTimestamp() - (new DateTime('now'))->getTimestamp();
     }
 
     /**
