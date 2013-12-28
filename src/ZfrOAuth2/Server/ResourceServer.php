@@ -64,8 +64,6 @@ class ResourceServer
             return false;
         }
 
-        // We must check that the client scope match the ones of the access token
-
         return true;
     }
 

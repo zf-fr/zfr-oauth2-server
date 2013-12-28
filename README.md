@@ -15,8 +15,3 @@ at one of those two PHP libraries:
 ## Requirements
 
 - PHP 5.4 or higher
-
-
-## Notes to myself while reading the spec:
-
-- when asking for an access token, it MUST be a POST request
