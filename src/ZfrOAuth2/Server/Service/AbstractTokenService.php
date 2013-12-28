@@ -130,10 +130,10 @@ abstract class AbstractTokenService
             $expiredTokens = $this->tokenRepository->matching($criteria);
 
             foreach ($expiredTokens as $expiredToken) {
-                $this->tokenRepository->remove($expiredToken);
+                $this->objectManager->remove($expiredToken);
             }
 
-            $this->tokenRepository->flush();
+            $this->objectManager->flush();
         } while (count($expiredTokens) > 0);
     }
 
@@ -163,16 +163,5 @@ abstract class AbstractTokenService
                 'The scope of the token exceeds the scope granted by the resource owner'
             );
         }
-    }
-
-    /**
-     * Generate a unique key for the token
-     *
-     * @return string
-     */
-    protected function generateKey()
-    {
-        // @TODO which algorithm to use?
-        return 'abc';
     }
 }

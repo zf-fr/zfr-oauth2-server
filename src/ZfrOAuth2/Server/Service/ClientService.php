@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server\Service;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Zend\Crypt\Password\Bcrypt;
+use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
@@ -53,6 +54,11 @@ class ClientService
     protected $bcrypt;
 
     /**
+     * @var string
+     */
+    protected $defaultScope = '';
+
+    /**
      * @param ObjectManager    $objectManager
      * @param ObjectRepository $clientRepository
      * @param ObjectRepository $scopeRepository
@@ -69,29 +75,50 @@ class ClientService
     }
 
     /**
-     * Register a new client
+     * Set the default scope that is used when registering a client, if none is set
+     *
+     * @param  string $defaultScope
+     * @return void
+     */
+    public function setDefaultScope($defaultScope)
+    {
+        $this->defaultScope = (string) $defaultScope;
+    }
+
+    /**
+     * Register a new client, and return the client secret before it was encryption
+     *
+     * Please note that the secret must be really kept secret, as it is used for some grant type to
+     * authorize the client
      *
      * @param  Client $client
-     * @return void
+     * @return string
      */
     public function registerClient(Client $client)
     {
-        // Before registering the client, we encrypt the secret (if any)
-        $secret = $client->getSecret();
-
-        if (!empty($secret)) {
-            $client->setSecret($this->bcrypt->create($secret));
-        }
-
         // The client may have scopes. We must make sure that it does not have unknown scope values
         $scope = $client->getScope();
 
         if (!empty($scope)) {
             $this->validateClientScopes($scope);
+        } else {
+            $client->setScope($this->defaultScope);
         }
+
+        // If no name was specified for the client, generate a unique one
+        $name = $client->getName();
+        if (empty($name)) {
+            $client->setName(uniqid());
+        }
+
+        // Finally, we must generate a strong, unique secret, and crypt it before storing it
+        $secret = Rand::getBytes(40, true);
+        $client->setSecret($this->bcrypt->create($secret));
 
         $this->objectManager->persist($client);
         $this->objectManager->flush();
+
+        return $secret;
     }
 
     /**

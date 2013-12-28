@@ -19,6 +19,7 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
+use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
@@ -62,7 +63,7 @@ class AuthorizationCodeService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setToken($this->generateKey());
+        $authorizationCode->setToken(Rand::getBytes(40));
         $authorizationCode->setClient($client);
         $authorizationCode->setOwner($owner);
         $authorizationCode->setExpiresAt($expiresAt);

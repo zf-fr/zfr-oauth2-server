@@ -19,6 +19,7 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
+use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
@@ -60,7 +61,7 @@ class RefreshTokenService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $refreshToken = new RefreshToken();
-        $refreshToken->setToken($this->generateKey());
+        $refreshToken->setToken(Rand::getBytes(40));
         $refreshToken->setClient($client);
         $refreshToken->setOwner($owner);
         $refreshToken->setExpiresAt($expiresAt);

@@ -19,6 +19,7 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
+use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
@@ -60,7 +61,7 @@ class AccessTokenService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $accessToken = new AccessToken();
-        $accessToken->setToken($this->generateKey());
+        $accessToken->setToken(Rand::getBytes(40));
         $accessToken->setClient($client);
         $accessToken->setOwner($owner);
         $accessToken->setExpiresAt($expiresAt);
