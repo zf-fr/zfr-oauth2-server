@@ -38,7 +38,7 @@ namespace ZfrOAuth2\Server\Entity;
 class Client implements TokenOwnerInterface
 {
     /**
-     * @var mixed
+     * @var string
      */
     protected $id;
 
@@ -63,9 +63,20 @@ class Client implements TokenOwnerInterface
     protected $scope;
 
     /**
+     * Set the client id
+     *
+     * @param  int $id
+     * @return void
+     */
+    public function setId($id)
+    {
+        $this->id = (string) $id;
+    }
+
+    /**
      * Get the client id
      *
-     * @return mixed
+     * @return string
      */
     public function getId()
     {

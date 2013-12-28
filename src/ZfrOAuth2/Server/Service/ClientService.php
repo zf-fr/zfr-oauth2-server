@@ -105,10 +105,11 @@ class ClientService
             $client->setScope($this->defaultScope);
         }
 
-        // If no name was specified for the client, generate a unique one
-        $name = $client->getName();
+        // If no identifier was specified for the client, generate a unique one
+        // @TODO: should we use a Doctrine custom generator name here instead?
+        $name = $client->getId();
         if (empty($name)) {
-            $client->setName(uniqid());
+            $client->setId(uniqid());
         }
 
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
