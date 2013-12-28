@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Grant\AuthorizationServiceAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 
 /**
@@ -43,7 +44,13 @@ class AuthorizationServer
      */
     public function __construct(array $grants)
     {
-        $this->grants = $grants;
+        foreach ($grants as $grant) {
+            if ($grant instanceof AuthorizationServiceAwareInterface) {
+                $grant->setAuthorizationServer($this);
+            }
+
+            $this->grants[$grant::GRANT_TYPE] = $grant;
+        }
     }
 
     /**
@@ -113,18 +120,27 @@ class AuthorizationServer
     }
 
     /**
+     * Check if the authorization server supports this grant
+     *
+     * @param  string $grantType
+     * @return bool
+     */
+    public function hasGrant($grantType)
+    {
+        return isset($this->grants[$grantType]);
+    }
+
+    /**
      * Get the grant by its name
      *
      * @param  string $grantType
      * @return GrantInterface
      * @throws OAuth2Exception If grant type is not registered by this authorization server
      */
-    private function getGrant($grantType)
+    public function getGrant($grantType)
     {
-        foreach ($this->grants as $grant) {
-            if ($grantType === $grant->getGrantType()) {
-                return $grant;
-            }
+        if ($this->hasGrant($grantType)) {
+            return $this->grants[$grantType];
         }
 
         // If we reach here... then no grant was found. Not good!

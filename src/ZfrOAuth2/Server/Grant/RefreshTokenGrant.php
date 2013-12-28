@@ -32,6 +32,12 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
 class RefreshTokenGrant implements GrantInterface
 {
     /**
+     * Constants for the refresh token grant
+     */
+    const GRANT_TYPE          = 'refresh_token';
+    const GRANT_RESPONSE_TYPE = null;
+
+    /**
      * @var AccessTokenService
      */
     protected $accessTokenService;
@@ -114,21 +120,5 @@ class RefreshTokenGrant implements GrantInterface
     public function allowPublicClients()
     {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getGrantType()
-    {
-        return 'refresh_token';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getResponseType()
-    {
-        return null;
     }
 }

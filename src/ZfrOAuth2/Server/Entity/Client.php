@@ -28,10 +28,13 @@ namespace ZfrOAuth2\Server\Entity;
  * while other don't need it. The reason is that for public clients (like a JavaScript application), the secret
  * cannot be kept, well, secret! To create a public client, you just need to let an empty secret
  *
+ * Note that the client implements TokenOwnerInterface, because in the "ClientCredentials" grant type, the
+ * owner of the tokens is actually the client itself
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Client
+class Client implements TokenOwnerInterface
 {
     /**
      * @var int
@@ -159,5 +162,13 @@ class Client
     public function isPublic()
     {
         return empty($this->secret);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getTokenOwnerId()
+    {
+        return $this->id;
     }
 }

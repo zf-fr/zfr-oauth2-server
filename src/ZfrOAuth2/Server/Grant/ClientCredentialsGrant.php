@@ -36,6 +36,12 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 class ClientCredentialsGrant implements GrantInterface
 {
     /**
+     * Constants for the client credentials grant
+     */
+    const GRANT_TYPE          = 'client_credentials';
+    const GRANT_RESPONSE_TYPE = null;
+
+    /**
      * Access token service (used to create access token)
      *
      * @var AccessTokenService
@@ -61,7 +67,8 @@ class ClientCredentialsGrant implements GrantInterface
         }
 
         // Everything is okey, we can start tokens generation!
-        $accessToken = $this->accessTokenService->createToken($client, $owner);
+        // Note that in this grant, the owner of the token is the client itself!
+        $accessToken = $this->accessTokenService->createToken($client, $client);
 
         // We can generate the response!
         $response = new HttpResponse();
@@ -80,21 +87,5 @@ class ClientCredentialsGrant implements GrantInterface
     public function allowPublicClients()
     {
         return false;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getGrantType()
-    {
-        return 'client_credentials';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getResponseType()
-    {
-        return null;
     }
 }

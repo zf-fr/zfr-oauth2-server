@@ -36,8 +36,16 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class PasswordGrant implements GrantInterface
+class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterface
 {
+    use AuthorizationServerAwareTrait;
+
+    /**
+     * Constants for the password grant
+     */
+    const GRANT_TYPE          = 'password';
+    const GRANT_RESPONSE_TYPE = null;
+
     /**
      * Access token service (used to create access token)
      *
@@ -83,8 +91,6 @@ class PasswordGrant implements GrantInterface
      */
     public function createResponse(HttpRequest $request, Client $client = null)
     {
-        $this->validateGrantType($request);
-
         // Validate the user using its username and password
         $username = $request->getPost('username');
         $password = $request->getPost('password');
@@ -100,17 +106,23 @@ class PasswordGrant implements GrantInterface
         }
 
         // Everything is okey, we can start tokens generation!
-        $accessToken  = $this->accessTokenService->createToken($client, $owner);
-        $refreshToken = $this->refreshTokenService->createToken($client, $owner);
+        $accessToken = $this->accessTokenService->createToken($client, $owner);
+
+        $responseBody = [
+            'access_token' => $accessToken->getToken(),
+            'token_type'   => 'Bearer',
+            'expires_in'   => $accessToken->getExpiresIn()
+        ];
+
+        // Before generating a refresh token, we must make sure the authorization server supports this grant
+        if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
+            $refreshToken                  = $this->refreshTokenService->createToken($client, $owner);
+            $responseBody['refresh_token'] = $refreshToken->getToken();
+        }
 
         // We can generate the response!
         $response = new HttpResponse();
-        $response->setContent(json_encode([
-            'access_token'  => $accessToken->getToken(),
-            'token_type'    => 'Bearer',
-            'expires_in'    => $accessToken->getExpiresIn(),
-            'refresh_token' => $refreshToken->getToken()
-        ]));
+        $response->setContent(json_encode($responseBody));
 
         return $response;
     }
@@ -121,21 +133,5 @@ class PasswordGrant implements GrantInterface
     public function allowPublicClients()
     {
         return true;
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getGrantType()
-    {
-        return 'password';
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getResponseType()
-    {
-        return null;
     }
 }

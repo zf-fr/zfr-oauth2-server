@@ -18,41 +18,21 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\AuthorizationServer;
 
 /**
- * Interface that all authorization grant type should implement
+ * Interface for grant that need to have access to the authorization server
  *
- * Please note that the grants DOES NOT authenticate the client. This is done in the authorization
- * server. You must therefore make sure that the grants are only called from the authorization server
- *
- * @link    http://tools.ietf.org/html/rfc6749#section-1.3
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface GrantInterface
+interface AuthorizationServiceAwareInterface
 {
     /**
-     * Constants that need to be overridden for each grant
-     */
-    const GRANT_TYPE          = null;
-    const GRANT_RESPONSE_TYPE = null;
-
-    /**
-     * Create a response according to the grant
+     * Set the authorization server
      *
-     * @param  HttpRequest $request
-     * @param  Client|null $client
-     * @return HttpResponse
+     * @param  AuthorizationServer $authorizationServer
+     * @return void
      */
-    public function createResponse(HttpRequest $request, Client $client = null);
-
-    /**
-     * Does this authorization grant allow public clients?
-     *
-     * @return bool
-     */
-    public function allowPublicClients();
+    public function setAuthorizationServer(AuthorizationServer $authorizationServer);
 }
