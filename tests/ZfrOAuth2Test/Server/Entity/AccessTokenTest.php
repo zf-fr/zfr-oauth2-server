@@ -37,11 +37,13 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $expiresAt = new DateTime();
 
         $accessToken = new AccessToken();
+        $accessToken->setToken('token');
         $accessToken->setScope('scope');
         $accessToken->setClient($client);
         $accessToken->setExpiresAt($expiresAt);
         $accessToken->setOwner($owner);
 
+        $this->assertEquals('token', $accessToken->getToken());
         $this->assertEquals('scope', $accessToken->getScope());
         $this->assertSame($client, $accessToken->getClient());
         $this->assertEquals($expiresAt, $accessToken->getExpiresAt());

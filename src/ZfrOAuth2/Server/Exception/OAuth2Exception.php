@@ -36,7 +36,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function accessDenied($description)
+    public static function accessDenied($description)
     {
         return new self($description, 'access_denied');
     }
@@ -45,7 +45,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function invalidRequest($description)
+    public static function invalidRequest($description)
     {
         return new self($description, 'invalid_request');
     }
@@ -54,7 +54,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function invalidClient($description)
+    public static function invalidClient($description)
     {
         return new self($description, 'invalid_client');
     }
@@ -63,7 +63,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function invalidGrant($description)
+    public static function invalidGrant($description)
     {
         return new self($description, 'invalid_grant');
     }
@@ -72,7 +72,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function invalidScope($description)
+    public static function invalidScope($description)
     {
         return new self($description, 'invalid_scope');
     }
@@ -81,7 +81,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function serverError($description)
+    public static function serverError($description)
     {
         return new self($description, 'server_error');
     }
@@ -90,7 +90,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function temporarilyUnavailable($description)
+    public static function temporarilyUnavailable($description)
     {
         return new self($description, 'temporarily_unavailable');
     }
@@ -99,7 +99,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function unauthorizedClient($description)
+    public static function unauthorizedClient($description)
     {
         return new self($description, 'unauthorized_client');
     }
@@ -108,7 +108,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function unsupportedGrantType($description)
+    public static function unsupportedGrantType($description)
     {
         return new self($description, 'unsupported_grant_type');
     }
@@ -117,7 +117,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      * @param  string $description
      * @return OAuth2Exception
      */
-    static public function unsupportedResponseType($description)
+    public static function unsupportedResponseType($description)
     {
         return new self($description, 'unsupported_response_type');
     }

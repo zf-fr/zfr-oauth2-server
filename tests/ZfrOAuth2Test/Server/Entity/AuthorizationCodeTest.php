@@ -37,12 +37,14 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         $expiresAt = new DateTime();
 
         $authorizationCode = new AuthorizationCode();
+        $authorizationCode->setToken('token');
         $authorizationCode->setScope('scope');
         $authorizationCode->setClient($client);
         $authorizationCode->setExpiresAt($expiresAt);
         $authorizationCode->setOwner($owner);
         $authorizationCode->setRedirectUri('http://www.example.com');
 
+        $this->assertEquals('token', $authorizationCode->getToken());
         $this->assertEquals('scope', $authorizationCode->getScope());
         $this->assertSame($client, $authorizationCode->getClient());
         $this->assertEquals($expiresAt, $authorizationCode->getExpiresAt());

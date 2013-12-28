@@ -37,11 +37,13 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $expiresAt = new DateTime();
 
         $refreshToken = new RefreshToken();
+        $refreshToken->setToken('token');
         $refreshToken->setScope('scope');
         $refreshToken->setClient($client);
         $refreshToken->setExpiresAt($expiresAt);
         $refreshToken->setOwner($owner);
 
+        $this->assertEquals('token', $refreshToken->getToken());
         $this->assertEquals('scope', $refreshToken->getScope());
         $this->assertSame($client, $refreshToken->getClient());
         $this->assertEquals($expiresAt, $refreshToken->getExpiresAt());

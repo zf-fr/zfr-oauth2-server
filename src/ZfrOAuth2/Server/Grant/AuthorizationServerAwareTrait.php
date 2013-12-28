@@ -17,6 +17,7 @@
  */
 
 namespace ZfrOAuth2\Server\Grant;
+
 use ZfrOAuth2\Server\AuthorizationServer;
 
 /**

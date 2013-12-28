@@ -157,7 +157,7 @@ class AuthorizationServer
                     $request->getMethod()
                 ));
             }
-        } catch(OAuth2Exception $exception) {
+        } catch (OAuth2Exception $exception) {
             return $this->createResponseFromOAuthException($exception);
         }
 
