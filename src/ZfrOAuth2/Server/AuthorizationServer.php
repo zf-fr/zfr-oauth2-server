@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server;
 
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
+use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServiceAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
@@ -109,16 +110,25 @@ class AuthorizationServer
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
             }
 
-            $grant = $this->getGrant($grantType);
+            $grant  = $this->getGrant($grantType);
+            $client = $this->getClient($request, $grant->allowPublicClients());
 
-            $this->validateClient($request, $grant->allowPublicClients());
-
-            $response = $grant->createResponse($request);
+            // If it's a GET, it's an authorization endpoint, if it's a POST, it's a token endpoint!
+            if ($request->isGet()) {
+                $response = $grant->createAuthorizationResponse($request, $client);
+            } elseif ($request->isPost()) {
+                $response = $grant->createTokenResponse($request, $client);
+            } else {
+                throw OAuth2Exception::invalidRequest(sprintf(
+                    'Only GET and POST verbs are supported by the authorization server, "%s" given',
+                    $request->getMethod()
+                ));
+            }
         } catch(OAuth2Exception $exception) {
             return $this->createResponseFromOAuthException($exception);
         }
 
-        // According to the spec, we should set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
+        // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
         $response->getHeaders()->addHeaderLine('Cache-Control', 'no-store')
                                ->addHeaderLine('Pragma', 'no-cache');
 
@@ -126,16 +136,17 @@ class AuthorizationServer
     }
 
     /**
-     * Validate the client
+     * Get the client
      *
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
      *
      * @param  HttpRequest $request
      * @param  bool        $allowPublicClients
+     * @return Client
      * @throws Exception\OAuth2Exception
      */
-    protected function validateClient(HttpRequest $request, $allowPublicClients)
+    protected function getClient(HttpRequest $request, $allowPublicClients)
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
         if ($header = $request->getHeader('Authorization')) {
@@ -158,9 +169,11 @@ class AuthorizationServer
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || $this->clientService->isClientValid($client, $secret)) {
+        if (null === $client || $this->clientService->isClientValid($client, $secret, $allowPublicClients)) {
             throw OAuth2Exception::invalidClient('Client cannot authenticated');
         }
+
+        return $client;
     }
 
     /**

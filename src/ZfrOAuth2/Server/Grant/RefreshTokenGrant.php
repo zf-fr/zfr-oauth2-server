@@ -79,7 +79,15 @@ class RefreshTokenGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createResponse(HttpRequest $request, Client $client = null)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    {
+        throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createTokenResponse(HttpRequest $request, Client $client)
     {
         if (!$refreshToken = $request->getPost('refresh_token')) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
@@ -92,7 +100,8 @@ class RefreshTokenGrant implements GrantInterface
         }
 
         // Okey, we can create a new access token!
-        $accessToken = $this->accessTokenService->createToken($client, $refreshToken->getOwner());
+        $scope       = $request->getPost('scope');
+        $accessToken = $this->accessTokenService->createToken($client, $refreshToken->getOwner(), $scope);
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {

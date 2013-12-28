@@ -158,7 +158,7 @@ abstract class AbstractToken
     }
 
     /**
-     * Set the scope of this token (can set multiple scopes by separating them using a space)
+     * Set the scope of this token (you can set multiple scopes by separating them using a space)
      *
      * @param  string $scope
      * @return void

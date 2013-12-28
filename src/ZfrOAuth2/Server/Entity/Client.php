@@ -60,7 +60,7 @@ class Client implements TokenOwnerInterface
     /**
      * @var string
      */
-    protected $grantTypes;
+    protected $scope;
 
     /**
      * Get the client id
@@ -136,23 +136,24 @@ class Client implements TokenOwnerInterface
     }
 
     /**
-     * Set the grant types (it must be a string of space separated grant types)
+     * Set the client scope (you can set multiple scopes by separating them using a space)
      *
-     * @param string $grantTypes
+     * @param  string $scope
+     * @return void
      */
-    public function setGrantTypes($grantTypes)
+    public function setScope($scope)
     {
-        $this->grantTypes = (string) $grantTypes;
+        $this->scope = (string) $scope;
     }
 
     /**
-     * Get the grant types
+     * Get the client scope(s)
      *
      * @return string
      */
-    public function getGrantTypes()
+    public function getScope()
     {
-        return $this->grantTypes;
+        return $this->scope;
     }
 
     /**

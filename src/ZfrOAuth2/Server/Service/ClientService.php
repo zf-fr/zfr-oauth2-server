@@ -90,12 +90,21 @@ class ClientService
     /**
      * Check if the client is valid by checking the secret
      *
+     * If $allowPublicClients, this means that we do not need a secret to validate the client
+     *
      * @param  Client $client
      * @param  string $secret
+     * @param  bool   $allowPublicClients
      * @return bool
      */
-    public function isClientValid(Client $client, $secret)
+    public function isClientValid(Client $client, $secret, $allowPublicClients)
     {
+        // @TODO: add validation for grant and scope
+
+        if ($allowPublicClients) {
+            return true;
+        }
+
         return $this->bcrypt->verify($secret, $client->getSecret());
     }
 }

@@ -41,13 +41,22 @@ interface GrantInterface
     const GRANT_RESPONSE_TYPE = null;
 
     /**
-     * Create a response according to the grant
+     * Create an authorization response (this is the response to the "authorization endpoint"))
      *
      * @param  HttpRequest $request
-     * @param  Client|null $client
+     * @param  Client      $client
      * @return HttpResponse
      */
-    public function createResponse(HttpRequest $request, Client $client = null);
+    public function createAuthorizationResponse(HttpRequest $request, Client $client);
+
+    /**
+     * Create a token response according (this is the response to the "token endpoint")
+     *
+     * @param  HttpRequest $request
+     * @param  Client      $client
+     * @return HttpResponse
+     */
+    public function createTokenResponse(HttpRequest $request, Client $client);
 
     /**
      * Does this authorization grant allow public clients?

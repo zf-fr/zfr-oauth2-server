@@ -59,16 +59,19 @@ class ClientCredentialsGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createResponse(HttpRequest $request, Client $client = null)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client)
     {
-        // In this mode, we ABSOLUTELY need a client
-        if (null === $client) {
-            throw OAuth2Exception::invalidClient('Client is invalid');
-        }
+        throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
+    }
 
+    /**
+     * {@inheritDoc}
+     */
+    public function createTokenResponse(HttpRequest $request, Client $client)
+    {
         // Everything is okey, we can start tokens generation!
         // Note that in this grant, the owner of the token is the client itself!
-        $accessToken = $this->accessTokenService->createToken($client, $client);
+        $accessToken = $this->accessTokenService->createToken($client, $client, $request->getPost('scope'));
 
         // We can generate the response!
         $response = new HttpResponse();

@@ -87,9 +87,17 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
 
     /**
      * {@inheritDoc}
+     */
+    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    {
+        throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
+    }
+
+    /**
+     * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createResponse(HttpRequest $request, Client $client = null)
+    public function createTokenResponse(HttpRequest $request, Client $client)
     {
         // Validate the user using its username and password
         $username = $request->getPost('username');
@@ -116,7 +124,8 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $refreshToken                  = $this->refreshTokenService->createToken($client, $owner);
+            $scope                         = $request->getPost('scope');
+            $refreshToken                  = $this->refreshTokenService->createToken($client, $owner, $scope);
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
