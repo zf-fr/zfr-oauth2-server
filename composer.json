@@ -18,7 +18,8 @@
   ],
   "require": {
     "php": ">=5.4",
-    "zendframework/zend-http": "~2.2"
+    "zendframework/zend-http": "~2.2",
+    "zendframework/zend-eventmanager": "~2.2"
   },
   "require-dev": {
     "phpunit/phpunit": "~3.7",

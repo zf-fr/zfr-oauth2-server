@@ -52,6 +52,7 @@ class AccessTokenService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $accessToken = new AccessToken();
+        $accessToken->setToken($this->generateKey());
         $accessToken->setClient($client);
         $accessToken->setOwner($owner);
         $accessToken->setExpiresAt($expiresAt);

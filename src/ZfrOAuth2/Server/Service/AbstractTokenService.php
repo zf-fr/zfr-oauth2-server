@@ -18,9 +18,13 @@
 
 namespace ZfrOAuth2\Server\Service;
 
+use DateTime;
+use Doctrine\Common\Collections\Criteria;
+use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
  * Abstract token service
@@ -99,5 +103,45 @@ abstract class AbstractTokenService
     {
         $this->objectManager->remove($token);
         $this->objectManager->flush();
+    }
+
+    /**
+     * Delete all the expired tokens
+     *
+     * This can be executed as a CRON task to clean a database. Because we are type hinting on ObjectManager,
+     * we cannot take advantage of optimized delete queries. This method also only works with Selectable
+     *
+     * @return void
+     * @throws RuntimeException
+     */
+    public function deleteExpiredTokens()
+    {
+        if (!$this->tokenRepository instanceof Selectable) {
+            throw new RuntimeException('Deleting expired tokens currently only work with Selectable repositories');
+        }
+
+        $criteria = Criteria::create(Criteria::expr()->lt('expiresAt', new DateTime()));
+        $criteria->setMaxResults(50);
+
+        do {
+            $expiredTokens = $this->tokenRepository->matching($criteria);
+
+            foreach ($expiredTokens as $expiredToken) {
+                $this->tokenRepository->remove($expiredToken);
+            }
+
+            $this->tokenRepository->flush();
+        } while (count($expiredTokens) > 0);
+    }
+
+    /**
+     * Generate a unique key for the token
+     *
+     * @return string
+     */
+    protected function generateKey()
+    {
+        // @TODO which algorithm to use?
+        return 'abc';
     }
 }

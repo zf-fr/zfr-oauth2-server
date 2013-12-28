@@ -49,9 +49,10 @@ class RefreshTokenService extends AbstractTokenService
     public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
     {
         $expiresAt = new DateTime();
-        $expiresAt->setTimestamp(time() + $this->defaultTokenTTL);
+        $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $refreshToken = new RefreshToken();
+        $refreshToken->setToken($this->generateKey());
         $refreshToken->setClient($client);
         $refreshToken->setOwner($owner);
         $refreshToken->setExpiresAt($expiresAt);
