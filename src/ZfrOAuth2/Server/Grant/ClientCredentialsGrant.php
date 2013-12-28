@@ -74,12 +74,15 @@ class ClientCredentialsGrant implements GrantInterface
         $accessToken = $this->accessTokenService->createToken($client, $client, $request->getPost('scope'));
 
         // We can generate the response!
-        $response = new HttpResponse();
-        $response->setContent(json_encode([
+        $response     = new HttpResponse();
+        $responseBody = [
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn()
-        ]));
+            'expires_in'   => $accessToken->getExpiresIn(),
+            'scope'        => $accessToken->getScope()
+        ];
+
+        $response->setContent(json_encode(array_filter($responseBody)));
 
         return $response;
     }

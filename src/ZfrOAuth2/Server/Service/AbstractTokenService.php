@@ -25,6 +25,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
@@ -136,12 +137,31 @@ abstract class AbstractTokenService
     }
 
     /**
-     * @param Client $client
-     * @param $scope
+     * Validate the token scopes against the client
+     *
+     * @param  Client $client
+     * @param  string $scope
+     * @return void
+     * @throws OAuth2Exception
      */
-    public function validateScope(Client $client, $scope)
+    protected function validateTokenScopes(Client $client, $scope)
     {
+        $clientScope = $client->getScope();
 
+        if (empty($clientScope) || empty($scope)) {
+            return;
+        }
+
+        // The spec says that if multiple scopes are needed, they must be separated by a space
+        $clientScopes = explode(' ', $client->getScope());
+        $tokenScopes  = explode(' ', $scope);
+
+        // The token scope must not ask for more scope, or scope that are not granted to the client
+        if (count(array_diff($tokenScopes, $clientScopes)) > 0) {
+            throw OAuth2Exception::invalidScope(
+                'The scope of the token exceeds the scope granted by the resource owner'
+            );
+        }
     }
 
     /**

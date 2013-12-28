@@ -120,7 +120,8 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
         $responseBody = [
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn()
+            'expires_in'   => $accessToken->getExpiresIn(),
+            'scope'        => $accessToken->getScope()
         ];
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
@@ -131,7 +132,7 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
 
         // We can generate the response!
         $response = new HttpResponse();
-        $response->setContent(json_encode($responseBody));
+        $response->setContent(json_encode(array_filter($responseBody)));
 
         return $response;
     }

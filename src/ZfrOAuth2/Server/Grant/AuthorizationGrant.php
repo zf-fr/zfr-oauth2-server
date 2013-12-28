@@ -146,13 +146,14 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
         }
 
         // Okey, everything is okey, let's start the token generation!
-        $scope       = $request->getPost('scope');
+        $scope       = $authorizationCode->getScope(); // reuse the scopes from the authorization code
         $accessToken = $this->accessTokenService->createToken($client, $client, $scope);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn()
+            'expires_in'   => $accessToken->getExpiresIn(),
+            'scope'        => $accessToken->getScope()
         ];
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
@@ -163,7 +164,7 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
 
         // We can generate the response!
         $response = new HttpResponse();
-        $response->setContent(json_encode($responseBody));
+        $response->setContent(json_encode(array_filter($responseBody)));
 
         return $response;
     }

@@ -50,6 +50,14 @@ class AuthorizationCodeService extends AbstractTokenService
      */
     public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
     {
+        // If some specific scope were given when creating the token, we must validate them against
+        // the client. Otherwise, it is assumed to reuse the client scope
+        if (empty($scope)) {
+            $scope = $client->getScope();
+        } else {
+            $this->validateTokenScopes($client, $scope);
+        }
+
         $expiresAt = new DateTime();
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 

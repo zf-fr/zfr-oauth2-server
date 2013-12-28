@@ -108,17 +108,20 @@ class RefreshTokenGrant implements GrantInterface
             $owner = $refreshToken->getOwner();
 
             $this->refreshTokenService->deleteToken($refreshToken);
-            $refreshToken = $this->refreshTokenService->createToken($client, $owner);
+            $refreshToken = $this->refreshTokenService->createToken($client, $owner, $scope);
         }
 
         // We can generate the response!
-        $response = new HttpResponse();
-        $response->setContent(json_encode([
+        $response     = new HttpResponse();
+        $responseBody = [
             'access_token'  => $accessToken->getToken(),
             'token_type'    => 'Bearer',
             'expires_in'    => $accessToken->getExpiresIn(),
-            'refresh_token' => $refreshToken->getToken()
-        ]));
+            'refresh_token' => $refreshToken->getToken(),
+            'scope'         => $accessToken->getScope()
+        ];
+
+        $response->setContent(json_encode(array_filter($responseBody)));
 
         return $response;
     }

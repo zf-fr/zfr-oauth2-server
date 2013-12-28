@@ -84,10 +84,10 @@ class ClientService
         }
 
         // The client may have scopes. We must make sure that it does not have unknown scope values
-        $clientScopes = explode(' ', $client->getScope());
+        $scope = $client->getScope();
 
-        if (!empty($clientScopes)) {
-            $this->validateClientScopes($clientScopes);
+        if (!empty($scope)) {
+            $this->validateClientScopes($scope);
         }
 
         $this->objectManager->persist($client);
@@ -131,11 +131,11 @@ class ClientService
      * @TODO: we are loading the whole scope table here. Not sure if this a good idea, but I suppose that
      *        scopes are limited
      *
-     * @param  array $clientScopes
+     * @param  string $scope
      * @return void
      * @throws OAuth2Exception
      */
-    protected function validateClientScopes(array $clientScopes)
+    protected function validateClientScopes($scope)
     {
         /* @var \ZfrOAuth2\Server\Entity\Scope[] $scopes */
         $scopes = $this->scopeRepository->findAll();
@@ -143,6 +143,8 @@ class ClientService
         foreach ($scopes as &$scope) {
             $scope = $scope->getName();
         }
+
+        $clientScopes = explode(' ', (string) $scope);
 
         if (count(array_diff($clientScopes, $scopes)) > 0) {
             throw OAuth2Exception::invalidRequest('Client is asking for scopes that do not exist');

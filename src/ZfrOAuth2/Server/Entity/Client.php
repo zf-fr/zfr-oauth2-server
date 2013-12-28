@@ -60,7 +60,7 @@ class Client implements TokenOwnerInterface
     /**
      * @var string
      */
-    protected $scope;
+    protected $scope = '';
 
     /**
      * Get the client id
