@@ -32,27 +32,24 @@ use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 class RefreshTokenService extends AbstractTokenService
 {
     /**
-     * Override default token TTL for refresh token
+     * Token TTL (in seconds) for the refresh tokens
      *
      * @var int
      */
-    protected $defaultTokenTTL = 604800;
+    protected $tokenTTL = 604800;
 
     /**
      * Create a new refresh token
      *
      * @param  Client              $client
      * @param  TokenOwnerInterface $owner
-     * @param  DateTime            $expiresAt
      * @param  string              $scope
      * @return RefreshToken
      */
-    public function createToken(Client $client, TokenOwnerInterface $owner, DateTime $expiresAt = null, $scope = '')
+    public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
     {
-        if (null === $expiresAt) {
-            $expiresAt = new DateTime();
-            $expiresAt->setTimestamp(time() + $this->defaultTokenTTL);
-        }
+        $expiresAt = new DateTime();
+        $expiresAt->setTimestamp(time() + $this->defaultTokenTTL);
 
         $refreshToken = new RefreshToken();
         $refreshToken->setClient($client);

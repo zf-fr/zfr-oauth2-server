@@ -44,6 +44,13 @@ interface GrantInterface
     public function createResponse(HttpRequest $request, Client $client = null);
 
     /**
+     * Does this authorization grant allow public clients?
+     *
+     * @return bool
+     */
+    public function allowPublicClients();
+
+    /**
      * Get the grant type
      *
      * @return string

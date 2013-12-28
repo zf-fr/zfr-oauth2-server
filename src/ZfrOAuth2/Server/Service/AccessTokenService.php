@@ -32,27 +32,24 @@ use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 class AccessTokenService extends AbstractTokenService
 {
     /**
-     * Override default token TTL for access token
+     * Token TTL (in seconds) for the access tokens
      *
      * @var int
      */
-    protected $defaultTokenTTL = 3600;
+    protected $tokenTTL = 3600;
 
     /**
      * Create a new access token
      *
      * @param  Client              $client
      * @param  TokenOwnerInterface $owner
-     * @param  DateTime            $expiresAt
      * @param  string              $scope
      * @return AccessToken
      */
-    public function createToken(Client $client, TokenOwnerInterface $owner, DateTime $expiresAt = null, $scope = '')
+    public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
     {
-        if (null === $expiresAt) {
-            $expiresAt = new DateTime();
-            $expiresAt->setTimestamp(time() + $this->defaultTokenTTL);
-        }
+        $expiresAt = new DateTime();
+        $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $accessToken = new AccessToken();
         $accessToken->setClient($client);

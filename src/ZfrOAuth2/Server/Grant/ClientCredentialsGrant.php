@@ -77,6 +77,14 @@ class ClientCredentialsGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
+    public function allowPublicClients()
+    {
+        return false;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
     public function getGrantType()
     {
         return 'client_credentials';

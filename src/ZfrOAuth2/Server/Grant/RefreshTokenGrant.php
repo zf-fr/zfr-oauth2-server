@@ -21,87 +21,80 @@ namespace ZfrOAuth2\Server\Grant;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
- * Implementation of the password grant model
- *
- * This authorization grant type, also known as "resource owner password credentials", is ideal
- * when you trust the client (for instance for a native app)
- *
- * @link    http://tools.ietf.org/html/rfc6749#section-4.3
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class PasswordGrant implements GrantInterface
+class RefreshTokenGrant implements GrantInterface
 {
     /**
-     * Access token service (used to create access token)
-     *
      * @var AccessTokenService
      */
     protected $accessTokenService;
 
     /**
-     * Refresh token service (used to create refresh token)
-     *
      * @var RefreshTokenService
      */
     protected $refreshTokenService;
 
     /**
-     * Callable that is used to verify the username and password
-     *
-     * This callable MUST return an object that implement the TokenOwnerInterface, or
-     * null if no identity can be matched with the given credentials
-     *
-     * @var callable
+     * @var bool
      */
-    protected $callback;
+    protected $rotateRefreshTokens = false;
 
     /**
      * @param AccessTokenService  $accessTokenService
      * @param RefreshTokenService $refreshTokenService
-     * @param callable            $callback
      */
-    public function __construct(
-        AccessTokenService $accessTokenService,
-        RefreshTokenService $refreshTokenService,
-        callable $callback
-    ) {
+    public function __construct(AccessTokenService $accessTokenService, RefreshTokenService $refreshTokenService)
+    {
         $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-        $this->callback            = $callback;
+    }
+
+    /**
+     * Set if we should rotate refresh tokens
+     *
+     * If set to true, then a new refresh token will be created each time an access token is asked from it,
+     * and the old refresh token is deleted
+     *
+     * @param  bool $rotateTokens
+     * @return void
+     */
+    public function setRotateRefreshTokens($rotateTokens)
+    {
+        $this->rotateRefreshTokens = (bool) $rotateTokens;
     }
 
     /**
      * {@inheritDoc}
-     * @throws OAuth2Exception
      */
     public function createResponse(HttpRequest $request, Client $client = null)
     {
-        $this->validateGrantType($request);
-
-        // Validate the user using its username and password
-        $username = $request->getPost('username');
-        $password = $request->getPost('password');
-
-        if (null === $username || null == $password) {
-            throw OAuth2Exception::invalidRequest('Username and/or password is missing');
+        if (!$refreshToken = $request->getPost('refresh_token')) {
+            throw OAuth2Exception::invalidRequest('Refresh token is missing');
         }
 
-        $owner = $this->callback($username, $password);
-
-        if (!$owner instanceof TokenOwnerInterface) {
-            throw OAuth2Exception::invalidGrant('Either username or password are incorrect');
+        // We can fetch the actual token, and validate it
+        $refreshToken = $this->refreshTokenService->getToken($refreshToken);
+        if ($refreshToken->isExpired()) {
+            throw OAuth2Exception::invalidRequest('Refresh token is expired');
         }
 
-        // Everything is okey, we can start tokens generation!
-        $accessToken  = $this->accessTokenService->createToken($client, $owner);
-        $refreshToken = $this->refreshTokenService->createToken($client, $owner);
+        // Okey, we can create a new access token!
+        $accessToken = $this->accessTokenService->createToken($client, $refreshToken->getOwner());
+
+        // We may want to revoke the old refresh token
+        if ($this->rotateRefreshTokens) {
+            $owner = $refreshToken->getOwner();
+
+            $this->refreshTokenService->deleteToken($refreshToken);
+            $refreshToken = $this->refreshTokenService->createToken($client, $owner);
+        }
 
         // We can generate the response!
         $response = new HttpResponse();
@@ -128,7 +121,7 @@ class PasswordGrant implements GrantInterface
      */
     public function getGrantType()
     {
-        return 'password';
+        return 'refresh_token';
     }
 
     /**

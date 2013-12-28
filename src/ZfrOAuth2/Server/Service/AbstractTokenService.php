@@ -41,11 +41,11 @@ abstract class AbstractTokenService
     protected $tokenRepository;
 
     /**
-     * Default token TTL
+     * Token TTL (in seconds)
      *
      * @var int
      */
-    protected $defaultTokenTTL = 0;
+    protected $tokenTTL = 0;
 
     /**
      * @param ObjectManager    $objectManager
@@ -58,6 +58,27 @@ abstract class AbstractTokenService
     }
 
     /**
+     * Set the token TTL for this service
+     *
+     * @param  int $tokenTTL
+     * @return void
+     */
+    public function setTokenTTL($tokenTTL)
+    {
+        $this->tokenTTL = (int) $tokenTTL;
+    }
+
+    /**
+     * Get the token TTL for this service
+     *
+     * @return int
+     */
+    public function getTokenTTL()
+    {
+        return $this->tokenTTL;
+    }
+
+    /**
      * Get a token using its identifier (the token itself)
      *
      * @param  string $token
@@ -66,5 +87,17 @@ abstract class AbstractTokenService
     public function getToken($token)
     {
         return $this->tokenRepository->find($token);
+    }
+
+    /**
+     * Remove the abstract token from the underlying storage
+     *
+     * @param  AbstractToken $token
+     * @return void
+     */
+    public function deleteToken(AbstractToken $token)
+    {
+        $this->objectManager->remove($token);
+        $this->objectManager->flush();
     }
 }

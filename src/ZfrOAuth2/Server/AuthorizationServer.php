@@ -62,7 +62,11 @@ class AuthorizationServer
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
             }
 
-            $response = $this->getGrant($grantType)->createResponse($request);
+            $grant = $this->getGrant($grantType);
+
+            $this->validateClient($request, $grant->allowPublicClients());
+
+            $response = $grant->createResponse($request);
         } catch(OAuth2Exception $exception) {
             return $this->createResponseFromOAuthException($exception);
         }
@@ -77,8 +81,9 @@ class AuthorizationServer
     /**
      * Validate the client
      *
-     * @param HttpRequest $request
-     * @param bool        $optionalSecret
+     * @param  HttpRequest $request
+     * @param  bool        $optionalSecret
+     * @throws Exception\OAuth2Exception
      */
     public function validateClient(HttpRequest $request, $optionalSecret = false)
     {
