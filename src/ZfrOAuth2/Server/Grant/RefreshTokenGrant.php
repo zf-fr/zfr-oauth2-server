@@ -96,7 +96,7 @@ class RefreshTokenGrant implements GrantInterface
         // We can fetch the actual token, and validate it
         $refreshToken = $this->refreshTokenService->getToken($refreshToken);
         if ($refreshToken->isExpired()) {
-            throw OAuth2Exception::invalidRequest('Refresh token is expired');
+            throw OAuth2Exception::invalidGrant('Refresh token is expired');
         }
 
         // Okey, we can create a new access token!

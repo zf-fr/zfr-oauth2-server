@@ -22,7 +22,9 @@ use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * Implementation of the authorization grant
@@ -30,8 +32,10 @@ use ZfrOAuth2\Server\Service\AuthorizationCodeService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationGrant implements GrantInterface
+class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInterface
 {
+    use AuthorizationServerAwareTrait;
+
     /**
      * Constants for the authorization grant
      */
@@ -44,15 +48,37 @@ class AuthorizationGrant implements GrantInterface
     protected $authorizationCodeService;
 
     /**
-     * @param AuthorizationCodeService $authorizationCodeService
+     * Access token service (used to create access token)
+     *
+     * @var AccessTokenService
      */
-    public function __construct(AuthorizationCodeService $authorizationCodeService)
-    {
+    protected $accessTokenService;
+
+    /**
+     * Refresh token service (used to create refresh token)
+     *
+     * @var RefreshTokenService
+     */
+    protected $refreshTokenService;
+
+    /**
+     * @param AuthorizationCodeService $authorizationCodeService
+     * @param AccessTokenService       $accessTokenService
+     * @param RefreshTokenService      $refreshTokenService
+     */
+    public function __construct(
+        AuthorizationCodeService $authorizationCodeService,
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService
+    ) {
         $this->authorizationCodeService = $authorizationCodeService;
+        $this->accessTokenService       = $accessTokenService;
+        $this->refreshTokenService      = $refreshTokenService;
     }
 
     /**
      * {@inheritDoc}
+     * @throws OAuth2Exception
      */
     public function createAuthorizationResponse(HttpRequest $request, Client $client)
     {
@@ -90,10 +116,56 @@ class AuthorizationGrant implements GrantInterface
 
     /**
      * {@inheritDoc}
+     * @throws OAuth2Exception
      */
     public function createTokenResponse(HttpRequest $request, Client $client)
     {
-        // TODO: Implement createResponse() method.
+        $code = $request->getPost('code');
+
+        if (null === $code) {
+            throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
+        }
+
+        // We need to get authorization code to perform additional validations
+        $authorizationCode = $this->authorizationCodeService->getToken($code);
+
+        if (null === $authorizationCode || $authorizationCode->isExpired()) {
+            throw OAuth2Exception::invalidGrant('Authorization code cannot be found or is expired');
+        }
+
+        if ($authorizationCode->getRedirectUri() !== $request->getPost('redirect_uri')) {
+            throw OAuth2Exception::invalidRequest(
+                'Redirect URI does not match with the one that was issued when creating the authorization code'
+            );
+        }
+
+        if ($authorizationCode->getClient()->getId() !== $request->getPost('client_id')) {
+            throw OAuth2Exception::invalidRequest(
+                'Authorization code client does not match with the one that created the authorization code'
+            );
+        }
+
+        // Okey, everything is okey, let's start the token generation!
+        $scope       = $request->getPost('scope');
+        $accessToken = $this->accessTokenService->createToken($client, $client, $scope);
+
+        $responseBody = [
+            'access_token' => $accessToken->getToken(),
+            'token_type'   => 'Bearer',
+            'expires_in'   => $accessToken->getExpiresIn()
+        ];
+
+        // Before generating a refresh token, we must make sure the authorization server supports this grant
+        if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
+            $refreshToken                  = $this->refreshTokenService->createToken($client, $client, $scope);
+            $responseBody['refresh_token'] = $refreshToken->getToken();
+        }
+
+        // We can generate the response!
+        $response = new HttpResponse();
+        $response->setContent(json_encode($responseBody));
+
+        return $response;
     }
 
     /**

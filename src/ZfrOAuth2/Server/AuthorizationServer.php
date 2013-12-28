@@ -47,6 +47,13 @@ class AuthorizationServer
     protected $grants = [];
 
     /**
+     * A list of grant interfaces that can answer to an authorization request
+     *
+     * @var GrantInterface[]
+     */
+    protected $responseTypes = [];
+
+    /**
      * @param ClientService    $clientService
      * @param GrantInterface[] $grants
      */
@@ -60,6 +67,10 @@ class AuthorizationServer
             }
 
             $this->grants[$grant::GRANT_TYPE] = $grant;
+
+            if (empty($grant::GRANT_RESPONSE_TYPE)) {
+                $this->responseTypes[$grant::GRANT_RESPONSE_TYPE] = $grant;
+            }
         }
     }
 
@@ -95,6 +106,37 @@ class AuthorizationServer
     }
 
     /**
+     * Check if the authorization server supports this response type
+     *
+     * @param  string $responseType
+     * @return bool
+     */
+    public function hasResponseType($responseType)
+    {
+        return isset($this->responseTypes[$responseType]);
+    }
+
+    /**
+     * Get the response type by its name
+     *
+     * @param  string $responseType
+     * @return GrantInterface
+     * @throws Exception\OAuth2Exception
+     */
+    public function getResponseType($responseType)
+    {
+        if ($this->hasResponseType($responseType)) {
+            return $this->responseTypes[$responseType];
+        }
+
+        // If we reach here... then no grant was found. Not good!
+        throw OAuth2Exception::unsupportedGrantType(sprintf(
+            'Grant type "%s" is not supported by this server',
+            $responseType
+        ));
+    }
+
+    /**
      * Handle the request
      *
      * @param  HttpRequest $request
@@ -104,20 +146,11 @@ class AuthorizationServer
     public function handleRequest(HttpRequest $request)
     {
         try {
-            $grantType = $request->getPost('grant_type');
-
-            if (null === $grantType) {
-                throw OAuth2Exception::invalidRequest('No grant type was found in the request');
-            }
-
-            $grant  = $this->getGrant($grantType);
-            $client = $this->getClient($request, $grant->allowPublicClients());
-
             // If it's a GET, it's an authorization endpoint, if it's a POST, it's a token endpoint!
             if ($request->isGet()) {
-                $response = $grant->createAuthorizationResponse($request, $client);
+                $response = $this->handleAuthorizationRequest($request);
             } elseif ($request->isPost()) {
-                $response = $grant->createTokenResponse($request, $client);
+                $response = $this->handleTokenRequest($request);
             } else {
                 throw OAuth2Exception::invalidRequest(sprintf(
                     'Only GET and POST verbs are supported by the authorization server, "%s" given',
@@ -133,6 +166,44 @@ class AuthorizationServer
                                ->addHeaderLine('Pragma', 'no-cache');
 
         return $response;
+    }
+
+    /**
+     * @param  HttpRequest $request
+     * @return HttpResponse
+     * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
+     */
+    protected function handleAuthorizationRequest(HttpRequest $request)
+    {
+        $responseType = $request->getQuery('response_type');
+
+        if (null === $responseType) {
+            throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
+        }
+
+        $responseType = $this->getResponseType($responseType);
+        $client       = $this->getClient($request, $responseType->allowPublicClients());
+
+        return $responseType->createAuthorizationResponse($request, $client);
+    }
+
+    /**
+     * @param  HttpRequest $request
+     * @return HttpResponse
+     * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
+     */
+    protected function handleTokenRequest(HttpRequest $request)
+    {
+        $grant = $request->getPost('grant_type');
+
+        if (null === $grant) {
+            throw OAuth2Exception::invalidRequest('No grant type was found in the request');
+        }
+
+        $grant  = $this->getGrant($grant);
+        $client = $this->getClient($request, $grant->allowPublicClients());
+
+        return $grant->createTokenResponse($request, $client);
     }
 
     /**

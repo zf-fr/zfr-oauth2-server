@@ -24,6 +24,7 @@ use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
@@ -132,6 +133,15 @@ abstract class AbstractTokenService
 
             $this->tokenRepository->flush();
         } while (count($expiredTokens) > 0);
+    }
+
+    /**
+     * @param Client $client
+     * @param $scope
+     */
+    public function validateScope(Client $client, $scope)
+    {
+
     }
 
     /**

@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Zend\Crypt\Password\Bcrypt;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
 /**
  * Client service
@@ -42,6 +43,11 @@ class ClientService
     protected $clientRepository;
 
     /**
+     * @var ObjectRepository
+     */
+    protected $scopeRepository;
+
+    /**
      * @var Bcrypt
      */
     protected $bcrypt;
@@ -49,11 +55,16 @@ class ClientService
     /**
      * @param ObjectManager    $objectManager
      * @param ObjectRepository $clientRepository
+     * @param ObjectRepository $scopeRepository
      */
-    public function __construct(ObjectManager $objectManager, ObjectRepository $clientRepository)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        ObjectRepository $clientRepository,
+        ObjectRepository $scopeRepository
+    ) {
         $this->objectManager    = $objectManager;
         $this->clientRepository = $clientRepository;
+        $this->scopeRepository  = $scopeRepository;
         $this->bcrypt           = new Bcrypt();
     }
 
@@ -70,6 +81,13 @@ class ClientService
 
         if (!empty($secret)) {
             $client->setSecret($this->bcrypt->create($secret));
+        }
+
+        // The client may have scopes. We must make sure that it does not have unknown scope values
+        $clientScopes = explode(' ', $client->getScope());
+
+        if (!empty($clientScopes)) {
+            $this->validateClientScopes($clientScopes);
         }
 
         $this->objectManager->persist($client);
@@ -99,12 +117,35 @@ class ClientService
      */
     public function isClientValid(Client $client, $secret, $allowPublicClients)
     {
-        // @TODO: add validation for grant and scope
-
         if ($allowPublicClients) {
             return true;
         }
 
         return $this->bcrypt->verify($secret, $client->getSecret());
+    }
+
+    /**
+     * Utility method that load all the scopes of the application, and check if the client does not
+     * ask for scopes that do not exist
+     *
+     * @TODO: we are loading the whole scope table here. Not sure if this a good idea, but I suppose that
+     *        scopes are limited
+     *
+     * @param  array $clientScopes
+     * @return void
+     * @throws OAuth2Exception
+     */
+    protected function validateClientScopes(array $clientScopes)
+    {
+        /* @var \ZfrOAuth2\Server\Entity\Scope[] $scopes */
+        $scopes = $this->scopeRepository->findAll();
+
+        foreach ($scopes as &$scope) {
+            $scope = $scope->getName();
+        }
+
+        if (count(array_diff($clientScopes, $scopes)) > 0) {
+            throw OAuth2Exception::invalidRequest('Client is asking for scopes that do not exist');
+        }
     }
 }

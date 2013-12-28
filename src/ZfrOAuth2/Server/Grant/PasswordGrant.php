@@ -110,11 +110,12 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
         $owner = $this->callback($username, $password);
 
         if (!$owner instanceof TokenOwnerInterface) {
-            throw OAuth2Exception::invalidGrant('Either username or password are incorrect');
+            throw OAuth2Exception::accessDenied('Either username or password are incorrect');
         }
 
         // Everything is okey, we can start tokens generation!
-        $accessToken = $this->accessTokenService->createToken($client, $owner);
+        $scope       = $request->getPost('scope');
+        $accessToken = $this->accessTokenService->createToken($client, $owner, $scope);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
@@ -124,7 +125,6 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $scope                         = $request->getPost('scope');
             $refreshToken                  = $this->refreshTokenService->createToken($client, $owner, $scope);
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
