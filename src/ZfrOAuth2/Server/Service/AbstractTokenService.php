@@ -25,7 +25,6 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Exception\RuntimeException;
 
@@ -123,7 +122,7 @@ abstract class AbstractTokenService
             throw new RuntimeException('Deleting expired tokens currently only work with Selectable repositories');
         }
 
-        $criteria = Criteria::create(Criteria::expr()->lt('expiresAt', new DateTime()));
+        $criteria = new Criteria(Criteria::expr()->lt('expiresAt', new DateTime()));
         $criteria->setMaxResults(50);
 
         do {
