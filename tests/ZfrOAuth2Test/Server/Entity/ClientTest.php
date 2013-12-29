@@ -38,7 +38,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->setRedirectUri('http://www.example.com');
 
         $this->assertEquals('id', $client->getId());
-        $this->assertEquals('id', $client->getTokenOwnerId());
         $this->assertEquals('secret', $client->getSecret());
         $this->assertEquals('name', $client->getName());
         $this->assertEquals('http://www.example.com', $client->getRedirectUri());

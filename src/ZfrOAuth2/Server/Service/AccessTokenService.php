@@ -42,12 +42,12 @@ class AccessTokenService extends AbstractTokenService
     /**
      * Create a new access token
      *
-     * @param  Client              $client
-     * @param  TokenOwnerInterface $owner
-     * @param  string              $scope
+     * @param  Client                   $client
+     * @param  TokenOwnerInterface|null $owner
+     * @param  string                   $scope
      * @return AccessToken
      */
-    public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
+    public function createToken(Client $client, TokenOwnerInterface $owner = null, $scope = '')
     {
         // If some specific scope were given when creating the token, we must validate them against
         // the client. Otherwise, it is assumed to reuse the client scope
@@ -63,9 +63,12 @@ class AccessTokenService extends AbstractTokenService
         $accessToken = new AccessToken();
         $accessToken->setToken(Rand::getBytes(40));
         $accessToken->setClient($client);
-        $accessToken->setOwner($owner);
         $accessToken->setExpiresAt($expiresAt);
         $accessToken->setScope($scope);
+
+        if (null !== $owner) {
+            $accessToken->setOwner($owner);
+        }
 
         // Persist the access token
         $this->objectManager->persist($accessToken);

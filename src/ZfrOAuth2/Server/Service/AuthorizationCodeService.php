@@ -44,12 +44,12 @@ class AuthorizationCodeService extends AbstractTokenService
     /**
      * Create a new authorization token
      *
-     * @param  Client              $client
-     * @param  TokenOwnerInterface $owner
-     * @param  string              $scope
+     * @param  Client                   $client
+     * @param  TokenOwnerInterface|null $owner
+     * @param  string                   $scope
      * @return AuthorizationCode
      */
-    public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
+    public function createToken(Client $client, TokenOwnerInterface $owner = null, $scope = '')
     {
         // If some specific scope were given when creating the token, we must validate them against
         // the client. Otherwise, it is assumed to reuse the client scope
@@ -65,10 +65,13 @@ class AuthorizationCodeService extends AbstractTokenService
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setToken(Rand::getBytes(40));
         $authorizationCode->setClient($client);
-        $authorizationCode->setOwner($owner);
         $authorizationCode->setExpiresAt($expiresAt);
         $authorizationCode->setScope($scope);
         $authorizationCode->setRedirectUri($client->getRedirectUri());
+
+        if (null !== $owner) {
+            $authorizationCode->setOwner($owner);
+        }
 
         // Persist the access token
         $this->objectManager->persist($authorizationCode);

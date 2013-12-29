@@ -29,13 +29,10 @@ namespace ZfrOAuth2\Server\Entity;
  * cannot be kept, well, secret! To create a public client, you just need to let an empty secret. More
  * info about that: http://tools.ietf.org/html/rfc6749#section-2.1
  *
- * Note that the client implements TokenOwnerInterface, because in the "ClientCredentials" grant type, the
- * owner of the tokens is actually the client itself
- *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Client implements TokenOwnerInterface
+class Client
 {
     /**
      * @var string
@@ -175,13 +172,5 @@ class Client implements TokenOwnerInterface
     public function isPublic()
     {
         return empty($this->secret);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function getTokenOwnerId()
-    {
-        return $this->id;
     }
 }

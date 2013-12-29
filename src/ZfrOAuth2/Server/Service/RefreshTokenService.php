@@ -42,12 +42,12 @@ class RefreshTokenService extends AbstractTokenService
     /**
      * Create a new refresh token
      *
-     * @param  Client              $client
-     * @param  TokenOwnerInterface $owner
-     * @param  string              $scope
+     * @param  Client                   $client
+     * @param  TokenOwnerInterface|null $owner
+     * @param  string                   $scope
      * @return RefreshToken
      */
-    public function createToken(Client $client, TokenOwnerInterface $owner, $scope = '')
+    public function createToken(Client $client, TokenOwnerInterface $owner = null, $scope = '')
     {
         // If some specific scope were given when creating the token, we must validate them against
         // the client. Otherwise, it is assumed to reuse the client scope
@@ -63,9 +63,12 @@ class RefreshTokenService extends AbstractTokenService
         $refreshToken = new RefreshToken();
         $refreshToken->setToken(Rand::getBytes(40));
         $refreshToken->setClient($client);
-        $refreshToken->setOwner($owner);
         $refreshToken->setExpiresAt($expiresAt);
         $refreshToken->setScope($scope);
+
+        if (null !== $owner) {
+            $refreshToken->setOwner($owner);
+        }
 
         // Persist the token
         $this->objectManager->persist($refreshToken);
