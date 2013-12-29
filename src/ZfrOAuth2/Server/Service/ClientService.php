@@ -90,12 +90,12 @@ class ClientService
     /**
      * Get the client using its id
      *
-     * @param  string      $id
+     * @param  string $id
      * @return Client|null
      */
     public function getClient($id)
     {
-        return $this->clientRepository->findOneBy(['id' => $id]);
+        return $this->clientRepository->find($id);
     }
 
     /**

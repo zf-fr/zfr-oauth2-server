@@ -31,7 +31,11 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
 /**
  * Token service
  *
- * You'll need to create one token service per type of token, as the repositories are not the same
+ * You'll need to create one token service per type of token, as the repositories are not the same (as well
+ * as the token TTL)
+ *
+ * @TODO: should we create one service per token type? I think it's a bit useless, as the only thing that would
+ *        be overriden is the token TTL
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
@@ -58,7 +62,7 @@ class TokenService
      *
      * @var int
      */
-    protected $tokenTTL = 0;
+    protected $tokenTTL = 3600;
 
     /**
      * Default scope
@@ -199,10 +203,10 @@ class TokenService
         }
 
         $scopes = explode(' ', (string) $scope);
-        $diff   = array_diff($registeredScopes, $scopes);
+        $diff   = array_diff($scopes, $registeredScopes);
 
         if (count($diff) > 0) {
-            throw OAuth2Exception::invalidRequest(sprintf(
+            throw OAuth2Exception::invalidScope(sprintf(
                 'Some scope(s) do not exist: %s',
                 implode(', ', $diff)
             ));

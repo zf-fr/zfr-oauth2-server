@@ -21,16 +21,16 @@ namespace ZfrOAuth2Test\Server\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Service\AuthorizationCodeService;
+use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Service\AuthorizationCodeService
+ * @cover \ZfrOAuth2\Server\Service\TokenService
  */
-class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
+class TokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
@@ -43,7 +43,12 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
     protected $tokenRepository;
 
     /**
-     * @var AuthorizationCodeService
+     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     */
+    protected $scopeRepository;
+
+    /**
+     * @var TokenService
      */
     protected $tokenService;
 
@@ -51,19 +56,17 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager   = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->tokenRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->tokenService    = new AuthorizationCodeService($this->objectManager, $this->tokenRepository);
-    }
-
-    public function testGettersAndSetters()
-    {
-        $this->assertEquals(600, $this->tokenService->getTokenTTL());
-        $this->tokenService->setTokenTTL(1000);
-        $this->assertEquals(1000, $this->tokenService->getTokenTTL());
+        $this->scopeRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
+        $this->tokenService    = new TokenService(
+            $this->objectManager,
+            $this->tokenRepository,
+            $this->scopeRepository
+        );
     }
 
     public function testCanGetToken()
     {
-        $token = new AuthorizationCode();
+        $token = new AccessToken();
 
         $this->tokenRepository->expects($this->once())
                               ->method('find')
@@ -75,7 +78,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanDeleteToken()
     {
-        $token = new AuthorizationCode();
+        $token = new AccessToken();
         $this->objectManager->expects($this->once())->method('remove')->with($token);
 
         $this->tokenService->deleteToken($token);
@@ -83,7 +86,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanDeleteExpiredTokens()
     {
-        $expiredToken  = new AuthorizationCode();
+        $expiredToken  = new AccessToken();
         $expiredTokens = new ArrayCollection([$expiredToken]);
 
         $this->tokenRepository->expects($this->at(0))
@@ -103,70 +106,78 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
         $this->tokenService->deleteExpiredTokens();
     }
 
-    public function testCanCreateAccessTokenWithoutScope()
-    {
-        $client = new Client();
-        $client->setScope('read');
-
-        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
-
-        $this->objectManager->expects($this->once())
-                            ->method('persist')
-                            ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AuthorizationCode'));
-
-        $token = $this->tokenService->createToken($client, $owner);
-
-        $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AuthorizationCode', $token);
-        $this->assertEquals(40, strlen($token->getToken()));
-        $this->assertEquals('read', $token->getScope());
-        $this->assertSame($owner, $token->getOwner());
-        $this->assertSame($client, $token->getClient());
-        $this->assertFalse($token->isExpired());
-    }
-
     public function scopeProvider()
     {
         return [
+            // With no scope
+            [
+                'registered_scopes' => ['read', 'write'],
+                'token_scope'       => '',
+                'throw_exception'   => false
+            ],
             // With less permissions
             [
-                'client_scope'    => 'read write',
-                'token_scope'     => 'read',
-                'throw_exception' => false
+                'registered_scopes' => ['read', 'write'],
+                'token_scope'       => 'read',
+                'throw_exception'   => false
             ],
             // With same permissions
             [
-                'client_scope'    => 'read write',
-                'token_scope'     => 'read write',
-                'throw_exception' => false
+                'registered_scopes' => ['read', 'write'],
+                'token_scope'       => 'read write',
+                'throw_exception'   => false
             ],
             // With too much permissions
             [
-                'client_scope'    => 'read write',
-                'token_scope'     => 'read write delete',
-                'throw_exception' => true
-            ]
+                'registered_scopes' => ['read', 'write'],
+                'token_scope'       => 'read write delete',
+                'throw_exception'   => true
+            ],
         ];
     }
 
     /**
      * @dataProvider scopeProvider
      */
-    public function testCanCreateAccessTokenWithScope($clientScope, $tokenScope, $throwException)
+    public function testCanSaveToken($registeredScopes, $tokenScope, $throwException)
     {
         if ($throwException) {
-            $this->setExpectedException(
-                'ZfrOAuth2\Server\Exception\OAuth2Exception',
-                'The scope of the token exceeds the scope(s) allowed by the client',
-                'invalid_scope'
-            );
+            $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
         }
 
-        $client = new Client();
-        $client->setScope($clientScope);
+        $token        = new AccessToken();
+        $defaultScope = 'read';
 
-        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
-        $token = $this->tokenService->createToken($client, $owner, $tokenScope);
+        if (empty($tokenScope)) {
+            $this->tokenService->setDefaultScope($defaultScope);
+        } else {
+            $token->setScope($tokenScope);
+        }
 
-        $this->assertEquals($tokenScope, $token->getScope());
+        if (!$throwException) {
+            $this->objectManager->expects($this->once())
+                                ->method('persist')
+                                ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AbstractToken'));
+        }
+
+        $scopes = [];
+        foreach ($registeredScopes as $registeredScope) {
+            $scope = new Scope();
+            $scope->setName($registeredScope);
+
+            $scopes[] = $scope;
+        }
+
+        $this->scopeRepository->expects($this->any())->method('findAll')->will($this->returnValue($scopes));
+
+        $this->tokenService->saveToken($token);
+
+        $this->assertEquals(40, strlen($token->getToken()));
+
+        if (empty($tokenScope)) {
+            $this->assertEquals($defaultScope, $token->getScope());
+        } else {
+            $this->assertEquals($tokenScope, $token->getScope());
+        }
     }
 }

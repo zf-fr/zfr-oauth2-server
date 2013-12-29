@@ -71,7 +71,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
                                ->with('client_id')
                                ->will($this->returnValue($client));
 
-        $this->assertSame($client, $this->clientService->getToken('client_id'));
+        $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
     public function scopeProvider()
@@ -98,6 +98,5 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
     public function testRegisterClient($scope = '')
     {
         $client = new Client();
-        $client->setScope($scope);
     }
 }
