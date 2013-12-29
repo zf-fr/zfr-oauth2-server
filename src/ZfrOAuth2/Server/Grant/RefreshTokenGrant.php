@@ -97,7 +97,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // We can fetch the actual token, and validate it
         $refreshToken = $this->refreshTokenService->getToken($refreshToken);
-        if ($refreshToken->isExpired()) {
+        if (null === $refreshToken || $refreshToken->isExpired()) {
             throw OAuth2Exception::invalidGrant('Refresh token is expired');
         }
 
