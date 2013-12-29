@@ -21,16 +21,16 @@ namespace ZfrOAuth2Test\Server\Service;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Service\AccessTokenService
+ * @cover \ZfrOAuth2\Server\Service\RefreshTokenService
  */
-class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
@@ -43,12 +43,7 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
     protected $tokenRepository;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $scopeRepository;
-
-    /**
-     * @var AccessTokenService
+     * @var RefreshTokenService
      */
     protected $tokenService;
 
@@ -56,24 +51,19 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager   = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->tokenRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->scopeRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->tokenService    = new AccessTokenService(
-            $this->objectManager,
-            $this->tokenRepository,
-            $this->scopeRepository
-        );
+        $this->tokenService    = new RefreshTokenService($this->objectManager, $this->tokenRepository);
     }
 
     public function testGettersAndSetters()
     {
-        $this->assertEquals(3600, $this->tokenService->getTokenTTL());
+        $this->assertEquals(604800, $this->tokenService->getTokenTTL());
         $this->tokenService->setTokenTTL(1000);
         $this->assertEquals(1000, $this->tokenService->getTokenTTL());
     }
 
     public function testCanGetToken()
     {
-        $token = new AccessToken();
+        $token = new RefreshToken();
 
         $this->tokenRepository->expects($this->once())
                               ->method('find')
@@ -85,7 +75,7 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanDeleteToken()
     {
-        $token = new AccessToken();
+        $token = new RefreshToken();
         $this->objectManager->expects($this->once())->method('remove')->with($token);
 
         $this->tokenService->deleteToken($token);
@@ -93,7 +83,7 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanDeleteExpiredTokens()
     {
-        $expiredToken  = new AccessToken();
+        $expiredToken  = new RefreshToken();
         $expiredTokens = new ArrayCollection([$expiredToken]);
 
         $this->tokenRepository->expects($this->at(0))
@@ -122,11 +112,11 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->objectManager->expects($this->once())
                             ->method('persist')
-                            ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AccessToken'));
+                            ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\RefreshToken'));
 
         $token = $this->tokenService->createToken($client, $owner);
 
-        $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AccessToken', $token);
+        $this->assertInstanceOf('ZfrOAuth2\Server\Entity\RefreshToken', $token);
         $this->assertEquals(40, strlen($token->getToken()));
         $this->assertEquals('read', $token->getScope());
         $this->assertSame($owner, $token->getOwner());

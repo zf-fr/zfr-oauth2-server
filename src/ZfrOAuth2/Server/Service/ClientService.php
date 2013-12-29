@@ -44,45 +44,19 @@ class ClientService
     protected $clientRepository;
 
     /**
-     * @var ObjectRepository
-     */
-    protected $scopeRepository;
-
-    /**
      * @var Bcrypt
      */
     protected $bcrypt;
 
     /**
-     * @var string
-     */
-    protected $defaultScope = '';
-
-    /**
      * @param ObjectManager    $objectManager
      * @param ObjectRepository $clientRepository
-     * @param ObjectRepository $scopeRepository
      */
-    public function __construct(
-        ObjectManager $objectManager,
-        ObjectRepository $clientRepository,
-        ObjectRepository $scopeRepository
-    ) {
+    public function __construct(ObjectManager $objectManager, ObjectRepository $clientRepository)
+    {
         $this->objectManager    = $objectManager;
         $this->clientRepository = $clientRepository;
-        $this->scopeRepository  = $scopeRepository;
         $this->bcrypt           = new Bcrypt();
-    }
-
-    /**
-     * Set the default scope that is used when registering a client, if none is set
-     *
-     * @param  string $defaultScope
-     * @return void
-     */
-    public function setDefaultScope($defaultScope)
-    {
-        $this->defaultScope = (string) $defaultScope;
     }
 
     /**
@@ -96,19 +70,10 @@ class ClientService
      */
     public function registerClient(Client $client)
     {
-        // The client may have scopes. We must make sure that it does not have unknown scope values
-        $scope = $client->getScope();
-
-        if (!empty($scope)) {
-            $this->validateClientScopes($scope);
-        } else {
-            $client->setScope($this->defaultScope);
-        }
-
         // If no identifier was specified for the client, generate a unique one
         // @TODO: should we use a Doctrine custom generator name here instead?
-        $name = $client->getId();
-        if (empty($name)) {
+        $clientId = $client->getId();
+        if (empty($clientId)) {
             $client->setId(uniqid());
         }
 
@@ -150,32 +115,5 @@ class ClientService
         }
 
         return $this->bcrypt->verify($secret, $client->getSecret());
-    }
-
-    /**
-     * Utility method that load all the scopes of the application, and check if the client does not
-     * ask for scopes that do not exist
-     *
-     * @TODO: we are loading the whole scope table here. Not sure if this a good idea, but I suppose that
-     *        scopes are limited
-     *
-     * @param  string $scope
-     * @return void
-     * @throws OAuth2Exception
-     */
-    protected function validateClientScopes($scope)
-    {
-        /* @var \ZfrOAuth2\Server\Entity\Scope[] $scopes */
-        $scopes = $this->scopeRepository->findAll();
-
-        foreach ($scopes as &$scope) {
-            $scope = $scope->getName();
-        }
-
-        $clientScopes = explode(' ', (string) $scope);
-
-        if (count(array_diff($clientScopes, $scopes)) > 0) {
-            throw OAuth2Exception::invalidRequest('Client is asking for scopes that do not exist');
-        }
     }
 }

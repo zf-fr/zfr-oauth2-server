@@ -33,6 +33,18 @@ use Exception;
 class OAuth2Exception extends Exception implements ExceptionInterface
 {
     /**
+     * Override the constructor to allow $code as a string
+     *
+     * @param string $message
+     * @param string $code
+     */
+    public function __construct($message, $code)
+    {
+        $this->message = (string) $message;
+        $this->code    = (string) $code;
+    }
+
+    /**
      * @param  string $description
      * @return OAuth2Exception
      */

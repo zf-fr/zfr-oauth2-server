@@ -9,6 +9,5 @@
         <id name="id" type="string" length="60" />
         <field name="secret" type="string" length="60" />
         <field name="redirectUri" type="string" length="1000" />
-        <field name="scope" type="string" length="1000" />
     </entity>
 </doctrine-mapping>

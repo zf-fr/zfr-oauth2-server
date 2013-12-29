@@ -23,18 +23,20 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
-use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
- * Abstract token service
+ * Token service
+ *
+ * You'll need to create one token service per type of token, as the repositories are not the same
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-abstract class AbstractTokenService
+class TokenService
 {
     /**
      * @var ObjectManager
@@ -47,6 +49,11 @@ abstract class AbstractTokenService
     protected $tokenRepository;
 
     /**
+     * @var ObjectRepository
+     */
+    protected $scopeRepository;
+
+    /**
      * Token TTL (in seconds)
      *
      * @var int
@@ -54,13 +61,25 @@ abstract class AbstractTokenService
     protected $tokenTTL = 0;
 
     /**
+     * Default scope
+     *
+     * @var string
+     */
+    protected $defaultScope = '';
+
+    /**
      * @param ObjectManager    $objectManager
      * @param ObjectRepository $tokenRepository
+     * @param ObjectRepository $scopeRepository
      */
-    public function __construct(ObjectManager $objectManager, ObjectRepository $tokenRepository)
-    {
+    public function __construct(
+        ObjectManager $objectManager,
+        ObjectRepository $tokenRepository,
+        ObjectRepository $scopeRepository
+    ) {
         $this->objectManager   = $objectManager;
         $this->tokenRepository = $tokenRepository;
+        $this->scopeRepository = $scopeRepository;
     }
 
     /**
@@ -75,13 +94,40 @@ abstract class AbstractTokenService
     }
 
     /**
-     * Get the token TTL for this service
+     * Set the default scope when issuing a token (if none is specified)
      *
-     * @return int
+     * @param  string $defaultScope
+     * @return void
      */
-    public function getTokenTTL()
+    public function setDefaultScope($defaultScope)
     {
-        return $this->tokenTTL;
+        $this->defaultScope = (string) $defaultScope;
+    }
+
+    /**
+     * Save a new token (and compute the token)
+     *
+     * @param  AbstractToken $token
+     * @return void
+     */
+    public function saveToken(AbstractToken $token)
+    {
+        $scope = $token->getScope();
+
+        if (empty($scope)) {
+            $token->setScope($this->defaultScope);
+        } else {
+            $this->validateTokenScopes($scope);
+        }
+
+        $expiresAt = new DateTime();
+        $expiresAt->setTimestamp(time() + $this->tokenTTL);
+
+        $token->setExpiresAt($expiresAt);
+        $token->setToken(Rand::getString(40));
+
+        $this->objectManager->persist($token);
+        $this->objectManager->flush();
     }
 
     /**
@@ -137,30 +183,29 @@ abstract class AbstractTokenService
     }
 
     /**
-     * Validate the token scopes against the client
+     * Validate the token scopes against the registered scope
      *
-     * @param  Client $client
      * @param  string $scope
      * @return void
      * @throws OAuth2Exception
      */
-    protected function validateTokenScopes(Client $client, $scope)
+    protected function validateTokenScopes($scope)
     {
-        $clientScope = $client->getScope();
+        /* @var \ZfrOAuth2\Server\Entity\Scope[] $registeredScopes */
+        $registeredScopes = $this->scopeRepository->findAll();
 
-        if (empty($clientScope) || empty($scope)) {
-            return;
+        foreach ($registeredScopes as &$registeredScope) {
+            $registeredScope = $registeredScope->getName();
         }
 
-        // The spec says that if multiple scopes are needed, they must be separated by a space
-        $clientScopes = explode(' ', $client->getScope());
-        $tokenScopes  = explode(' ', $scope);
+        $scopes = explode(' ', (string) $scope);
+        $diff   = array_diff($registeredScopes, $scopes);
 
-        // The token scope must not ask for more scope, or scope that are not granted to the client
-        if (count(array_diff($tokenScopes, $clientScopes)) > 0) {
-            throw OAuth2Exception::invalidScope(
-                'The scope of the token exceeds the scope(s) allowed by the client'
-            );
+        if (count($diff) > 0) {
+            throw OAuth2Exception::invalidRequest(sprintf(
+                'Some scope(s) do not exist: %s',
+                implode(', ', $diff)
+            ));
         }
     }
 }

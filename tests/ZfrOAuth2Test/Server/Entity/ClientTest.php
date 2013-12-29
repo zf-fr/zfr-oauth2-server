@@ -34,14 +34,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client->setId('id');
         $client->setSecret('secret');
         $client->setName('name');
-        $client->setScope('scope');
         $client->setRedirectUri('http://www.example.com');
 
         $this->assertEquals('id', $client->getId());
         $this->assertEquals('secret', $client->getSecret());
         $this->assertEquals('name', $client->getName());
         $this->assertEquals('http://www.example.com', $client->getRedirectUri());
-        $this->assertEquals('scope', $client->getScope());
     }
 
     public function testCanCheckPublicClient()

@@ -121,7 +121,8 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $accessToken->getScope()
+            'scope'        => $accessToken->getScope(),
+            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
         ];
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant

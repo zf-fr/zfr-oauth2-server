@@ -55,11 +55,6 @@ class Client
     protected $redirectUri;
 
     /**
-     * @var string
-     */
-    protected $scope;
-
-    /**
      * Set the client id
      *
      * @param  int $id
@@ -141,27 +136,6 @@ class Client
     public function getRedirectUri()
     {
         return $this->redirectUri;
-    }
-
-    /**
-     * Set the client scope (you can set multiple scopes by separating them using a space)
-     *
-     * @param  string $scope
-     * @return void
-     */
-    public function setScope($scope)
-    {
-        $this->scope = (string) $scope;
-    }
-
-    /**
-     * Get the client scope(s)
-     *
-     * @return string
-     */
-    public function getScope()
-    {
-        return $this->scope;
     }
 
     /**

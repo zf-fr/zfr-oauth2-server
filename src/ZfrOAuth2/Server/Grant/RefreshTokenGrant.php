@@ -100,8 +100,12 @@ class RefreshTokenGrant implements GrantInterface
             throw OAuth2Exception::invalidGrant('Refresh token is expired');
         }
 
-        // Okey, we can create a new access token!
-        $scope       = $request->getPost('scope');
+        // Okey, we can create a new access token! First, we need to make some checks on the asked scopes,
+        // because according to the spec, a refresh token can create an access token with an equal or lesser
+        // scope, but not more
+        $scope = $request->getPost('scope') ?: $refreshToken->getScope();
+        $this->validateScope($refreshToken->getScope(), $scope);
+
         $owner       = $refreshToken->getOwner();
         $accessToken = $this->accessTokenService->createToken($client, $owner, $scope);
 
@@ -118,7 +122,8 @@ class RefreshTokenGrant implements GrantInterface
             'token_type'    => 'Bearer',
             'expires_in'    => $accessToken->getExpiresIn(),
             'refresh_token' => $refreshToken->getToken(),
-            'scope'         => $accessToken->getScope()
+            'scope'         => $accessToken->getScope(),
+            'owner_id'      => $owner ? $owner->getTokenOwnerId() : null
         ];
 
         $response->setContent(json_encode(array_filter($responseBody)));
@@ -132,5 +137,31 @@ class RefreshTokenGrant implements GrantInterface
     public function allowPublicClients()
     {
         return true;
+    }
+
+    /**
+     * Validate if the scopes required for the new access token are equal or lesser than those in the refresh token
+     *
+     * @param  string $originalScope
+     * @param  string $newScope
+     * @return void
+     * @throws OAuth2Exception
+     */
+    protected function validateScope($originalScope, $newScope)
+    {
+        // First do a fast check when scope are the same
+        if ($originalScope === $newScope) {
+            return;
+        }
+
+        $originalScopes = explode(' ', $originalScope);
+        $newScopes      = explode(' ', $newScope);
+
+        // The token scope must not ask for more scope, or scope that were allowed in the refresh token
+        if (count(array_diff($newScopes, $originalScopes)) > 0) {
+            throw OAuth2Exception::invalidScope(
+                'The scope of the token exceeds the scope(s) allowed by the client'
+            );
+        }
     }
 }

@@ -23,7 +23,7 @@ use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * Implementation of the client credentials grant
@@ -45,14 +45,14 @@ class ClientCredentialsGrant implements GrantInterface
     /**
      * Access token service (used to create access token)
      *
-     * @var AccessTokenService
+     * @var TokenService
      */
     protected $accessTokenService;
 
     /**
-     * @param AccessTokenService $accessTokenService
+     * @param TokenService $accessTokenService
      */
-    public function __construct(AccessTokenService $accessTokenService)
+    public function __construct(TokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }
@@ -72,7 +72,7 @@ class ClientCredentialsGrant implements GrantInterface
     {
         // Everything is okey, we can start tokens generation!
         // Note that in this grant, the owner of the token is the client itself!
-        $accessToken = $this->accessTokenService->createToken($client, $owner, $request->getPost('scope'));
+        $accessToken = $this->tokenService->createToken($client, $owner, $request->getPost('scope'));
 
         // We can generate the response!
         $response     = new HttpResponse();
@@ -80,7 +80,8 @@ class ClientCredentialsGrant implements GrantInterface
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $accessToken->getScope()
+            'scope'        => $accessToken->getScope(),
+            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
         ];
 
         $response->setContent(json_encode(array_filter($responseBody)));
