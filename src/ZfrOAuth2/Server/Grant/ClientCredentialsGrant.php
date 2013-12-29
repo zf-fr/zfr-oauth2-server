@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -34,7 +35,7 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ClientCredentialsGrant implements GrantInterface
+class ClientCredentialsGrant extends AbstractGrant
 {
     /**
      * Constants for the client credentials grant
@@ -71,8 +72,10 @@ class ClientCredentialsGrant implements GrantInterface
     public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         // Everything is okey, we can start tokens generation!
-        // Note that in this grant, the owner of the token is the client itself!
-        $accessToken = $this->tokenService->createToken($client, $owner, $request->getPost('scope'));
+        $accessToken = new AccessToken();
+
+        $this->fillToken($accessToken, $client, $owner, $request->getPost('scope'));
+        $this->accessTokenService->saveToken($accessToken);
 
         // We can generate the response!
         $response     = new HttpResponse();

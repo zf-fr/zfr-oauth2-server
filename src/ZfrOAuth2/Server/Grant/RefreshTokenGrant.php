@@ -20,17 +20,18 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\AccessTokenService;
-use ZfrOAuth2\Server\Service\RefreshTokenService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class RefreshTokenGrant implements GrantInterface
+class RefreshTokenGrant extends AbstractGrant
 {
     /**
      * Constants for the refresh token grant
@@ -39,12 +40,12 @@ class RefreshTokenGrant implements GrantInterface
     const GRANT_RESPONSE_TYPE = null;
 
     /**
-     * @var AccessTokenService
+     * @var TokenService
      */
     protected $accessTokenService;
 
     /**
-     * @var RefreshTokenService
+     * @var TokenService
      */
     protected $refreshTokenService;
 
@@ -54,10 +55,10 @@ class RefreshTokenGrant implements GrantInterface
     protected $rotateRefreshTokens = false;
 
     /**
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
+     * @param TokenService $accessTokenService
+     * @param TokenService $refreshTokenService
      */
-    public function __construct(AccessTokenService $accessTokenService, RefreshTokenService $refreshTokenService)
+    public function __construct(TokenService $accessTokenService, TokenService $refreshTokenService)
     {
         $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
@@ -107,12 +108,19 @@ class RefreshTokenGrant implements GrantInterface
         $this->validateScope($refreshToken->getScope(), $scope);
 
         $owner       = $refreshToken->getOwner();
-        $accessToken = $this->accessTokenService->createToken($client, $owner, $scope);
+        $accessToken = new AccessToken();
+
+        $this->fillToken($accessToken, $client, $owner, $scope);
+        $this->accessTokenService->saveToken($accessToken);
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {
             $this->refreshTokenService->deleteToken($refreshToken);
-            $refreshToken = $this->refreshTokenService->createToken($client, $owner, $scope);
+
+            $refreshToken = new RefreshToken();
+
+            $this->fillToken($refreshToken, $client, $owner, $scope);
+            $this->refreshTokenService->saveToken($refreshToken);
         }
 
         // We can generate the response!
