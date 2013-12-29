@@ -28,7 +28,7 @@ use ZfrOAuth2\Server\Service\TokenService;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Service\TokenService
+ * @covers \ZfrOAuth2\Server\Service\TokenService
  */
 class TokenServiceTest extends \PHPUnit_Framework_TestCase
 {

@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\Service\ClientService;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Service\ClientService
+ * @covers \ZfrOAuth2\Server\Service\ClientService
  */
 class ClientServiceTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,11 +41,6 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
     protected $clientRepository;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $scopeRepository;
-
-    /**
      * @var ClientService
      */
     protected $clientService;
@@ -54,12 +49,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager    = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->clientRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->scopeRepository  = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->clientService    = new ClientService(
-            $this->objectManager,
-            $this->clientRepository,
-            $this->scopeRepository
-        );
+        $this->clientService    = new ClientService($this->objectManager, $this->clientRepository);
     }
 
     public function testCanGetClient()
@@ -74,29 +64,16 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
-    public function scopeProvider()
-    {
-        return [
-            [
-                'scope'       => '',
-                'list_scopes' => 'read write'
-            ],
-            [
-                'scope'       => 'read',
-                'list_scopes' => 'read write'
-            ],
-            [
-                'scope'       => 'read',
-                'list_scopes' => 'read write'
-            ]
-        ];
-    }
-
-    /**
-     * @dataProvider scopeProvider
-     */
-    public function testRegisterClient($scope = '')
+    public function testRegisterClient()
     {
         $client = new Client();
+
+        $this->objectManager->expects($this->once())
+                            ->method('persist')
+                            ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\Client'));
+
+        $this->clientService->registerClient($client);
+
+        $this->assertEquals(60, strlen($client->getSecret()));
     }
 }

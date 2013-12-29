@@ -26,7 +26,8 @@ use ZfrOAuth2\Server\Entity\Client;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Entity\RefreshToken
+ * @covers \ZfrOAuth2\Server\Entity\AbstractToken
+ * @covers \ZfrOAuth2\Server\Entity\RefreshToken
  */
 class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {

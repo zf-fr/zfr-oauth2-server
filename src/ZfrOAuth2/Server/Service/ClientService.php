@@ -60,13 +60,13 @@ class ClientService
     }
 
     /**
-     * Register a new client, and return the client secret before it was encryption
+     * Register a new client and generate a strong secret
      *
      * Please note that the secret must be really kept secret, as it is used for some grant type to
      * authorize the client
      *
      * @param  Client $client
-     * @return string
+     * @return void
      */
     public function registerClient(Client $client)
     {
@@ -83,8 +83,6 @@ class ClientService
 
         $this->objectManager->persist($client);
         $this->objectManager->flush();
-
-        return $secret;
     }
 
     /**

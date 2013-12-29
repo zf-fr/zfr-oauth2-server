@@ -23,7 +23,7 @@ use ZfrOAuth2\Server\Entity\Client;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Entity\Client
+ * @covers \ZfrOAuth2\Server\Entity\Client
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {

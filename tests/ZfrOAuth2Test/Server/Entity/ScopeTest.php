@@ -23,7 +23,7 @@ use ZfrOAuth2\Server\Entity\Scope;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @cover \ZfrOAuth2\Server\Entity\Scope
+ * @covers \ZfrOAuth2\Server\Entity\Scope
  */
 class ScopeTest extends \PHPUnit_Framework_TestCase
 {
