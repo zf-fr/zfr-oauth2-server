@@ -63,7 +63,7 @@ class AuthorizationCodeService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setToken(Rand::getBytes(40));
+        $authorizationCode->setToken(Rand::getString(40));
         $authorizationCode->setClient($client);
         $authorizationCode->setExpiresAt($expiresAt);
         $authorizationCode->setScope($scope);

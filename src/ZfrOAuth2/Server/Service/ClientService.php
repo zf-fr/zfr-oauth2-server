@@ -113,7 +113,7 @@ class ClientService
         }
 
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
-        $secret = Rand::getBytes(40, true);
+        $secret = Rand::getString(40);
         $client->setSecret($this->bcrypt->create($secret));
 
         $this->objectManager->persist($client);

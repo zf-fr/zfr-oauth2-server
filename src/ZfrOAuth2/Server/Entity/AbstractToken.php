@@ -177,4 +177,15 @@ abstract class AbstractToken
     {
         return $this->scope;
     }
+
+    /**
+     * Check if the access token has the given scope(s)
+     *
+     * @param  string $scope
+     * @return bool
+     */
+    public function hasScope($scope)
+    {
+
+    }
 }

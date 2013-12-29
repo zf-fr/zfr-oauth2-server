@@ -61,7 +61,7 @@ class RefreshTokenService extends AbstractTokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $refreshToken = new RefreshToken();
-        $refreshToken->setToken(Rand::getBytes(40));
+        $refreshToken->setToken(Rand::getString(40));
         $refreshToken->setClient($client);
         $refreshToken->setExpiresAt($expiresAt);
         $refreshToken->setScope($scope);

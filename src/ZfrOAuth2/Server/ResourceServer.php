@@ -50,10 +50,13 @@ class ResourceServer
     /**
      * Check if the request is valid
      *
+     * If the scope parameter is given, it will also check that the token has enough permissions
+     *
      * @param  HttpRequest $request
+     * @param  string      $scope
      * @return bool
      */
-    public function isRequestValid(HttpRequest $request)
+    public function isRequestValid(HttpRequest $request, $scope = '')
     {
         // We extract the token and get the actual instance from storage
         $accessToken = $this->extractAccessToken($request);
@@ -61,6 +64,10 @@ class ResourceServer
 
         // It must exist and must not be outdated, otherwise it's wrong!
         if (null === $accessToken || $accessToken->isExpired()) {
+            return false;
+        }
+
+        if (!empty($scope) && !$accessToken->hasScope($scope)) {
             return false;
         }
 

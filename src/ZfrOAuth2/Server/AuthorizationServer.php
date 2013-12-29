@@ -167,7 +167,8 @@ class AuthorizationServer
         }
 
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
-        $response->getHeaders()->addHeaderLine('Cache-Control', 'no-store')
+        $response->getHeaders()->addHeaderLine('Content-Type', 'application/json')
+                               ->addHeaderLine('Cache-Control', 'no-store')
                                ->addHeaderLine('Pragma', 'no-cache');
 
         return $response;
