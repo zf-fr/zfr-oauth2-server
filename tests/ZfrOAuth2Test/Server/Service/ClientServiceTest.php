@@ -72,8 +72,12 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
                             ->method('persist')
                             ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\Client'));
 
-        $this->clientService->registerClient($client);
+        $secret = $this->clientService->registerClient($client);
 
         $this->assertEquals(60, strlen($client->getSecret()));
+        $this->assertEquals(40, strlen($secret));
+
+        $this->assertFalse($this->clientService->isClientValid($client, 'azerty', false));
+        $this->assertTrue($this->clientService->isClientValid($client, $secret, false));
     }
 }
