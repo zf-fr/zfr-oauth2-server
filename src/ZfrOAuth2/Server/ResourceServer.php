@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server;
 
 use Zend\Http\Request as HttpRequest;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
-use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * The resource server main role is to validate the access token and that its scope covers the
@@ -35,14 +35,14 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 class ResourceServer
 {
     /**
-     * @var AccessTokenService
+     * @var TokenService
      */
     protected $accessTokenService;
 
     /**
-     * @param AccessTokenService $accessTokenService
+     * @param TokenService $accessTokenService
      */
-    public function __construct(AccessTokenService $accessTokenService)
+    public function __construct(TokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }
@@ -83,8 +83,14 @@ class ResourceServer
      */
     public function extractAccessToken(HttpRequest $request)
     {
+        $headers = $request->getHeaders();
+
+        if (!$headers->has('Authorization')) {
+            return null;
+        }
+
         // Header value is expected to be "Bearer xxx"
-        $parts = explode(' ', $request->getHeader('Authorization')->getFieldValue());
+        $parts = explode(' ', $headers->get('Authorization')->getFieldValue());
         $token = end($parts); // Access token is the last value
 
         if (count($parts) < 2 || empty($token)) {

@@ -186,6 +186,14 @@ abstract class AbstractToken
      */
     public function hasScope($scope)
     {
+        // First quick check
+        if ($this->scope === $scope) {
+            return true;
+        }
 
+        $tokenScopes = explode(' ', $this->scope);
+        $scopes      = explode(' ', $scope);
+
+        return count(array_diff($tokenScopes, $scopes)) > 0;
     }
 }
