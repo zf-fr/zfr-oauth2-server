@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server\Grant;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
@@ -80,7 +81,7 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         // We must validate some parameters first
         $responseType = $request->getQuery('response_type');
@@ -99,7 +100,7 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
         $scope = $request->getQuery('scope');
         $state = $request->getQuery('state');
 
-        $authorizationCode = $this->authorizationCodeService->createToken($client, $client, $scope);
+        $authorizationCode = $this->authorizationCodeService->createToken($client, $owner, $scope);
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
@@ -118,7 +119,7 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client)
+    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         $code = $request->getPost('code');
 
@@ -147,7 +148,7 @@ class AuthorizationGrant implements GrantInterface, AuthorizationServiceAwareInt
 
         // Okey, everything is okey, let's start the token generation!
         $scope       = $authorizationCode->getScope(); // reuse the scopes from the authorization code
-        $accessToken = $this->accessTokenService->createToken($client, $client, $scope);
+        $accessToken = $this->accessTokenService->createToken($client, $owner, $scope);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),

@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server\Grant;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
@@ -79,7 +80,7 @@ class RefreshTokenGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
     }
@@ -87,7 +88,7 @@ class RefreshTokenGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client)
+    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         if (!$refreshToken = $request->getPost('refresh_token')) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
@@ -101,12 +102,11 @@ class RefreshTokenGrant implements GrantInterface
 
         // Okey, we can create a new access token!
         $scope       = $request->getPost('scope');
-        $accessToken = $this->accessTokenService->createToken($client, $refreshToken->getOwner(), $scope);
+        $owner       = $refreshToken->getOwner();
+        $accessToken = $this->accessTokenService->createToken($client, $owner, $scope);
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {
-            $owner = $refreshToken->getOwner();
-
             $this->refreshTokenService->deleteToken($refreshToken);
             $refreshToken = $this->refreshTokenService->createToken($client, $owner, $scope);
         }

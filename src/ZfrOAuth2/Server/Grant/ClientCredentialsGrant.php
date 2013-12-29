@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server\Grant;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
@@ -59,7 +60,7 @@ class ClientCredentialsGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
     }
@@ -67,11 +68,11 @@ class ClientCredentialsGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client)
+    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         // Everything is okey, we can start tokens generation!
         // Note that in this grant, the owner of the token is the client itself!
-        $accessToken = $this->accessTokenService->createToken($client, $client, $request->getPost('scope'));
+        $accessToken = $this->accessTokenService->createToken($client, $owner, $request->getPost('scope'));
 
         // We can generate the response!
         $response     = new HttpResponse();

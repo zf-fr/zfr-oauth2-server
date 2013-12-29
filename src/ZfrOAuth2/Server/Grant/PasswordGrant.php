@@ -88,7 +88,7 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client)
+    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
     }
@@ -97,7 +97,7 @@ class PasswordGrant implements GrantInterface, AuthorizationServiceAwareInterfac
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client)
+    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         // Validate the user using its username and password
         $username = $request->getPost('username');

@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServiceAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
@@ -139,18 +140,22 @@ class AuthorizationServer
     /**
      * Handle the request
      *
-     * @param  HttpRequest $request
+     * If you pass an owner as a second parameter, it will be saved along the tokens (if one is created). Most
+     * of the time, the resource owner will be a user
+     *
+     * @param  HttpRequest              $request
+     * @param  TokenOwnerInterface|null $owner
      * @return HttpResponse
      * @throws OAuth2Exception If no grant type could be found
      */
-    public function handleRequest(HttpRequest $request)
+    public function handleRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
     {
         try {
             // If it's a GET, it's an authorization endpoint, if it's a POST, it's a token endpoint!
             if ($request->isGet()) {
-                $response = $this->handleAuthorizationRequest($request);
+                $response = $this->handleAuthorizationRequest($request, $owner);
             } elseif ($request->isPost()) {
-                $response = $this->handleTokenRequest($request);
+                $response = $this->handleTokenRequest($request, $owner);
             } else {
                 throw OAuth2Exception::invalidRequest(sprintf(
                     'Only GET and POST verbs are supported by the authorization server, "%s" given',
@@ -169,11 +174,12 @@ class AuthorizationServer
     }
 
     /**
-     * @param  HttpRequest $request
+     * @param  HttpRequest              $request
+     * @param  TokenOwnerInterface|null $owner
      * @return HttpResponse
      * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    protected function handleAuthorizationRequest(HttpRequest $request)
+    protected function handleAuthorizationRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
     {
         $responseType = $request->getQuery('response_type');
 
@@ -184,15 +190,16 @@ class AuthorizationServer
         $responseType = $this->getResponseType($responseType);
         $client       = $this->getClient($request, $responseType->allowPublicClients());
 
-        return $responseType->createAuthorizationResponse($request, $client);
+        return $responseType->createAuthorizationResponse($request, $client, $owner);
     }
 
     /**
-     * @param  HttpRequest $request
+     * @param  HttpRequest              $request
+     * @param  TokenOwnerInterface|null $owner
      * @return HttpResponse
      * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
      */
-    protected function handleTokenRequest(HttpRequest $request)
+    protected function handleTokenRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
     {
         $grant = $request->getPost('grant_type');
 
@@ -203,7 +210,7 @@ class AuthorizationServer
         $grant  = $this->getGrant($grant);
         $client = $this->getClient($request, $grant->allowPublicClients());
 
-        return $grant->createTokenResponse($request, $client);
+        return $grant->createTokenResponse($request, $client, $owner);
     }
 
     /**
