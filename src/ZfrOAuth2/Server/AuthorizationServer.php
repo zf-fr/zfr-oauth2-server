@@ -69,7 +69,7 @@ class AuthorizationServer
 
             $this->grants[$grant::GRANT_TYPE] = $grant;
 
-            if (empty($grant::GRANT_RESPONSE_TYPE)) {
+            if (!empty($grant::GRANT_RESPONSE_TYPE)) {
                 $this->responseTypes[$grant::GRANT_RESPONSE_TYPE] = $grant;
             }
         }
