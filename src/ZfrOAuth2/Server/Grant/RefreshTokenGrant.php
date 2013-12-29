@@ -105,7 +105,12 @@ class RefreshTokenGrant extends AbstractGrant
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
         $scope = $request->getPost('scope') ?: $refreshToken->getScope();
-        $this->validateScope($refreshToken->getScope(), $scope);
+
+        if (!$refreshToken->hasScope($scope)) {
+            throw OAuth2Exception::invalidScope(
+                'The scope of the token exceeds the scope(s) allowed by the client'
+            );
+        }
 
         $owner       = $refreshToken->getOwner();
         $accessToken = new AccessToken();
@@ -145,31 +150,5 @@ class RefreshTokenGrant extends AbstractGrant
     public function allowPublicClients()
     {
         return true;
-    }
-
-    /**
-     * Validate if the scopes required for the new access token are equal or lesser than those in the refresh token
-     *
-     * @param  string $originalScope
-     * @param  string $newScope
-     * @return void
-     * @throws OAuth2Exception
-     */
-    protected function validateScope($originalScope, $newScope)
-    {
-        // First do a fast check when scope are the same
-        if ($originalScope === $newScope) {
-            return;
-        }
-
-        $originalScopes = explode(' ', $originalScope);
-        $newScopes      = explode(' ', $newScope);
-
-        // The token scope must not ask for more scope, or scope that were allowed in the refresh token
-        if (count(array_diff($newScopes, $originalScopes)) > 0) {
-            throw OAuth2Exception::invalidScope(
-                'The scope of the token exceeds the scope(s) allowed by the client'
-            );
-        }
     }
 }

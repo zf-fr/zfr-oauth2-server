@@ -181,6 +181,8 @@ abstract class AbstractToken
     /**
      * Check if the access token has the given scope(s)
      *
+     * It can check for multiple scope using space separated scopes
+     *
      * @param  string $scope
      * @return bool
      */
