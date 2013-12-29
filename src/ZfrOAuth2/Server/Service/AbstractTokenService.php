@@ -159,7 +159,7 @@ abstract class AbstractTokenService
         // The token scope must not ask for more scope, or scope that are not granted to the client
         if (count(array_diff($tokenScopes, $clientScopes)) > 0) {
             throw OAuth2Exception::invalidScope(
-                'The scope of the token exceeds the scope granted by the resource owner'
+                'The scope of the token exceeds the scope(s) allowed by the client'
             );
         }
     }
