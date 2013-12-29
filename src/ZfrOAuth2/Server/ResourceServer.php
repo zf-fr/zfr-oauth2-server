@@ -74,7 +74,7 @@ class ResourceServer
      * @return string|null
      * @throws InvalidAccessTokenException If no access token could be found
      */
-    private function extractAccessToken(HttpRequest $request)
+    public function extractAccessToken(HttpRequest $request)
     {
         // Header value is expected to be "Bearer xxx"
         $parts = explode(' ', $request->getHeader('Authorization')->getFieldValue());

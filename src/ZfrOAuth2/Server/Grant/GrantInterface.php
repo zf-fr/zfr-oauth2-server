@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
+use Zend\Http\Request;
+use Zend\Http\Response;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
@@ -44,22 +44,22 @@ interface GrantInterface
     /**
      * Create an authorization response (this is the response to the "authorization endpoint"))
      *
-     * @param  HttpRequest              $request
+     * @param  Request                  $request
      * @param  Client                   $client
      * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
+     * @return Response
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null);
+    public function createAuthorizationResponse(Request $request, Client $client, TokenOwnerInterface $owner = null);
 
     /**
      * Create a token response according (this is the response to the "token endpoint")
      *
-     * @param  HttpRequest              $request
+     * @param  Request                  $request
      * @param  Client                   $client
      * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
+     * @return Response
      */
-    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null);
+    public function createTokenResponse(Request $request, Client $client, TokenOwnerInterface $owner = null);
 
     /**
      * Does this authorization grant allow public clients?
