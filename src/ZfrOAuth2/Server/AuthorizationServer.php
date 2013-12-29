@@ -215,7 +215,7 @@ class AuthorizationServer
     }
 
     /**
-     * Get the client
+     * Get the client (after authenticating it)
      *
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
@@ -248,8 +248,8 @@ class AuthorizationServer
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || $this->clientService->isClientValid($client, $secret, $allowPublicClients)) {
-            throw OAuth2Exception::invalidClient('Client cannot authenticated');
+        if (null === $client || $allowPublicClients || $this->clientService->authenticate($client, $secret)) {
+            throw OAuth2Exception::invalidClient('Client authentication failed');
         }
 
         return $client;

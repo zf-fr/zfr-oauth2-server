@@ -77,7 +77,8 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(60, strlen($client->getSecret()));
         $this->assertEquals(40, strlen($secret));
 
-        $this->assertFalse($this->clientService->isClientValid($client, 'azerty', false));
-        $this->assertTrue($this->clientService->isClientValid($client, $secret, false));
+        $this->assertFalse($this->clientService->authenticate($client, 'azerty'));
+        $this->assertTrue($this->clientService->authenticate($client, $secret));
+        $this->assertFalse($this->clientService->authenticate($client, $client->getSecret()));
     }
 }
