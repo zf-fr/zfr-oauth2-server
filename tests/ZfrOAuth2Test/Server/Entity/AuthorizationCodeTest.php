@@ -39,14 +39,16 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setToken('token');
-        $authorizationCode->setScope('scope');
+        $authorizationCode->setScopes(['scope1', 'scope2']);
         $authorizationCode->setClient($client);
         $authorizationCode->setExpiresAt($expiresAt);
         $authorizationCode->setOwner($owner);
         $authorizationCode->setRedirectUri('http://www.example.com');
 
         $this->assertEquals('token', $authorizationCode->getToken());
-        $this->assertEquals('scope', $authorizationCode->getScope());
+        $this->assertCount(2, $authorizationCode->getScopes());
+        $this->assertTrue($authorizationCode->hasScope('scope1'));
+        $this->assertFalse($authorizationCode->hasScope('scope3'));
         $this->assertSame($client, $authorizationCode->getClient());
         $this->assertEquals($expiresAt, $authorizationCode->getExpiresAt());
         $this->assertSame($owner, $authorizationCode->getOwner());

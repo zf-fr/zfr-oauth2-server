@@ -145,13 +145,13 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
         }
 
-        $token        = new AccessToken();
-        $defaultScope = 'read';
+        $token         = new AccessToken();
+        $defaultScopes = ['read'];
 
         if (empty($tokenScope)) {
-            $this->tokenService->setDefaultScope($defaultScope);
+            $this->tokenService->setDefaultScopes($defaultScopes);
         } else {
-            $token->setScope($tokenScope);
+            $token->setScopes($tokenScope);
         }
 
         if (!$throwException) {
@@ -175,9 +175,9 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(40, strlen($token->getToken()));
 
         if (empty($tokenScope)) {
-            $this->assertEquals($defaultScope, $token->getScope());
+            $this->assertEquals($defaultScopes, $token->getScopes());
         } else {
-            $this->assertEquals($tokenScope, $token->getScope());
+            $this->assertEquals(explode(' ', $tokenScope), $token->getScopes());
         }
     }
 }

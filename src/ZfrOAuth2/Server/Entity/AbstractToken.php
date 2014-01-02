@@ -49,9 +49,9 @@ abstract class AbstractToken
     protected $expiresAt;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $scope;
+    protected $scopes = [];
 
     /**
      * Set the token (either access or refresh token)
@@ -158,24 +158,28 @@ abstract class AbstractToken
     }
 
     /**
-     * Set the scope of this token (you can set multiple scopes by separating them using a space)
+     * Set the scopes of this token
      *
-     * @param  string $scope
+     * @param  array|string $scopes
      * @return void
      */
-    public function setScope($scope)
+    public function setScopes($scopes)
     {
-        $this->scope = (string) $scope;
+        if (is_string($scopes)) {
+            $scopes = explode(' ', $scopes);
+        }
+
+        $this->scopes = $scopes;
     }
 
     /**
-     * Get the scope
+     * Get the scopes
      *
-     * @return string
+     * @return array
      */
-    public function getScope()
+    public function getScopes()
     {
-        return $this->scope;
+        return $this->scopes;
     }
 
     /**
@@ -188,14 +192,6 @@ abstract class AbstractToken
      */
     public function hasScope($scope)
     {
-        // First quick check
-        if ($this->scope === $scope) {
-            return true;
-        }
-
-        $tokenScopes = explode(' ', $this->scope);
-        $scopes      = explode(' ', $scope);
-
-        return count(array_diff($tokenScopes, $scopes)) > 0;
+        return in_array($scope, $this->scopes, true);
     }
 }

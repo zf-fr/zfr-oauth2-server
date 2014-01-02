@@ -72,9 +72,10 @@ class ClientCredentialsGrant extends AbstractGrant
     public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
     {
         // Everything is okey, we can start tokens generation!
+        $scope       = $request->getPost('scope');
         $accessToken = new AccessToken();
 
-        $this->fillToken($accessToken, $client, $owner, $request->getPost('scope'));
+        $this->fillToken($accessToken, $client, $owner, $scope);
         $this->accessTokenService->saveToken($accessToken);
 
         // We can generate the response!
@@ -83,7 +84,7 @@ class ClientCredentialsGrant extends AbstractGrant
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $accessToken->getScope(),
+            'scope'        => $scope,
             'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
         ];
 

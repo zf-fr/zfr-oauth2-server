@@ -36,13 +36,13 @@ abstract class AbstractGrant implements GrantInterface
      * @param  AbstractToken       $token
      * @param  Client              $client
      * @param  TokenOwnerInterface $owner
-     * @param  string              $scope
+     * @param  string              $scopes
      * @return void
      */
-    protected function fillToken(AbstractToken $token, Client $client, TokenOwnerInterface $owner = null, $scope = '')
+    protected function fillToken(AbstractToken $token, Client $client, TokenOwnerInterface $owner = null, $scopes = '')
     {
         $token->setClient($client);
-        $token->setScope($scope);
+        $token->setScopes($scopes);
 
         if (null !== $owner) {
             $token->setOwner($owner);

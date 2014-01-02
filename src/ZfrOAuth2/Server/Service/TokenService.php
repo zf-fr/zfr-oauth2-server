@@ -65,11 +65,11 @@ class TokenService
     protected $tokenTTL = 3600;
 
     /**
-     * Default scope
+     * Default scopes
      *
      * @var string
      */
-    protected $defaultScope = '';
+    protected $defaultScopes = [];
 
     /**
      * @param ObjectManager    $objectManager
@@ -98,14 +98,18 @@ class TokenService
     }
 
     /**
-     * Set the default scope when issuing a token (if none is specified)
+     * Set the default scopes when issuing a token (if none is specified)
      *
-     * @param  string $defaultScope
+     * @param  array|string $defaultScopes
      * @return void
      */
-    public function setDefaultScope($defaultScope)
+    public function setDefaultScopes($defaultScopes)
     {
-        $this->defaultScope = (string) $defaultScope;
+        if (is_string($defaultScopes)) {
+            $defaultScopes = explode(' ', $defaultScopes);
+        }
+
+        $this->defaultScopes = $defaultScopes;
     }
 
     /**
@@ -116,12 +120,12 @@ class TokenService
      */
     public function saveToken(AbstractToken $token)
     {
-        $scope = $token->getScope();
+        $scopes = $token->getScopes();
 
-        if (empty($scope)) {
-            $token->setScope($this->defaultScope);
+        if (empty($scopes)) {
+            $token->setScopes($this->defaultScopes);
         } else {
-            $this->validateTokenScopes($scope);
+            $this->validateTokenScopes($scopes);
         }
 
         $expiresAt = new DateTime();
@@ -189,11 +193,11 @@ class TokenService
     /**
      * Validate the token scopes against the registered scope
      *
-     * @param  string $scope
+     * @param  array $scopes
      * @return void
      * @throws OAuth2Exception
      */
-    protected function validateTokenScopes($scope)
+    protected function validateTokenScopes(array $scopes)
     {
         /* @var \ZfrOAuth2\Server\Entity\Scope[] $registeredScopes */
         $registeredScopes = $this->scopeRepository->findAll();
@@ -202,8 +206,7 @@ class TokenService
             $registeredScope = $registeredScope->getName();
         }
 
-        $scopes = explode(' ', (string) $scope);
-        $diff   = array_diff($scopes, $registeredScopes);
+        $diff = array_diff($scopes, $registeredScopes);
 
         if (count($diff) > 0) {
             throw OAuth2Exception::invalidScope(sprintf(

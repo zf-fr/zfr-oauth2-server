@@ -113,7 +113,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         }
 
         $accessToken->setExpiresAt($date);
-        $accessToken->setScope($tokenScope);
+        $accessToken->setScopes([$tokenScope]);
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')

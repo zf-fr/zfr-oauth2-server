@@ -39,13 +39,15 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
         $accessToken = new AccessToken();
         $accessToken->setToken('token');
-        $accessToken->setScope('scope');
+        $accessToken->setScopes(['scope1', 'scope2']);
         $accessToken->setClient($client);
         $accessToken->setExpiresAt($expiresAt);
         $accessToken->setOwner($owner);
 
         $this->assertEquals('token', $accessToken->getToken());
-        $this->assertEquals('scope', $accessToken->getScope());
+        $this->assertCount(2, $accessToken->getScopes());
+        $this->assertTrue($accessToken->hasScope('scope1'));
+        $this->assertFalse($accessToken->hasScope('scope3'));
         $this->assertSame($client, $accessToken->getClient());
         $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
         $this->assertSame($owner, $accessToken->getOwner());
