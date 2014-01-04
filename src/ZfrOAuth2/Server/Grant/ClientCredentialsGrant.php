@@ -76,7 +76,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken = new AccessToken();
 
         $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->saveToken($accessToken);
+        $this->accessTokenService->createToken($accessToken);
 
         // We can generate the response!
         $response     = new HttpResponse();

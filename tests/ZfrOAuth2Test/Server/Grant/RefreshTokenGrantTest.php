@@ -21,6 +21,7 @@ namespace ZfrOAuth2Test\Server\Grant;
 use DateInterval;
 use DateTime;
 use Zend\Http\Request as HttpRequest;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
@@ -75,9 +76,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getPost()->set('refresh_token', '123');
 
-        $refreshToken = new RefreshToken();
-        $expiredDate  = new DateTime();
-        $expiredDate->sub(new DateInterval('P1D'));
+        $refreshToken = $this->getExpiredRefreshToken();
 
         $this->refreshTokenService->expects($this->once())
                                   ->method('getToken')
@@ -85,5 +84,125 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                   ->will($this->returnValue($refreshToken));
 
         $this->grant->createTokenResponse($request, new Client());
+    }
+
+    public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
+    {
+        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
+
+        $request = new HttpRequest();
+        $request->getPost()->fromArray(['refresh_token' => '123', 'scope' => 'read write']);
+
+        $refreshToken = $this->getValidRefreshToken();
+        $refreshToken->setScopes(['read']);
+
+        $this->refreshTokenService->expects($this->once())
+                                   ->method('getToken')
+                                   ->with('123')
+                                   ->will($this->returnValue($refreshToken));
+
+        $this->grant->createTokenResponse($request, new Client());
+    }
+
+    public function rotateRefreshToken()
+    {
+        return [
+            [true],
+            [false]
+        ];
+    }
+
+    /**
+     * @dataProvider rotateRefreshToken
+     */
+    public function testCanCreateTokenResponse($rotateRefreshToken)
+    {
+        $request = new HttpRequest();
+        $request->getPost()->fromArray(['refresh_token' => '123', 'scope' => 'read']);
+
+        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
+
+        $refreshToken = $this->getValidRefreshToken();
+        $refreshToken->setScopes(['read']);
+        $refreshToken->setOwner($owner);
+
+        $this->refreshTokenService->expects($this->once())
+                                  ->method('getToken')
+                                  ->with('123')
+                                  ->will($this->returnValue($refreshToken));
+
+        if ($rotateRefreshToken) {
+            $this->refreshTokenService->expects($this->once())
+                                ->method('deleteToken')
+                                ->with($refreshToken);
+
+            $this->refreshTokenService->expects($this->once())
+                                      ->method('createToken')
+                                      ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\RefreshToken'))
+                                      ->will($this->returnCallback(function(RefreshToken $token) {
+                                           $validDate  = new DateTime();
+                                           $validDate->add(new DateInterval('PT1H'));
+
+                                           $token->setToken('azerty_refresh');
+                                           $token->setExpiresAt($validDate);
+                                       }));
+        }
+
+        $this->accessTokenService->expects($this->once())
+                                 ->method('createToken')
+                                 ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AccessToken'))
+                                 ->will($this->returnCallback(function(AccessToken $token) {
+                                     $validDate  = new DateTime();
+                                     $validDate->add(new DateInterval('PT1H'));
+
+                                     $token->setToken('azerty_access');
+                                     $token->setExpiresAt($validDate);
+                                 }));
+
+        $this->grant->setRotateRefreshTokens($rotateRefreshToken);
+        $response = $this->grant->createTokenResponse($request, new Client());
+
+        $body = json_decode($response->getContent(), true);
+
+        $this->assertEquals('azerty_access', $body['access_token']);
+        $this->assertEquals('Bearer', $body['token_type']);
+        $this->assertEquals(3600, $body['expires_in']);
+        $this->assertEquals('read', $body['scope']);
+        $this->assertEquals(1, $body['owner_id']);
+
+        if ($rotateRefreshToken) {
+            $this->assertEquals('azerty_refresh', $body['refresh_token']);
+        } else {
+            $this->assertArrayNotHasKey('refresh_token', $body);
+        }
+    }
+
+    /**
+     * @return RefreshToken
+     */
+    private function getExpiredRefreshToken()
+    {
+        $refreshToken = new RefreshToken();
+        $expiredDate  = new DateTime();
+        $expiredDate->sub(new DateInterval('P1D'));
+
+        $refreshToken->setExpiresAt($expiredDate);
+
+        return $refreshToken;
+    }
+
+    /**
+     * @return RefreshToken
+     */
+    private function getValidRefreshToken()
+    {
+        $refreshToken = new RefreshToken();
+        $validDate    = new DateTime();
+        $validDate->add(new DateInterval('P1D'));
+
+        $refreshToken->setExpiresAt($validDate);
+
+        return $refreshToken;
     }
 }

@@ -116,7 +116,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
         $accessToken = new AccessToken();
 
         $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->saveToken($accessToken);
+        $this->accessTokenService->createToken($accessToken);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
@@ -131,7 +131,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
             $refreshToken = new RefreshToken();
 
             $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->saveToken($refreshToken);
+            $this->refreshTokenService->createToken($refreshToken);
 
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }

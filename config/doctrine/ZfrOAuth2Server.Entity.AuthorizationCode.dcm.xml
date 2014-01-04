@@ -5,7 +5,7 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="ZfrOAuth2\Server\Entity\AuthorizationCode" table="oauth_authorization_codes">
+    <entity name="ZfrOAuth2\Server\Entity\AuthorizationCode" table="oauth_authorization_codes" read-only="true">
         <field name="redirectUri" type="string" length="1000" />
     </entity>
 </doctrine-mapping>

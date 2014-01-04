@@ -170,7 +170,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->scopeRepository->expects($this->any())->method('findAll')->will($this->returnValue($scopes));
 
-        $this->tokenService->saveToken($token);
+        $this->tokenService->createToken($token);
 
         $this->assertEquals(40, strlen($token->getToken()));
 

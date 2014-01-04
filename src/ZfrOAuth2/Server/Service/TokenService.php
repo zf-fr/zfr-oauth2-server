@@ -113,12 +113,12 @@ class TokenService
     }
 
     /**
-     * Save a new token (and compute the token)
+     * Create a new token (and generate the token)
      *
      * @param  AbstractToken $token
      * @return void
      */
-    public function saveToken(AbstractToken $token)
+    public function createToken(AbstractToken $token)
     {
         $scopes = $token->getScopes();
 

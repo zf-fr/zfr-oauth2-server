@@ -5,6 +5,6 @@
         xsi:schemaLocation="http://doctrine-project.org/schemas/orm/doctrine-mapping
     http://doctrine-project.org/schemas/orm/doctrine-mapping.xsd">
 
-    <entity name="ZfrOAuth2\Server\Entity\RefreshToken" table="oauth_refresh_tokens">
+    <entity name="ZfrOAuth2\Server\Entity\RefreshToken" table="oauth_refresh_tokens" read-only="true">
     </entity>
 </doctrine-mapping>

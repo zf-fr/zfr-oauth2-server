@@ -105,7 +105,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
         $authorizationCode->setRedirectUri($redirectUri);
 
         $this->fillToken($authorizationCode, $client, $owner, $scope);
-        $this->authorizationCodeService->saveToken($authorizationCode);
+        $this->authorizationCodeService->createToken($authorizationCode);
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
@@ -161,7 +161,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
         $accessToken = new AccessToken();
 
         $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->saveToken($accessToken);
+        $this->accessTokenService->createToken($accessToken);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
@@ -176,7 +176,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
             $refreshToken = new RefreshToken();
 
             $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->saveToken($refreshToken);
+            $this->refreshTokenService->createToken($refreshToken);
 
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }

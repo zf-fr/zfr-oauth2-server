@@ -185,13 +185,22 @@ abstract class AbstractToken
     /**
      * Check if the access token has the given scope(s)
      *
-     * It can check for multiple scope using space separated scopes
+     * It can check for multiple scope using space separated scopes. If this is the case, it return true
+     * ONLY if all scopes are here
      *
-     * @param  string $scope
+     * @param  string|array $scope
      * @return bool
      */
     public function hasScope($scope)
     {
-        return in_array($scope, $this->scopes, true);
+        $scopes = is_string($scope) ? explode(' ', $scope) : $scope;
+
+        foreach ($scopes as $scope) {
+            if (!in_array($scope, $this->scopes, true)) {
+                return false;
+            }
+        }
+
+        return true;
     }
 }

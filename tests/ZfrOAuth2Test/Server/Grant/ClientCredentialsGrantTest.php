@@ -18,8 +18,12 @@
 
 namespace ZfrOAuth2Test\Server\Grant;
 
+use DateInterval;
+use DateTime;
 use Zend\Http\Request as HttpRequest;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -31,7 +35,7 @@ use ZfrOAuth2\Server\Service\TokenService;
 class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TokenService
+     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenService;
 
@@ -42,11 +46,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService = new TokenService(
-            $this->getMock('Doctrine\Common\Persistence\ObjectManager'),
-            $this->getMock('Doctrine\Common\Persistence\ObjectRepository'),
-            $this->getMock('Doctrine\Common\Persistence\ObjectRepository')
-        );
+        $this->tokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
         $this->grant = new ClientCredentialsGrant($this->tokenService);
     }
 
@@ -64,11 +64,23 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $owner   = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
+        $this->tokenService->expects($this->once())
+                           ->method('createToken')
+                           ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AccessToken'))
+                           ->will($this->returnCallback(function(AccessToken $token) use ($owner) {
+                               $validDate  = new DateTime();
+                               $validDate->add(new DateInterval('PT1H'));
+
+                               $token->setToken('azerty');
+                               $token->setOwner($owner);
+                               $token->setExpiresAt($validDate);
+                           }));
+
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
         $body = json_decode($response->getContent(), true);
 
-        $this->assertEquals(40, strlen($body['access_token']));
+        $this->assertEquals('azerty', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
         $this->assertEquals(3600, $body['expires_in']);
         $this->assertEquals(1, $body['owner_id']);

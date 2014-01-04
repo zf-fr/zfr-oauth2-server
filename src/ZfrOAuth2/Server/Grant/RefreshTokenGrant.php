@@ -104,11 +104,11 @@ class RefreshTokenGrant extends AbstractGrant
         // Okey, we can create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scope = $request->getPost('scope') ?: $refreshToken->getScope();
+        $scope = $request->getPost('scope') ?: $refreshToken->getScopes();
 
         if (!$refreshToken->hasScope($scope)) {
             throw OAuth2Exception::invalidScope(
-                'The scope of the token exceeds the scope(s) allowed by the client'
+                'The scope of the new access token exceeds the scope(s) of the refresh token'
             );
         }
 
@@ -116,7 +116,7 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken = new AccessToken();
 
         $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->saveToken($accessToken);
+        $this->accessTokenService->createToken($accessToken);
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {
@@ -125,7 +125,7 @@ class RefreshTokenGrant extends AbstractGrant
             $refreshToken = new RefreshToken();
 
             $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->saveToken($refreshToken);
+            $this->refreshTokenService->createToken($refreshToken);
         }
 
         // We can generate the response!
@@ -135,7 +135,7 @@ class RefreshTokenGrant extends AbstractGrant
             'token_type'    => 'Bearer',
             'expires_in'    => $accessToken->getExpiresIn(),
             'refresh_token' => $refreshToken->getToken(),
-            'scope'         => $accessToken->getScope(),
+            'scope'         => implode(' ', $refreshToken->getScopes()),
             'owner_id'      => $owner ? $owner->getTokenOwnerId() : null
         ];
 
