@@ -35,7 +35,7 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
  * as the token TTL)
  *
  * @TODO: should we create one service per token type? I think it's a bit useless, as the only thing that would
- *        be overriden is the token TTL
+ *        be overridden is the token TTL
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
