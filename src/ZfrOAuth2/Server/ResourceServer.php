@@ -97,6 +97,6 @@ class ResourceServer
             throw new InvalidAccessTokenException('No access token could be found');
         }
 
-        return $this->accessTokenService->getToken($token);;
+        return $this->accessTokenService->getToken($token);
     }
 }
