@@ -116,7 +116,7 @@ class TokenService
      * Create a new token (and generate the token)
      *
      * @param  AbstractToken $token
-     * @return void
+     * @return AbstractToken
      */
     public function createToken(AbstractToken $token)
     {
@@ -136,6 +136,8 @@ class TokenService
 
         $this->objectManager->persist($token);
         $this->objectManager->flush();
+
+        return $token;
     }
 
     /**

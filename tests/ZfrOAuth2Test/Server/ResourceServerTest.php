@@ -53,7 +53,14 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
 
-        $this->assertEquals('token', $this->resourceServer->extractAccessToken($request));
+        $token = $this->getMock('ZfrOAuth2\Server\Entity\AbstractToken');
+
+        $this->tokenService->expects($this->once())
+                           ->method('getToken')
+                           ->with('token')
+                           ->will($this->returnValue($token));
+
+        $this->assertSame($token, $this->resourceServer->getAccessToken($request));
     }
 
     public function testThrowExceptionIfNoAccessTokenIsInAuthorizationHeader()
@@ -63,7 +70,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Authorization', '');
 
-        $this->assertEquals('token', $this->resourceServer->extractAccessToken($request));
+        $this->resourceServer->getAccessToken($request);
     }
 
     public function requestProvider()
@@ -113,7 +120,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         }
 
         $accessToken->setExpiresAt($date);
-        $accessToken->setScopes([$tokenScope]);
+        $accessToken->setScopes($tokenScope);
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')

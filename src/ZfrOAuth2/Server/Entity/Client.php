@@ -21,12 +21,12 @@ namespace ZfrOAuth2\Server\Entity;
 /**
  * Client entity
  *
- * A client is an application that makes protected resources on behalf of the resource owner (eg. a user
- * for instance). A client can be, for instance, a server or a browser
+ * A client is typically an application (either a third-party or your own application) that integrates with the
+ * provider (in this case, you are the provider)
  *
  * There are two types of clients: the public and confidential ones. Some grants absolutely require a client,
  * while other don't need it. The reason is that for public clients (like a JavaScript application), the secret
- * cannot be kept, well, secret! To create a public client, you just need to let an empty secret. More
+ * cannot be kept... well... secret! To create a public client, you just need to let an empty secret. More
  * info about that: http://tools.ietf.org/html/rfc6749#section-2.1
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>

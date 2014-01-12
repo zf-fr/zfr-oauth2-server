@@ -37,7 +37,7 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareInterface
+class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
     use AuthorizationServerAwareTrait;
 
@@ -95,7 +95,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
+    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
         // Validate the user using its username and password
         $username = $request->getPost('username');
@@ -106,7 +106,8 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
         }
 
-        $owner = $this->callback($username, $password);
+        $callback = $this->callback;
+        $owner    = $callback($username, $password);
 
         if (!$owner instanceof TokenOwnerInterface) {
             throw OAuth2Exception::accessDenied('Either username or password are incorrect');
@@ -115,14 +116,14 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
         // Everything is okey, we can start tokens generation!
         $accessToken = new AccessToken();
 
-        $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->createToken($accessToken);
+        $this->populateToken($accessToken, $client, $owner, $scope);
+        $accessToken = $this->accessTokenService->createToken($accessToken);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $accessToken->getScope(),
+            'scope'        => implode(' ', $accessToken->getScopes()),
             'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
         ];
 
@@ -130,8 +131,8 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServiceAwareIn
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
             $refreshToken = new RefreshToken();
 
-            $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->createToken($refreshToken);
+            $this->populateToken($refreshToken, $client, $owner, $scope);
+            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
 
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }

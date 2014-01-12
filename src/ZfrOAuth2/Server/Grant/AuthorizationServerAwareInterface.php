@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\AuthorizationServer;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface AuthorizationServiceAwareInterface
+interface AuthorizationServerAwareInterface
 {
     /**
      * Set the authorization server

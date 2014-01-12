@@ -55,11 +55,11 @@ interface GrantInterface
      * Create a token response according (this is the response to the "token endpoint")
      *
      * @param  Request                  $request
-     * @param  Client                   $client
+     * @param  Client|null              $client
      * @param  TokenOwnerInterface|null $owner
      * @return Response
      */
-    public function createTokenResponse(Request $request, Client $client, TokenOwnerInterface $owner = null);
+    public function createTokenResponse(Request $request, Client $client = null, TokenOwnerInterface $owner = null);
 
     /**
      * Does this authorization grant allow public clients?

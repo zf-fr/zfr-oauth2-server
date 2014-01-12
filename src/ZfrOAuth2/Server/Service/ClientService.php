@@ -67,7 +67,7 @@ class ClientService
      * in the client object
      *
      * @param  Client $client
-     * @return string
+     * @return array
      */
     public function registerClient(Client $client)
     {
@@ -85,18 +85,20 @@ class ClientService
         $this->objectManager->persist($client);
         $this->objectManager->flush();
 
-        return $secret;
+        return [$client, $secret];
     }
 
     /**
      * Update an existing client
      *
      * @param  Client $client
-     * @return void
+     * @return Client
      */
     public function updateClient(Client $client)
     {
         $this->objectManager->flush($client);
+
+        return $client;
     }
 
     /**

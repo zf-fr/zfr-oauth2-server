@@ -64,17 +64,12 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $owner   = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
-        $this->tokenService->expects($this->once())
-                           ->method('createToken')
-                           ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AccessToken'))
-                           ->will($this->returnCallback(function(AccessToken $token) use ($owner) {
-                               $validDate  = new DateTime();
-                               $validDate->add(new DateInterval('PT1H'));
+        $token = new AccessToken();
+        $token->setToken('azerty');
+        $token->setOwner($owner);
+        $token->setExpiresAt((new DateTime())->add(new DateInterval('PT1H')));
 
-                               $token->setToken('azerty');
-                               $token->setOwner($owner);
-                               $token->setExpiresAt($validDate);
-                           }));
+        $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 

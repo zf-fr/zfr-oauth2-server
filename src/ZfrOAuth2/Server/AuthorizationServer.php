@@ -222,22 +222,12 @@ class AuthorizationServer
      *
      * @param  HttpRequest $request
      * @param  bool        $allowPublicClients
-     * @return Client
+     * @return Client|null
      * @throws Exception\OAuth2Exception
      */
     protected function getClient(HttpRequest $request, $allowPublicClients)
     {
-        // We first try to get the Authorization header, as this is the recommended way according to the spec
-        if ($header = $request->getHeader('Authorization')) {
-            // The value is "Basic xxx", we are interested in the last part
-            $parts = explode(' ', $header->getFieldValue());
-            $value = base64_decode(end($parts));
-
-            list($id, $secret) = explode(':', $value);
-        } else {
-            $id     = $request->getPost('client_id');
-            $secret = $request->getPost('client_secret');
-        }
+        list($id, $secret) = $this->extractClientCredentials($request);
 
         // If the grant type we are issuing does not allow public clients, and that the secret is
         // missing, then we have an error...
@@ -245,10 +235,15 @@ class AuthorizationServer
             throw OAuth2Exception::invalidClient('Client secret is missing');
         }
 
+        // If we allow public clients and no client id was set, we can return null
+        if ($allowPublicClients && !$id) {
+            return null;
+        }
+
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || $allowPublicClients || $this->clientService->authenticate($client, $secret)) {
+        if (null === $client || (!$allowPublicClients && !$this->clientService->authenticate($client, $secret))) {
             throw OAuth2Exception::invalidClient('Client authentication failed');
         }
 
@@ -271,5 +266,28 @@ class AuthorizationServer
         $response->setContent(json_encode($body));
 
         return $response;
+    }
+
+    /**
+     * Extract the client credentials from Authorization header or POST data
+     *
+     * @param  HttpRequest $request
+     * @return array
+     */
+    private function extractClientCredentials(HttpRequest $request)
+    {
+        // We first try to get the Authorization header, as this is the recommended way according to the spec
+        if ($header = $request->getHeader('Authorization')) {
+            // The value is "Basic xxx", we are interested in the last part
+            $parts = explode(' ', $header->getFieldValue());
+            $value = base64_decode(end($parts));
+
+            list($id, $secret) = explode(':', $value);
+        } else {
+            $id     = $request->getPost('client_id');
+            $secret = $request->getPost('client_secret');
+        }
+
+        return [$id, $secret];
     }
 }

@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAwareInterface
+class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
     use AuthorizationServerAwareTrait;
 
@@ -104,8 +104,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setRedirectUri($redirectUri);
 
-        $this->fillToken($authorizationCode, $client, $owner, $scope);
-        $this->authorizationCodeService->createToken($authorizationCode);
+        $this->populateToken($authorizationCode, $client, $owner, $scope);
+        $authorizationCode = $this->authorizationCodeService->createToken($authorizationCode);
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
@@ -114,7 +114,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
         ]));
 
         $response = new HttpResponse();
-        $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . $uri);
+        $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . array_filter($uri));
         $response->setStatusCode(302); // here it's a redirection!
 
         return $response;
@@ -124,7 +124,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
+    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
         $code = $request->getPost('code');
 
@@ -132,7 +132,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
         }
 
-        // We need to get authorization code to perform additional validations
+        /* @var \ZfrOAuth2\Server\Entity\AuthorizationCode  $authorizationCode */
         $authorizationCode = $this->authorizationCodeService->getToken($code);
 
         if (null === $authorizationCode || $authorizationCode->isExpired()) {
@@ -147,27 +147,25 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
 
         if ($authorizationCode->getClient()->getId() !== $request->getPost('client_id')) {
             throw OAuth2Exception::invalidRequest(
-                'Authorization code client does not match with the one that created the authorization code'
+                'Authorization code\'s client does not match with the one that created the authorization code'
             );
         }
 
         // If owner is null, we reuse the same as the authorization code
-        if (null == $owner) {
-            $owner = $authorizationCode->getOwner();
-        }
+        $owner = $owner ?: $authorizationCode->getOwner();
 
         // Everything is okey, let's start the token generation!
-        $scope       = $authorizationCode->getScope(); // reuse the scopes from the authorization code
+        $scopes      = $authorizationCode->getScopes(); // reuse the scopes from the authorization code
         $accessToken = new AccessToken();
 
-        $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->createToken($accessToken);
+        $this->populateToken($accessToken, $client, $owner, $scopes);
+        $accessToken = $this->accessTokenService->createToken($accessToken);
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $accessToken->getScope(),
+            'scope'        => implode(' ', $accessToken->getScopes()),
             'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
         ];
 
@@ -175,8 +173,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServiceAw
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
             $refreshToken = new RefreshToken();
 
-            $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->createToken($refreshToken);
+            $this->populateToken($refreshToken, $client, $owner, $scopes);
+            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
 
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }

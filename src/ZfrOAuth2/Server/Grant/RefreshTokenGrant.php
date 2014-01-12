@@ -89,7 +89,7 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
+    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
     {
         if (!$refreshToken = $request->getPost('refresh_token')) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
@@ -97,16 +97,17 @@ class RefreshTokenGrant extends AbstractGrant
 
         // We can fetch the actual token, and validate it
         $refreshToken = $this->refreshTokenService->getToken($refreshToken);
+
         if (null === $refreshToken || $refreshToken->isExpired()) {
             throw OAuth2Exception::invalidGrant('Refresh token is expired');
         }
 
-        // Okey, we can create a new access token! First, we need to make some checks on the asked scopes,
+        // We can now create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scope = $request->getPost('scope') ?: $refreshToken->getScopes();
+        $scopes = $request->getPost('scope') ?: $refreshToken->getScopes();
 
-        if (!$refreshToken->hasScope($scope)) {
+        if (!$refreshToken->matchScopes($scopes)) {
             throw OAuth2Exception::invalidScope(
                 'The scope of the new access token exceeds the scope(s) of the refresh token'
             );
@@ -115,8 +116,8 @@ class RefreshTokenGrant extends AbstractGrant
         $owner       = $refreshToken->getOwner();
         $accessToken = new AccessToken();
 
-        $this->fillToken($accessToken, $client, $owner, $scope);
-        $this->accessTokenService->createToken($accessToken);
+        $this->populateToken($accessToken, $client, $owner, $scopes);
+        $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {
@@ -124,8 +125,8 @@ class RefreshTokenGrant extends AbstractGrant
 
             $refreshToken = new RefreshToken();
 
-            $this->fillToken($refreshToken, $client, $owner, $scope);
-            $this->refreshTokenService->createToken($refreshToken);
+            $this->populateToken($refreshToken, $client, $owner, $scopes);
+            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
         }
 
         // We can generate the response!

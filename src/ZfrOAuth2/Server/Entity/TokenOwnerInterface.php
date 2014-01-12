@@ -21,8 +21,8 @@ namespace ZfrOAuth2\Server\Entity;
 /**
  * Interface for token owner
  *
- * Most of the time, the token owners will be users of your system. Therefore, your user class
- * should implement this interface
+ * A token owner is someone (most likely a user) that contains the actual data. It's the entity that holds
+ * the data that the client is asking permission to see
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT

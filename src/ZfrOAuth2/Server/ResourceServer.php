@@ -19,6 +19,7 @@
 namespace ZfrOAuth2\Server;
 
 use Zend\Http\Request as HttpRequest;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -52,22 +53,21 @@ class ResourceServer
      *
      * If the scope parameter is given, it will also check that the token has enough permissions
      *
-     * @param  HttpRequest $request
-     * @param  string      $scope
+     * @param  HttpRequest  $request
+     * @param  array|string $scopes
      * @return bool
      */
-    public function isRequestValid(HttpRequest $request, $scope = '')
+    public function isRequestValid(HttpRequest $request, $scopes = [])
     {
         // We extract the token and get the actual instance from storage
-        $accessToken = $this->extractAccessToken($request);
-        $accessToken = $this->accessTokenService->getToken($accessToken);
+        $accessToken = $this->getAccessToken($request);
 
         // It must exist and must not be outdated, otherwise it's wrong!
         if (null === $accessToken || $accessToken->isExpired()) {
             return false;
         }
 
-        if (!empty($scope) && !$accessToken->hasScope($scope)) {
+        if (!empty($scopes) && !$accessToken->matchScopes($scopes)) {
             return false;
         }
 
@@ -78,10 +78,10 @@ class ResourceServer
      * Extract the access token from the Authorization header of the request
      *
      * @param  HttpRequest $request
-     * @return string|null
+     * @return AccessToken
      * @throws InvalidAccessTokenException If no access token could be found
      */
-    public function extractAccessToken(HttpRequest $request)
+    public function getAccessToken(HttpRequest $request)
     {
         $headers = $request->getHeaders();
 
@@ -97,6 +97,6 @@ class ResourceServer
             throw new InvalidAccessTokenException('No access token could be found');
         }
 
-        return $token;
+        return $this->accessTokenService->getToken($token);;
     }
 }
