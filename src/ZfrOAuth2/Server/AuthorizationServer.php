@@ -131,8 +131,8 @@ class AuthorizationServer
         }
 
         // If we reach here... then no grant was found. Not good!
-        throw OAuth2Exception::unsupportedGrantType(sprintf(
-            'Grant type "%s" is not supported by this server',
+        throw OAuth2Exception::unsupportedResponseType(sprintf(
+            'Response type "%s" is not supported by this server',
             $responseType
         ));
     }

@@ -26,6 +26,7 @@ at one of those two PHP libraries:
 
 - Better documentation
 - Review of the whole spec
+- Testing the authorization server more extensively
 
 ## Versioning note
 
