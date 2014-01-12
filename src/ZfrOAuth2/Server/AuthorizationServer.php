@@ -23,7 +23,7 @@ use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Grant\AuthorizationServiceAwareInterface;
+use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Service\ClientService;
 
@@ -63,7 +63,7 @@ class AuthorizationServer
         $this->clientService = $clientService;
 
         foreach ($grants as $grant) {
-            if ($grant instanceof AuthorizationServiceAwareInterface) {
+            if ($grant instanceof AuthorizationServerAwareInterface) {
                 $grant->setAuthorizationServer($this);
             }
 

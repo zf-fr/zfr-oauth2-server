@@ -21,3 +21,8 @@ at one of those two PHP libraries:
 ## Requirements
 
 - PHP 5.4 or higher
+
+## Versioning note
+
+Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This means that BC can occur between
+0.1.x and 0.2.x releases. If you are using this in production, please set your dependency using 0.1.*, for instance.
