@@ -19,7 +19,7 @@
 namespace ZfrOAuth2\Server\Entity;
 
 /**
- * A scope is associated to a token and define the "permissions" of the token
+ * A scope is associated to a token and define the permissions of the token
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
