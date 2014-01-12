@@ -109,12 +109,11 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
-            'scope' => $scope,
             'state' => $state
         ]));
 
         $response = new HttpResponse();
-        $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . array_filter($uri));
+        $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . $uri);
         $response->setStatusCode(302); // here it's a redirection!
 
         return $response;
@@ -137,12 +136,6 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         if (null === $authorizationCode || $authorizationCode->isExpired()) {
             throw OAuth2Exception::invalidGrant('Authorization code cannot be found or is expired');
-        }
-
-        if ($authorizationCode->getRedirectUri() !== $request->getPost('redirect_uri')) {
-            throw OAuth2Exception::invalidRequest(
-                'Redirect URI does not match with the one that was issued when creating the authorization code'
-            );
         }
 
         if ($authorizationCode->getClient()->getId() !== $request->getPost('client_id')) {
