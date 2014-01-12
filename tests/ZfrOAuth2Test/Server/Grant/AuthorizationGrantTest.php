@@ -27,6 +27,7 @@ use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -150,7 +151,83 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidRequestIfAuthClientIsNotSame()
     {
+        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
 
+        $request = new HttpRequest();
+        $request->getPost()->set('code', '123')
+                           ->set('client_id', 'foo');
+
+        $token = $this->getValidAuthorizationCode();
+        $token->setClient(new Client());
+
+        $this->authorizationCodeService->expects($this->once())
+                                       ->method('getToken')
+                                       ->with('123')
+                                       ->will($this->returnValue($token));
+
+        $this->grant->createTokenResponse($request, new Client());
+    }
+
+    public function hasRefreshGrant()
+    {
+        return [
+            [true],
+            [false]
+        ];
+    }
+
+    /**
+     * @dataProvider hasRefreshGrant
+     */
+    public function testCanCreateTokenResponse($hasRefreshGrant)
+    {
+        $request = new HttpRequest();
+        $request->getPost()->fromArray(['code' => '123', 'client_id' => 'client_123']);
+
+        $token  = $this->getValidAuthorizationCode();
+
+        $client = new Client();
+        $client->setId('client_123');
+        $token->setClient($client);
+
+        $this->authorizationCodeService->expects($this->once())
+                                       ->method('getToken')
+                                       ->with('123')
+                                       ->will($this->returnValue($token));
+
+        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
+
+        $accessToken = $this->getValidAccessToken();
+        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
+
+        if ($hasRefreshGrant) {
+            $refreshToken = $this->getValidRefreshToken();
+            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
+        }
+
+        $authorizationServer = $this->getMock('ZfrOAuth2\Server\AuthorizationServer', [], [], '', false);
+        $authorizationServer->expects($this->once())
+                            ->method('hasGrant')
+                            ->with(RefreshTokenGrant::GRANT_TYPE)
+                            ->will($this->returnValue($hasRefreshGrant));
+
+        $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
+        $this->grant->setAuthorizationServer($authorizationServer);
+
+        $response = $this->grant->createTokenResponse($request, new Client(), $owner);
+
+        $body = json_decode($response->getContent(), true);
+
+        $this->assertEquals('azerty_access', $body['access_token']);
+        $this->assertEquals('Bearer', $body['token_type']);
+        $this->assertEquals(3600, $body['expires_in']);
+        $this->assertEquals('read', $body['scope']);
+        $this->assertEquals(1, $body['owner_id']);
+
+        if ($hasRefreshGrant) {
+            $this->assertEquals('azerty_refresh', $body['refresh_token']);
+        }
     }
 
     /**

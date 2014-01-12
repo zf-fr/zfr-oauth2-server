@@ -57,7 +57,7 @@ class Client
     /**
      * Set the client id
      *
-     * @param  int $id
+     * @param  string $id
      * @return void
      */
     public function setId($id)

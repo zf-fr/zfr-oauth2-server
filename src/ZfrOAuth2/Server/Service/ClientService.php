@@ -72,7 +72,6 @@ class ClientService
     public function registerClient(Client $client)
     {
         // If no identifier was specified for the client, generate a unique one
-        // @TODO: should we use a Doctrine custom generator name here instead?
         $clientId = $client->getId();
         if (empty($clientId)) {
             $client->setId(uniqid());
