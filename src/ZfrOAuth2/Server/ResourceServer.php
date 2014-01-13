@@ -41,6 +41,11 @@ class ResourceServer
     protected $accessTokenService;
 
     /**
+     * @var AccessToken
+     */
+    protected $accessToken;
+
+    /**
      * @param TokenService $accessTokenService
      */
     public function __construct(TokenService $accessTokenService)
@@ -83,6 +88,11 @@ class ResourceServer
      */
     public function getAccessToken(HttpRequest $request)
     {
+        // Try to get it from memory cache first
+        if (null !== $this->accessToken) {
+            return $this->accessToken;
+        }
+
         $headers = $request->getHeaders();
 
         if (!$headers->has('Authorization')) {
@@ -94,9 +104,11 @@ class ResourceServer
         $token = end($parts); // Access token is the last value
 
         if (count($parts) < 2 || empty($token)) {
-            throw new InvalidAccessTokenException('No access token could be found');
+            throw new InvalidAccessTokenException('No access token could be found in Authorization header');
         }
 
-        return $this->accessTokenService->getToken($token);
+        $this->accessToken = $this->accessTokenService->getToken($token);
+
+        return $this->accessToken;
     }
 }
