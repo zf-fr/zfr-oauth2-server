@@ -72,7 +72,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
         $authorizationServer = new AuthorizationServer($clientService, []);
 
-        $response = $authorizationServer->handleRequest($request);
+        $response = $authorizationServer->handleTokenRequest($request);
         $body     = json_decode($response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());

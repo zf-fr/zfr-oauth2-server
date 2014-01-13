@@ -138,30 +138,48 @@ class AuthorizationServer
     }
 
     /**
-     * Handle the request
-     *
-     * If you pass an owner as a second parameter, it will be saved along the tokens (if one is created). Most
-     * of the time, the resource owner will be a user
-     *
      * @param  HttpRequest              $request
      * @param  TokenOwnerInterface|null $owner
      * @return HttpResponse
-     * @throws OAuth2Exception If no grant type could be found
+     * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    public function handleRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
+    public function handleAuthorizationRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
     {
         try {
-            // If it's a GET, it's an authorization endpoint, if it's a POST, it's a token endpoint!
-            if ($request->isGet()) {
-                $response = $this->handleAuthorizationRequest($request, $owner);
-            } elseif ($request->isPost()) {
-                $response = $this->handleTokenRequest($request, $owner);
-            } else {
-                throw OAuth2Exception::invalidRequest(sprintf(
-                    'Only GET and POST verbs are supported by the authorization server, "%s" given',
-                    $request->getMethod()
-                ));
+            $responseType = $request->getQuery('response_type');
+
+            if (null === $responseType) {
+                throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
             }
+
+            $responseType = $this->getResponseType($responseType);
+            $client       = $this->getClient($request, $responseType->allowPublicClients());
+
+            return $responseType->createAuthorizationResponse($request, $client, $owner);
+        } catch (OAuth2Exception $exception) {
+            return $this->createResponseFromOAuthException($exception);
+        }
+    }
+
+    /**
+     * @param  HttpRequest              $request
+     * @param  TokenOwnerInterface|null $owner
+     * @return HttpResponse
+     * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
+     */
+    public function handleTokenRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
+    {
+        try {
+            $grant = $request->getPost('grant_type');
+
+            if (null === $grant) {
+                throw OAuth2Exception::invalidRequest('No grant type was found in the request');
+            }
+
+            $grant  = $this->getGrant($grant);
+            $client = $this->getClient($request, $grant->allowPublicClients());
+
+            $response = $grant->createTokenResponse($request, $client, $owner);
         } catch (OAuth2Exception $exception) {
             return $this->createResponseFromOAuthException($exception);
         }
@@ -172,46 +190,6 @@ class AuthorizationServer
                                ->addHeaderLine('Pragma', 'no-cache');
 
         return $response;
-    }
-
-    /**
-     * @param  HttpRequest              $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
-     * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
-     */
-    protected function handleAuthorizationRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
-    {
-        $responseType = $request->getQuery('response_type');
-
-        if (null === $responseType) {
-            throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
-        }
-
-        $responseType = $this->getResponseType($responseType);
-        $client       = $this->getClient($request, $responseType->allowPublicClients());
-
-        return $responseType->createAuthorizationResponse($request, $client, $owner);
-    }
-
-    /**
-     * @param  HttpRequest              $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
-     * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
-     */
-    protected function handleTokenRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
-    {
-        $grant = $request->getPost('grant_type');
-
-        if (null === $grant) {
-            throw OAuth2Exception::invalidRequest('No grant type was found in the request');
-        }
-
-        $grant  = $this->getGrant($grant);
-        $client = $this->getClient($request, $grant->allowPublicClients());
-
-        return $grant->createTokenResponse($request, $client, $owner);
     }
 
     /**
