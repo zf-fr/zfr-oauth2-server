@@ -155,10 +155,14 @@ class AuthorizationServer
             $responseType = $this->getResponseType($responseType);
             $client       = $this->getClient($request, $responseType->allowPublicClients());
 
-            return $responseType->createAuthorizationResponse($request, $client, $owner);
+            $response = $responseType->createAuthorizationResponse($request, $client, $owner);
         } catch (OAuth2Exception $exception) {
-            return $this->createResponseFromOAuthException($exception);
+            $response = $this->createResponseFromOAuthException($exception);
         }
+
+        $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+
+        return $response;
     }
 
     /**
@@ -181,7 +185,7 @@ class AuthorizationServer
 
             $response = $grant->createTokenResponse($request, $client, $owner);
         } catch (OAuth2Exception $exception) {
-            return $this->createResponseFromOAuthException($exception);
+            $response = $this->createResponseFromOAuthException($exception);
         }
 
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
