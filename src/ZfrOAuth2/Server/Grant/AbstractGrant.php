@@ -53,6 +53,6 @@ abstract class AbstractGrant implements GrantInterface
             $token->setOwner($owner);
         }
 
-        $token->setScopes($scopes);
+        $token->setScopes($scopes ?: []);
     }
 }

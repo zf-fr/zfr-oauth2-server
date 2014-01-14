@@ -37,6 +37,16 @@ class Scope
     protected $name;
 
     /**
+     * @var string
+     */
+    protected $description;
+
+    /**
+     * @var bool
+     */
+    protected $isDefault;
+
+    /**
      * Get the scope id
      *
      * @return int
@@ -49,7 +59,8 @@ class Scope
     /**
      * Set the scope's name
      *
-     * @param string $name
+     * @param  string $name
+     * @return void
      */
     public function setName($name)
     {
@@ -64,5 +75,47 @@ class Scope
     public function getName()
     {
         return $this->name;
+    }
+
+    /**
+     * Set the scope's description
+     *
+     * @param  string $description
+     * @return void
+     */
+    public function setDescription($description)
+    {
+        $this->description = (string) $description;
+    }
+
+    /**
+     * Get the scope's description
+     *
+     * @return string
+     */
+    public function getDescription()
+    {
+        return $this->description;
+    }
+
+    /**
+     * Set if the scope is a default scope
+     *
+     * @param  bool $isDefault
+     * @return void
+     */
+    public function setIsDefault($isDefault)
+    {
+        $this->isDefault = (bool) $isDefault;
+    }
+
+    /**
+     * Is the scope a default scope?
+     *
+     * @return bool
+     */
+    public function isDefault()
+    {
+        return $this->isDefault;
     }
 }

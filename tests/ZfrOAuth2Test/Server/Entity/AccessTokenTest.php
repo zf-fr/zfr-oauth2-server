@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -51,6 +52,27 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $accessToken->getClient());
         $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
         $this->assertSame($owner, $accessToken->getOwner());
+    }
+
+    public function testCanSetScopesFromString()
+    {
+        $scopes = 'foo bar';
+
+        $accessToken = new AccessToken();
+        $accessToken->setScopes($scopes);
+
+        $this->assertCount(2, $accessToken->getScopes());
+    }
+
+    public function testCanSetScopesFromInstances()
+    {
+        $scope = new Scope();
+        $scope->setName('bar');
+
+        $accessToken = new AccessToken();
+        $accessToken->setScopes([$scope]);
+
+        $this->assertCount(1, $accessToken->getScopes());
     }
 
     public function testCalculateExpiresIn()

@@ -187,7 +187,12 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token  = $this->getValidAuthorizationCode();
 
         $client = new Client();
-        $client->setId('client_123');
+
+        // We use reflection because there is no setter on client
+        $reflProperty = new \ReflectionProperty($client, 'id');
+        $reflProperty->setAccessible(true);
+        $reflProperty->setValue($client, 'client_123');
+
         $token->setClient($client);
 
         $this->authorizationCodeService->expects($this->once())

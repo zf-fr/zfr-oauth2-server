@@ -11,5 +11,7 @@
         </id>
 
         <field name="name" type="string" length="40" />
+        <field name="description" type="string" length="500" />
+        <field name="isDefault" type="boolean" />
     </entity>
 </doctrine-mapping>

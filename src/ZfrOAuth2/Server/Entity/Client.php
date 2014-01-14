@@ -55,17 +55,6 @@ class Client
     protected $redirectUri;
 
     /**
-     * Set the client id
-     *
-     * @param  string $id
-     * @return void
-     */
-    public function setId($id)
-    {
-        $this->id = (string) $id;
-    }
-
-    /**
      * Get the client id
      *
      * @return string

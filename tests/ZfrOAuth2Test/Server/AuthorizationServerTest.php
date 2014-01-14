@@ -63,14 +63,46 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authorizationServer->getResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
     }
 
-    public function testCanCreateErrorMessages()
+    public function testThrowExceptionIfNoResponseType()
     {
-        // We are going to use an unusual HTTP verb so that it triggers an exception
         $request = new HttpRequest();
-        $request->setMethod('PATCH');
 
         $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
         $authorizationServer = new AuthorizationServer($clientService, []);
+
+        $response = $authorizationServer->handleAuthorizationRequest($request);
+        $body     = json_decode($response->getBody(), true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('error_description', $body);
+    }
+
+    public function testThrowExceptionIfNoGrantType()
+    {
+        $request = new HttpRequest();
+
+        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $authorizationServer = new AuthorizationServer($clientService, []);
+
+        $response = $authorizationServer->handleTokenRequest($request);
+        $body     = json_decode($response->getBody(), true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('error_description', $body);
+    }
+
+    public function testThrowExceptionIfPrivateClientDoesNotHaveSecret()
+    {
+        $request = new HttpRequest();
+        $request->getPost()->set('grant_type', 'client_credentials');
+
+        $grantType = $this->getMock('ZfrOAuth2\Server\Grant\ClientCredentialsGrant', [], [], '', false);
+        $grantType->expects($this->once())->method('allowPublicClients')->will($this->returnValue(false));
+
+        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $authorizationServer = new AuthorizationServer($clientService, [$grantType]);
 
         $response = $authorizationServer->handleTokenRequest($request);
         $body     = json_decode($response->getBody(), true);

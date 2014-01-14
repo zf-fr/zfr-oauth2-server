@@ -23,6 +23,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -43,9 +44,9 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     protected $tokenRepository;
 
     /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeService|\PHPUnit_Framework_MockObject_MockObject
      */
-    protected $scopeRepository;
+    protected $scopeService;
 
     /**
      * @var TokenService
@@ -56,11 +57,11 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->objectManager   = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
         $this->tokenRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->scopeRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
+        $this->scopeService    = $this->getMock('ZfrOAuth2\Server\Service\ScopeService', [], [], '', false);
         $this->tokenService    = new TokenService(
             $this->objectManager,
             $this->tokenRepository,
-            $this->scopeRepository
+            $this->scopeService
         );
     }
 
@@ -145,11 +146,15 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
         }
 
-        $token         = new AccessToken();
-        $defaultScopes = ['read'];
+        $token = new AccessToken();
 
         if (empty($tokenScope)) {
-            $this->tokenService->setDefaultScopes($defaultScopes);
+            $scope = new Scope();
+            $scope->setName('read');
+
+            $this->scopeService->expects($this->once())
+                               ->method('getDefaultScopes')
+                               ->will($this->returnValue([$scope]));
         } else {
             $token->setScopes($tokenScope);
         }
@@ -168,14 +173,14 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             $scopes[] = $scope;
         }
 
-        $this->scopeRepository->expects($this->any())->method('findAll')->will($this->returnValue($scopes));
+        $this->scopeService->expects($this->any())->method('getAll')->will($this->returnValue($scopes));
 
         $this->tokenService->createToken($token);
 
         $this->assertEquals(40, strlen($token->getToken()));
 
         if (empty($tokenScope)) {
-            $this->assertEquals($defaultScopes, $token->getScopes());
+            $this->assertCount(1, $token->getScopes());
         } else {
             $this->assertEquals(explode(' ', $tokenScope), $token->getScopes());
         }

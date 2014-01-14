@@ -16,30 +16,24 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Entity;
+namespace ZfrOAuth2\Server\Id;
 
-use ZfrOAuth2\Server\Entity\Scope;
+use Doctrine\ORM\EntityManager;
+use Doctrine\ORM\Id\AbstractIdGenerator;
 
 /**
+ * Generate a custom identifier for clients
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Entity\Scope
  */
-class ScopeTest extends \PHPUnit_Framework_TestCase
+class ClientIdGenerator extends AbstractIdGenerator
 {
-    public function testGettersAndSetters()
+    /**
+     * {@inheritDoc}
+     */
+    public function generate(EntityManager $em, $entity)
     {
-        $scope = new Scope();
-
-        $this->assertNull($scope->getId());
-
-        $scope->setName('scope');
-        $this->assertEquals('scope', $scope->getName());
-
-        $scope->setDescription('Fooo');
-        $this->assertEquals('Fooo', $scope->getDescription());
-
-        $scope->setIsDefault(true);
-        $this->assertTrue($scope->isDefault());
+        return uniqid();
     }
 }

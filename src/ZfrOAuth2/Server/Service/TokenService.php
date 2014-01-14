@@ -53,9 +53,9 @@ class TokenService
     protected $tokenRepository;
 
     /**
-     * @var ObjectRepository
+     * @var ScopeService
      */
-    protected $scopeRepository;
+    protected $scopeService;
 
     /**
      * Token TTL (in seconds)
@@ -65,25 +65,18 @@ class TokenService
     protected $tokenTTL = 3600;
 
     /**
-     * Default scopes
-     *
-     * @var string
-     */
-    protected $defaultScopes = [];
-
-    /**
      * @param ObjectManager    $objectManager
      * @param ObjectRepository $tokenRepository
-     * @param ObjectRepository $scopeRepository
+     * @param ScopeService     $scopeService
      */
     public function __construct(
         ObjectManager $objectManager,
         ObjectRepository $tokenRepository,
-        ObjectRepository $scopeRepository
+        ScopeService $scopeService
     ) {
         $this->objectManager   = $objectManager;
         $this->tokenRepository = $tokenRepository;
-        $this->scopeRepository = $scopeRepository;
+        $this->scopeService    = $scopeService;
     }
 
     /**
@@ -98,21 +91,6 @@ class TokenService
     }
 
     /**
-     * Set the default scopes when issuing a token (if none is specified)
-     *
-     * @param  array|string $defaultScopes
-     * @return void
-     */
-    public function setDefaultScopes($defaultScopes)
-    {
-        if (is_string($defaultScopes)) {
-            $defaultScopes = explode(' ', $defaultScopes);
-        }
-
-        $this->defaultScopes = $defaultScopes;
-    }
-
-    /**
      * Create a new token (and generate the token)
      *
      * @param  AbstractToken $token
@@ -123,7 +101,8 @@ class TokenService
         $scopes = $token->getScopes();
 
         if (empty($scopes)) {
-            $token->setScopes($this->defaultScopes);
+            $defaultScopes = $this->scopeService->getDefaultScopes();
+            $token->setScopes($defaultScopes);
         } else {
             $this->validateTokenScopes($scopes);
         }
@@ -201,8 +180,7 @@ class TokenService
      */
     protected function validateTokenScopes(array $scopes)
     {
-        /* @var \ZfrOAuth2\Server\Entity\Scope[] $registeredScopes */
-        $registeredScopes = $this->scopeRepository->findAll();
+        $registeredScopes = $this->scopeService->getAll();
 
         foreach ($registeredScopes as &$registeredScope) {
             $registeredScope = $registeredScope->getName();

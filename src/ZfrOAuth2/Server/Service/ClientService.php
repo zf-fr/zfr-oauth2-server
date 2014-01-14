@@ -23,7 +23,6 @@ use Doctrine\Common\Persistence\ObjectRepository;
 use Zend\Crypt\Password\Bcrypt;
 use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
 /**
  * Client service
@@ -56,7 +55,7 @@ class ClientService
     {
         $this->objectManager    = $objectManager;
         $this->clientRepository = $clientRepository;
-        $this->bcrypt           = new Bcrypt();
+        $this->bcrypt           = new Bcrypt(['cost' => 10]);
     }
 
     /**
@@ -71,12 +70,6 @@ class ClientService
      */
     public function registerClient(Client $client)
     {
-        // If no identifier was specified for the client, generate a unique one
-        $clientId = $client->getId();
-        if (empty($clientId)) {
-            $client->setId(uniqid());
-        }
-
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
         $secret = Rand::getString(40);
         $client->setSecret($this->bcrypt->create($secret));

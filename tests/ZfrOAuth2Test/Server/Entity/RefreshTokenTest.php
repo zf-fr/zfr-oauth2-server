@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -51,6 +52,27 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $refreshToken->getClient());
         $this->assertEquals($expiresAt, $refreshToken->getExpiresAt());
         $this->assertSame($owner, $refreshToken->getOwner());
+    }
+
+    public function testCanSetScopesFromString()
+    {
+        $scopes = 'foo bar';
+
+        $refreshToken = new RefreshToken();
+        $refreshToken->setScopes($scopes);
+
+        $this->assertCount(2, $refreshToken->getScopes());
+    }
+
+    public function testCanSetScopesFromInstances()
+    {
+        $scope = new Scope();
+        $scope->setName('bar');
+
+        $refreshToken = new RefreshToken();
+        $refreshToken->setScopes([$scope]);
+
+        $this->assertCount(1, $refreshToken->getScopes());
     }
 
     public function testCalculateExpiresIn()

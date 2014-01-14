@@ -23,6 +23,9 @@ use DateTime;
 /**
  * Provide basic functionality for both access tokens, refresh tokens and authorization codes
  *
+ * Please note that scopes are stored as a saved as a string instead using associations to scope entities, mainly
+ * for performance reasons and to avoid useless database calls
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
@@ -160,13 +163,17 @@ abstract class AbstractToken
     /**
      * Set the scopes of this token
      *
-     * @param  array|string $scopes
+     * @param  array|string|Scope[] $scopes
      * @return void
      */
     public function setScopes($scopes)
     {
         if (is_string($scopes)) {
             $scopes = explode(' ', $scopes);
+        } else {
+            foreach ($scopes as &$scope) {
+                $scope = $scope instanceof Scope ? $scope->getName() : (string) $scope;
+            }
         }
 
         $this->scopes = $scopes;

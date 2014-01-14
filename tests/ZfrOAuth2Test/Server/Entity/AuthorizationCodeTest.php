@@ -22,6 +22,7 @@ use DateInterval;
 use DateTime;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -53,6 +54,27 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals($expiresAt, $authorizationCode->getExpiresAt());
         $this->assertSame($owner, $authorizationCode->getOwner());
         $this->assertEquals('http://www.example.com', $authorizationCode->getRedirectUri());
+    }
+
+    public function testCanSetScopesFromString()
+    {
+        $scopes = 'foo bar';
+
+        $authorizationCode = new AuthorizationCode();
+        $authorizationCode->setScopes($scopes);
+
+        $this->assertCount(2, $authorizationCode->getScopes());
+    }
+
+    public function testCanSetScopesFromInstances()
+    {
+        $scope = new Scope();
+        $scope->setName('bar');
+
+        $authorizationCode = new AuthorizationCode();
+        $authorizationCode->setScopes([$scope]);
+
+        $this->assertCount(1, $authorizationCode->getScopes());
     }
 
     public function testCalculateExpiresIn()
