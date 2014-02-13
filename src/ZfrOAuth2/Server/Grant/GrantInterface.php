@@ -62,6 +62,20 @@ interface GrantInterface
     public function createTokenResponse(Request $request, Client $client = null, TokenOwnerInterface $owner = null);
 
     /**
+     * Get the grant type
+     *
+     * @return string
+     */
+    public function getType();
+
+    /**
+     * Get the grant response type
+     *
+     * @return string|null
+     */
+    public function getResponseType();
+
+    /**
      * Does this authorization grant allow public clients?
      *
      * @return bool
