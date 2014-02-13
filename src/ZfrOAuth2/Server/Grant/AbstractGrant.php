@@ -55,4 +55,20 @@ abstract class AbstractGrant implements GrantInterface
 
         $token->setScopes($scopes ?: []);
     }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return static::GRANT_TYPE;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResponseType()
+    {
+        return static::GRANT_RESPONSE_TYPE;
+    }
 }

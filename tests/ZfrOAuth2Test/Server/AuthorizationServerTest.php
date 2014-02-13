@@ -34,7 +34,11 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testCanCheckAndGetForGrants()
     {
         $clientService = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant         = $this->getMock('ZfrOAuth2\Server\Grant\PasswordGrant', [], [], '', false);
+        $grant         = new PasswordGrant(
+            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
+            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
+            function() {}
+        );
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant]);
 
@@ -50,7 +54,11 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testCanCheckAndGetForResponseType()
     {
         $clientService = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant         = $this->getMock('ZfrOAuth2\Server\Grant\AuthorizationGrant', [], [], '', false);
+        $grant         = new AuthorizationGrant(
+            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
+            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
+            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false)
+        );
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant]);
 
@@ -98,11 +106,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getPost()->set('grant_type', 'client_credentials');
 
-        $grantType = $this->getMock('ZfrOAuth2\Server\Grant\ClientCredentialsGrant', [], [], '', false);
-        $grantType->expects($this->once())->method('allowPublicClients')->will($this->returnValue(false));
+        $grant = new ClientCredentialsGrant($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
 
         $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $authorizationServer = new AuthorizationServer($clientService, [$grantType]);
+        $authorizationServer = new AuthorizationServer($clientService, [$grant]);
 
         $response = $authorizationServer->handleTokenRequest($request);
         $body     = json_decode($response->getBody(), true);

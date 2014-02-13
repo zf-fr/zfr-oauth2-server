@@ -67,10 +67,10 @@ class AuthorizationServer
                 $grant->setAuthorizationServer($this);
             }
 
-            $this->grants[$grant::GRANT_TYPE] = $grant;
+            $this->grants[$grant->getType()] = $grant;
 
-            if (null !== $grant::GRANT_RESPONSE_TYPE) {
-                $this->responseTypes[$grant::GRANT_RESPONSE_TYPE] = $grant;
+            if ($responseType = $grant->getResponseType()) {
+                $this->responseTypes[$responseType] = $grant;
             }
         }
     }
