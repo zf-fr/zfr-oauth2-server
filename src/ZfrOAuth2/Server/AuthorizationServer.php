@@ -41,14 +41,14 @@ class AuthorizationServer
     protected $clientService;
 
     /**
-     * A list of grant interfaces
+     * A list of grant
      *
      * @var GrantInterface[]
      */
     protected $grants = [];
 
     /**
-     * A list of grant interfaces that can answer to an authorization request
+     * A list of grant that can answer to an authorization request
      *
      * @var GrantInterface[]
      */

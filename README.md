@@ -53,7 +53,7 @@ ZfrOAuth2Server is based on the [RFC 6749](http://tools.ietf.org/html/rfc6749) f
 
 ### Using the authorization server
 
-The authorization server allows you to authorize a request and generate token. To create an authorization server,
+The authorization server allows you to authorize a request and generate a token. To create an authorization server,
 you need first to create grants. A grant is a flow that allows to create tokens. Each flow has its own use case.
 Currently, ZfrOAuth2 supports the following grants: authorization grant, client credentials grant, password grant
 and refresh token grant:

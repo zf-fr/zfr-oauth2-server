@@ -41,9 +41,6 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
 {
     use AuthorizationServerAwareTrait;
 
-    /**
-     * Constants for the password grant
-     */
     const GRANT_TYPE          = 'password';
     const GRANT_RESPONSE_TYPE = null;
 
@@ -137,7 +134,6 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        // We can generate the response!
         $response = new HttpResponse();
         $response->setContent(json_encode(array_filter($responseBody)));
 

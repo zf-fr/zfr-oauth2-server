@@ -37,9 +37,6 @@ use ZfrOAuth2\Server\Service\TokenService;
  */
 class ClientCredentialsGrant extends AbstractGrant
 {
-    /**
-     * Constants for the client credentials grant
-     */
     const GRANT_TYPE          = 'client_credentials';
     const GRANT_RESPONSE_TYPE = null;
 

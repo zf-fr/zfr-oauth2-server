@@ -38,9 +38,6 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 {
     use AuthorizationServerAwareTrait;
 
-    /**
-     * Constants for the authorization grant
-     */
     const GRANT_TYPE          = 'authorization_code';
     const GRANT_RESPONSE_TYPE = 'code';
 
@@ -172,7 +169,6 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        // We can generate the response!
         $response = new HttpResponse();
         $response->setContent(json_encode(array_filter($responseBody)));
 
