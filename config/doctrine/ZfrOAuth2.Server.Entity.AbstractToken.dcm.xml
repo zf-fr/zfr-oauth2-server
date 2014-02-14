@@ -9,7 +9,7 @@
         <id name="token" type="string" length="40" />
         <many-to-one field="client" target-entity="ZfrOAuth2\Server\Entity\Client" />
         <many-to-one field="owner" target-entity="ZfrOAuth2\Server\Entity\TokenOwnerInterface" fetch="EAGER" />
-        <field name="expires_at" type="datetime" />
+        <field name="expiresAt" type="datetime" />
         <field name="scopes" type="json_array" />
     </mapped-superclass>
 </doctrine-mapping>

@@ -12,6 +12,6 @@
 
         <field name="name" type="string" length="40" />
         <field name="description" type="string" length="500" />
-        <field name="is_default" type="boolean" />
+        <field name="isDefault" type="boolean" />
     </entity>
 </doctrine-mapping>
