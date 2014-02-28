@@ -48,10 +48,25 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
-    public function testCanExtractAccessToken()
+    public function testCanExtractAccessTokenFromAuthorizationHeader()
     {
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
+
+        $token = $this->getMock('ZfrOAuth2\Server\Entity\AbstractToken');
+
+        $this->tokenService->expects($this->once())
+                           ->method('getToken')
+                           ->with('token')
+                           ->will($this->returnValue($token));
+
+        $this->assertSame($token, $this->resourceServer->getAccessToken($request));
+    }
+
+    public function testCanExtractAccessTokenFromQueryString()
+    {
+        $request = new HttpRequest();
+        $request->getQuery()->fromArray(['access_token' => 'token']);
 
         $token = $this->getMock('ZfrOAuth2\Server\Entity\AbstractToken');
 

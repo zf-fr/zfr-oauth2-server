@@ -82,8 +82,9 @@ class ResourceServer
     /**
      * Extract the access token from the Authorization header of the request
      *
+     * @link   http://tools.ietf.org/html/rfc6750#page-5
      * @param  HttpRequest $request
-     * @return AccessToken
+     * @return AccessToken|null
      * @throws InvalidAccessTokenException If no access token could be found
      */
     public function getAccessToken(HttpRequest $request)
@@ -95,20 +96,23 @@ class ResourceServer
 
         $headers = $request->getHeaders();
 
-        if (!$headers->has('Authorization')) {
+        // The preferred way is using Authorization header
+        if ($headers->has('Authorization')) {
+            // Header value is expected to be "Bearer xxx"
+            $parts = explode(' ', $headers->get('Authorization')->getFieldValue());
+            $token = end($parts); // Access token is the last value
+
+            if (count($parts) < 2 || empty($token)) {
+                throw new InvalidAccessTokenException('No access token could be found in Authorization header');
+            }
+        } else {
+            $token = $request->getQuery('access_token');
+        }
+
+        if (null === $token) {
             return null;
         }
 
-        // Header value is expected to be "Bearer xxx"
-        $parts = explode(' ', $headers->get('Authorization')->getFieldValue());
-        $token = end($parts); // Access token is the last value
-
-        if (count($parts) < 2 || empty($token)) {
-            throw new InvalidAccessTokenException('No access token could be found in Authorization header');
-        }
-
-        $this->accessToken = $this->accessTokenService->getToken($token);
-
-        return $this->accessToken;
+        return $this->accessToken = $this->accessTokenService->getToken($token);
     }
 }
