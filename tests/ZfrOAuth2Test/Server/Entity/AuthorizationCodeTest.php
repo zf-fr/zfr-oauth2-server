@@ -99,4 +99,10 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($authorizationCode->isExpired());
     }
+
+    public function testDoNotSupportLongLiveToken()
+    {
+        $accessToken = new AuthorizationCode();
+        $this->assertTrue($accessToken->isExpired());
+    }
 }

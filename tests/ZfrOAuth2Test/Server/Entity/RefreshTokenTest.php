@@ -97,4 +97,10 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
         $this->assertTrue($refreshToken->isExpired());
     }
+
+    public function testSupportLongLiveToken()
+    {
+        $accessToken = new RefreshToken();
+        $this->assertFalse($accessToken->isExpired());
+    }
 }
