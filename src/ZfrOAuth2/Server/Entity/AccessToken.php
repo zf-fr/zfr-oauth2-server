@@ -26,4 +26,11 @@ namespace ZfrOAuth2\Server\Entity;
  */
 class AccessToken extends AbstractToken
 {
+    /**
+     * {@inheritDoc}
+     */
+    public function isExpired()
+    {
+        return parent::isExpired() && $this->expiresAt !== null;
+    }
 }
