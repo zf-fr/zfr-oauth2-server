@@ -68,6 +68,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     public function testCanGetToken()
     {
         $token = new AccessToken();
+        $token->setToken('token');
 
         $this->tokenRepository->expects($this->once())
                               ->method('find')
