@@ -23,6 +23,7 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use Zend\Crypt\Utils as CryptUtils;
 use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -127,7 +128,16 @@ class TokenService
      */
     public function getToken($token)
     {
-        return $this->tokenRepository->find($token);
+        /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
+        $tokenFromDb = $this->tokenRepository->find($token);
+
+        // By default, Doctrine 2 mappings contains options so that SQL query is case-sensitive. However for
+        // some RDBMS or ODM, it may do a case-insensitive check, so we need to verify the token matches in PHP
+        if (CryptUtils::compareStrings($tokenFromDb->getToken(), $token)) {
+            return $tokenFromDb;
+        }
+
+        return null;
     }
 
     /**
