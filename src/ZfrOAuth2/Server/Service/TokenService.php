@@ -112,7 +112,12 @@ class TokenService
         $expiresAt->setTimestamp(time() + $this->tokenTTL);
 
         $token->setExpiresAt($expiresAt);
-        $token->setToken(Rand::getString(40));
+
+        do {
+            $tokenHash = Rand::getString(40);
+        } while ($this->tokenRepository->find($tokenHash) !== null);
+
+        $token->setToken($tokenHash);
 
         $this->objectManager->persist($token);
         $this->objectManager->flush();
@@ -131,8 +136,8 @@ class TokenService
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->find($token);
 
-        // By default, Doctrine 2 mappings contains options so that SQL query is case-sensitive. However for
-        // some RDBMS or ODM, it may do a case-insensitive check, so we need to verify the token matches in PHP
+        // Because the collation is most often case insensitive, we need to add a check here to ensure
+        // that the token matches case
         if (CryptUtils::compareStrings($tokenFromDb->getToken(), $token)) {
             return $tokenFromDb;
         }
