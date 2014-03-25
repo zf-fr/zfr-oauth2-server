@@ -68,6 +68,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     public function testCanGetToken()
     {
         $token = new AccessToken();
+        $token->setToken('token');
 
         $this->tokenRepository->expects($this->once())
                               ->method('find')
@@ -75,6 +76,19 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
                               ->will($this->returnValue($token));
 
         $this->assertSame($token, $this->tokenService->getToken('token'));
+    }
+
+    public function testDoesCaseSensitiveTest()
+    {
+        $token = new AccessToken();
+        $token->setToken('Token');
+
+        $this->tokenRepository->expects($this->once())
+                              ->method('find')
+                              ->with('token')
+                              ->will($this->returnValue($token));
+
+        $this->assertNull($this->tokenService->getToken('token'));
     }
 
     public function testCanDeleteToken()
