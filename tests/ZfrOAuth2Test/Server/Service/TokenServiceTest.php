@@ -199,4 +199,25 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             $this->assertEquals(explode(' ', $tokenScope), $token->getScopes());
         }
     }
+
+    public function testCreateNewTokenUntilOneDoesNotExist()
+    {
+        $token = new AccessToken();
+
+        $this->scopeService->expects($this->once())->method('getDefaultScopes')->will($this->returnValue(['read']));
+
+        $this->tokenRepository->expects($this->at(0))
+                              ->method('find')
+                              ->with($this->isType('string'))
+                              ->will($this->returnValue(new AccessToken()));
+
+        $this->tokenRepository->expects($this->at(1))
+                              ->method('find')
+                              ->with($this->isType('string'))
+                              ->will($this->returnValue(null));
+
+        $this->tokenService->createToken($token);
+
+        $this->assertEquals(40, strlen($token->getToken()));
+    }
 }
