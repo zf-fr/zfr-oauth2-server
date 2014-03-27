@@ -136,6 +136,7 @@ class TokenService
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->find($token);
 
+        // Because the collation is most often case insensitive, we need to add a check here to ensure
         // that the token matches case
         if (!$tokenFromDb || !CryptUtils::compareStrings($tokenFromDb->getToken(), $token)) {
             return null;
