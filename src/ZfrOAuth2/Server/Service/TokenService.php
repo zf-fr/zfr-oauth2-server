@@ -136,7 +136,6 @@ class TokenService
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->find($token);
 
-
         // that the token matches case
         if (!$tokenFromDb || !CryptUtils::compareStrings($tokenFromDb->getToken(), $token)) {
             return null;

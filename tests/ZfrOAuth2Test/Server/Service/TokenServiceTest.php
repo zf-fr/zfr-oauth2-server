@@ -78,6 +78,16 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($token, $this->tokenService->getToken('token'));
     }
 
+    public function testGetTokenReturnNullOnTokenNotFound()
+    {
+        $this->tokenRepository
+            ->expects($this->once())
+            ->method('find')
+            ->with('token');
+
+        $this->assertNull($this->tokenService->getToken('token'));
+    }
+
     public function testDoesCaseSensitiveTest()
     {
         $token = new AccessToken();
