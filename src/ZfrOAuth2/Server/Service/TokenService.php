@@ -46,7 +46,7 @@ class TokenService
     /**
      * @var string
      */
-    protected $tokenCharlist = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-_';
+    protected $tokenCharlist = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-';
 
     /**
      * @var ObjectManager
