@@ -44,6 +44,11 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
 class TokenService
 {
     /**
+     * @var string
+     */
+    protected $tokenCharlist = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-_';
+
+    /**
      * @var ObjectManager
      */
     protected $objectManager;
@@ -114,7 +119,7 @@ class TokenService
         $token->setExpiresAt($expiresAt);
 
         do {
-            $tokenHash = Rand::getString(40);
+            $tokenHash = Rand::getString(40, $this->tokenCharlist);
         } while ($this->tokenRepository->find($tokenHash) !== null);
 
         $token->setToken($tokenHash);
