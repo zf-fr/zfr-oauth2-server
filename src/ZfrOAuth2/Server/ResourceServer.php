@@ -49,40 +49,39 @@ class ResourceServer
     }
 
     /**
-     * Check if the request is valid
+     * Get the access token
      *
-     * If the scope parameter is given, it will also check that the token has enough permissions
-     *
-     * @param  HttpRequest  $request
-     * @param  array|string $scopes
-     * @return bool
-     */
-    public function isRequestValid(HttpRequest $request, $scopes = [])
-    {
-        // We extract the token and get the actual instance from storage
-        $accessToken = $this->getAccessToken($request);
-
-        // It must exist and must not be outdated, otherwise it's wrong!
-        if (null === $accessToken || $accessToken->isExpired()) {
-            return false;
-        }
-
-        if (!empty($scopes) && !$accessToken->matchScopes($scopes)) {
-            return false;
-        }
-
-        return true;
-    }
-
-    /**
-     * Extract the access token from the Authorization header of the request
+     * Note that this method will only match tokens that are not expired and match the given scopes (if any).
+     * Otherwise, null will be returned
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
      * @param  HttpRequest $request
+     * @param  array       $scopes
      * @return AccessToken|null
-     * @throws InvalidAccessTokenException If no access token could be found
      */
-    public function getAccessToken(HttpRequest $request)
+    public function getAccessToken(HttpRequest $request, $scopes = [])
+    {
+        if (!$token = $this->extractAccessToken($request)) {
+            return null;
+        }
+
+        $token = $this->accessTokenService->getToken($token);
+
+        if ($token === null || !$this->isTokenValid($token, $scopes)) {
+            return null;
+        }
+
+        return $token;
+    }
+
+    /**
+     * Extract the token either from Authorization header or query params
+     *
+     * @param  HttpRequest $request
+     * @return string|null
+     * @throws Exception\InvalidAccessTokenException If access token is malformed in the Authorization header
+     */
+    private function extractAccessToken(HttpRequest $request)
     {
         $headers = $request->getHeaders();
 
@@ -99,10 +98,26 @@ class ResourceServer
             $token = $request->getQuery('access_token');
         }
 
-        if (null === $token) {
-            return null;
+        return $token;
+    }
+
+    /**
+     * Check if the given token is valid (not expired and/or match the given scopes)
+     *
+     * @param  AccessToken $accessToken
+     * @param  array       $scopes
+     * @return bool
+     */
+    private function isTokenValid(AccessToken $accessToken, $scopes = [])
+    {
+        if ($accessToken->isExpired()) {
+            return false;
         }
 
-        return $this->accessTokenService->getToken($token);
+        if (!empty($scopes) && !$accessToken->matchScopes($scopes)) {
+            return false;
+        }
+
+        return true;
     }
 }
