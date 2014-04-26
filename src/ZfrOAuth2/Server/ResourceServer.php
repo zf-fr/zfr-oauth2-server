@@ -41,11 +41,6 @@ class ResourceServer
     protected $accessTokenService;
 
     /**
-     * @var AccessToken
-     */
-    protected $accessToken;
-
-    /**
      * @param TokenService $accessTokenService
      */
     public function __construct(TokenService $accessTokenService)
@@ -89,11 +84,6 @@ class ResourceServer
      */
     public function getAccessToken(HttpRequest $request)
     {
-        // Try to get it from memory cache first
-        if (null !== $this->accessToken) {
-            return $this->accessToken;
-        }
-
         $headers = $request->getHeaders();
 
         // The preferred way is using Authorization header
@@ -113,6 +103,6 @@ class ResourceServer
             return null;
         }
 
-        return $this->accessToken = $this->accessTokenService->getToken($token);
+        return $this->accessTokenService->getToken($token);
     }
 }
