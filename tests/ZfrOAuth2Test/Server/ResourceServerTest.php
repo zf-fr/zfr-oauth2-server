@@ -53,7 +53,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
 
-        $token = $this->getMock('ZfrOAuth2\Server\Entity\AbstractToken');
+        $token = $this->getMock('ZfrOAuth2\Server\Entity\AccessToken');
+        $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
@@ -68,7 +69,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request = new HttpRequest();
         $request->getQuery()->fromArray(['access_token' => 'token']);
 
-        $token = $this->getMock('ZfrOAuth2\Server\Entity\AbstractToken');
+        $token = $this->getMock('ZfrOAuth2\Server\Entity\AccessToken');
+        $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
@@ -96,7 +98,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                 'expired_token' => true,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'result'        => false
+                'match'         => false
             ],
 
             // Should return false because we are asking more permissions than the token scope
@@ -104,7 +106,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                 'expired_token' => false,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'result'        => false
+                'match'         => false
             ],
 
             // Should return true
@@ -112,7 +114,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                 'expired_token' => false,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read',
-                'result'        => true
+                'match'         => true
             ],
         ];
     }
@@ -120,7 +122,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
     /**
      * @dataProvider requestProvider
      */
-    public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $result)
+    public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
     {
         $request = new HttpRequest();
         $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
@@ -142,6 +144,12 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                            ->with('token')
                            ->will($this->returnValue($accessToken));
 
-        $this->assertEquals($result, $this->resourceServer->isRequestValid($request, $desiredScope));
+        $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
+
+        if ($match) {
+            $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AccessToken', $tokenResult);
+        } else {
+            $this->assertNull($tokenResult);
+        }
     }
 }

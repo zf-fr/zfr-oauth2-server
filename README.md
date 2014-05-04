@@ -40,7 +40,7 @@ Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This
 Installation is only officially supported using Composer:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:0.1.*
+php composer.phar require zfr/zfr-oauth2-server:0.2.*
 ```
 
 ## Framework integration
@@ -132,22 +132,16 @@ $response = $authorizationServer->handleRequest($request, $user);
 ### Using the resource server
 
 You can use the resource server to retrieve the access token (by automatically extracting the data from the HTTP
-headers). You can also use the resource server to validate the access token against scopes:
+headers). You can also specify scope constraints when retrieving the token:
 
 ```php
 $accessTokenService = new TokenService($objectManager, $accessTokenRepository, $scopeRepository);
 $resourceServer     = new ResourceServer($accessTokenService);
 
-if (!$resourceServer->isRequestValid($request, ['write']) {
+if (!$token = $resourceServer->getAccessToken($request, ['write']) {
     // there is either no access token, or the access token is expired, or the access token does not have
     // the `write` scope
 }
-```
-
-You can also manually retrieve the access token:
-
-```php
-$accessToken = $resourceServer->getAccessToken($request);
 ```
 
 ### Doctrine
