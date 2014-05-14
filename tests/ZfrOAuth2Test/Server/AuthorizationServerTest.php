@@ -19,7 +19,11 @@
 namespace ZfrOAuth2Test\Server;
 
 use Zend\Http\Request as HttpRequest;
+use Zend\Http\Response as HttpResponse;
+use Zend\Stdlib\Parameters;
 use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Event\TokenEvent;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
@@ -117,5 +121,99 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
         $this->assertArrayHasKey('error_description', $body);
+    }
+
+    public function testCanTriggerCreatedEventForToken()
+    {
+        $request = new HttpRequest();
+        $request->setPost(new Parameters(['grant_type' => 'grantType']));
+
+        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+
+        $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
+        $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant]);
+
+        $accessToken = new AccessToken();
+
+        $response = new HttpResponse();
+        $response->setContent(json_encode(['foo' => 'bar']));
+        $response->setMetadata('accessToken', $accessToken);
+
+        $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
+
+        $eventManager = $this->getMock('Zend\EventManager\EventManagerInterface');
+        $authorizationServer->setEventManager($eventManager);
+
+        $response->setMetadata('accessToken', $accessToken);
+
+        $eventManager->expects($this->once())
+            ->method('trigger')
+            ->with(TokenEvent::EVENT_TOKEN_CREATED, $this->callback(
+                function(TokenEvent $event) use ($request, $accessToken) {
+                    $this->assertSame($request, $event->getRequest());
+                    $this->assertSame($accessToken, $event->getAccessToken());
+                    $this->assertEquals(['foo' => 'bar'], $event->getResponseBody());
+
+                    return true;
+                }));
+
+        $response = $authorizationServer->handleTokenRequest($request);
+
+        // First check that headers are properly added
+        $this->assertTrue($response->getHeaders()->has('Content-Type'));
+        $this->assertTrue($response->getHeaders()->has('Cache-Control'));
+        $this->assertTrue($response->getHeaders()->has('Pragma'));
+
+        $this->assertEquals('application/json', $response->getHeaders()->get('Content-Type')->getFieldValue());
+        $this->assertEquals('no-store', $response->getHeaders()->get('Cache-Control')->getFieldValue());
+        $this->assertEquals('no-cache', $response->getHeaders()->get('Pragma')->getFieldValue());
+    }
+
+    public function testCanTriggerFailedEventForToken()
+    {
+        $request = new HttpRequest();
+        $request->setPost(new Parameters(['grant_type' => 'grantType']));
+
+        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+
+        $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
+        $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant]);
+
+        $response = new HttpResponse();
+        $response->setStatusCode(400);
+        $response->setContent(json_encode(['foo' => 'bar']));
+
+        $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
+
+        $eventManager = $this->getMock('Zend\EventManager\EventManagerInterface');
+        $authorizationServer->setEventManager($eventManager);
+
+        $eventManager->expects($this->once())
+            ->method('trigger')
+            ->with(TokenEvent::EVENT_TOKEN_FAILED, $this->callback(
+                function(TokenEvent $event) use ($request) {
+                    $this->assertSame($request, $event->getRequest());
+                    $this->assertNull($event->getAccessToken());
+                    $this->assertEquals(['foo' => 'bar'], $event->getResponseBody());
+
+                    return true;
+                }));
+
+        $response = $authorizationServer->handleTokenRequest($request);
+
+        // First check that headers are properly added
+        $this->assertTrue($response->getHeaders()->has('Content-Type'));
+        $this->assertTrue($response->getHeaders()->has('Cache-Control'));
+        $this->assertTrue($response->getHeaders()->has('Pragma'));
+
+        $this->assertEquals('application/json', $response->getHeaders()->get('Content-Type')->getFieldValue());
+        $this->assertEquals('no-store', $response->getHeaders()->get('Cache-Control')->getFieldValue());
+        $this->assertEquals('no-cache', $response->getHeaders()->get('Pragma')->getFieldValue());
     }
 }

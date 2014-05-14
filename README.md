@@ -148,3 +148,92 @@ if (!$token = $resourceServer->getAccessToken($request, ['write']) {
 
 ZfrOAuth2Server is built to be used with Doctrine (either ORM or ODM). Out of the box, it provides ORM mapping for
 Doctrine (in the `config/doctrine` folder).
+
+### Event manager
+
+There are a lot of use cases where you would like to execute specific code when a token is created (or when it
+could not be created). Such use cases include: log login, modify generic OAuth2 response to include additional fields...
+
+To that extent, ZfrOAuth2 trigger various events in the `AuthorizationServer`. Four events are triggered:
+
+* `ZfrOAuth2\Server\Event\AuthorizationCodeEvent::EVENT_CODE_CREATED`: event that is triggered when the auth code has
+been properly created and persisted.
+* `ZfrOAuth2\Server\Event\AuthorizationCodeEvent::EVENT_CODE_FAILED`: event that is triggered when an error has occurred (
+wrong credentials, missing grant...).
+* `ZfrOAuth2\Server\Event\TokenEvent::EVENT_TOKEN_CREATED`: event that is triggered when the access token has
+been properly created and persisted.
+* `ZfrOAuth2\Server\Event\TokenEvent::EVENT_TOKEN_FAILED`: event that is triggered when an error has occurred (
+wrong credentials, missing grant...).
+
+In both cases, the `TokenEvent` or `AuthorizationCodeEvent` event lets you access to the request, the response body
+and the access token/authorization code (if available).
+
+Here is an example:
+
+#### Zend Framework 2 users
+
+Zend Framework 2 users can take advantage of the shared event manager, and attach listeners in their Module.php
+class as shown below:
+
+```php
+use ZfrOAuth2\Server\Event\TokenEvent;
+
+class Module
+{
+    public function onBootstrap(EventInterface $event)
+    {
+        /* @var \Zend\Mvc\Application $application */
+        $application   = $event->getTarget();
+        $eventManager  = $application->getEventManager();
+        $sharedManager = $eventManager->getSharedManager();
+
+        $sharedManager->attach(
+            'ZfrOAuth2\Server\AuthorizationServer',
+            TokenEvent::EVENT_TOKEN_CREATED,
+            [$this, 'tokenCreated']
+        );
+
+        $sharedManager->attach(
+            'ZfrOAuth2\Server\AuthorizationServer',
+            TokenEvent::EVENT_TOKEN_FAILED,
+            [$this, 'tokenFailed']
+        );
+    }
+
+    public function tokenCreated(TokenEvent $event)
+    {
+        // We can log the access token
+        $accessToken = $event->getAccessToken();
+        // ...
+
+        // Or we can alter the response body, if we need to
+        $body                 = $event->getResponseBody();
+        $body['custom_field'] = 'bar';
+
+        // Update the body
+        $event->setResponseBody($body);
+    }
+
+    public function tokenFailed(TokenEvent $event)
+    {
+        // We can inspect the response to know what happen and log the failure
+        $body = $event->getResponseBody();
+    }
+}
+```
+
+#### Other users
+
+For other users, you can manually retrieve the event manager from the authorization server, and attach
+your listener there:
+
+```php
+use ZfrOAuth2\Server\Event\TokenEvent;
+
+$eventManager = $authorizationServer->getEventManager();
+$eventManager->attach(TokenEvent::EVENT_TOKEN_CREATED, function(TokenEvent $event) {
+    // Do things
+}
+```
+
+You are responsible to wire everything in your application.

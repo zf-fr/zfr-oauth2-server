@@ -21,7 +21,8 @@
     "doctrine/common": "~2.4",
     "zendframework/zend-http": "~2.2",
     "zendframework/zend-crypt": "~2.2",
-    "zendframework/zend-math": "~2.2"
+    "zendframework/zend-math": "~2.2",
+    "zendframework/zend-eventmanager": "~2.2"
   },
   "require-dev": {
     "phpunit/phpunit": "~3.7",

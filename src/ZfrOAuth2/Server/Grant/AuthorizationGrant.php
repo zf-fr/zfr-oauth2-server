@@ -113,6 +113,9 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . $uri);
         $response->setStatusCode(302); // here it's a redirection!
 
+        // Set the authorization code in metadata so it can be retrieved for events
+        $response->setMetadata('authorizationCode', $authorizationCode);
+
         return $response;
     }
 

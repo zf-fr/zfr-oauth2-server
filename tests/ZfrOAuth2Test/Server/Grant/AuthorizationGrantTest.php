@@ -90,6 +90,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
         $location = $response->getHeaders()->get('Location')->getFieldValue();
         $this->assertEquals('http://www.example.com/?code=azerty_auth&state=xyz', $location);
+        $this->assertSame($token, $response->getMetadata('authorizationCode'));
     }
 
     public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUri()
