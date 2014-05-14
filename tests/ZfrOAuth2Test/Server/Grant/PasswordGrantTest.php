@@ -120,6 +120,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         };
 
         $accessToken = $this->getValidAccessToken();
+        $accessToken->setOwner($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
@@ -139,6 +140,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $response = $this->grant->createTokenResponse($request, new Client());
 
         $body = json_decode($response->getContent(), true);
+
+        $this->assertSame($accessToken, $response->getMetadata('accessToken'));
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);

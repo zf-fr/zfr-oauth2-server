@@ -204,6 +204,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $accessToken = $this->getValidAccessToken();
+        $accessToken->setOwner($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
@@ -229,6 +230,8 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3600, $body['expires_in']);
         $this->assertEquals('read', $body['scope']);
         $this->assertEquals(1, $body['owner_id']);
+
+        $this->assertSame($accessToken, $response->getMetadata('accessToken'));
 
         if ($hasRefreshGrant) {
             $this->assertEquals('azerty_refresh', $body['refresh_token']);

@@ -151,28 +151,17 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $this->populateToken($accessToken, $client, $owner, $scopes);
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
-        $responseBody = [
-            'access_token' => $accessToken->getToken(),
-            'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => implode(' ', $accessToken->getScopes()),
-            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
-        ];
-
         // Before generating a refresh token, we must make sure the authorization server supports this grant
+        $refreshToken = null;
+
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
             $refreshToken = new RefreshToken();
 
             $this->populateToken($refreshToken, $client, $owner, $scopes);
             $refreshToken = $this->refreshTokenService->createToken($refreshToken);
-
-            $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        $response = new HttpResponse();
-        $response->setContent(json_encode(array_filter($responseBody)));
-
-        return $response;
+        return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
     /**

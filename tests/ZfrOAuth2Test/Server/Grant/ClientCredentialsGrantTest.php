@@ -74,6 +74,8 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
         $body = json_decode($response->getContent(), true);
 
+        $this->assertSame($token, $response->getMetadata('accessToken'));
+
         $this->assertEquals('azerty', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
         $this->assertEquals(3600, $body['expires_in']);
