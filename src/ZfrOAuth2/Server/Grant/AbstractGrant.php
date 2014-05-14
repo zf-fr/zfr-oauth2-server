@@ -104,8 +104,9 @@ abstract class AbstractGrant implements GrantInterface
         }
 
         $response = new HttpResponse();
-        $response->setMetadata('accessToken', $accessToken); // Set the access token in metadata so it
-                                                             // can be retrieved for events
+
+        // Set the access token in metadata so it can be retrieved for events
+        $response->setMetadata('accessToken', $accessToken);
         $response->setContent(json_encode(array_filter($responseBody)));
 
         return $response;
