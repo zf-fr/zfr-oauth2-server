@@ -117,6 +117,8 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
+        $refreshToken = null;
+
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
             $refreshToken = new RefreshToken();
 
@@ -124,7 +126,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
             $refreshToken = $this->refreshTokenService->createToken($refreshToken);
         }
 
-        return $this->prepareTokenResponse($accessToken, isset($refreshToken) ? $refreshToken : null);
+        return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
     /**

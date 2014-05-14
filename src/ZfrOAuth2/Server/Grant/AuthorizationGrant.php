@@ -152,6 +152,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
+        $refreshToken = null;
+
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
             $refreshToken = new RefreshToken();
 
@@ -159,7 +161,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             $refreshToken = $this->refreshTokenService->createToken($refreshToken);
         }
 
-        return $this->prepareTokenResponse($accessToken, isset($refreshToken) ? $refreshToken : null);
+        return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
     /**
