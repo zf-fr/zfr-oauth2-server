@@ -127,19 +127,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // We can generate the response!
-        $response     = new HttpResponse();
-        $responseBody = [
-            'access_token'  => $accessToken->getToken(),
-            'token_type'    => 'Bearer',
-            'expires_in'    => $accessToken->getExpiresIn(),
-            'refresh_token' => $refreshToken->getToken(),
-            'scope'         => implode(' ', $refreshToken->getScopes()),
-            'owner_id'      => $owner ? $owner->getTokenOwnerId() : null
-        ];
-
-        $response->setContent(json_encode(array_filter($responseBody)));
-
-        return $response;
+        return $this->prepareTokenResponse($accessToken, $refreshToken, true);
     }
 
     /**

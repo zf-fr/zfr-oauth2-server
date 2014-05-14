@@ -18,8 +18,11 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
+use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
@@ -70,5 +73,41 @@ abstract class AbstractGrant implements GrantInterface
     public function getResponseType()
     {
         return static::GRANT_RESPONSE_TYPE;
+    }
+
+    /**
+     * Prepare the actual HttpResponse for the token
+     *
+     * @param  AccessToken       $accessToken
+     * @param  RefreshToken|null $refreshToken
+     * @param  bool              $useRefreshTokenScopes
+     * @return HttpResponse
+     */
+    protected function prepareTokenResponse(
+        AccessToken $accessToken,
+        RefreshToken $refreshToken = null,
+        $useRefreshTokenScopes = false
+    ) {
+        $owner  = $accessToken->getOwner();
+        $scopes = $useRefreshTokenScopes ? $refreshToken->getScopes() : $accessToken->getScopes();
+
+        $responseBody = [
+            'access_token' => $accessToken->getToken(),
+            'token_type'   => 'Bearer',
+            'expires_in'   => $accessToken->getExpiresIn(),
+            'scope'        => implode(' ', $scopes),
+            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
+        ];
+
+        if (null !== $refreshToken) {
+            $responseBody['refresh_token'] = $refreshToken->getToken();
+        }
+
+        $response = new HttpResponse();
+        $response->setMetadata('accessToken', $accessToken); // Set the access token in metadata so it
+                                                             // can be retrieved for events
+        $response->setContent(json_encode(array_filter($responseBody)));
+
+        return $response;
     }
 }

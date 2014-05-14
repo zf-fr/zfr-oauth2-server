@@ -142,6 +142,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         }
 
         $accessToken = $this->getValidAccessToken();
+        $accessToken->setOwner($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         $this->grant->setRotateRefreshTokens($rotateRefreshToken);

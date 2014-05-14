@@ -75,19 +75,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $this->populateToken($accessToken, $client, $owner, $scope);
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
-        // We can generate the response!
-        $response     = new HttpResponse();
-        $responseBody = [
-            'access_token' => $accessToken->getToken(),
-            'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => $scope,
-            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
-        ];
-
-        $response->setContent(json_encode(array_filter($responseBody)));
-
-        return $response;
+        return $this->prepareTokenResponse($accessToken);
     }
 
     /**
