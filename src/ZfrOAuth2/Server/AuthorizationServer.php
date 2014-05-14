@@ -18,10 +18,14 @@
 
 namespace ZfrOAuth2\Server;
 
+use Zend\EventManager\EventManagerAwareInterface;
+use Zend\EventManager\EventManagerAwareTrait;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
+use ZfrOAuth2\Server\Event\TokenEvent;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
@@ -33,8 +37,10 @@ use ZfrOAuth2\Server\Service\ClientService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServer
+class AuthorizationServer implements EventManagerAwareInterface
 {
+    use EventManagerAwareTrait;
+
     /**
      * @var ClientService
      */
@@ -162,6 +168,20 @@ class AuthorizationServer
 
         $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
 
+        $responseBody = json_decode($response->getContent(), true);
+
+        $event = new AuthorizationCodeEvent($request, $responseBody, $response->getMetadata('authorizationCode'));
+        $event->setTarget($this);
+
+        if ($response->isSuccess()) {
+            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_CREATED, $event);
+        } else {
+            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_FAILED, $event);
+        }
+
+        // We re-encode the content back into the response in case it changed
+        $response->setContent(json_encode($event->getResponseBody()));
+
         return $response;
     }
 
@@ -192,6 +212,20 @@ class AuthorizationServer
         $response->getHeaders()->addHeaderLine('Content-Type', 'application/json')
                                ->addHeaderLine('Cache-Control', 'no-store')
                                ->addHeaderLine('Pragma', 'no-cache');
+
+        $responseBody = json_decode($response->getContent(), true);
+
+        $event = new TokenEvent($request, $responseBody, $response->getMetadata('accessToken'));
+        $event->setTarget($this);
+
+        if ($response->isSuccess()) {
+            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_CREATED, $event);
+        } else {
+            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
+        }
+
+        // We re-encode the content back into the response in case it changed
+        $response->setContent(json_encode($event->getResponseBody()));
 
         return $response;
     }
