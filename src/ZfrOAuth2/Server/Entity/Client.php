@@ -50,9 +50,9 @@ class Client
     protected $name;
 
     /**
-     * @var string
+     * @var array
      */
-    protected $redirectUri;
+    protected $redirectUris;
 
     /**
      * Get the client id
@@ -107,24 +107,45 @@ class Client
     }
 
     /**
-     * Set the redirect URI
+     * Set the redirect URIs
      *
-     * @param  string $redirectUri
+     * You can either set a string of comma separated string, or an array
+     *
+     * @param  array|string $redirectUris
      * @return void
      */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUris($redirectUris)
     {
-        $this->redirectUri = (string) $redirectUri;
+        if (is_string($redirectUris)) {
+            $redirectUris = explode(',', str_replace(' ', '', $redirectUris));
+        } else {
+            foreach ($redirectUris as &$redirectUri) {
+                $redirectUri = (string) $redirectUri;
+            }
+        }
+
+        $this->redirectUris = $redirectUris;
     }
 
     /**
-     * Get the redirect URI
+     * Get the redirect URIs
      *
      * @return string
      */
-    public function getRedirectUri()
+    public function getRedirectUris()
     {
-        return $this->redirectUri;
+        return $this->redirectUris;
+    }
+
+    /**
+     * Check if the given redirect URI is in the list
+     *
+     * @param  string $redirectUri
+     * @return bool
+     */
+    public function hasRedirectUri($redirectUri)
+    {
+        return in_array($redirectUri, $this->redirectUris, true);
     }
 
     /**

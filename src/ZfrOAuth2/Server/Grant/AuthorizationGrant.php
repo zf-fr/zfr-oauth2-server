@@ -91,8 +91,15 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             ));
         }
 
-        // If a redirect URI is specified as a GET parameter, it overrides the one define in the client
-        $redirectUri = $request->getQuery('redirect_uri') ?: $client->getRedirectUri();
+        // We try to fetch the redirect URI from query param as per spec, and if none found, we just use
+        // the first redirect URI defined in the client
+        $redirectUri = $request->getQuery('redirect_uri', $client->getRedirectUris()[0]);
+
+        // If the redirect URI cannot be found in the list, we throw an error as we don't want the user
+        // to be redirected to an unauthorized URL
+        if (!$client->hasRedirectUri($redirectUri)) {
+            throw OAuth2Exception::invalidRequest('Redirect URI does not match the registered one');
+        }
 
         // Scope and state allow to perform additional validation
         $scope = $request->getQuery('scope');
