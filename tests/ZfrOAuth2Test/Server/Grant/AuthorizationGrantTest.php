@@ -85,7 +85,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
         $client   = new Client();
-        $client->setRedirectUri('http://www.example.com');
+        $client->setRedirectUris('http://www.example.com');
         $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaders()->get('Location')->getFieldValue();
@@ -93,7 +93,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($token, $response->getMetadata('authorizationCode'));
     }
 
-    public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUri()
+    public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUriInList()
     {
         $request = new HttpRequest();
         $request->getQuery()->fromArray([
@@ -107,11 +107,31 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
         $client   = new Client();
-        $client->setRedirectUri('http://www.example.com');
+        $client->setRedirectUris('http://www.example.com,http://www.custom-example.com');
         $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaders()->get('Location')->getFieldValue();
         $this->assertEquals('http://www.custom-example.com/?code=azerty_auth&state=xyz', $location);
+    }
+
+    public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized()
+    {
+        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception');
+
+        $request = new HttpRequest();
+        $request->getQuery()->fromArray([
+            'response_type' => 'code',
+            'scope'         => '',
+            'state'         => 'xyz',
+            'redirect_uri'  => 'http://www.custom-example.com'
+        ]);
+
+        $token = $this->getValidAuthorizationCode();
+        $this->authorizationCodeService->expects($this->never())->method('createToken')->will($this->returnValue($token));
+
+        $client   = new Client();
+        $client->setRedirectUris('http://www.example.com');
+        $this->grant->createAuthorizationResponse($request, $client);
     }
 
     public function testAssertInvalidIfNoCodeIsSet()

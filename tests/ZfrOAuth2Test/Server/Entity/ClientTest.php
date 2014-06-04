@@ -33,11 +33,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $client->setSecret('secret');
         $client->setName('name');
-        $client->setRedirectUri('http://www.example.com');
+        $client->setRedirectUris('http://www.example.com');
 
         $this->assertEquals('secret', $client->getSecret());
         $this->assertEquals('name', $client->getName());
-        $this->assertEquals('http://www.example.com', $client->getRedirectUri());
+        $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
     }
 
     public function testCanCheckPublicClient()
@@ -47,5 +47,32 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $client->setSecret('secret');
         $this->assertFalse($client->isPublic());
+    }
+
+    public function testRedirectUri()
+    {
+        $client = new Client();
+        $client->setRedirectUris('http://www.example.com');
+        $this->assertCount(1, $client->getRedirectUris());
+        $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
+
+        $client->setRedirectUris('http://www.example1.com,http://www.example2.com');
+        $this->assertCount(2, $client->getRedirectUris());
+        $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
+        $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
+
+        $client->setRedirectUris('http://www.example1.com, http://www.example2.com');
+        $this->assertCount(2, $client->getRedirectUris());
+
+        $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
+        $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
+
+        $client->setRedirectUris(['http://www.example.com']);
+        $this->assertCount(1, $client->getRedirectUris());
+        $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
     }
 }
