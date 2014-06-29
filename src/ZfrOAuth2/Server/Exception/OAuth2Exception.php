@@ -133,4 +133,14 @@ class OAuth2Exception extends Exception implements ExceptionInterface
     {
         return new self($description, 'unsupported_response_type');
     }
+
+    /**
+     * @link   https://tools.ietf.org/html/rfc7009#section-2.2.1
+     * @param  string $description
+     * @return OAuth2Exception
+     */
+    public static function unsupportedTokenType($description)
+    {
+        return new self($description, 'unsupported_token_type');
+    }
 }
