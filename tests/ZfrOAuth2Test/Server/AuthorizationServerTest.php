@@ -46,13 +46,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant]);
 
-        $this->assertTrue($authorizationServer->hasGrant(PasswordGrant::GRANT_TYPE));
-        $this->assertFalse($authorizationServer->hasGrant(ClientCredentialsGrant::GRANT_TYPE));
+        $this->assertTrue($authorizationServer->hasGrant('password'));
+        $this->assertFalse($authorizationServer->hasGrant('client_credentials'));
 
-        $this->assertSame($grant, $authorizationServer->getGrant(PasswordGrant::GRANT_TYPE));
+        $this->assertSame($grant, $authorizationServer->getGrant('password'));
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'unsupported_grant_type');
-        $authorizationServer->getGrant(ClientCredentialsGrant::GRANT_TYPE);
+        $authorizationServer->getGrant('client_credentials');
     }
 
     public function testCanCheckAndGetForResponseType()
@@ -66,13 +66,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant]);
 
-        $this->assertTrue($authorizationServer->hasResponseType(AuthorizationGrant::GRANT_RESPONSE_TYPE));
-        $this->assertFalse($authorizationServer->hasResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE));
+        $this->assertTrue($authorizationServer->hasResponseType('code'));
+        $this->assertFalse($authorizationServer->hasResponseType(null));
 
-        $this->assertSame($grant, $authorizationServer->getResponseType(AuthorizationGrant::GRANT_RESPONSE_TYPE));
+        $this->assertSame($grant, $authorizationServer->getResponseType('code'));
 
         $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'unsupported_response_type');
-        $authorizationServer->getResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
+        $authorizationServer->getResponseType(null);
     }
 
     public function testThrowExceptionIfNoResponseType()

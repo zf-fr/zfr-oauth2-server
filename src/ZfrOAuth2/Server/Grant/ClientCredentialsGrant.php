@@ -37,9 +37,6 @@ use ZfrOAuth2\Server\Service\TokenService;
  */
 class ClientCredentialsGrant extends AbstractGrant
 {
-    const GRANT_TYPE          = 'client_credentials';
-    const GRANT_RESPONSE_TYPE = null;
-
     /**
      * Access token service (used to create access token)
      *
@@ -76,6 +73,22 @@ class ClientCredentialsGrant extends AbstractGrant
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         return $this->prepareTokenResponse($accessToken);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return 'client_credentials';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResponseType()
+    {
+        return null;
     }
 
     /**

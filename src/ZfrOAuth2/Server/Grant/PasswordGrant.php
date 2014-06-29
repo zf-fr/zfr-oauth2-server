@@ -41,9 +41,6 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
 {
     use AuthorizationServerAwareTrait;
 
-    const GRANT_TYPE          = 'password';
-    const GRANT_RESPONSE_TYPE = null;
-
     /**
      * Access token service (used to create access token)
      *
@@ -119,7 +116,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
-        if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
+        if ($this->authorizationServer->hasGrant('refresh_token')) {
             $refreshToken = new RefreshToken();
 
             $this->populateToken($refreshToken, $client, $owner, $scope);
@@ -127,6 +124,22 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return 'password';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResponseType()
+    {
+        return null;
     }
 
     /**

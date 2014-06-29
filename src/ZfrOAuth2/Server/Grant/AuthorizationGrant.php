@@ -38,9 +38,6 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 {
     use AuthorizationServerAwareTrait;
 
-    const GRANT_TYPE          = 'authorization_code';
-    const GRANT_RESPONSE_TYPE = 'code';
-
     /**
      * @var TokenService
      */
@@ -84,7 +81,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         // We must validate some parameters first
         $responseType = $request->getQuery('response_type');
 
-        if ($responseType !== self::GRANT_RESPONSE_TYPE) {
+        if ($responseType !== $this->getResponseType()) {
             throw OAuth2Exception::invalidRequest(sprintf(
                 'The desired grant type must be "code", but "%s" was given',
                 $responseType
@@ -164,7 +161,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
-        if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
+        if ($this->authorizationServer->hasGrant('refresh_token')) {
             $refreshToken = new RefreshToken();
 
             $this->populateToken($refreshToken, $client, $owner, $scopes);
@@ -172,6 +169,22 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return 'authorization_code';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResponseType()
+    {
+        return 'code';
     }
 
     /**
