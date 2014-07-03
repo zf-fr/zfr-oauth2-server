@@ -3,11 +3,7 @@ language: php
 php:
   - 5.4
   - 5.5
-  - hhvm
-
-matrix:
-  allow_failure:
-    - hhvm
+  - hhvm-nightly
 
 before_script:
   - composer self-update
