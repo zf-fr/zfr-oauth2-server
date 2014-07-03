@@ -36,12 +36,6 @@ use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 interface GrantInterface
 {
     /**
-     * Constants that need to be overridden for each grant
-     */
-    const GRANT_TYPE          = null;
-    const GRANT_RESPONSE_TYPE = null;
-
-    /**
      * Create an authorization response (this is the response to the "authorization endpoint"))
      *
      * @param  Request                  $request

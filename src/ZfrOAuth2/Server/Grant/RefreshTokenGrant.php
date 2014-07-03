@@ -33,9 +33,6 @@ use ZfrOAuth2\Server\Service\TokenService;
  */
 class RefreshTokenGrant extends AbstractGrant
 {
-    const GRANT_TYPE          = 'refresh_token';
-    const GRANT_RESPONSE_TYPE = null;
-
     /**
      * @var TokenService
      */
@@ -128,6 +125,22 @@ class RefreshTokenGrant extends AbstractGrant
 
         // We can generate the response!
         return $this->prepareTokenResponse($accessToken, $refreshToken, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getType()
+    {
+        return 'refresh_token';
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function getResponseType()
+    {
+        return null;
     }
 
     /**

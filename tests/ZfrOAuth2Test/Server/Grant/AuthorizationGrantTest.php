@@ -236,7 +236,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $authorizationServer = $this->getMock('ZfrOAuth2\Server\AuthorizationServer', [], [], '', false);
         $authorizationServer->expects($this->once())
                             ->method('hasGrant')
-                            ->with(RefreshTokenGrant::GRANT_TYPE)
+                            ->with('refresh_token')
                             ->will($this->returnValue($hasRefreshGrant));
 
         $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
