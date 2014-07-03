@@ -5,6 +5,10 @@ php:
   - 5.5
   - hhvm
 
+matrix:
+  allow_failure:
+    - hhvm
+
 before_script:
   - composer self-update
   - composer update --prefer-source
