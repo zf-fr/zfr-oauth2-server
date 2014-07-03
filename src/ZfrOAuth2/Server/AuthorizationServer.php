@@ -30,6 +30,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * The authorization server main role is to create access tokens or refresh tokens
@@ -61,12 +62,30 @@ class AuthorizationServer implements EventManagerAwareInterface
     protected $responseTypes = [];
 
     /**
+     * @var TokenService
+     */
+    protected $accessTokenService;
+
+    /**
+     * @var TokenService
+     */
+    protected $refreshTokenService;
+
+    /**
      * @param ClientService    $clientService
      * @param GrantInterface[] $grants
+     * @param TokenService     $accessTokenService
+     * @param TokenService     $refreshTokenService
      */
-    public function __construct(ClientService $clientService, array $grants)
-    {
-        $this->clientService = $clientService;
+    public function __construct(
+        ClientService $clientService,
+        array $grants,
+        TokenService $accessTokenService,
+        TokenService $refreshTokenService
+    ) {
+        $this->clientService       = $clientService;
+        $this->accessTokenService  = $accessTokenService;
+        $this->refreshTokenService = $refreshTokenService;
 
         foreach ($grants as $grant) {
             if ($grant instanceof AuthorizationServerAwareInterface) {
@@ -226,6 +245,66 @@ class AuthorizationServer implements EventManagerAwareInterface
 
         // We re-encode the content back into the response in case it changed
         $response->setContent(json_encode($event->getResponseBody()));
+
+        return $response;
+    }
+
+    /**
+     * @param  HttpRequest $request
+     * @return HttpResponse
+     * @throws OAuth2Exception If no "token" is present
+     */
+    public function handleRevocationRequest(HttpRequest $request)
+    {
+        $token     = $request->getPost('token');
+        $tokenHint = $request->getPost('token_type_hint');
+
+        if (null === $token || null === $tokenHint) {
+            throw OAuth2Exception::invalidRequest(
+                'Cannot revoke a token as the "token" and/or "token_type_hint" parameters are missing'
+            );
+        }
+
+        if ($tokenHint !== 'access_token' && $tokenHint !== 'refresh_token') {
+            throw OAuth2Exception::unsupportedTokenType(sprintf(
+                'Authorization server does not support revocation of token of type "%s"',
+                $tokenHint
+            ));
+        }
+
+        if ($tokenHint === 'access_token') {
+            $token = $this->accessTokenService->getToken($token);
+        } else {
+            $token = $this->refreshTokenService->getToken($token);
+        }
+
+        $response = new HttpResponse();
+
+        // According to spec, we should return 200 if token is invalid
+        if (null === $token) {
+            return $response;
+        }
+
+        // Now, we must validate the client if the token was generated against a non-public client
+        if (null !== $token->getClient() && !$token->getClient()->isPublic()) {
+            $requestClient = $this->getClient($request, false);
+
+            if ($requestClient !== $token->getClient()) {
+                throw OAuth2Exception::invalidClient('Token was issued for another client and cannot be revoked');
+            }
+        }
+
+        try {
+            if ($tokenHint === 'access_token') {
+                $this->accessTokenService->deleteToken($token);
+            } else {
+                $this->refreshTokenService->deleteToken($token);
+            }
+        } catch (\Exception $exception) {
+            // According to spec (https://tools.ietf.org/html/rfc7009#section-2.2.1), we should return a server 503
+            // error if we cannot delete the token for any reason
+            $response->setStatusCode(503);
+        }
 
         return $response;
     }

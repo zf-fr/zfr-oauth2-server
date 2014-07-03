@@ -10,7 +10,8 @@ ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's 
 library that aims to be used with Doctrine 2 only.
 
 Currently, ZfrOAuth2Server does not implement the whole specification (implicit grant is missing), so you are
-encouraged to have a look at the doc if ZfrOAuth2Server can be used in your application.
+encouraged to have a look at the doc if ZfrOAuth2Server can be used in your application. However, it implements the
+additional [token revocation](https://tools.ietf.org/html/rfc7009) specification.
 
 Here are other OAuth2 library you can use:
 
@@ -128,6 +129,22 @@ $user = new User(); // must implement TokenOwnerInterface
 
 $response = $authorizationServer->handleRequest($request, $user);
 ```
+
+#### Revoking a token
+
+ZfrOAuth2Server supports revoking access and refresh tokens using the [RFC 7009 specification](https://tools.ietf.org/html/rfc7009).
+You can use the `handleRevocationRequest` method in the AuthorizationServer. You must pass the following two POST parameters:
+
+* `token`: the token to remove (either access or refresh token)
+* `token_hint_type`: must be either `access_token` or `refresh_token` to indicate the authorization server which token
+type to revoke.
+
+If you need to revoke a token that was issued for a non-public client (this means a client that has a secret key), then you
+MUST authenticate the request using the client id and secret.
+
+> If you try to revoke a token that does not exist, it will return 200 SUCCESS request, according to the spec. However,
+if the token is valid, but cannot be deleted for any reason (database is down...), then it returns a 503 SERVICE UNAVAILABLE
+error!
 
 ### Using the resource server
 
