@@ -135,6 +135,6 @@ class RefreshTokenGrant extends AbstractGrant
      */
     public function allowPublicClients()
     {
-        return true;
+        return false;
     }
 }
