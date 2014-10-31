@@ -79,7 +79,7 @@ class ResourceServer
      *
      * @param  HttpRequest $request
      * @return string|null
-     * @throws Exception\InvalidAccessTokenException If access token is malformed in the Authorization header
+     * @throws InvalidAccessTokenException If access token is malformed in the Authorization header
      */
     private function extractAccessToken(HttpRequest $request)
     {
