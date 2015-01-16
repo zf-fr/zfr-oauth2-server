@@ -80,12 +80,25 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($token, $this->resourceServer->getAccessToken($request));
     }
 
-    public function testThrowExceptionIfNoAccessTokenIsInAuthorizationHeader()
+    public function testReturnNullIfNoAccessTokenIsInAuthorizationHeader()
+    {
+        $request = new HttpRequest();
+        $request->getHeaders()->addHeaderLine('Authorization', '');
+
+        $this->assertNull($this->resourceServer->getAccessToken($request));
+    }
+
+    public function testThrowExceptionIfTokenDoesNotExistAnymore()
     {
         $this->setExpectedException('ZfrOAuth2\Server\Exception\InvalidAccessTokenException');
 
         $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Authorization', '');
+        $request->getHeaders()->addHeaderLine('Authorization', 'Bearer foo');
+
+        $this->tokenService->expects($this->once())
+                           ->method('getToken')
+                           ->with('foo')
+                          ->will($this->returnValue(null));
 
         $this->resourceServer->getAccessToken($request);
     }
@@ -144,12 +157,11 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                            ->with('token')
                            ->will($this->returnValue($accessToken));
 
-        $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
-
-        if ($match) {
-            $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AccessToken', $tokenResult);
-        } else {
-            $this->assertNull($tokenResult);
+        if (!$match || $expiredToken) {
+            $this->setExpectedException('ZfrOAuth2\Server\Exception\InvalidAccessTokenException');
         }
+
+        $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
+        $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AccessToken', $tokenResult);
     }
 }

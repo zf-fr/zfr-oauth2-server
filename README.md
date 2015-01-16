@@ -41,7 +41,7 @@ Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This
 Installation is only officially supported using Composer:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:0.5.*
+php composer.phar require zfr/zfr-oauth2-server:0.6.*
 ```
 
 ## Framework integration
