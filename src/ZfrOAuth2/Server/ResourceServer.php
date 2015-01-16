@@ -52,12 +52,14 @@ class ResourceServer
      * Get the access token
      *
      * Note that this method will only match tokens that are not expired and match the given scopes (if any).
-     * Otherwise, null will be returned
+     * If no token is pass, this method will return null, but if a token is given does not exist (ie. has been
+     * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
      * @param  HttpRequest $request
      * @param  array       $scopes
      * @return AccessToken|null
+     * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
      */
     public function getAccessToken(HttpRequest $request, $scopes = [])
     {
@@ -68,7 +70,7 @@ class ResourceServer
         $token = $this->accessTokenService->getToken($token);
 
         if ($token === null || !$this->isTokenValid($token, $scopes)) {
-            return null;
+            throw new InvalidAccessTokenException();
         }
 
         return $token;
@@ -79,7 +81,6 @@ class ResourceServer
      *
      * @param  HttpRequest $request
      * @return string|null
-     * @throws Exception\InvalidAccessTokenException If access token is malformed in the Authorization header
      */
     private function extractAccessToken(HttpRequest $request)
     {
@@ -89,16 +90,16 @@ class ResourceServer
         if ($headers->has('Authorization')) {
             // Header value is expected to be "Bearer xxx"
             $parts = explode(' ', $headers->get('Authorization')->getFieldValue());
-            $token = end($parts); // Access token is the last value
 
-            if (count($parts) < 2 || empty($token)) {
-                throw new InvalidAccessTokenException('No access token could be found in Authorization header');
+            if (count($parts) < 2) {
+                return null;
             }
-        } else {
-            $token = $request->getQuery('access_token');
+
+            return end($parts);
         }
 
-        return $token;
+        // Default back to authorization in query param
+        return $request->getQuery('access_token');
     }
 
     /**
