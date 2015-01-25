@@ -254,3 +254,8 @@ $eventManager->attach(TokenEvent::EVENT_TOKEN_CREATED, function(TokenEvent $even
 ```
 
 You are responsible to wire everything in your application.
+
+#### Second level cache
+
+Scope and tokens are marked cacheable to take advantage of Doctrine 2.5 ORM second level cache. However, you
+need to configure the regions yourself.
