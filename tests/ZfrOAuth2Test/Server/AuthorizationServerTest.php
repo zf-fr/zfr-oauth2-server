@@ -18,6 +18,9 @@
 
 namespace ZfrOAuth2Test\Server;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\EventManager\EventManagerInterface;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use Zend\Stdlib\Parameters;
@@ -25,9 +28,13 @@ use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Event\TokenEvent;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
+use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -38,15 +45,15 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCheckAndGetForGrants()
     {
-        $clientService = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $clientService = $this->getMock(ClientService::class, [], [], '', false);
         $grant         = new PasswordGrant(
-            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
-            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
+            $this->getMock(TokenService::class, [], [], '', false),
+            $this->getMock(TokenService::class, [], [], '', false),
             function() {}
         );
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -61,15 +68,15 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckAndGetForResponseType()
     {
-        $clientService = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $clientService = $this->getMock(ClientService::class, [], [], '', false);
         $grant         = new AuthorizationGrant(
-            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
-            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false),
-            $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false)
+            $this->getMock(TokenService::class, [], [], '', false),
+            $this->getMock(TokenService::class, [], [], '', false),
+            $this->getMock(TokenService::class, [], [], '', false)
         );
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -78,18 +85,18 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($grant, $authorizationServer->getResponseType(AuthorizationGrant::GRANT_RESPONSE_TYPE));
 
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'unsupported_response_type');
+        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_response_type');
         $authorizationServer->getResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
     }
 
     public function testThrowExceptionIfNoResponseType()
     {
-        $request = new HttpRequest();
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getQueryParams')->willReturn([]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
@@ -103,12 +110,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testThrowExceptionIfNoGrantType()
     {
-        $request = new HttpRequest();
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getQueryParams')->willReturn([]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
@@ -122,10 +130,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testThrowExceptionIfPrivateClientDoesNotHaveSecret()
     {
-        $request = new HttpRequest();
-        $request->getPost()->set('grant_type', 'client_credentials');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
 
-        $grant = new ClientCredentialsGrant($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
+        $grant = new ClientCredentialsGrant($this->getMock(TokenService::class, [], [], '', false));
 
         $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
 
@@ -144,116 +152,96 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCanTriggerCreatedEventForToken()
     {
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['grant_type' => 'grantType']));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
         $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
-        $accessToken = new AccessToken();
-
-        $response = new HttpResponse();
-        $response->setContent(json_encode(['foo' => 'bar']));
-        $response->setMetadata('accessToken', $accessToken);
+        $response = $this->getMock(ResponseInterface::class);
+        $response->expects($this->at(0))->method('getStatusCode')->willReturn(200);
+        $response->expects($this->at(1))->method('withAddedHeader')->with('Content-Type', 'application/json');
+        $response->expects($this->at(2))->method('withAddedHeader')->with('Cache-Control', 'no-store');
+        $response->expects($this->at(3))->method('withAddedHeader')->with('Pragma', 'no-cache');
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
 
-        $eventManager = $this->getMock('Zend\EventManager\EventManagerInterface');
+        $eventManager = $this->getMock(EventManagerInterface::class);
         $authorizationServer->setEventManager($eventManager);
-
-        $response->setMetadata('accessToken', $accessToken);
 
         $eventManager->expects($this->once())
             ->method('trigger')
             ->with(TokenEvent::EVENT_TOKEN_CREATED, $this->callback(
-                function(TokenEvent $event) use ($request, $accessToken) {
+                function(TokenEvent $event) use ($request, $response) {
                     $this->assertSame($request, $event->getRequest());
-                    $this->assertSame($accessToken, $event->getAccessToken());
-                    $this->assertEquals(['foo' => 'bar'], $event->getResponseBody());
+                    $this->assertSame($response, $event->getResponse());
 
                     return true;
                 }));
 
-        $response = $authorizationServer->handleTokenRequest($request);
-
-        // First check that headers are properly added
-        $this->assertTrue($response->getHeaders()->has('Content-Type'));
-        $this->assertTrue($response->getHeaders()->has('Cache-Control'));
-        $this->assertTrue($response->getHeaders()->has('Pragma'));
-
-        $this->assertEquals('application/json', $response->getHeaders()->get('Content-Type')->getFieldValue());
-        $this->assertEquals('no-store', $response->getHeaders()->get('Cache-Control')->getFieldValue());
-        $this->assertEquals('no-cache', $response->getHeaders()->get('Pragma')->getFieldValue());
+        $authorizationServer->handleTokenRequest($request);
     }
 
     public function testCanTriggerFailedEventForToken()
     {
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['grant_type' => 'grantType']));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
         $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
-        $response = new HttpResponse();
-        $response->setStatusCode(400);
-        $response->setContent(json_encode(['foo' => 'bar']));
+        $response = $this->getMock(ResponseInterface::class);
+        $response->expects($this->at(0))->method('getStatusCode')->willReturn(400);
+        $response->expects($this->at(1))->method('withAddedHeader')->with('Content-Type', 'application/json');
+        $response->expects($this->at(2))->method('withAddedHeader')->with('Cache-Control', 'no-store');
+        $response->expects($this->at(3))->method('withAddedHeader')->with('Pragma', 'no-cache');
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
 
-        $eventManager = $this->getMock('Zend\EventManager\EventManagerInterface');
+        $eventManager = $this->getMock(EventManagerInterface::class);
         $authorizationServer->setEventManager($eventManager);
 
         $eventManager->expects($this->once())
             ->method('trigger')
             ->with(TokenEvent::EVENT_TOKEN_FAILED, $this->callback(
-                function(TokenEvent $event) use ($request) {
+                function(TokenEvent $event) use ($request, $response) {
                     $this->assertSame($request, $event->getRequest());
-                    $this->assertNull($event->getAccessToken());
-                    $this->assertEquals(['foo' => 'bar'], $event->getResponseBody());
+                    $this->assertSame($response, $event->getResponse());
 
                     return true;
                 }));
 
-        $response = $authorizationServer->handleTokenRequest($request);
-
-        // First check that headers are properly added
-        $this->assertTrue($response->getHeaders()->has('Content-Type'));
-        $this->assertTrue($response->getHeaders()->has('Cache-Control'));
-        $this->assertTrue($response->getHeaders()->has('Pragma'));
-
-        $this->assertEquals('application/json', $response->getHeaders()->get('Content-Type')->getFieldValue());
-        $this->assertEquals('no-store', $response->getHeaders()->get('Cache-Control')->getFieldValue());
-        $this->assertEquals('no-cache', $response->getHeaders()->get('Pragma')->getFieldValue());
+        $authorizationServer->handleTokenRequest($request);
     }
 
     public function testTriggerExceptionIfTokenIsNotPresentForRevocation()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
 
-        $request = new HttpRequest();
-        $request->setPost(new Parameters([]));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -262,16 +250,16 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
     public function testTriggerExceptionIfTokenHintIsInvalidForRevocation()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'unsupported_token_type');
+        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_token_type');
 
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['token' => 'abc', 'token_type_hint' => 'invalid']));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => 'invalid']);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -291,14 +279,14 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanReturn200IfTokenDoesNotExistForRevocation($tokenType)
     {
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['token' => 'abc', 'token_type_hint' => $tokenType]));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -312,7 +300,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $response = $authorizationServer->handleRevocationRequest($request);
 
-        $this->assertInstanceOf('Zend\Http\Response', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -321,14 +309,14 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanRevokeToken($tokenType)
     {
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['token' => 'abc', 'token_type_hint' => $tokenType]));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -346,7 +334,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $response = $authorizationServer->handleRevocationRequest($request);
 
-        $this->assertInstanceOf('Zend\Http\Response', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(200, $response->getStatusCode());
     }
 
@@ -355,14 +343,14 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testReturn503IfCannotRevoke($tokenType)
     {
-        $request = new HttpRequest();
-        $request->setPost(new Parameters(['token' => 'abc', 'token_type_hint' => $tokenType]));
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
-        $grant               = $this->getMock('ZfrOAuth2\Server\Grant\GrantInterface');
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
+        $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -386,7 +374,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $response = $authorizationServer->handleRevocationRequest($request);
 
-        $this->assertInstanceOf('Zend\Http\Response', $response);
+        $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(503, $response->getStatusCode());
     }
 }

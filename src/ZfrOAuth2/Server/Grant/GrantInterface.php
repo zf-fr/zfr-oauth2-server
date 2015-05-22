@@ -22,6 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
 /**
  * Interface that all authorization grant type should implement
@@ -42,12 +43,13 @@ interface GrantInterface
     const GRANT_RESPONSE_TYPE = null;
 
     /**
-     * Create an authorization response (this is the response to the "authorization endpoint"))
+     * Create an authorization code
      *
      * @param  ServerRequestInterface   $request
      * @param  Client                   $client
      * @param  TokenOwnerInterface|null $owner
      * @return ResponseInterface
+     * @throws OAuth2Exception
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
@@ -62,6 +64,7 @@ interface GrantInterface
      * @param  Client|null              $client
      * @param  TokenOwnerInterface|null $owner
      * @return ResponseInterface
+     * @throws OAuth2Exception
      */
     public function createTokenResponse(
         ServerRequestInterface $request,

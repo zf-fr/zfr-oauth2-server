@@ -190,7 +190,7 @@ class AuthorizationServer implements EventManagerAwareInterface
         /** @var ResponseInterface $response */
         $response = $response->withAddedHeader('Content-Type', 'application/json');
 
-        $event = new AuthorizationCodeEvent($request, $response);
+        $event = new AuthorizationCodeEvent($request, $response, $owner);
         $event->setTarget($this);
 
         if ($response->getStatusCode() === 200) {
@@ -234,7 +234,7 @@ class AuthorizationServer implements EventManagerAwareInterface
                              ->withAddedHeader('Cache-Control', 'no-store')
                              ->withAddedHeader('Pragma', 'no-cache');
 
-        $event = new TokenEvent($request, $response);
+        $event = new TokenEvent($request, $response, $owner);
         $event->setTarget($this);
 
         if ($response->getStatusCode() === 200) {

@@ -20,10 +20,13 @@ namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
 use DateTime;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\Http\Request as HttpRequest;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -51,30 +54,33 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $this->refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $this->accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $this->refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $this->grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
-        $this->grant->createAuthorizationResponse(new HttpRequest(), new Client());
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
     }
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
-        $this->grant->createTokenResponse(new HttpRequest(), new Client());
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
+
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createTokenResponse($request, new Client());
     }
 
     public function testAssertInvalidIfRefreshTokenIsExpired()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_grant');
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
 
-        $request = new HttpRequest();
-        $request->getPost()->set('refresh_token', '123');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['refresh_token' => '123']);
 
         $refreshToken = $this->getExpiredRefreshToken();
 
@@ -88,10 +94,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
 
-        $request = new HttpRequest();
-        $request->getPost()->fromArray(['refresh_token' => '123', 'scope' => 'read write']);
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['refresh_token' => '123', 'scope' => 'read write']);
 
         $refreshToken = $this->getValidRefreshToken();
         $refreshToken->setScopes(['read']);
@@ -117,10 +123,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCreateTokenResponse($rotateRefreshToken)
     {
-        $request = new HttpRequest();
-        $request->getPost()->fromArray(['refresh_token' => '123', 'scope' => 'read']);
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['refresh_token' => '123', 'scope' => 'read']);
 
-        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner = $this->getMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $refreshToken = $this->getValidRefreshToken();
@@ -148,14 +154,13 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant->setRotateRefreshTokens($rotateRefreshToken);
         $response = $this->grant->createTokenResponse($request, new Client());
 
-        $body = json_decode($response->getContent(), true);
+        $body = json_decode($response->getBody(), true);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
         $this->assertEquals(3600, $body['expires_in']);
         $this->assertEquals('read', $body['scope']);
         $this->assertEquals(1, $body['owner_id']);
-
         $this->assertEquals('azerty_refresh', $body['refresh_token']);
     }
 

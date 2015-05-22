@@ -21,8 +21,15 @@ namespace ZfrOAuth2\Server\Event;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
+ * Event that is triggered whenever an access token has been created or failed. You have access to both
+ * the request and response, as well as the optional token owner.
+ *
+ * If you want to alter the response before sending it back to the client, you can do it by fetching the current
+ * response, alter it and store it again
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
@@ -42,13 +49,23 @@ class TokenEvent extends Event
     protected $response;
 
     /**
+     * @var TokenOwnerInterface
+     */
+    private $tokenOwner;
+
+    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
+     * @param TokenOwnerInterface    $tokenOwner
      */
-    public function __construct(ServerRequestInterface $request, ResponseInterface $response)
-    {
-        $this->request  = $request;
-        $this->response = $response;
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TokenOwnerInterface $tokenOwner = null
+    ) {
+        $this->request    = $request;
+        $this->response   = $response;
+        $this->tokenOwner = $tokenOwner;
     }
 
     /**
@@ -74,5 +91,13 @@ class TokenEvent extends Event
     public function getResponse()
     {
         return $this->response;
+    }
+
+    /**
+     * @return TokenOwnerInterface
+     */
+    public function getTokenOwner()
+    {
+        return $this->tokenOwner;
     }
 }

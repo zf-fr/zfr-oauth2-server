@@ -20,7 +20,7 @@ namespace ZfrOAuth2Test\Server\Event;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
 
 class AuthorizationCodeEventTest extends \PHPUnit_Framework_TestCase
@@ -29,12 +29,12 @@ class AuthorizationCodeEventTest extends \PHPUnit_Framework_TestCase
     {
         $request  = $this->getMock(ServerRequestInterface::class);
         $response = $this->getMock(ResponseInterface::class);
-        $token    = new AuthorizationCode();
+        $owner    = $this->getMock(TokenOwnerInterface::class);
 
-        $event = new AuthorizationCodeEvent($request, $response, $token);
+        $event = new AuthorizationCodeEvent($request, $response, $owner);
 
         $this->assertSame($request, $event->getRequest());
         $this->assertEquals($response, $event->getResponse());
-        $this->assertSame($token, $event->getAuthorizationCode());
+        $this->assertSame($owner, $event->getTokenOwner());
     }
 }

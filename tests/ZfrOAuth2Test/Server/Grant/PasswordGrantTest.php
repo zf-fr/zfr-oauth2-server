@@ -20,10 +20,13 @@ namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
 use DateTime;
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\TokenService;
@@ -57,8 +60,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $this->refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $this->accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $this->refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $callable    = function(){};
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
@@ -66,23 +69,25 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
-        $this->grant->createAuthorizationResponse(new HttpRequest(), new Client());
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
-        $this->grant->createTokenResponse(new HttpRequest(), new Client());
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
+
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createTokenResponse($request, new Client());
     }
 
     public function testAssertInvalidIfWrongCredentials()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'access_denied');
+        $this->setExpectedException(OAuth2Exception::class, null, 'access_denied');
 
-        $request = new HttpRequest();
-        $request->getPost()->set('username', 'michael')
-                           ->set('password', 'azerty');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
 
         $callable = function($username, $password) {
             $this->assertEquals('michael', $username);
@@ -109,10 +114,10 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
-        $request = new HttpRequest();
-        $request->getPost()->fromArray(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
 
-        $owner = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner = $this->getMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $callable = function($username, $password) use ($owner) {
@@ -128,7 +133,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
             $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
         }
 
-        $authorizationServer = $this->getMock('ZfrOAuth2\Server\AuthorizationServer', [], [], '', false);
+        $authorizationServer = $this->getMock(AuthorizationServer::class, [], [], '', false);
         $authorizationServer->expects($this->once())
                             ->method('hasGrant')
                             ->with(RefreshTokenGrant::GRANT_TYPE)
@@ -139,9 +144,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->grant->createTokenResponse($request, new Client());
 
-        $body = json_decode($response->getContent(), true);
-
-        $this->assertSame($accessToken, $response->getMetadata('accessToken'));
+        $body = json_decode($response->getBody(), true);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
