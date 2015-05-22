@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server;
 
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Service\TokenService;
@@ -56,12 +56,12 @@ class ResourceServer
      * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
-     * @param  HttpRequest $request
-     * @param  array       $scopes
+     * @param  ServerRequestInterface $request
+     * @param  array                  $scopes
      * @return AccessToken|null
      * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
      */
-    public function getAccessToken(HttpRequest $request, $scopes = [])
+    public function getAccessToken(ServerRequestInterface $request, $scopes = [])
     {
         if (!$token = $this->extractAccessToken($request)) {
             return null;
@@ -79,17 +79,15 @@ class ResourceServer
     /**
      * Extract the token either from Authorization header or query params
      *
-     * @param  HttpRequest $request
+     * @param  ServerRequestInterface $request
      * @return string|null
      */
-    private function extractAccessToken(HttpRequest $request)
+    private function extractAccessToken(ServerRequestInterface $request)
     {
-        $headers = $request->getHeaders();
-
         // The preferred way is using Authorization header
-        if ($headers->has('Authorization')) {
+        if ($request->hasHeader('Authorization')) {
             // Header value is expected to be "Bearer xxx"
-            $parts = explode(' ', $headers->get('Authorization')->getFieldValue());
+            $parts = explode(' ', $request->getHeaderLine('Authorization'));
 
             if (count($parts) < 2) {
                 return null;
@@ -99,7 +97,9 @@ class ResourceServer
         }
 
         // Default back to authorization in query param
-        return $request->getQuery('access_token');
+        $queryParams = $request->getQueryParams();
+
+        return isset($queryParams['access_token']) ? $queryParams['access_token'] : null;
     }
 
     /**

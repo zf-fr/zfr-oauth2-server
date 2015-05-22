@@ -18,9 +18,9 @@
 
 namespace ZfrOAuth2\Server\Event;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
 
 /**
@@ -33,14 +33,14 @@ class AuthorizationCodeEvent extends Event
     const EVENT_CODE_FAILED  = 'authorizationCode.failed';
 
     /**
-     * @var HttpRequest
+     * @var RequestInterface
      */
     protected $request;
 
     /**
-     * @var array
+     * @var ResponseInterface
      */
-    protected $responseBody;
+    protected $response;
 
     /**
      * @var AuthorizationCode|null
@@ -48,19 +48,22 @@ class AuthorizationCodeEvent extends Event
     protected $authorizationCode;
 
     /**
-     * @param HttpRequest            $request
-     * @param array                  $responseBody
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
      * @param AuthorizationCode|null $authorizationCode
      */
-    public function __construct(HttpRequest $request, array $responseBody, AuthorizationCode $authorizationCode = null)
-    {
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        AuthorizationCode $authorizationCode = null
+    ) {
         $this->request           = $request;
-        $this->responseBody      = $responseBody;
+        $this->response          = $response;
         $this->authorizationCode = $authorizationCode;
     }
 
     /**
-     * @return HttpRequest
+     * @return ServerRequestInterface
      */
     public function getRequest()
     {
@@ -68,20 +71,20 @@ class AuthorizationCodeEvent extends Event
     }
 
     /**
-     * @param  array $responseBody
+     * @param  ResponseInterface $response
      * @return void
      */
-    public function setResponseBody(array $responseBody)
+    public function setResponse(ResponseInterface $response)
     {
-        $this->responseBody = $responseBody;
+        $this->response = $response;
     }
 
     /**
      * @return array
      */
-    public function getResponseBody()
+    public function getResponse()
     {
-        return $this->responseBody;
+        return $this->response;
     }
 
     /**

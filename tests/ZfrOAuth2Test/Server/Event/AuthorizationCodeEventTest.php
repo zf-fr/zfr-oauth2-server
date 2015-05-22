@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2Test\Server\Event;
 
-use Zend\Http\Request;
-use Zend\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
 use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
 
@@ -27,14 +27,14 @@ class AuthorizationCodeEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $request  = new Request();
-        $response = [];
+        $request  = $this->getMock(ServerRequestInterface::class);
+        $response = $this->getMock(ResponseInterface::class);
         $token    = new AuthorizationCode();
 
         $event = new AuthorizationCodeEvent($request, $response, $token);
 
         $this->assertSame($request, $event->getRequest());
-        $this->assertEquals($response, $event->getResponseBody());
+        $this->assertEquals($response, $event->getResponse());
         $this->assertSame($token, $event->getAuthorizationCode());
     }
 }
