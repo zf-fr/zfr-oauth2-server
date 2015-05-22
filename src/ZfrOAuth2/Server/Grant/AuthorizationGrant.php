@@ -18,6 +18,8 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 use Zend\Http\Request as HttpRequest;
 use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\AccessToken;
@@ -79,10 +81,15 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
-    {
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    ) {
+        $queryParams = $request->getQueryParams();
+
         // We must validate some parameters first
-        $responseType = $request->getQuery('response_type');
+        $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
 
         if ($responseType !== self::GRANT_RESPONSE_TYPE) {
             throw OAuth2Exception::invalidRequest(sprintf(
@@ -93,7 +100,9 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         // We try to fetch the redirect URI from query param as per spec, and if none found, we just use
         // the first redirect URI defined in the client
-        $redirectUri = $request->getQuery('redirect_uri', $client->getRedirectUris()[0]);
+        $redirectUri = isset($queryParams['redirect_uri'])
+            ? $queryParams['redirect_uri']
+            : $client->getRedirectUris()[0];
 
         // If the redirect URI cannot be found in the list, we throw an error as we don't want the user
         // to be redirected to an unauthorized URL
@@ -102,8 +111,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         // Scope and state allow to perform additional validation
-        $scope = $request->getQuery('scope');
-        $state = $request->getQuery('state');
+        $scope = isset($queryParams['scope']) ? $queryParams['scope'] : null;
+        $state = isset($queryParams['state']) ? $queryParams['state'] : null;
 
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setRedirectUri($redirectUri);
@@ -116,12 +125,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             'state' => $state
         ]));
 
-        $response = new HttpResponse();
-        $response->getHeaders()->addHeaderLine('Location', $redirectUri . '?' . $uri);
-        $response->setStatusCode(302); // here it's a redirection!
-
-        // Set the authorization code in metadata so it can be retrieved for events
-        $response->setMetadata('authorizationCode', $authorizationCode);
+        $response = new Response('', 302, ['Location' => $redirectUri . '?' . $uri]);
 
         return $response;
     }
@@ -130,9 +134,14 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
-    {
-        $code = $request->getPost('code');
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    ) {
+        $postParams = $request->getParsedBody();
+
+        $code = isset($postParams['code']) ? $postParams['code'] : null;
 
         if (null === $code) {
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
@@ -145,7 +154,9 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             throw OAuth2Exception::invalidGrant('Authorization code cannot be found or is expired');
         }
 
-        if ($authorizationCode->getClient()->getId() !== $request->getPost('client_id')) {
+        $clientId = isset($postParams['client_id']) ? $postParams['client_id'] : null;
+
+        if ($authorizationCode->getClient()->getId() !== $clientId) {
             throw OAuth2Exception::invalidRequest(
                 'Authorization code\'s client does not match with the one that created the authorization code'
             );

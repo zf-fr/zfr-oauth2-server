@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request;
-use Zend\Http\Response;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
@@ -44,22 +44,30 @@ interface GrantInterface
     /**
      * Create an authorization response (this is the response to the "authorization endpoint"))
      *
-     * @param  Request                  $request
+     * @param  ServerRequestInterface   $request
      * @param  Client                   $client
      * @param  TokenOwnerInterface|null $owner
-     * @return Response
+     * @return ResponseInterface
      */
-    public function createAuthorizationResponse(Request $request, Client $client, TokenOwnerInterface $owner = null);
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    );
 
     /**
      * Create a token response according (this is the response to the "token endpoint")
      *
-     * @param  Request                  $request
+     * @param  ServerRequestInterface   $request
      * @param  Client|null              $client
      * @param  TokenOwnerInterface|null $owner
-     * @return Response
+     * @return ResponseInterface
      */
-    public function createTokenResponse(Request $request, Client $client = null, TokenOwnerInterface $owner = null);
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    );
 
     /**
      * Get the grant type

@@ -18,8 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
@@ -78,17 +77,27 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
-    {
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    ) {
         throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
-    {
-        if (!$refreshToken = $request->getPost('refresh_token')) {
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    ) {
+        $postParams = $request->getParsedBody();
+
+        $refreshToken = isset($postParams['refresh_token']) ? $postParams['refresh_token'] : null;
+
+        if (null === $refreshToken) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
         }
 
@@ -102,7 +111,7 @@ class RefreshTokenGrant extends AbstractGrant
         // We can now create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scopes = $request->getPost('scope') ?: $refreshToken->getScopes();
+        $scopes = isset($postParams['scope']) ? $postParams['scope'] : $refreshToken->getScopes();
 
         if (!$refreshToken->matchScopes($scopes)) {
             throw OAuth2Exception::invalidScope(

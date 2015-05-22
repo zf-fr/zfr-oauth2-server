@@ -21,7 +21,6 @@ namespace ZfrOAuth2\Server\Event;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
-use ZfrOAuth2\Server\Entity\AccessToken;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -43,23 +42,13 @@ class TokenEvent extends Event
     protected $response;
 
     /**
-     * @var AccessToken|null
-     */
-    protected $accessToken;
-
-    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * @param AccessToken|null       $accessToken
      */
-    public function __construct(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        AccessToken $accessToken = null
-    ) {
-        $this->request     = $request;
-        $this->response    = $response;
-        $this->accessToken = $accessToken;
+    public function __construct(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $this->request  = $request;
+        $this->response = $response;
     }
 
     /**
@@ -82,16 +71,8 @@ class TokenEvent extends Event
     /**
      * @return ResponseInterface
      */
-    public function getResponseBody()
+    public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * @return AccessToken|null
-     */
-    public function getAccessToken()
-    {
-        return $this->accessToken;
     }
 }

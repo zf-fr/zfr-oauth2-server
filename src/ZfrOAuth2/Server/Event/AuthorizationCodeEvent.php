@@ -21,7 +21,6 @@ namespace ZfrOAuth2\Server\Event;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -29,11 +28,11 @@ use ZfrOAuth2\Server\Entity\AuthorizationCode;
  */
 class AuthorizationCodeEvent extends Event
 {
-    const EVENT_CODE_CREATED = 'authorizationCode.created';
-    const EVENT_CODE_FAILED  = 'authorizationCode.failed';
+    const EVENT_CODE_CREATED = 'authorization_code.created';
+    const EVENT_CODE_FAILED  = 'authorization_code.failed';
 
     /**
-     * @var RequestInterface
+     * @var ServerRequestInterface
      */
     protected $request;
 
@@ -43,23 +42,13 @@ class AuthorizationCodeEvent extends Event
     protected $response;
 
     /**
-     * @var AuthorizationCode|null
-     */
-    protected $authorizationCode;
-
-    /**
      * @param ServerRequestInterface $request
      * @param ResponseInterface      $response
-     * @param AuthorizationCode|null $authorizationCode
      */
-    public function __construct(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        AuthorizationCode $authorizationCode = null
-    ) {
-        $this->request           = $request;
-        $this->response          = $response;
-        $this->authorizationCode = $authorizationCode;
+    public function __construct(ServerRequestInterface $request, ResponseInterface $response)
+    {
+        $this->request  = $request;
+        $this->response = $response;
     }
 
     /**
@@ -85,13 +74,5 @@ class AuthorizationCodeEvent extends Event
     public function getResponse()
     {
         return $this->response;
-    }
-
-    /**
-     * @return AuthorizationCode|null
-     */
-    public function getAuthorizationCode()
-    {
-        return $this->authorizationCode;
     }
 }

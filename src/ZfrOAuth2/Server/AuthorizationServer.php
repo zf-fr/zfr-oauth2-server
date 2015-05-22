@@ -18,10 +18,11 @@
 
 namespace ZfrOAuth2\Server;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Diactoros\Response;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
@@ -163,15 +164,16 @@ class AuthorizationServer implements EventManagerAwareInterface
     }
 
     /**
-     * @param  HttpRequest              $request
+     * @param  ServerRequestInterface   $request
      * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
+     * @return ResponseInterface
      * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    public function handleAuthorizationRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
+    public function handleAuthorizationRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
     {
         try {
-            $responseType = $request->getQuery('response_type');
+            $queryParams  = $request->getQueryParams();
+            $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
 
             if (null === $responseType) {
                 throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
@@ -185,35 +187,33 @@ class AuthorizationServer implements EventManagerAwareInterface
             $response = $this->createResponseFromOAuthException($exception);
         }
 
-        $response->getHeaders()->addHeaderLine('Content-Type', 'application/json');
+        /** @var ResponseInterface $response */
+        $response = $response->withAddedHeader('Content-Type', 'application/json');
 
-        $responseBody = json_decode($response->getContent(), true);
-
-        $event = new AuthorizationCodeEvent($request, $responseBody, $response->getMetadata('authorizationCode'));
+        $event = new AuthorizationCodeEvent($request, $response);
         $event->setTarget($this);
 
-        if ($response->isSuccess()) {
+        if ($response->getStatusCode() === 200) {
             $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_CREATED, $event);
         } else {
             $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_FAILED, $event);
         }
 
-        // We re-encode the content back into the response in case it changed
-        $response->setContent(json_encode($event->getResponseBody()));
-
-        return $response;
+        return $event->getResponse();
     }
 
     /**
-     * @param  HttpRequest              $request
+     * @param  ServerRequestInterface   $request
      * @param  TokenOwnerInterface|null $owner
-     * @return HttpResponse
+     * @return ResponseInterface
      * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
      */
-    public function handleTokenRequest(HttpRequest $request, TokenOwnerInterface $owner = null)
+    public function handleTokenRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
     {
+        $postParams = $request->getParsedBody();
+
         try {
-            $grant = $request->getPost('grant_type');
+            $grant = isset($postParams['grant_type']) ? $postParams['grant_type'] : null;
 
             if (null === $grant) {
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
@@ -228,36 +228,35 @@ class AuthorizationServer implements EventManagerAwareInterface
         }
 
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
-        $response->getHeaders()->addHeaderLine('Content-Type', 'application/json')
-                               ->addHeaderLine('Cache-Control', 'no-store')
-                               ->addHeaderLine('Pragma', 'no-cache');
 
-        $responseBody = json_decode($response->getContent(), true);
+        /** @var ResponseInterface $response */
+        $response = $response->withAddedHeader('Content-Type', 'application/json')
+                             ->withAddedHeader('Cache-Control', 'no-store')
+                             ->withAddedHeader('Pragma', 'no-cache');
 
-        $event = new TokenEvent($request, $responseBody, $response->getMetadata('accessToken'));
+        $event = new TokenEvent($request, $response);
         $event->setTarget($this);
 
-        if ($response->isSuccess()) {
+        if ($response->getStatusCode() === 200) {
             $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_CREATED, $event);
         } else {
             $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
         }
 
-        // We re-encode the content back into the response in case it changed
-        $response->setContent(json_encode($event->getResponseBody()));
-
         return $response;
     }
 
     /**
-     * @param  HttpRequest $request
-     * @return HttpResponse
+     * @param  ServerRequestInterface $request
+     * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(HttpRequest $request)
+    public function handleRevocationRequest(ServerRequestInterface $request)
     {
-        $token     = $request->getPost('token');
-        $tokenHint = $request->getPost('token_type_hint');
+        $postParams = $request->getParsedBody();
+
+        $token     = isset($postParams['token']) ? $postParams['token'] : null;
+        $tokenHint = isset($postParams['token_type_hint']) ? $postParams['token_type_hint'] : null;
 
         if (null === $token || null === $tokenHint) {
             throw OAuth2Exception::invalidRequest(
@@ -278,7 +277,7 @@ class AuthorizationServer implements EventManagerAwareInterface
             $token = $this->refreshTokenService->getToken($token);
         }
 
-        $response = new HttpResponse();
+        $response = new Response();
 
         // According to spec, we should return 200 if token is invalid
         if (null === $token) {
@@ -303,7 +302,7 @@ class AuthorizationServer implements EventManagerAwareInterface
         } catch (\Exception $exception) {
             // According to spec (https://tools.ietf.org/html/rfc7009#section-2.2.1), we should return a server 503
             // error if we cannot delete the token for any reason
-            $response->setStatusCode(503);
+            $response = $response->withStatus(503, 'An error occurred while trying to delete the token');
         }
 
         return $response;
@@ -315,12 +314,12 @@ class AuthorizationServer implements EventManagerAwareInterface
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
      *
-     * @param  HttpRequest $request
-     * @param  bool        $allowPublicClients
+     * @param  ServerRequestInterface $request
+     * @param  bool                   $allowPublicClients
      * @return Client|null
      * @throws Exception\OAuth2Exception
      */
-    protected function getClient(HttpRequest $request, $allowPublicClients)
+    protected function getClient(ServerRequestInterface $request, $allowPublicClients)
     {
         list($id, $secret) = $this->extractClientCredentials($request);
 
@@ -350,37 +349,35 @@ class AuthorizationServer implements EventManagerAwareInterface
      *
      * @link   http://tools.ietf.org/html/rfc6749#section-5.2
      * @param  OAuth2Exception $exception
-     * @return HttpResponse
+     * @return Response
      */
     protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
-        $response = new HttpResponse();
-        $response->setStatusCode(400);
-
         $body = ['error' => $exception->getCode(), 'error_description' => $exception->getMessage()];
-        $response->setContent(json_encode($body));
 
-        return $response;
+        return new Response(json_encode($body), 400);
     }
 
     /**
      * Extract the client credentials from Authorization header or POST data
      *
-     * @param  HttpRequest $request
+     * @param  ServerRequestInterface $request
      * @return array
      */
-    private function extractClientCredentials(HttpRequest $request)
+    private function extractClientCredentials(ServerRequestInterface $request)
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
-        if ($header = $request->getHeader('Authorization')) {
+        if ($request->hasHeader('Authorization')) {
             // The value is "Basic xxx", we are interested in the last part
-            $parts = explode(' ', $header->getFieldValue());
+            $parts = explode(' ', $request->getHeaderLine('Authorization'));
             $value = base64_decode(end($parts));
 
             list($id, $secret) = explode(':', $value);
         } else {
-            $id     = $request->getPost('client_id');
-            $secret = $request->getPost('client_secret');
+            $postParams = $request->getParsedBody();
+
+            $id     = $postParams['client_id'];
+            $secret = $postParams['client_secret'];
         }
 
         return [$id, $secret];

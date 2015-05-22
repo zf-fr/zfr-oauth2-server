@@ -18,8 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
@@ -58,18 +57,26 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
-    {
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    ) {
         throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
     }
 
     /**
      * {@inheritDoc}
      */
-    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
-    {
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    ) {
+        $postParams = $request->getParsedBody();
+
         // Everything is okey, we can start tokens generation!
-        $scope       = $request->getPost('scope');
+        $scope       = isset($postParams['scope']) ? $postParams['scope'] : null;
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scope);

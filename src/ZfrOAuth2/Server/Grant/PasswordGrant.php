@@ -18,8 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
@@ -83,8 +82,11 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     /**
      * {@inheritDoc}
      */
-    public function createAuthorizationResponse(HttpRequest $request, Client $client, TokenOwnerInterface $owner = null)
-    {
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    ) {
         throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
     }
 
@@ -92,12 +94,17 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      * {@inheritDoc}
      * @throws OAuth2Exception
      */
-    public function createTokenResponse(HttpRequest $request, Client $client = null, TokenOwnerInterface $owner = null)
-    {
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    ) {
+        $postParams = $request->getParsedBody();
+
         // Validate the user using its username and password
-        $username = $request->getPost('username');
-        $password = $request->getPost('password');
-        $scope    = $request->getPost('scope');
+        $username = isset($postParams['username']) ? $postParams['username'] : null;
+        $password = isset($postParams['password']) ? $postParams['password'] : null;
+        $scope    = isset($postParams['scope']) ? $postParams['scope'] : null;
 
         if (null === $username || null == $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
@@ -110,7 +117,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
             throw OAuth2Exception::accessDenied('Either username or password are incorrect');
         }
 
-        // Everything is okey, we can start tokens generation!
+        // Everything is okay, we can start tokens generation!
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scope);
