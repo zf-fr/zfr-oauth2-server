@@ -354,7 +354,7 @@ class AuthorizationServer implements EventManagerAwareInterface
      */
     protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
-        $stream = new Stream('php://temp');
+        $stream = new Stream('php://temp', 'wb+');
         $stream->write(json_encode(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()]));
 
         return new Response($stream, 400);
@@ -378,8 +378,8 @@ class AuthorizationServer implements EventManagerAwareInterface
         } else {
             $postParams = $request->getParsedBody();
 
-            $id     = $postParams['client_id'];
-            $secret = $postParams['client_secret'];
+            $id     = isset($postParams['client_id']) ? $postParams['client_id'] : null;
+            $secret = isset($postParams['client_secret']) ? $postParams['client_secret'] : null;
         }
 
         return [$id, $secret];

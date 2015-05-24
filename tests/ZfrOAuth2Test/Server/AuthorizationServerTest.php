@@ -111,7 +111,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testThrowExceptionIfNoGrantType()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->willReturn([]);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
 
@@ -131,14 +131,14 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testThrowExceptionIfPrivateClientDoesNotHaveSecret()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
+        $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
 
         $grant = new ClientCredentialsGrant($this->getMock(TokenService::class, [], [], '', false));
 
-        $clientService       = $this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false);
+        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
 
-        $accessTokenService  = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
-        $refreshTokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -153,7 +153,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testCanTriggerCreatedEventForToken()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
+        $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
         $grant               = $this->getMock(GrantInterface::class);
@@ -167,10 +167,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('getStatusCode')->willReturn(200);
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Content-Type', 'application/json');
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Cache-Control', 'no-store');
-        $response->expects($this->at(3))->method('withAddedHeader')->with('Pragma', 'no-cache');
+        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
+        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
+        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
+        $response->expects($this->at(3))->method('getStatusCode')->willReturn(200);
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
 
@@ -193,7 +193,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     public function testCanTriggerFailedEventForToken()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
+        $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
         $grant               = $this->getMock(GrantInterface::class);
@@ -207,10 +207,10 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('getStatusCode')->willReturn(400);
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Content-Type', 'application/json');
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Cache-Control', 'no-store');
-        $response->expects($this->at(3))->method('withAddedHeader')->with('Pragma', 'no-cache');
+        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
+        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
+        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
+        $response->expects($this->at(3))->method('getStatusCode')->willReturn(400);
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
 

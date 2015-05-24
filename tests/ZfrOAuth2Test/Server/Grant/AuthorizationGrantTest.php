@@ -95,7 +95,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('http://www.example.com/?code=azerty_auth&state=xyz', $location);
+        $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
     }
 
     public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUriInList()
@@ -118,7 +118,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('http://www.custom-example.com/?code=azerty_auth&state=xyz', $location);
+        $this->assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
     }
 
     public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized()

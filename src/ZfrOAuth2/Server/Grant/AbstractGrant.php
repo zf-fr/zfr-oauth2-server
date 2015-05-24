@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -104,6 +105,9 @@ abstract class AbstractGrant implements GrantInterface
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        return new Response(json_encode(array_filter($responseBody)));
+        $stream = new Stream('php://temp', 'wb+');
+        $stream->write(json_encode(array_filter($responseBody)));
+
+        return new Response($stream);
     }
 }

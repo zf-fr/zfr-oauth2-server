@@ -102,7 +102,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
-                           ->with('foo')
+                           ->with('token')
                            ->will($this->returnValue(null));
 
         $this->resourceServer->getAccessToken($request);
