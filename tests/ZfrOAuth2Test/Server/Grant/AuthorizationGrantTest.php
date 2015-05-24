@@ -57,7 +57,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
     protected $refreshTokenService;
 
     /**
-     * @var PasswordGrant
+     * @var AuthorizationGrant
      */
     protected $grant;
 

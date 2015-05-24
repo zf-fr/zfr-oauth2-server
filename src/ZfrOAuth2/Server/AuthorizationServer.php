@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
+use Zend\Diactoros\Stream;
 use Zend\EventManager\EventManagerAwareInterface;
 use Zend\EventManager\EventManagerAwareTrait;
 use ZfrOAuth2\Server\Entity\Client;
@@ -243,7 +244,7 @@ class AuthorizationServer implements EventManagerAwareInterface
             $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
         }
 
-        return $response;
+        return $event->getResponse();
     }
 
     /**
@@ -353,9 +354,10 @@ class AuthorizationServer implements EventManagerAwareInterface
      */
     protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
-        $body = ['error' => $exception->getCode(), 'error_description' => $exception->getMessage()];
+        $stream = new Stream('php://temp');
+        $stream->write(json_encode(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()]));
 
-        return new Response(json_encode($body), 400);
+        return new Response($stream, 400);
     }
 
     /**
