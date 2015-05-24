@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -47,8 +48,8 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->objectManager    = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->clientRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
+        $this->objectManager    = $this->getMock(ObjectManager::class);
+        $this->clientRepository = $this->getMock(SelectableObjectRepository::class);
         $this->clientService    = new ClientService($this->objectManager, $this->clientRepository);
     }
 
@@ -70,7 +71,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->objectManager->expects($this->once())
                             ->method('persist')
-                            ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\Client'));
+                            ->with($this->isInstanceOf(Client::class));
 
         list($client, $secret) = $this->clientService->registerClient($client);
 

@@ -21,9 +21,6 @@ namespace ZfrOAuth2Test\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\EventManagerInterface;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use Zend\Stdlib\Parameters;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\RefreshToken;
@@ -62,7 +59,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $this->assertSame($grant, $authorizationServer->getGrant(PasswordGrant::GRANT_TYPE));
 
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'unsupported_grant_type');
+        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_grant_type');
         $authorizationServer->getGrant(ClientCredentialsGrant::GRANT_TYPE);
     }
 
