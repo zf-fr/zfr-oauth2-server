@@ -30,8 +30,13 @@
     "doctrine/orm": "~2.5"
   },
   "autoload": {
-    "psr-0": {
+    "psr-4": {
       "ZfrOAuth2\\": "src/"
+    }
+  },
+  "autoload-dev": {
+    "psr-4": {
+      "ZfrOAuth2Test\\": "tests/"
     }
   }
 }
