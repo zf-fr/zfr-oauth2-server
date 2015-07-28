@@ -21,7 +21,6 @@ namespace ZfrOAuth2Test\Server\Grant;
 use DateInterval;
 use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Http\Request as HttpRequest;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;

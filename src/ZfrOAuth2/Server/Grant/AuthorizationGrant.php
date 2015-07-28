@@ -20,8 +20,6 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
 use ZfrOAuth2\Server\Entity\Client;
