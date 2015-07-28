@@ -125,9 +125,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             'state' => $state
         ]));
 
-        $response = new Response('php://temp', 302, ['Location' => $redirectUri . '?' . $uri]);
-
-        return $response;
+        return new Response\RedirectResponse($redirectUri . '?' . $uri);
     }
 
     /**

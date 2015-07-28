@@ -105,9 +105,6 @@ abstract class AbstractGrant implements GrantInterface
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        $stream = new Stream('php://temp', 'wb+');
-        $stream->write(json_encode(array_filter($responseBody)));
-
-        return new Response($stream);
+        return new Response\JsonResponse(array_filter($responseBody));
     }
 }
