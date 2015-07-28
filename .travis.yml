@@ -4,7 +4,11 @@ php:
   - 5.4
   - 5.5
   - 5.6
-  - hhvm-nightly
+  - 7.0
+  - hhvm
+
+allow_failure:
+  - hhvm
 
 before_script:
   - composer self-update

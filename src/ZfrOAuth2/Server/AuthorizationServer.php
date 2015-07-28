@@ -354,7 +354,12 @@ class AuthorizationServer implements EventManagerAwareInterface
      */
     protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
-        return new Response\JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()], 400);
+        $payload = [
+            'error'             => $exception->getCode(),
+            'error_description' => $exception->getMessage()
+        ];
+
+        return new Response\JsonResponse($payload, 400);
     }
 
     /**
