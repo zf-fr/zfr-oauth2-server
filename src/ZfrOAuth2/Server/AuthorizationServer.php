@@ -354,10 +354,7 @@ class AuthorizationServer implements EventManagerAwareInterface
      */
     protected function createResponseFromOAuthException(OAuth2Exception $exception)
     {
-        $stream = new Stream('php://temp', 'wb+');
-        $stream->write(json_encode(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()]));
-
-        return new Response($stream, 400);
+        return new Response\JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()], 400);
     }
 
     /**
