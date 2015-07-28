@@ -18,23 +18,23 @@
 
 namespace ZfrOAuth2Test\Server\Event;
 
-use Zend\Http\Request;
-use Zend\Http\Response;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Event\TokenEvent;
 
 class TokenEventTest extends \PHPUnit_Framework_TestCase
 {
     public function testGetters()
     {
-        $request  = new Request();
-        $response = [];
-        $token    = new AccessToken();
+        $request  = $this->getMock(ServerRequestInterface::class);
+        $response = $this->getMock(ResponseInterface::class);
+        $owner    = $this->getMock(TokenOwnerInterface::class);
 
-        $event = new TokenEvent($request, $response, $token);
+        $event = new TokenEvent($request, $response, $owner);
 
         $this->assertSame($request, $event->getRequest());
-        $this->assertEquals($response, $event->getResponseBody());
-        $this->assertSame($token, $event->getAccessToken());
+        $this->assertEquals($response, $event->getResponse());
+        $this->assertSame($owner, $event->getTokenOwner());
     }
 }

@@ -20,8 +20,9 @@ namespace ZfrOAuth2Test\Server;
 
 use DateInterval;
 use DateTime;
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\ResourceServer;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -44,16 +45,17 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService   = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $this->tokenService   = $this->getMock(TokenService::class, [], [], '', false);
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
     public function testCanExtractAccessTokenFromAuthorizationHeader()
     {
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
+        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
-        $token = $this->getMock('ZfrOAuth2\Server\Entity\AccessToken');
+        $token = $this->getMock(AccessToken::class);
         $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
 
         $this->tokenService->expects($this->once())
@@ -66,10 +68,11 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function testCanExtractAccessTokenFromQueryString()
     {
-        $request = new HttpRequest();
-        $request->getQuery()->fromArray(['access_token' => 'token']);
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(false));
+        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['access_token' => 'token']));
 
-        $token = $this->getMock('ZfrOAuth2\Server\Entity\AccessToken');
+        $token = $this->getMock(AccessToken::class);
         $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
 
         $this->tokenService->expects($this->once())
@@ -82,23 +85,25 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function testReturnNullIfNoAccessTokenIsInAuthorizationHeader()
     {
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Authorization', '');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
+        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue(''));
 
         $this->assertNull($this->resourceServer->getAccessToken($request));
     }
 
     public function testThrowExceptionIfTokenDoesNotExistAnymore()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\InvalidAccessTokenException');
+        $this->setExpectedException(InvalidAccessTokenException::class);
 
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Authorization', 'Bearer foo');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
+        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
-                           ->with('foo')
-                          ->will($this->returnValue(null));
+                           ->with('token')
+                           ->will($this->returnValue(null));
 
         $this->resourceServer->getAccessToken($request);
     }
@@ -137,8 +142,9 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
     {
-        $request = new HttpRequest();
-        $request->getHeaders()->addHeaderLine('Authorization', 'Bearer token');
+        $request = $this->getMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
+        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
         $accessToken = new AccessToken();
         $date        = new DateTime();
@@ -158,10 +164,10 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                            ->will($this->returnValue($accessToken));
 
         if (!$match || $expiredToken) {
-            $this->setExpectedException('ZfrOAuth2\Server\Exception\InvalidAccessTokenException');
+            $this->setExpectedException(InvalidAccessTokenException::class);
         }
 
         $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
-        $this->assertInstanceOf('ZfrOAuth2\Server\Entity\AccessToken', $tokenResult);
+        $this->assertInstanceOf(AccessToken::class, $tokenResult);
     }
 }

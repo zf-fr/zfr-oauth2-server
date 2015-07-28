@@ -23,6 +23,7 @@ use DateTime;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -34,7 +35,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 {
     public function testGettersAndSetters()
     {
-        $owner     = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner     = $this->getMock(TokenOwnerInterface::class);
         $client    = new Client();
         $expiresAt = new DateTime();
 

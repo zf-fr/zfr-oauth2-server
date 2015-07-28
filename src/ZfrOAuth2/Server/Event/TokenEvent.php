@@ -18,12 +18,18 @@
 
 namespace ZfrOAuth2\Server\Event;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
+ * Event that is triggered whenever an access token has been created or failed. You have access to both
+ * the request and response, as well as the optional token owner.
+ *
+ * If you want to alter the response before sending it back to the client, you can do it by fetching the current
+ * response, alter it and store it again
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
@@ -33,34 +39,37 @@ class TokenEvent extends Event
     const EVENT_TOKEN_FAILED  = 'token.failed';
 
     /**
-     * @var HttpRequest
+     * @var ServerRequestInterface
      */
     protected $request;
 
     /**
-     * @var array
+     * @var ResponseInterface
      */
-    protected $responseBody;
+    protected $response;
 
     /**
-     * @var AccessToken|null
+     * @var TokenOwnerInterface
      */
-    protected $accessToken;
+    private $tokenOwner;
 
     /**
-     * @param HttpRequest      $request
-     * @param array            $responseBody
-     * @param AccessToken|null $accessToken
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param TokenOwnerInterface    $tokenOwner
      */
-    public function __construct(HttpRequest $request, array $responseBody, AccessToken $accessToken = null)
-    {
-        $this->request      = $request;
-        $this->responseBody = $responseBody;
-        $this->accessToken  = $accessToken;
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TokenOwnerInterface $tokenOwner = null
+    ) {
+        $this->request    = $request;
+        $this->response   = $response;
+        $this->tokenOwner = $tokenOwner;
     }
 
     /**
-     * @return HttpRequest
+     * @return ServerRequestInterface
      */
     public function getRequest()
     {
@@ -68,27 +77,27 @@ class TokenEvent extends Event
     }
 
     /**
-     * @param  array $responseBody
+     * @param  ResponseInterface $response
      * @return void
      */
-    public function setResponseBody(array $responseBody)
+    public function setResponse(ResponseInterface $response)
     {
-        $this->responseBody = $responseBody;
+        $this->response = $response;
     }
 
     /**
-     * @return array
+     * @return ResponseInterface
      */
-    public function getResponseBody()
+    public function getResponse()
     {
-        return $this->responseBody;
+        return $this->response;
     }
 
     /**
-     * @return AccessToken|null
+     * @return TokenOwnerInterface
      */
-    public function getAccessToken()
+    public function getTokenOwner()
     {
-        return $this->accessToken;
+        return $this->tokenOwner;
     }
 }

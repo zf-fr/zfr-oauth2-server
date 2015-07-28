@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Id;
 
+use Doctrine\ORM\EntityManager;
 use ZfrOAuth2\Server\Id\ClientIdGenerator;
 
 /**
@@ -31,7 +32,7 @@ class ClientIdGeneratorTest extends \PHPUnit_Framework_TestCase
     public function testCanGenerateClientId()
     {
         $generator = new ClientIdGenerator();
-        $id        = $generator->generate($this->getMock('Doctrine\ORM\EntityManager', [], [], '', false), new \stdClass());
+        $id        = $generator->generate($this->getMock(EntityManager::class, [], [], '', false), new \stdClass());
 
         $this->assertEquals(13, strlen($id));
     }

@@ -19,12 +19,16 @@
 namespace ZfrOAuth2Test\Server\Service;
 
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
+use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -55,9 +59,9 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->objectManager   = $this->getMock('Doctrine\Common\Persistence\ObjectManager');
-        $this->tokenRepository = $this->getMock('ZfrOAuth2Test\Server\Asset\SelectableObjectRepository');
-        $this->scopeService    = $this->getMock('ZfrOAuth2\Server\Service\ScopeService', [], [], '', false);
+        $this->objectManager   = $this->getMock(ObjectManager::class);
+        $this->tokenRepository = $this->getMock(SelectableObjectRepository::class);
+        $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
         $this->tokenService    = new TokenService(
             $this->objectManager,
             $this->tokenRepository,
@@ -116,12 +120,12 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
         $this->tokenRepository->expects($this->at(0))
                               ->method('matching')
-                              ->with($this->isInstanceOf('Doctrine\Common\Collections\Criteria'))
+                              ->with($this->isInstanceOf(Criteria::class))
                               ->will($this->returnValue($expiredTokens));
 
         $this->tokenRepository->expects($this->at(1))
                               ->method('matching')
-                              ->with($this->isInstanceOf('Doctrine\Common\Collections\Criteria'))
+                              ->with($this->isInstanceOf(Criteria::class))
                               ->will($this->returnValue(new ArrayCollection()));
 
         $this->objectManager->expects($this->once())
@@ -167,7 +171,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     public function testCanSaveToken($registeredScopes, $tokenScope, $throwException)
     {
         if ($throwException) {
-            $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_scope');
+            $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
         $token = new AccessToken();
@@ -186,7 +190,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         if (!$throwException) {
             $this->objectManager->expects($this->once())
                                 ->method('persist')
-                                ->with($this->isInstanceOf('ZfrOAuth2\Server\Entity\AbstractToken'));
+                                ->with($this->isInstanceOf(AbstractToken::class));
         }
 
         $scopes = [];

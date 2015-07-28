@@ -18,7 +18,8 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use Zend\Http\Response as HttpResponse;
+use Psr\Http\Message\ResponseInterface;
+use Zend\Diactoros\Response;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -81,7 +82,7 @@ abstract class AbstractGrant implements GrantInterface
      * @param  AccessToken       $accessToken
      * @param  RefreshToken|null $refreshToken
      * @param  bool              $useRefreshTokenScopes
-     * @return HttpResponse
+     * @return ResponseInterface
      */
     protected function prepareTokenResponse(
         AccessToken $accessToken,
@@ -103,12 +104,6 @@ abstract class AbstractGrant implements GrantInterface
             $responseBody['refresh_token'] = $refreshToken->getToken();
         }
 
-        $response = new HttpResponse();
-
-        // Set the access token in metadata so it can be retrieved for events
-        $response->setMetadata('accessToken', $accessToken);
-        $response->setContent(json_encode(array_filter($responseBody)));
-
-        return $response;
+        return new Response\JsonResponse(array_filter($responseBody));
     }
 }

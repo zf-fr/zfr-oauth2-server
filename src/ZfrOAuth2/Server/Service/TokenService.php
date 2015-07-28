@@ -23,7 +23,6 @@ use Doctrine\Common\Collections\Criteria;
 use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Zend\Crypt\Utils as CryptUtils;
 use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -119,6 +118,7 @@ class TokenService
         $token->setExpiresAt($expiresAt);
 
         do {
+            // @TODO: once we require PHP 7, we can use native random_bytes
             $tokenHash = Rand::getString(40, $this->tokenCharlist);
         } while ($this->tokenRepository->find($tokenHash) !== null);
 
@@ -143,7 +143,7 @@ class TokenService
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure
         // that the token matches case
-        if (!$tokenFromDb || !CryptUtils::compareStrings($tokenFromDb->getToken(), $token)) {
+        if (!$tokenFromDb || !$this->compareStrings($tokenFromDb->getToken(), $token)) {
             return null;
         }
 
@@ -214,5 +214,34 @@ class TokenService
                 implode(', ', $diff)
             ));
         }
+    }
+
+    /**
+     * This method is extracted from Zend\Crypt (so that we avoid the whole dependency)
+     *
+     * @param  string $expected
+     * @param  string $actual
+     * @return bool
+     */
+    private function compareStrings($expected, $actual)
+    {
+        $expected     = (string) $expected;
+        $actual       = (string) $actual;
+
+        if (function_exists('hash_equals')) {
+            return hash_equals($expected, $actual);
+        }
+
+        $lenExpected  = strlen($expected);
+        $lenActual    = strlen($actual);
+        $len          = min($lenExpected, $lenActual);
+
+        $result = 0;
+        for ($i = 0; $i < $len; $i++) {
+            $result |= ord($expected[$i]) ^ ord($actual[$i]);
+        }
+        $result |= $lenExpected ^ $lenActual;
+
+        return ($result === 0);
     }
 }

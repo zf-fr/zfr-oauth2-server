@@ -6,7 +6,7 @@
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/badges/quality-score.png?s=be36235c9898cfc55044f58d9bba789d2d4d102e)](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/)
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 
-ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's main goal is to be a clean, PHP 5.4+
+ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's main goal is to be a clean, PHP 5.5+
 library that aims to be used with Doctrine 2 only.
 
 Currently, ZfrOAuth2Server does not implement the whole specification (implicit grant is missing), so you are
@@ -20,7 +20,7 @@ Here are other OAuth2 library you can use:
 
 ## Requirements
 
-- PHP 5.4 or higher
+- PHP 5.5 or higher
 - Doctrine 2
 
 ## To-do
@@ -41,7 +41,7 @@ Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This
 Installation is only officially supported using Composer:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:0.6.*
+php composer.phar require zfr/zfr-oauth2-server:0.7.*
 ```
 
 ## Framework integration
@@ -219,22 +219,21 @@ class Module
 
     public function tokenCreated(TokenEvent $event)
     {
-        // We can log the access token
-        $accessToken = $event->getAccessToken();
+        // Get the response
+        $response = $event->getResponse();
         // ...
 
-        // Or we can alter the response body, if we need to
-        $body                 = $event->getResponseBody();
-        $body['custom_field'] = 'bar';
+        // Response is a PSR-7 compliant response, so you modify it
+        $response = $response->withHeader(...);
 
-        // Update the body
-        $event->setResponseBody($body);
+        // Do not forget to set back the response, as PSR-7 are immutable
+        $event->setResponse($response);
     }
 
     public function tokenFailed(TokenEvent $event)
     {
         // We can inspect the response to know what happen and log the failure
-        $body = $event->getResponseBody();
+        $body = $event->getResponse()->getBody();
     }
 }
 ```

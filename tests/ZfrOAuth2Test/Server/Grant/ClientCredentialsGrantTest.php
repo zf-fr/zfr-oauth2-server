@@ -20,9 +20,11 @@ namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
 use DateTime;
-use Zend\Http\Request as HttpRequest;
+use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -45,22 +47,22 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService = $this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false);
+        $this->tokenService = $this->getMock(TokenService::class, [], [], '', false);
         $this->grant = new ClientCredentialsGrant($this->tokenService);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException('ZfrOAuth2\Server\Exception\OAuth2Exception', null, 'invalid_request');
-        $this->grant->createAuthorizationResponse(new HttpRequest(), new Client());
+        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
     }
 
     public function testCanCreateTokenResponse()
     {
-        $request = new HttpRequest();
+        $request = $this->getMock(ServerRequestInterface::class);
 
         $client  = new Client();
-        $owner   = $this->getMock('ZfrOAuth2\Server\Entity\TokenOwnerInterface');
+        $owner   = $this->getMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $token = new AccessToken();
@@ -72,9 +74,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
-        $body = json_decode($response->getContent(), true);
-
-        $this->assertSame($token, $response->getMetadata('accessToken'));
+        $body = json_decode($response->getBody(), true);
 
         $this->assertEquals('azerty', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);

@@ -18,49 +18,58 @@
 
 namespace ZfrOAuth2\Server\Event;
 
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
 use Zend\EventManager\Event;
-use Zend\Http\Request as HttpRequest;
-use Zend\Http\Response as HttpResponse;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
+use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 
 /**
+ * Event that is triggered whenever an authorization code has been created or failed. You have access to both
+ * the request and response, as well as the optional token owner.
+ *
+ * If you want to alter the response before sending it back to the client, you can do it by fetching the current
+ * response, alter it and store it again
+ *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationCodeEvent extends Event
 {
-    const EVENT_CODE_CREATED = 'authorizationCode.created';
-    const EVENT_CODE_FAILED  = 'authorizationCode.failed';
+    const EVENT_CODE_CREATED = 'authorization_code.created';
+    const EVENT_CODE_FAILED  = 'authorization_code.failed';
 
     /**
-     * @var HttpRequest
+     * @var ServerRequestInterface
      */
-    protected $request;
+    private $request;
 
     /**
-     * @var array
+     * @var ResponseInterface
      */
-    protected $responseBody;
+    private $response;
 
     /**
-     * @var AuthorizationCode|null
+     * @var TokenOwnerInterface
      */
-    protected $authorizationCode;
+    private $tokenOwner;
 
     /**
-     * @param HttpRequest            $request
-     * @param array                  $responseBody
-     * @param AuthorizationCode|null $authorizationCode
+     * @param ServerRequestInterface $request
+     * @param ResponseInterface      $response
+     * @param TokenOwnerInterface    $tokenOwner
      */
-    public function __construct(HttpRequest $request, array $responseBody, AuthorizationCode $authorizationCode = null)
-    {
-        $this->request           = $request;
-        $this->responseBody      = $responseBody;
-        $this->authorizationCode = $authorizationCode;
+    public function __construct(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        TokenOwnerInterface $tokenOwner = null
+    ) {
+        $this->request    = $request;
+        $this->response   = $response;
+        $this->tokenOwner = $tokenOwner;
     }
 
     /**
-     * @return HttpRequest
+     * @return ServerRequestInterface
      */
     public function getRequest()
     {
@@ -68,27 +77,27 @@ class AuthorizationCodeEvent extends Event
     }
 
     /**
-     * @param  array $responseBody
+     * @param  ResponseInterface $response
      * @return void
      */
-    public function setResponseBody(array $responseBody)
+    public function setResponse(ResponseInterface $response)
     {
-        $this->responseBody = $responseBody;
+        $this->response = $response;
     }
 
     /**
      * @return array
      */
-    public function getResponseBody()
+    public function getResponse()
     {
-        return $this->responseBody;
+        return $this->response;
     }
 
     /**
-     * @return AuthorizationCode|null
+     * @return TokenOwnerInterface
      */
-    public function getAuthorizationCode()
+    public function getTokenOwner()
     {
-        return $this->authorizationCode;
+        return $this->tokenOwner;
     }
 }
