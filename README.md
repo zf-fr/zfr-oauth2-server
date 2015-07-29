@@ -130,7 +130,7 @@ $user = new User(); // must implement TokenOwnerInterface
 $response = $authorizationServer->handleRequest($request, $user);
 ```
 
-#### Revoking a token
+#### Revoking a token 
 
 ZfrOAuth2Server supports revoking access and refresh tokens using the [RFC 7009 specification](https://tools.ietf.org/html/rfc7009).
 You can use the `handleRevocationRequest` method in the AuthorizationServer. You must pass the following two POST parameters:
