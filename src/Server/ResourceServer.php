@@ -33,7 +33,7 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ResourceServer
+class ResourceServer implements ResourceServerInterface
 {
     /**
      * @var TokenService

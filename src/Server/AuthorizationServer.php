@@ -39,7 +39,7 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServer implements EventManagerAwareInterface
+class AuthorizationServer implements AuthorizationServerInterface, EventManagerAwareInterface
 {
     use EventManagerAwareTrait;
 
