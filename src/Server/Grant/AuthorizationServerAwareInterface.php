@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 
 /**
  * Interface for grant that need to have access to the authorization server
@@ -31,8 +31,8 @@ interface AuthorizationServerAwareInterface
     /**
      * Set the authorization server
      *
-     * @param  AuthorizationServer $authorizationServer
+     * @param  AuthorizationServerInterface $authorizationServer
      * @return void
      */
-    public function setAuthorizationServer(AuthorizationServer $authorizationServer);
+    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer);
 }

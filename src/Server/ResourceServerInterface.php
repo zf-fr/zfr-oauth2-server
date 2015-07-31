@@ -16,26 +16,28 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Grant;
+namespace ZfrOAuth2\Server;
 
-use ZfrOAuth2\Server\AuthorizationServerInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * The resource server main role is to validate the access token and that its scope covers the
+ * requested resource
+ *
+ * Currently, the resource server only implements the Bearer token usage, as described in the
+ * RFC 6750 (http://tools.ietf.org/html/rfc6750)
  */
-trait AuthorizationServerAwareTrait
+interface ResourceServerInterface
 {
     /**
-     * @var AuthorizationServerInterface
+     * Get the access token
+     *
+     * @param  ServerRequestInterface $request
+     * @param  array|string|Scope[] $scopes
+     * @return AccessToken|null
+     * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
      */
-    protected $authorizationServer;
-
-    /**
-     * {@inheritDoc}
-     */
-    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
-    {
-        $this->authorizationServer = $authorizationServer;
-    }
+    public function getAccessToken(ServerRequestInterface $request, $scopes = []);
 }
