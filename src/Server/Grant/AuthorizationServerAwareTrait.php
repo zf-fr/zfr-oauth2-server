@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -27,14 +27,14 @@ use ZfrOAuth2\Server\AuthorizationServer;
 trait AuthorizationServerAwareTrait
 {
     /**
-     * @var AuthorizationServer
+     * @var AuthorizationServerInterface
      */
     protected $authorizationServer;
 
     /**
      * {@inheritDoc}
      */
-    public function setAuthorizationServer(AuthorizationServer $authorizationServer)
+    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
