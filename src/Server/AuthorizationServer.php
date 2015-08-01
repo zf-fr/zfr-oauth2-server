@@ -193,7 +193,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         $event = new AuthorizationCodeEvent($request, $response, $owner);
         $event->setTarget($this);
 
-        if ($response->getStatusCode() === 200) {
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode >= 200 && $statusCode <= 399) {
             $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_CREATED, $event);
         } else {
             $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_FAILED, $event);
@@ -237,7 +239,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         $event = new TokenEvent($request, $response, $owner);
         $event->setTarget($this);
 
-        if ($response->getStatusCode() === 200) {
+        $statusCode = $response->getStatusCode();
+
+        if ($statusCode >= 200 && $statusCode <= 399) {
             $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_CREATED, $event);
         } else {
             $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
