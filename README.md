@@ -7,7 +7,7 @@
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 
 ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's main goal is to be a clean, PHP 5.5+
-library that aims to be used with Doctrine 2 only.
+library that aims to be used with Doctrine 2 only. It is compatible with [PSR-7](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md) request and responses which makes it possible to use with any framework compatible with PSR-7.
 
 Currently, ZfrOAuth2Server does not implement the whole specification (implicit grant is missing), so you are
 encouraged to have a look at the doc if ZfrOAuth2Server can be used in your application. However, it implements the
@@ -113,7 +113,7 @@ $authorizationServer = new AuthorizationServer([$authorizationGrant]);
 $response = $authorizationServer->handleRequest($request);
 ```
 
-The request must be a valid `Zend\Http\Request`, and the authorization server returns a `Zend\Http\Response` object
+The request must be a valid `Psr\Http\Message\ServerRequestInterface`, and the authorization server returns a `Psr\Http\Message\ResponseInterface` object
 that is compliant with the OAuth2 specification.
 
 #### Passing a user
