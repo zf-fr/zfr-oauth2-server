@@ -163,35 +163,6 @@ class TokenService
     }
 
     /**
-     * Delete all the expired tokens
-     *
-     * This can be executed as a CRON task to clean a database. Because we are type hinting on ObjectManager,
-     * we cannot take advantage of optimized delete queries. This method also only works with Selectable
-     *
-     * @return void
-     * @throws RuntimeException
-     */
-    public function deleteExpiredTokens()
-    {
-        if (!$this->tokenRepository instanceof Selectable) {
-            throw new RuntimeException('Deleting expired tokens currently only work with Selectable repositories');
-        }
-
-        $criteria = new Criteria(Criteria::expr()->lt('expiresAt', new DateTime()));
-        $criteria->setMaxResults(50);
-
-        do {
-            $expiredTokens = $this->tokenRepository->matching($criteria);
-
-            foreach ($expiredTokens as $expiredToken) {
-                $this->objectManager->remove($expiredToken);
-            }
-
-            $this->objectManager->flush();
-        } while (count($expiredTokens) > 0);
-    }
-
-    /**
      * Validate the token scopes against the registered scope
      *
      * @param  array $scopes
