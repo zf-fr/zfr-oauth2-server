@@ -57,14 +57,13 @@ class ResourceServerMiddleware implements MiddlewareInterface
         try {
             $token = $this->resourceServer->getAccessToken($request);
         } catch (InvalidAccessTokenException $exception) {
-            // If we're here, this means that there was an access token, but it's either expired or invalid. If that's the case
-            // we must immediately return
+            // If we're here, this means that there was an access token, but it's either expired or invalid. If
+            // that's the case we must immediately return
             return new JsonResponse(['error' => $exception->getMessage()], 401);
         }
 
-        // Otherwise, if we actually have a token and set it as part of the request attribute
-        $request = $request->withAttribute('oauth_token', $token);
+        // Otherwise, if we actually have a token and set it as part of the request attribute for next step
 
-        return $out ? $out($request, $response) : new FinalHandler([], $response);
+        return $out ? $out($request->withAttribute('oauth_token', $token), $response) : $response;
     }
 }
