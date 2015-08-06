@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2\Server;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewarePipe;
 
 /**
@@ -47,34 +47,37 @@ class AuthorizationMiddleware extends MiddlewarePipe
 
         $this->authorizationServer = $authorizationServer;
 
-        $this->pipe('/oauth/authorize', [$this, 'handleAuthorizeRequest']);
-        $this->pipe('/oauth/token', [$this, 'handleTokenRequest']);
-        $this->pipe('/oauth/revoke', [$this, 'handleRevokeRequest']);
+        $this->pipe('/authorize', [$this, 'handleAuthorizeRequest']);
+        $this->pipe('/token', [$this, 'handleTokenRequest']);
+        $this->pipe('/revoke', [$this, 'handleRevokeRequest']);
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param Request       $request
+     * @param Response      $response
+     * @param callable|null $next
      */
-    public function handleAuthorizeRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleAuthorizeRequest(Request $request, Response $response, callable $next = null)
     {
         throw new \RuntimeException('Not implemented yet');
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param Request       $request
+     * @param Response      $response
+     * @param callable|null $next
      */
-    public function handleTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleTokenRequest(Request $request, Response $response, callable $next = null)
     {
         throw new \RuntimeException('Not implemented yet');
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param Request       $request
+     * @param Response      $response
+     * @param callable|null $next
      */
-    public function handleRevokeRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleRevokeRequest(Request $request, Response $response, callable $next = nul)
     {
         throw new \RuntimeException('Not implemented yet');
     }
