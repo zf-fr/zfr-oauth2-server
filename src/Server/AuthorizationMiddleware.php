@@ -49,7 +49,7 @@ class AuthorizationMiddleware extends MiddlewarePipe
 
         $this->pipe('/authorize', [$this, 'handleAuthorizeRequest']);
         $this->pipe('/token', [$this, 'handleTokenRequest']);
-        $this->pipe('/revoke', [$this, 'handleRevokeRequest']);
+        $this->pipe('/revoke', [$this, 'handleRevocationRequest']);
     }
 
     /**
@@ -63,22 +63,31 @@ class AuthorizationMiddleware extends MiddlewarePipe
     }
 
     /**
-     * @param Request       $request
-     * @param Response      $response
-     * @param callable|null $next
+     * Generate a new access token for the given request
+     *
+     * @param  Request       $request
+     * @param  Response      $response
+     * @param  callable|null $next
+     * @return Response
      */
     public function handleTokenRequest(Request $request, Response $response, callable $next = null)
     {
-        throw new \RuntimeException('Not implemented yet');
+        // @TODO: we should integrate with an authentication service to pass the logged user, if any. Currently,
+        // it will work out of the box for password grant
+
+        return $this->authorizationServer->handleTokenRequest($request);
     }
 
     /**
-     * @param Request       $request
-     * @param Response      $response
-     * @param callable|null $next
+     * Revoke a given token
+     *
+     * @param  Request       $request
+     * @param  Response      $response
+     * @param  callable|null $next
+     * @return Response
      */
-    public function handleRevokeRequest(Request $request, Response $response, callable $next = nul)
+    public function handleRevocationRequest(Request $request, Response $response, callable $next = null)
     {
-        throw new \RuntimeException('Not implemented yet');
+        return $this->authorizationServer->handleRevocationRequest($request);
     }
 }

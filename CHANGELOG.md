@@ -12,6 +12,11 @@ it very early in your pipeline.
 couldn't take advantage of batch optimization deletions in database. You should instead use a more reliable and efficient way to delete
 expired tokens (either through a CRON task, or database scheduling manager).
 
+* [BC] The `isTokenValid` method has been removed from the ResourceServer. Use the `isValid` method from the token instead.
+
+* Tokens now have a `isValid` method to check if a given token (either authorization, access or refresh) is valid against
+some scopes.
+
 ## v0.7.1
 
 * Now properly triggers an `EVENT_CODE_CREATED` event instead of `EVENT_CODE_FAILED` when response is between 200 and 399 (previously, 

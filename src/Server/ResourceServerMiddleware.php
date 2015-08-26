@@ -28,11 +28,11 @@ use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 /**
  * Middleware for a resource server
  *
- * This middleware aims to sit very early in your pipeline. It will check if a request has an access token, and if so, will
- * try to validate it. If the token is invalid, the middleware will immediately return.
+ * This middleware aims to sit very early in your pipeline. It will check if a request has an access token, and if so,
+ * will try to validate it. If the token is invalid, the middleware will immediately return.
  *
- * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can be used later
- * one by a permission system, for instance
+ * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can
+ * be used later one by a permission system, for instance
  */
 class ResourceServerMiddleware implements MiddlewareInterface
 {
