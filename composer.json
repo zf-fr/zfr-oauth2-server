@@ -21,6 +21,7 @@
     "doctrine/common": "~2.5",
     "zendframework/zend-stratigility": "~1.1",
     "zendframework/zend-diactoros": "~1.1",
+    "container-interop/container-interop": "^1.1",
     "zendframework/zend-math": "~2.2",
     "zendframework/zend-eventmanager": "~2.2"
   },
