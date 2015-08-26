@@ -31,7 +31,7 @@ use Zend\Stratigility\MiddlewarePipe;
  *      - /oauth/token: generate an access token
  *      - /oauth/revoke: revoke an existing token
  */
-class AuthorizationMiddleware extends MiddlewarePipe
+class AuthorizationServerMiddleware extends MiddlewarePipe
 {
     /**
      * @var AuthorizationServerInterface

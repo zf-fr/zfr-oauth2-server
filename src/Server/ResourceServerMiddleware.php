@@ -21,7 +21,6 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Stratigility\FinalHandler;
 use Zend\Stratigility\MiddlewareInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 
