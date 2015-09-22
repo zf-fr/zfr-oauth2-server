@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2\Server;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Message\ResponseInterface as Response;
+use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewarePipe;
 
 /**
@@ -31,7 +31,7 @@ use Zend\Stratigility\MiddlewarePipe;
  *      - /oauth/token: generate an access token
  *      - /oauth/revoke: revoke an existing token
  */
-class AuthorizationMiddleware extends MiddlewarePipe
+class AuthorizationServerMiddleware extends MiddlewarePipe
 {
     /**
      * @var AuthorizationServerInterface
@@ -47,35 +47,47 @@ class AuthorizationMiddleware extends MiddlewarePipe
 
         $this->authorizationServer = $authorizationServer;
 
-        $this->pipe('/oauth/authorize', [$this, 'handleAuthorizeRequest']);
-        $this->pipe('/oauth/token', [$this, 'handleTokenRequest']);
-        $this->pipe('/oauth/revoke', [$this, 'handleRevokeRequest']);
+        $this->pipe('/authorize', [$this, 'handleAuthorizeRequest']);
+        $this->pipe('/token', [$this, 'handleTokenRequest']);
+        $this->pipe('/revoke', [$this, 'handleRevocationRequest']);
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * @param Request       $request
+     * @param Response      $response
+     * @param callable|null $next
      */
-    public function handleAuthorizeRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleAuthorizeRequest(Request $request, Response $response, callable $next = null)
     {
         throw new \RuntimeException('Not implemented yet');
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * Generate a new access token for the given request
+     *
+     * @param  Request       $request
+     * @param  Response      $response
+     * @param  callable|null $next
+     * @return Response
      */
-    public function handleTokenRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleTokenRequest(Request $request, Response $response, callable $next = null)
     {
-        throw new \RuntimeException('Not implemented yet');
+        // @TODO: we should integrate with an authentication service to pass the logged user, if any. Currently,
+        // it will work out of the box for password grant
+
+        return $this->authorizationServer->handleTokenRequest($request);
     }
 
     /**
-     * @param ServerRequestInterface $request
-     * @param ResponseInterface      $response
+     * Revoke a given token
+     *
+     * @param  Request       $request
+     * @param  Response      $response
+     * @param  callable|null $next
+     * @return Response
      */
-    public function handleRevokeRequest(ServerRequestInterface $request, ResponseInterface $response)
+    public function handleRevocationRequest(Request $request, Response $response, callable $next = null)
     {
-        throw new \RuntimeException('Not implemented yet');
+        return $this->authorizationServer->handleRevocationRequest($request);
     }
 }

@@ -21,18 +21,17 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Stratigility\FinalHandler;
 use Zend\Stratigility\MiddlewareInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 
 /**
  * Middleware for a resource server
  *
- * This middleware aims to sit very early in your pipeline. It will check if a request has an access token, and if so, will
- * try to validate it. If the token is invalid, the middleware will immediately return.
+ * This middleware aims to sit very early in your pipeline. It will check if a request has an access token, and if so,
+ * will try to validate it. If the token is invalid, the middleware will immediately return.
  *
- * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can be used later
- * one by a permission system, for instance
+ * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can
+ * be used later one by a permission system, for instance
  */
 class ResourceServerMiddleware implements MiddlewareInterface
 {
@@ -57,14 +56,13 @@ class ResourceServerMiddleware implements MiddlewareInterface
         try {
             $token = $this->resourceServer->getAccessToken($request);
         } catch (InvalidAccessTokenException $exception) {
-            // If we're here, this means that there was an access token, but it's either expired or invalid. If that's the case
-            // we must immediately return
+            // If we're here, this means that there was an access token, but it's either expired or invalid. If
+            // that's the case we must immediately return
             return new JsonResponse(['error' => $exception->getMessage()], 401);
         }
 
-        // Otherwise, if we actually have a token and set it as part of the request attribute
-        $request = $request->withAttribute('oauth_token', $token);
+        // Otherwise, if we actually have a token and set it as part of the request attribute for next step
 
-        return $out ? $out($request, $response) : new FinalHandler([], $response);
+        return $out ? $out($request->withAttribute('oauth_token', $token), $response) : $response;
     }
 }

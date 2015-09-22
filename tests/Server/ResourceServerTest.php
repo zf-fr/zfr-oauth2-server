@@ -56,7 +56,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
         $token = $this->getMock(AccessToken::class);
-        $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
+        $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
@@ -73,7 +73,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['access_token' => 'token']));
 
         $token = $this->getMock(AccessToken::class);
-        $token->expects($this->once())->method('isExpired')->will($this->returnValue(false));
+        $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
