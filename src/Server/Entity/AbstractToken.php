@@ -204,12 +204,12 @@ abstract class AbstractToken
     }
 
     /**
-     * Check if the token is valid, according to the given scope and expiration dates
+     * Check if the token is valid, according to the given scope(s) and expiration dates
      *
-     * @param  array $scopes
+     * @param  array|string $scopes
      * @return bool
      */
-    public function isValid($scopes = [])
+    public function isValid($scopes)
     {
         if ($this->isExpired()) {
             return false;
