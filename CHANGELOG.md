@@ -2,11 +2,15 @@
 
 ## v0.8.0
 
-* ZfrOAuth2Server now has an additional dependency to [Zend\Stratigility](https://github.com/zendframework/zend-stratigility), and is a
-middleware.
+* ZfrOAuth2Server now integrates with [Zend\Stratigility](https://github.com/zendframework/zend-stratigility), and provide simple
+middlewares to cover authorization and authentication. This is entirely optional.
 
-This is achieved through a new `AuthorizationMiddleware` class, that implements `Zend\Stratigility\MiddlewareInterface`. You should pipe
-it very early in your pipeline.
+This is achieved through two middlewares that implement `Zend\Stratigility\MiddlewareInterface`:
+
+    - `ZfrOAuth2\Server\AuthorizationServerMiddleware`: when piped, it will add three endpoints (`/authorize`, `/token`, `/revoke`) that
+    handle the creation of token, revocation...
+    - `ZfrOAuth2\Server\ResourceServerMiddleware`: if you are using `Zend\Expressive`, that's a middleware that you could attach as
+    a `pre_routing` middleware. What it does is inspecting the request, and extracting the token, and set it as the `oauth_token` attribute
 
 * [BC] `deleteExpiredTokens` has been removed from the TokenService. The reason is that it relied on `Selectable` Doctrine's interface, and
 couldn't take advantage of batch optimization deletions in database. You should instead use a more reliable and efficient way to delete
