@@ -164,9 +164,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
+        $response->expects($this->at(0))->method('withHeader')->with('Content-Type', 'application/json')->willReturnSelf();
+        $response->expects($this->at(1))->method('withHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
+        $response->expects($this->at(2))->method('withHeader')->with('Pragma', 'no-cache')->willReturnSelf();
         $response->expects($this->at(3))->method('getStatusCode')->willReturn(200);
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
@@ -204,9 +204,9 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
+        $response->expects($this->at(0))->method('withHeader')->with('Content-Type', 'application/json')->willReturnSelf();
+        $response->expects($this->at(1))->method('withHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
+        $response->expects($this->at(2))->method('withHeader')->with('Pragma', 'no-cache')->willReturnSelf();
         $response->expects($this->at(3))->method('getStatusCode')->willReturn(400);
 
         $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
