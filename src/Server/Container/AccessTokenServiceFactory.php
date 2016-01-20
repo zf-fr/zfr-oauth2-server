@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -40,13 +41,21 @@ class AccessTokenServiceFactory
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
 
+        /** @var ServerOptions $serverOptions */
+        $serverOptions = $container->get(ServerOptions::class);
+
         /** @var ObjectManager $objectManager */
-        $objectManager         = $managerRegistry->getManager();
+        $objectManager         = $managerRegistry->getManager($serverOptions->getObjectManager());
         $accessTokenRepository = $objectManager->getRepository(AccessToken::class);
 
         /** @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        return new TokenService($objectManager, $accessTokenRepository, $scopeService);
+        $service = new TokenService($objectManager, $accessTokenRepository, $scopeService);
+
+        $service->setTokenTTL($serverOptions->getAccessTokenTtl());
+
+        return $service;
+
     }
 }

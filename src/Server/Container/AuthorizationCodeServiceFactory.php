@@ -22,6 +22,7 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Entity\AuthorizationCode;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -40,8 +41,11 @@ class AuthorizationCodeServiceFactory
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
 
+        /** @var ServerOptions $serverOptions */
+        $serverOptions = $container->get(ServerOptions::class);
+
         /** @var ObjectManager $objectManager */
-        $objectManager = $managerRegistry->getManager();
+        $objectManager = $managerRegistry->getManager($serverOptions->getObjectManager());
 
         /** @var  $tokenRepository */
         $tokenRepository = $objectManager->getRepository(AuthorizationCode::class);
@@ -49,6 +53,11 @@ class AuthorizationCodeServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        return new TokenService($objectManager, $tokenRepository, $scopeService);
+        $service = new TokenService($objectManager, $tokenRepository, $scopeService);
+
+        $service->setTokenTTL($serverOptions->getAuthorizationCodeTtl());
+
+        return $service;
+
     }
 }
