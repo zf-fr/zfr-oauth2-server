@@ -18,8 +18,12 @@
 
 namespace ZfrOAuth2\Server\Container;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Entity\AuthorizationCode;
+use ZfrOAuth2\Server\Service\ScopeService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -29,10 +33,27 @@ class AuthorizationCodeServiceFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return TokenService
      */
     public function __invoke(ContainerInterface $container)
     {
-        // @TODO
+        $config = $container->get('config')['zfr_oauth2_server'];
+
+        /** @var ManagerRegistry $managerRegistry */
+        $managerRegistry = $container->get(ManagerRegistry::class);
+
+        /** @var ObjectManager $objectManager */
+        $objectManager = $managerRegistry->getManager();
+
+        /** @var  $tokenRepository */
+        $tokenRepository = $objectManager->getRepository(AuthorizationCode::class);
+
+        /* @var ScopeService $scopeService */
+        $scopeService = $container->get(ScopeService::class);
+
+        $authorizationCodeService = new TokenService($objectManager, $tokenRepository, $scopeService);
+        $authorizationCodeService->setTokenTTL($config['authorization_code_ttl']);
+
+        return $authorizationCodeService;
     }
 }

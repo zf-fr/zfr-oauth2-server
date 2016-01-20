@@ -19,7 +19,8 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -29,10 +30,13 @@ class ResourceServerFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return ResourceServer
      */
     public function __invoke(ContainerInterface $container)
     {
-        // @TODO
+        /** @var TokenService $tokenService */
+        $tokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
+
+        return new ResourceServer($tokenService);
     }
 }

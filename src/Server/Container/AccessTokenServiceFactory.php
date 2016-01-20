@@ -18,8 +18,12 @@
 
 namespace ZfrOAuth2\Server\Container;
 
+use Doctrine\Common\Persistence\ManagerRegistry;
+use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -29,10 +33,25 @@ class AccessTokenServiceFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return TokenService
      */
     public function __invoke(ContainerInterface $container)
     {
-        // @TODO
+        $config = $container->get('config')['zfr_oauth2_server'];
+
+        /** @var ManagerRegistry $managerRegistry */
+        $managerRegistry = $container->get(ManagerRegistry::class);
+
+        /** @var ObjectManager $objectManager */
+        $objectManager         = $managerRegistry->getManager();
+        $accessTokenRepository = $objectManager->getRepository(AccessToken::class);
+
+        /** @var ScopeService $scopeService */
+        $scopeService        = $container->get(ScopeService::class);
+
+        $accessTokenService = new TokenService($objectManager, $accessTokenRepository, $scopeService);
+        $accessTokenService->setTokenTTL($config['access_token_ttl']);
+
+        return $accessTokenService;
     }
 }
