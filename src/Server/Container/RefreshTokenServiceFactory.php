@@ -22,7 +22,6 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\Scope;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -38,8 +37,6 @@ class RefreshTokenServiceFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get('config')['zfr_oauth2_server'];
-
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
 
@@ -48,11 +45,8 @@ class RefreshTokenServiceFactory
         $refreshTokenRepository = $objectManager->getRepository(RefreshToken::class);
 
         /** @var ScopeService $scopeService */
-        $scopeService        = $container->get(ScopeService::class);
+        $scopeService = $container->get(ScopeService::class);
 
-        $refreshTokenService = new TokenService($objectManager, $refreshTokenRepository, $scopeService);
-        $refreshTokenService->setTokenTTL($config['refresh_token_ttl']);
-
-        return $refreshTokenService;
+        return new TokenService($objectManager, $refreshTokenRepository, $scopeService);
     }
 }

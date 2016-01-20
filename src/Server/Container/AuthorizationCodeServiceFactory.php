@@ -37,8 +37,6 @@ class AuthorizationCodeServiceFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get('config')['zfr_oauth2_server'];
-
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
 
@@ -51,9 +49,6 @@ class AuthorizationCodeServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $authorizationCodeService = new TokenService($objectManager, $tokenRepository, $scopeService);
-        $authorizationCodeService->setTokenTTL($config['authorization_code_ttl']);
-
-        return $authorizationCodeService;
+        return new TokenService($objectManager, $tokenRepository, $scopeService);
     }
 }
