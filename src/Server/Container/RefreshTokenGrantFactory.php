@@ -19,23 +19,27 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ServerOptionsFactory
+class RefreshTokenGrantFactory
 {
     /**
      * @param ContainerInterface $container
-     * @return ServerOptions
+     * @return RefreshTokenGrant
      */
     public function __invoke(ContainerInterface $container)
     {
-        $config  = $container->get('config');
-        $options = isset($config['zfr_oauth2_server']) ? $config['zfr_oauth2_server'] : [];
+        /* @var TokenService $accessTokenService */
+        $accessTokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
 
-        return new ServerOptions($options);
+        /* @var TokenService $refreshTokenService */
+        $refreshTokenService = $container->get('ZfrOAuth2\Server\Service\RefreshTokenService');
+
+        return new RefreshTokenGrant($accessTokenService, $refreshTokenService);
     }
 }

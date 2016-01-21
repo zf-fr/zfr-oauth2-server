@@ -16,26 +16,33 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2Test\Server\Factory;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Container\ResourceServerFactory;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
+ *
+ * @covers  ZfrOAuth2\Server\Factory\ResourceServerFactory
  */
-class ServerOptionsFactory
+class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ServerOptions
-     */
-    public function __invoke(ContainerInterface $container)
+    public function testCanCreateFromFactory()
     {
-        $config  = $container->get('config');
-        $options = isset($config['zfr_oauth2_server']) ? $config['zfr_oauth2_server'] : [];
+        $container    = $this->getMock(ContainerInterface::class);
+        $tokenService = $this->getMock(TokenService::class, [], [], '', false);
 
-        return new ServerOptions($options);
+        $container->expects($this->once())
+            ->method('get')
+            ->with('ZfrOAuth2\Server\Service\AccessTokenService')
+            ->willReturn($tokenService);
+
+        $factory = new ResourceServerFactory();
+        $service = $factory($container);
+
+        $this->assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
     }
 }

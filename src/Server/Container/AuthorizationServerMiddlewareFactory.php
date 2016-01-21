@@ -31,7 +31,7 @@ class AuthorizationServerMiddlewareFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return AuthorizationServerMiddleware
      */
     public function __invoke(ContainerInterface $container)
     {

@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Options\ServerOptions;
@@ -46,6 +47,8 @@ class RefreshTokenServiceFactory
 
         /** @var ObjectManager $objectManager */
         $objectManager          = $managerRegistry->getManager($serverOptions->getObjectManager());
+
+        /** @var ObjectRepository $refreshTokenRepository */
         $refreshTokenRepository = $objectManager->getRepository(RefreshToken::class);
 
         /** @var ScopeService $scopeService */

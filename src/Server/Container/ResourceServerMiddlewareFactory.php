@@ -31,7 +31,7 @@ class ResourceServerMiddlewareFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return ResourceServerMiddleware
      */
     public function __invoke(ContainerInterface $container)
     {

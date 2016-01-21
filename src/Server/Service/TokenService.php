@@ -19,14 +19,11 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
  * Token service
