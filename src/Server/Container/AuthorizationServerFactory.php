@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -35,10 +36,16 @@ class AuthorizationServerFactory
      */
     public function __invoke(ContainerInterface $container)
     {
-        $config = $container->get('config')['zfr_oauth2_server'];
-
-        /** @var ClientService $clientService */
+        /* @var ClientService $clientService */
         $clientService = $container->get(ClientService::class);
+
+        /* @var ServerOptions $serverOptions */
+        $serverOptions = $container->get(ServerOptions::class);
+
+        $grants = [];
+        foreach ($serverOptions->getGrants() as $grant) {
+            $grants[] = $container->get($grant);
+        }
 
         /** @var TokenService $accessTokenService */
         $accessTokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
@@ -46,6 +53,6 @@ class AuthorizationServerFactory
         /** @var TokenService $refreshTokenService */
         $refreshTokenService = $container->get('ZfrOAuth2\Server\Service\RefreshTokenService');
 
-        return new AuthorizationServer($clientService, $config['grants'], $accessTokenService, $refreshTokenService);
+        return new AuthorizationServer($clientService, $grants, $accessTokenService, $refreshTokenService);
     }
 }
