@@ -35,7 +35,7 @@ class ResourceServerFactory
     public function __invoke(ContainerInterface $container)
     {
         /** @var TokenService $tokenService */
-        $tokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
+        $tokenService = $container->get(TokenService::AccessTokenService);
 
         return new ResourceServer($tokenService);
     }

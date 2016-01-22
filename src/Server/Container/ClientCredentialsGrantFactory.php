@@ -35,7 +35,7 @@ class ClientCredentialsGrantFactory
     public function __invoke(ContainerInterface $container)
     {
         /* @var TokenService $accessTokenService */
-        $accessTokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
+        $accessTokenService = $container->get(TokenService::AccessTokenService);
 
         return new ClientCredentialsGrant($accessTokenService);
     }

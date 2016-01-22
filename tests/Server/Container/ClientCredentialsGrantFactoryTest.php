@@ -37,7 +37,7 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\AccessTokenService')
+            ->with(TokenService::AccessTokenService)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $factory = new ClientCredentialsGrantFactory();

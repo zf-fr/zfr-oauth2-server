@@ -48,10 +48,10 @@ class AuthorizationServerFactory
         }
 
         /** @var TokenService $accessTokenService */
-        $accessTokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
+        $accessTokenService = $container->get(TokenService::AccessTokenService);
 
         /** @var TokenService $refreshTokenService */
-        $refreshTokenService = $container->get('ZfrOAuth2\Server\Service\RefreshTokenService');
+        $refreshTokenService = $container->get(TokenService::RefreshTokenService);
 
         return new AuthorizationServer($clientService, $grants, $accessTokenService, $refreshTokenService);
     }

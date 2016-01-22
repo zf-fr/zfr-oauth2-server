@@ -41,12 +41,12 @@ class RefreshTokenGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\AccessTokenService')
+            ->with(TokenService::AccessTokenService)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\RefreshTokenService')
+            ->with(TokenService::RefreshTokenService)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $factory = new RefreshTokenGrantFactory();

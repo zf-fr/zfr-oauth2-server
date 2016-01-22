@@ -37,7 +37,7 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->once())
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\AccessTokenService')
+            ->with(TokenService::AccessTokenService)
             ->willReturn($tokenService);
 
         $factory = new ResourceServerFactory();

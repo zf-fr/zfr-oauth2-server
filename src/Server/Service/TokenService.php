@@ -31,7 +31,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
  * You'll need to create one token service per type of token, as the repositories are not the same (as well
  * as the token TTL)
  *
- * @TODO: should we create one service per token type? I think it's a bit useless, as the only thing that would
+ * @TODO    : should we create one service per token type? I think it's a bit useless, as the only thing that would
  *        be overridden is the token TTL
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -39,6 +39,11 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
  */
 class TokenService
 {
+
+    const AuthorizationCodeService = 'ZfrOAuth2\Server\Service\AuthorizationCodeService';
+    const AccessTokenService = 'ZfrOAuth2\Server\Service\AccessTokenService';
+    const RefreshTokenService = 'ZfrOAuth2\Server\Service\RefreshTokenService';
+
     /**
      * @var string
      */
@@ -193,16 +198,16 @@ class TokenService
      */
     private function compareStrings($expected, $actual)
     {
-        $expected     = (string) $expected;
-        $actual       = (string) $actual;
+        $expected = (string) $expected;
+        $actual   = (string) $actual;
 
         if (function_exists('hash_equals')) {
             return hash_equals($expected, $actual);
         }
 
-        $lenExpected  = strlen($expected);
-        $lenActual    = strlen($actual);
-        $len          = min($lenExpected, $lenActual);
+        $lenExpected = strlen($expected);
+        $lenActual   = strlen($actual);
+        $len         = min($lenExpected, $lenActual);
 
         $result = 0;
         for ($i = 0; $i < $len; $i++) {

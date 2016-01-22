@@ -42,10 +42,10 @@ class PasswordGrantFactory
         $ownerCallable = is_string($ownerCallable) ? $container->get($ownerCallable) : $ownerCallable;
 
         /* @var TokenService $accessTokenService */
-        $accessTokenService = $container->get('ZfrOAuth2\Server\Service\AccessTokenService');
+        $accessTokenService = $container->get(TokenService::AccessTokenService);
 
         /* @var TokenService $refreshTokenService */
-        $refreshTokenService = $container->get('ZfrOAuth2\Server\Service\RefreshTokenService');
+        $refreshTokenService = $container->get(TokenService::RefreshTokenService);
 
         return new PasswordGrant($accessTokenService, $refreshTokenService, $ownerCallable);
     }

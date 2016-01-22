@@ -24,6 +24,7 @@ use ZfrOAuth2\Server\Container\AuthorizationServerFactory;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -55,7 +56,7 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(3))
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\AccessTokenService')
+            ->with(TokenService::AccessTokenService)
             ->willReturn($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
 
         $container->expects($this->at(4))
