@@ -44,11 +44,6 @@ class TokenService
     const REFRESH_TOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
 
     /**
-     * @var string
-     */
-    protected $tokenCharlist = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-';
-
-    /**
      * @var ObjectManager
      */
     protected $objectManager;
