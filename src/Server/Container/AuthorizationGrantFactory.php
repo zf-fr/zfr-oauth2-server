@@ -35,13 +35,13 @@ class AuthorizationGrantFactory
     public function __invoke(ContainerInterface $container)
     {
         /* @var \ZfrOAuth2\Server\Service\TokenService $authorizationCodeService */
-        $authorizationCodeService = $container->get(TokenService::AUTHORIZATIONCODE_SERVICE);
+        $authorizationCodeService = $container->get(TokenService::AUTHORIZATION_CODE_SERVICE);
 
         /* @var \ZfrOAuth2\Server\Service\TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::ACCESSTOKEN_SERVICE);
+        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
 
         /* @var \ZfrOAuth2\Server\Service\TokenService $refreshTokenService */
-        $refreshTokenService = $container->get(TokenService::REFRESHTOKEN_SERVICE);
+        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
 
         return new AuthorizationGrant($authorizationCodeService, $accessTokenService, $refreshTokenService);
     }

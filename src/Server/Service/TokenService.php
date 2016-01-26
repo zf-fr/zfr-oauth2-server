@@ -40,9 +40,9 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 class TokenService
 {
 
-    const AUTHORIZATIONCODE_SERVICE = 'ZfrOAuth2\Server\Service\AuthorizationCodeService';
-    const ACCESSTOKEN_SERVICE       = 'ZfrOAuth2\Server\Service\AccessTokenService';
-    const REFRESHTOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
+    const AUTHORIZATION_CODE_SERVICE = 'ZfrOAuth2\Server\Service\AuthorizationCodeService';
+    const ACCESS_TOKEN_SERVICE       = 'ZfrOAuth2\Server\Service\AccessTokenService';
+    const REFRESH_TOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
 
     /**
      * @var string

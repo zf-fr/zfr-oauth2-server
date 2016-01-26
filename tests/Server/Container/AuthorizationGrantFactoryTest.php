@@ -38,17 +38,17 @@ class AuthorizationGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(TokenService::AUTHORIZATIONCODE_SERVICE)
+            ->with(TokenService::AUTHORIZATION_CODE_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with(TokenService::ACCESSTOKEN_SERVICE)
+            ->with(TokenService::ACCESS_TOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $container->expects($this->at(2))
             ->method('get')
-            ->with(TokenService::REFRESHTOKEN_SERVICE)
+            ->with(TokenService::REFRESH_TOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $factory = new AuthorizationGrantFactory();

@@ -67,21 +67,21 @@ return [
              */
             ClientCredentialsGrant::class          => ClientCredentialsGrantFactory::class,
             PasswordGrant::class                   => PasswordGrantFactory::class,
-            AuthorizationGrant::class               => AuthorizationGrantFactory::class,
-            RefreshTokenGrant::class                => RefreshTokenGrantFactory::class,
+            AuthorizationGrant::class                => AuthorizationGrantFactory::class,
+            RefreshTokenGrant::class                 => RefreshTokenGrantFactory::class,
 
             /**
              * Utils
              */
-            ServerOptions::class                    => ServerOptionsFactory::class,
-            ManagerRegistry::class                  => My\ManagerRegistryFactory::class,
+            ServerOptions::class                     => ServerOptionsFactory::class,
+            ManagerRegistry::class                   => My\ManagerRegistryFactory::class,
 
             /**
              * Factories that do not map to a class
              */
-            TokenService::AUTHORIZATIONCODE_SERVICE => AuthorizationCodeServiceFactory::class,
-            TokenService::ACCESSTOKEN_SERVICE       => AccessTokenServiceFactory::class,
-            TokenService::REFRESHTOKEN_SERVICE      => RefreshTokenServiceFactory::class,
+            TokenService::AUTHORIZATION_CODE_SERVICE => AuthorizationCodeServiceFactory::class,
+            TokenService::ACCESS_TOKEN_SERVICE       => AccessTokenServiceFactory::class,
+            TokenService::REFRESH_TOKEN_SERVICE      => RefreshTokenServiceFactory::class,
         ],
     ],
 
