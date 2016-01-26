@@ -19,7 +19,7 @@
 namespace ZfrOAuth2\Server\Model;
 
 /**
- * Access token entity
+ * Access token model
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT

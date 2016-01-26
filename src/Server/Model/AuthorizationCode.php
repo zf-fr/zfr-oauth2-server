@@ -19,7 +19,7 @@
 namespace ZfrOAuth2\Server\Model;
 
 /**
- * Authorization code entity
+ * Authorization code model
  *
  * An authorization code is a special token that acts as an intermediary between the client and
  * the resource owner. An authorization code can then be exchanged against an access token

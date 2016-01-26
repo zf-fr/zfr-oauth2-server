@@ -21,7 +21,7 @@ namespace ZfrOAuth2\Server\Model;
 /**
  * Interface for token owner
  *
- * A token owner is someone (most likely a user) that contains the actual data. It's the entity that holds
+ * A token owner is someone (most likely a user) that contains the actual data. It's the model that holds
  * the data that the client is asking permission to see
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>

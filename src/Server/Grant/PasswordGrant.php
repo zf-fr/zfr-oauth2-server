@@ -62,7 +62,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      * Callable that is used to verify the username and password
      *
      * This callable MUST return an object that implement the TokenOwnerInterface, or
-     * null if no identity can be matched with the given credentials
+     * null if no idmodel can be matched with the given credentials
      *
      * @var callable
      */

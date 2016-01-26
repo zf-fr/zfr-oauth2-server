@@ -19,7 +19,7 @@
 namespace ZfrOAuth2\Server\Model;
 
 /**
- * Client entity
+ * Client model
  *
  * A client is typically an application (either a third-party or your own application) that integrates with the
  * provider (in this case, you are the provider)
