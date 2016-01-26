@@ -44,7 +44,6 @@ interface TokenRepositoryInterface
 
     /**
      * @param AbstractToken $token
-     * @return null
      */
-    public function deleteToken(AbstractToken $token): null;
+    public function deleteToken(AbstractToken $token);
 }
