@@ -16,17 +16,15 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
-use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
-use ZfrOAuth2\Server\Event\TokenEvent;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
@@ -39,10 +37,8 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServer implements AuthorizationServerInterface, EventManagerAwareInterface
+class AuthorizationServer implements AuthorizationServerInterface
 {
-    use EventManagerAwareTrait;
-
     /**
      * @var ClientService
      */
@@ -107,7 +103,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @param  string $grantType
      * @return bool
      */
-    public function hasGrant($grantType)
+    public function hasGrant($grantType): bool
     {
         return isset($this->grants[$grantType]);
     }
@@ -119,7 +115,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @return GrantInterface
      * @throws OAuth2Exception If grant type is not registered by this authorization server
      */
-    public function getGrant($grantType)
+    public function getGrant($grantType): GrantInterface
     {
         if ($this->hasGrant($grantType)) {
             return $this->grants[$grantType];
@@ -138,7 +134,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @param  string $responseType
      * @return bool
      */
-    public function hasResponseType($responseType)
+    public function hasResponseType($responseType): bool
     {
         return isset($this->responseTypes[$responseType]);
     }
@@ -150,7 +146,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @return GrantInterface
      * @throws Exception\OAuth2Exception
      */
-    public function getResponseType($responseType)
+    public function getResponseType($responseType): GrantInterface
     {
         if ($this->hasResponseType($responseType)) {
             return $this->responseTypes[$responseType];
@@ -169,8 +165,11 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @return ResponseInterface
      * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    public function handleAuthorizationRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
-    {
+    public function handleAuthorizationRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface {
+    
         try {
             $queryParams  = $request->getQueryParams();
             $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
@@ -187,21 +186,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
             $response = $this->createResponseFromOAuthException($exception);
         }
 
-        /** @var ResponseInterface $response */
-        $response = $response->withHeader('Content-Type', 'application/json');
-
-        $event = new AuthorizationCodeEvent($request, $response, $owner);
-        $event->setTarget($this);
-
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode >= 200 && $statusCode <= 399) {
-            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_CREATED, $event);
-        } else {
-            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_FAILED, $event);
-        }
-
-        return $event->getResponse();
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -210,8 +195,11 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @return ResponseInterface
      * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
      */
-    public function handleTokenRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
-    {
+    public function handleTokenRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface {
+    
         $postParams = $request->getParsedBody();
 
         try {
@@ -230,24 +218,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         }
 
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
-
-        /** @var ResponseInterface $response */
-        $response = $response->withHeader('Content-Type', 'application/json')
-                             ->withHeader('Cache-Control', 'no-store')
-                             ->withHeader('Pragma', 'no-cache');
-
-        $event = new TokenEvent($request, $response, $owner);
-        $event->setTarget($this);
-
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode >= 200 && $statusCode <= 399) {
-            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_CREATED, $event);
-        } else {
-            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
-        }
-
-        return $event->getResponse();
+        return $response->withHeader('Content-Type', 'application/json')
+                        ->withHeader('Cache-Control', 'no-store')
+                        ->withHeader('Pragma', 'no-cache');
     }
 
     /**
@@ -255,7 +228,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(ServerRequestInterface $request)
+    public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface
     {
         $postParams = $request->getParsedBody();
 
@@ -353,9 +326,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      *
      * @link   http://tools.ietf.org/html/rfc6749#section-5.2
      * @param  OAuth2Exception $exception
-     * @return Response
+     * @return ResponseInterface
      */
-    protected function createResponseFromOAuthException(OAuth2Exception $exception)
+    protected function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
         $payload = [
             'error'             => $exception->getCode(),
@@ -371,7 +344,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
      * @param  ServerRequestInterface $request
      * @return array
      */
-    private function extractClientCredentials(ServerRequestInterface $request)
+    private function extractClientCredentials(ServerRequestInterface $request): array
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
         if ($request->hasHeader('Authorization')) {

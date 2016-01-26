@@ -16,25 +16,26 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Event;
+namespace ZfrOAuth2\Server\Container;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
-use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
+use Interop\Container\ContainerInterface;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
-class AuthorizationCodeEventTest extends \PHPUnit_Framework_TestCase
+/**
+ * @author  Michaël Gallego <mic.gallego@gmail.com>
+ * @licence MIT
+ */
+class ServerOptionsFactory
 {
-    public function testGetters()
+    /**
+     * @param ContainerInterface $container
+     * @return ServerOptions
+     */
+    public function __invoke(ContainerInterface $container): ServerOptions
     {
-        $request  = $this->getMock(ServerRequestInterface::class);
-        $response = $this->getMock(ResponseInterface::class);
-        $owner    = $this->getMock(TokenOwnerInterface::class);
+        $config  = $container->get('config');
+        $options = isset($config['zfr_oauth2_server']) ? $config['zfr_oauth2_server'] : [];
 
-        $event = new AuthorizationCodeEvent($request, $response, $owner);
-
-        $this->assertSame($request, $event->getRequest());
-        $this->assertEquals($response, $event->getResponse());
-        $this->assertSame($owner, $event->getTokenOwner());
+        return new ServerOptions($options);
     }
 }

@@ -18,15 +18,15 @@
 
 namespace ZfrOAuth2Test\Server;
 
-use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use Psr\Http\Message\ResponseInterface;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
+use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
+use ZfrOAuth2\Server\AuthorizationServerMiddleware;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\AuthorizationServerMiddleware
+ * @covers  \ZfrOAuth2\Server\AuthorizationServerMiddleware
  */
 class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
@@ -51,7 +51,10 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $request  = $this->getMock(RequestInterface::class);
         $response = $this->getMock(ResponseInterface::class);
 
-        $this->authorizationServer->expects($this->once())->method('handleTokenRequest')->with($request);
+        $this->authorizationServer->expects($this->once())
+            ->method('handleTokenRequest')
+            ->with($request)
+            ->willReturn($this->getMock(ResponseInterface::class));
         $this->authorizationMiddleware->handleTokenRequest($request, $response);
     }
 
@@ -60,7 +63,11 @@ class AuthorizationServerMiddlewareTest extends \PHPUnit_Framework_TestCase
         $request  = $this->getMock(RequestInterface::class);
         $response = $this->getMock(ResponseInterface::class);
 
-        $this->authorizationServer->expects($this->once())->method('handleRevocationRequest')->with($request);
+        $this->authorizationServer->expects($this->once())
+            ->method('handleRevocationRequest')
+            ->with($request)
+            ->willReturn($this->getMock(ResponseInterface::class));
+
         $this->authorizationMiddleware->handleRevocationRequest($request, $response);
     }
 }

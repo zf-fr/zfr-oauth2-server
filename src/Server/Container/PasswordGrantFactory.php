@@ -19,25 +19,34 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
-use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServerMiddlewareFactory
+class PasswordGrantFactory
 {
     /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServerMiddleware
+     * @param ContainerInterface $container
+     * @return PasswordGrant
      */
-    public function __invoke(ContainerInterface $container): AuthorizationServerMiddleware
+    public function __invoke(ContainerInterface $container): PasswordGrant
     {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+        /* @var ServerOptions $options */
+        $options = $container->get(ServerOptions::class);
 
-        return new AuthorizationServerMiddleware($authorizationServer);
+        $ownerCallable = $options->getOwnerCallable();
+        $ownerCallable = is_string($ownerCallable) ? $container->get($ownerCallable) : $ownerCallable;
+
+        /* @var TokenService $accessTokenService */
+        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
+
+        /* @var TokenService $refreshTokenService */
+        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
+
+        return new PasswordGrant($accessTokenService, $refreshTokenService, $ownerCallable);
     }
 }

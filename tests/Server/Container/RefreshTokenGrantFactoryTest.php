@@ -16,43 +16,42 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Container\PasswordGrantFactory;
+use ZfrOAuth2\Server\Container\RefreshTokenGrantFactory;
+use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
-use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
+ *
+ * @covers  ZfrOAuth2\Server\Container\RefreshTokenGrantFactory
  */
-class AuthorizationServerFactory
+class RefreshTokenGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServer
-     */
-    public function __invoke(ContainerInterface $container): AuthorizationServer
+    public function testCanCreateFromFactory()
     {
-        /* @var ClientService $clientService */
-        $clientService = $container->get(ClientService::class);
+        $container = $this->getMock(ContainerInterface::class);
 
-        /* @var ServerOptions $serverOptions */
-        $serverOptions = $container->get(ServerOptions::class);
+        $container->expects($this->at(0))
+            ->method('get')
+            ->with(TokenService::ACCESS_TOKEN_SERVICE)
+            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
-        $grants = [];
-        foreach ($serverOptions->getGrants() as $grant) {
-            $grants[] = $container->get($grant);
-        }
+        $container->expects($this->at(1))
+            ->method('get')
+            ->with(TokenService::REFRESH_TOKEN_SERVICE)
+            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
-        /** @var TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
+        $factory = new RefreshTokenGrantFactory();
+        $service = $factory($container);
 
-        /** @var TokenService $refreshTokenService */
-        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
-
-        return new AuthorizationServer($clientService, $grants, $accessTokenService, $refreshTokenService);
+        $this->assertInstanceOf(RefreshTokenGrant::class, $service);
     }
 }

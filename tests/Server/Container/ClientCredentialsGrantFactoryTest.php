@@ -16,28 +16,33 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
-use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory;
+use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
+ *
+ * @covers  ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory
  */
-class AuthorizationServerMiddlewareFactory
+class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServerMiddleware
-     */
-    public function __invoke(ContainerInterface $container): AuthorizationServerMiddleware
+    public function testCanCreateFromFactory()
     {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+        $container = $this->getMock(ContainerInterface::class);
 
-        return new AuthorizationServerMiddleware($authorizationServer);
+        $container->expects($this->at(0))
+            ->method('get')
+            ->with(TokenService::ACCESS_TOKEN_SERVICE)
+            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+
+        $factory = new ClientCredentialsGrantFactory();
+        $service = $factory($container);
+
+        $this->assertInstanceOf(ClientCredentialsGrant::class, $service);
     }
 }

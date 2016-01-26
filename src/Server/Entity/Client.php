@@ -37,29 +37,29 @@ class Client
     /**
      * @var string
      */
-    protected $id;
+    protected $id = '';
 
     /**
      * @var string
      */
-    protected $secret;
+    protected $secret = '';
 
     /**
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * @var array
      */
-    protected $redirectUris;
+    protected $redirectUris = [];
 
     /**
      * Get the client id
      *
      * @return string
      */
-    public function getId()
+    public function getId(): string
     {
         return $this->id;
     }
@@ -80,7 +80,7 @@ class Client
      *
      * @return string
      */
-    public function getSecret()
+    public function getSecret(): string
     {
         return $this->secret;
     }
@@ -101,7 +101,7 @@ class Client
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -130,9 +130,9 @@ class Client
     /**
      * Get the redirect URIs
      *
-     * @return string
+     * @return array
      */
-    public function getRedirectUris()
+    public function getRedirectUris(): array
     {
         return $this->redirectUris;
     }
@@ -143,7 +143,7 @@ class Client
      * @param  string $redirectUri
      * @return bool
      */
-    public function hasRedirectUri($redirectUri)
+    public function hasRedirectUri($redirectUri): bool
     {
         return in_array($redirectUri, $this->redirectUris, true);
     }
@@ -153,7 +153,7 @@ class Client
      *
      * @return bool
      */
-    public function isPublic()
+    public function isPublic(): bool
     {
         return empty($this->secret);
     }

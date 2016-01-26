@@ -32,7 +32,7 @@ class ClientIdGenerator extends AbstractIdGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(EntityManager $em, $entity)
+    public function generate(EntityManager $em, $entity): string
     {
         return uniqid();
     }

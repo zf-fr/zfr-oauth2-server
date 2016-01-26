@@ -19,25 +19,24 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
-use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
+use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServerMiddlewareFactory
+class ClientCredentialsGrantFactory
 {
     /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServerMiddleware
+     * @param ContainerInterface $container
+     * @return ClientCredentialsGrant
      */
-    public function __invoke(ContainerInterface $container): AuthorizationServerMiddleware
+    public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+        /* @var TokenService $accessTokenService */
+        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
 
-        return new AuthorizationServerMiddleware($authorizationServer);
+        return new ClientCredentialsGrant($accessTokenService);
     }
 }

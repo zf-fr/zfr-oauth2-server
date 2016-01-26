@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
@@ -50,7 +52,10 @@ interface AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    public function handleAuthorizationRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null);
+    public function handleAuthorizationRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface;
 
     /**
      * @param  ServerRequestInterface   $request
@@ -58,12 +63,15 @@ interface AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
      */
-    public function handleTokenRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null);
+    public function handleTokenRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface;
 
     /**
      * @param  ServerRequestInterface $request
      * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(ServerRequestInterface $request);
+    public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface;
 }

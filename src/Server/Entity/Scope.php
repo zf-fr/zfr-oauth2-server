@@ -34,22 +34,22 @@ class Scope
     /**
      * @var string
      */
-    protected $name;
+    protected $name = '';
 
     /**
      * @var string
      */
-    protected $description;
+    protected $description = '';
 
     /**
      * @var bool
      */
-    protected $isDefault;
+    protected $isDefault = false;
 
     /**
      * Get the scope id
      *
-     * @return int
+     * @return int|null
      */
     public function getId()
     {
@@ -72,7 +72,7 @@ class Scope
      *
      * @return string
      */
-    public function getName()
+    public function getName(): string
     {
         return $this->name;
     }
@@ -93,7 +93,7 @@ class Scope
      *
      * @return string
      */
-    public function getDescription()
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -114,7 +114,7 @@ class Scope
      *
      * @return bool
      */
-    public function isDefault()
+    public function isDefault(): bool
     {
         return $this->isDefault;
     }
