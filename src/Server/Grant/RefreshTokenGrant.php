@@ -96,7 +96,7 @@ class RefreshTokenGrant extends AbstractGrant
     ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
-        $refreshToken = isset($postParams['refresh_token']) ? $postParams['refresh_token'] : null;
+        $refreshToken = $postParams['refresh_token'] ??  null;
 
         if (null === $refreshToken) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
@@ -112,7 +112,7 @@ class RefreshTokenGrant extends AbstractGrant
         // We can now create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scopes = isset($postParams['scope']) ? $postParams['scope'] : $refreshToken->getScopes();
+        $scopes = $postParams['scope'] ?? $refreshToken->getScopes();
 
         if (!$refreshToken->matchScopes($scopes)) {
             throw OAuth2Exception::invalidScope(

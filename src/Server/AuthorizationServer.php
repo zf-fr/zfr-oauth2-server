@@ -170,7 +170,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     
         try {
             $queryParams  = $request->getQueryParams();
-            $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
+            $responseType = $queryParams['response_type'] ?? null;
 
             if (null === $responseType) {
                 throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
@@ -201,7 +201,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         $postParams = $request->getParsedBody();
 
         try {
-            $grant = isset($postParams['grant_type']) ? $postParams['grant_type'] : null;
+            $grant = $postParams['grant_type'] ?? null;
 
             if (null === $grant) {
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
@@ -230,8 +230,8 @@ class AuthorizationServer implements AuthorizationServerInterface
     {
         $postParams = $request->getParsedBody();
 
-        $token     = isset($postParams['token']) ? $postParams['token'] : null;
-        $tokenHint = isset($postParams['token_type_hint']) ? $postParams['token_type_hint'] : null;
+        $token     = $postParams['token'] ?? null;
+        $tokenHint = $postParams['token_type_hint'] ?? null;
 
         if (null === $token || null === $tokenHint) {
             throw OAuth2Exception::invalidRequest(
@@ -354,8 +354,8 @@ class AuthorizationServer implements AuthorizationServerInterface
         } else {
             $postParams = $request->getParsedBody();
 
-            $id     = isset($postParams['client_id']) ? $postParams['client_id'] : null;
-            $secret = isset($postParams['client_secret']) ? $postParams['client_secret'] : null;
+            $id     = $postParams['client_id'] ?? null;
+            $secret = $postParams['client_secret'] ?? null;
         }
 
         return [$id, $secret];

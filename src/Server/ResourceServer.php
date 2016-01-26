@@ -99,6 +99,6 @@ class ResourceServer implements ResourceServerInterface
         // Default back to authorization in query param
         $queryParams = $request->getQueryParams();
 
-        return isset($queryParams['access_token']) ? $queryParams['access_token'] : null;
+        return $queryParams['access_token'] ?? null;
     }
 }
