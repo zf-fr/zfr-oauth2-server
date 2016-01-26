@@ -31,35 +31,35 @@ class ServerOptions
      *
      * @var int
      */
-    protected $authorizationCodeTtl = 120;
+    private $authorizationCodeTtl = 120;
 
     /**
      * Access token TTL
      *
      * @var int
      */
-    protected $accessTokenTtl = 3600;
+    private $accessTokenTtl = 3600;
 
     /**
      * Refresh token TTL
      *
      * @var int
      */
-    protected $refreshTokenTtl = 86400;
+    private $refreshTokenTtl = 86400;
 
     /**
      * Set the owner callable
      *
      * @var callable|string
      */
-    protected $ownerCallable;
+    private $ownerCallable;
 
     /**
      * Grants that the authorization server must support
      *
      * @var array
      */
-    protected $grants = [];
+    private $grants = [];
 
     /**
      * Constructor
@@ -111,9 +111,9 @@ class ServerOptions
      *
      * @param int $accessTokenTtl
      */
-    public function setAccessTokenTtl($accessTokenTtl)
+    public function setAccessTokenTtl(int $accessTokenTtl)
     {
-        $this->accessTokenTtl = (int) $accessTokenTtl;
+        $this->accessTokenTtl = $accessTokenTtl;
     }
 
     /**
@@ -131,9 +131,9 @@ class ServerOptions
      *
      * @param int $refreshTokenTtl
      */
-    public function setRefreshTokenTtl($refreshTokenTtl)
+    public function setRefreshTokenTtl(int $refreshTokenTtl)
     {
-        $this->refreshTokenTtl = (int) $refreshTokenTtl;
+        $this->refreshTokenTtl = $refreshTokenTtl;
     }
 
     /**

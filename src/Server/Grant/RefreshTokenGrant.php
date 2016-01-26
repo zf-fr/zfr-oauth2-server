@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
@@ -39,17 +40,17 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * @var TokenService
      */
-    protected $refreshTokenService;
+    private $refreshTokenService;
 
     /**
      * @var bool
      */
-    protected $rotateRefreshTokens = false;
+    private $rotateRefreshTokens = false;
 
     /**
      * @param TokenService $accessTokenService
@@ -93,7 +94,7 @@ class RefreshTokenGrant extends AbstractGrant
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         $refreshToken = $postParams['refresh_token'] ??  null;
@@ -103,6 +104,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // We can fetch the actual token, and validate it
+        /** @var RefreshToken $refreshToken */
         $refreshToken = $this->refreshTokenService->getToken($refreshToken);
 
         if (null === $refreshToken || $refreshToken->isExpired()) {
@@ -124,6 +126,8 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scopes);
+
+        /** @var AccessToken $accessToken */
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // We may want to revoke the old refresh token

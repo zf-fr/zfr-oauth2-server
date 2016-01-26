@@ -33,7 +33,7 @@ class ClientService
     /**
      * @var ClientRepositoryInterface
      */
-    protected $clientRepository;
+    private $clientRepository;
 
     /**
      * ClientService constructor.
@@ -72,7 +72,7 @@ class ClientService
      * @param  string $id
      * @return Client|null
      */
-    public function getClient($id)
+    public function getClient(string $id)
     {
         return $this->clientRepository->findById($id);
     }
@@ -84,7 +84,7 @@ class ClientService
      * @param  string $secret
      * @return bool True if properly authenticated, false otherwise
      */
-    public function authenticate(Client $client, $secret): bool
+    public function authenticate(Client $client, string $secret): bool
     {
         return password_verify($secret, $client->getSecret());
     }

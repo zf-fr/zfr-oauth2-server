@@ -46,19 +46,19 @@ class TokenService
     /**
      * @var TokenRepositoryInterface
      */
-    protected $tokenRepository;
+    private $tokenRepository;
 
     /**
      * @var ScopeService
      */
-    protected $scopeService;
+    private $scopeService;
 
     /**
      * Token TTL (in seconds)
      *
      * @var int
      */
-    protected $tokenTTL = 3600;
+    private $tokenTTL = 3600;
 
     /**
      * @param TokenRepositoryInterface $tokenRepository
@@ -120,7 +120,7 @@ class TokenService
      * @param  string $token
      * @return AbstractToken|null
      */
-    public function getToken($token)
+    public function getToken(string $token)
     {
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->findByToken($token);
@@ -152,7 +152,7 @@ class TokenService
      * @return void
      * @throws OAuth2Exception
      */
-    protected function validateTokenScopes(array $scopes)
+    private function validateTokenScopes(array $scopes)
     {
         $registeredScopes = $this->scopeService->getAll();
 

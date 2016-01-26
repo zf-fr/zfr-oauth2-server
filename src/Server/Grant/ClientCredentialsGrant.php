@@ -45,7 +45,7 @@ class ClientCredentialsGrant extends AbstractGrant
      *
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * @param TokenService $accessTokenService
