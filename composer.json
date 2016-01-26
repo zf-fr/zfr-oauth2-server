@@ -20,6 +20,7 @@
     "php": ">=5.5",
     "doctrine/common": "~2.5",
     "zendframework/zend-diactoros": "~1.1",
+    "container-interop/container-interop": "^1.1",
     "zendframework/zend-math": "~2.2",
     "zendframework/zend-eventmanager": "~2.2"
   },
@@ -27,7 +28,11 @@
     "phpunit/phpunit": "~4.6",
     "squizlabs/php_codesniffer": "1.4.*",
     "satooshi/php-coveralls": "~0.6",
-    "doctrine/orm": "~2.5"
+    "doctrine/orm": "~2.5",
+    "zendframework/zend-stratigility": "~1.1"
+  },
+  "suggest": {
+    "zendframework/zend-stratigility": "~1.1 : if you need the middleware capability"
   },
   "autoload": {
     "psr-4": {

@@ -105,36 +105,6 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertNull($this->tokenService->getToken('token'));
     }
 
-    public function testCanDeleteToken()
-    {
-        $token = new AccessToken();
-        $this->objectManager->expects($this->once())->method('remove')->with($token);
-
-        $this->tokenService->deleteToken($token);
-    }
-
-    public function testCanDeleteExpiredTokens()
-    {
-        $expiredToken  = new AccessToken();
-        $expiredTokens = new ArrayCollection([$expiredToken]);
-
-        $this->tokenRepository->expects($this->at(0))
-                              ->method('matching')
-                              ->with($this->isInstanceOf(Criteria::class))
-                              ->will($this->returnValue($expiredTokens));
-
-        $this->tokenRepository->expects($this->at(1))
-                              ->method('matching')
-                              ->with($this->isInstanceOf(Criteria::class))
-                              ->will($this->returnValue(new ArrayCollection()));
-
-        $this->objectManager->expects($this->once())
-                            ->method('remove')
-                            ->with($expiredToken);
-
-        $this->tokenService->deleteExpiredTokens();
-    }
-
     public function scopeProvider()
     {
         return [

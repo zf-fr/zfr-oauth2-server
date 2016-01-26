@@ -54,7 +54,6 @@ and make it very easy to use:
 
 If anyone want to help with a Symfony 2 bundle, I'd be glad to help.
 
-
 ## Documentation
 
 ZfrOAuth2Server is based on the [RFC 6749](http://tools.ietf.org/html/rfc6749) documentation.

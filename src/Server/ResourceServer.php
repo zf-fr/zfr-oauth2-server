@@ -69,7 +69,7 @@ class ResourceServer implements ResourceServerInterface
 
         $token = $this->accessTokenService->getToken($token);
 
-        if ($token === null || !$this->isTokenValid($token, $scopes)) {
+        if ($token === null || !$token->isValid($scopes)) {
             throw new InvalidAccessTokenException('Access token has expired or has been deleted');
         }
 
@@ -100,25 +100,5 @@ class ResourceServer implements ResourceServerInterface
         $queryParams = $request->getQueryParams();
 
         return isset($queryParams['access_token']) ? $queryParams['access_token'] : null;
-    }
-
-    /**
-     * Check if the given token is valid (not expired and/or match the given scopes)
-     *
-     * @param  AccessToken $accessToken
-     * @param  array       $scopes
-     * @return bool
-     */
-    private function isTokenValid(AccessToken $accessToken, $scopes = [])
-    {
-        if ($accessToken->isExpired()) {
-            return false;
-        }
-
-        if (!empty($scopes) && !$accessToken->matchScopes($scopes)) {
-            return false;
-        }
-
-        return true;
     }
 }

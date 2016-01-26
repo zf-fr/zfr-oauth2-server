@@ -188,7 +188,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         }
 
         /** @var ResponseInterface $response */
-        $response = $response->withAddedHeader('Content-Type', 'application/json');
+        $response = $response->withHeader('Content-Type', 'application/json');
 
         $event = new AuthorizationCodeEvent($request, $response, $owner);
         $event->setTarget($this);
@@ -232,9 +232,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
 
         /** @var ResponseInterface $response */
-        $response = $response->withAddedHeader('Content-Type', 'application/json')
-                             ->withAddedHeader('Cache-Control', 'no-store')
-                             ->withAddedHeader('Pragma', 'no-cache');
+        $response = $response->withHeader('Content-Type', 'application/json')
+                             ->withHeader('Cache-Control', 'no-store')
+                             ->withHeader('Pragma', 'no-cache');
 
         $event = new TokenEvent($request, $response, $owner);
         $event->setTarget($this);
