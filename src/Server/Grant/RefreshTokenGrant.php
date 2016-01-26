@@ -94,7 +94,7 @@ class RefreshTokenGrant extends AbstractGrant
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         $refreshToken = $postParams['refresh_token'] ??  null;
