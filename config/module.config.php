@@ -73,8 +73,8 @@ return [
             /**
              * Utils
              */
-            // ManagerRegistry::class                 => ManagerRegistryFactory::class,
             ServerOptions::class                   => ServerOptionsFactory::class,
+            ManagerRegistry::class                 => My\ManagerRegistryFactory::class,
 
             /**
              * Factories that do not map to a class
@@ -128,8 +128,31 @@ return [
                     ]
                 ]
             ]
-        ]
+        ],
     ],
 
-    'zfr_oauth2_server' => []
+    'zfr_oauth2_server' => [
+        /**
+         * Doctrine object manager key
+         */
+        // 'object_manager' => 'orm_default',
+
+        /**
+         * Various tokens TTL
+         */
+        // 'authorization_code_ttl' => 120,
+        // 'access_token_ttl'       => 3600,
+        // 'refresh_token_ttl'      => 86400,
+
+        /**
+         * Registered grants for this server
+         */
+        // 'grants'         => [],
+
+        /**
+         * A callable used to validate the username and password when using the
+         * password grant
+         */
+        // 'owner_callable' => null,
+    ]
 ];
