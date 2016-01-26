@@ -33,7 +33,6 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
     {
         $options = new ServerOptions();
 
-        $this->assertEmpty($options->getObjectManager());
         $this->assertEquals(120, $options->getAuthorizationCodeTtl());
         $this->assertEquals(3600, $options->getAccessTokenTtl());
         $this->assertEquals(86400, $options->getRefreshTokenTtl());
@@ -47,7 +46,6 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
         };
 
         $options = new ServerOptions([
-            'object_manager'         => 'my_object_manager',
             'authorization_code_ttl' => 300,
             'access_token_ttl'       => 3000,
             'refresh_token_ttl'      => 30000,
@@ -55,7 +53,6 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
             'grants'                 => [ClientCredentialsGrant::class]
         ]);
 
-        $this->assertEquals('my_object_manager', $options->getObjectManager());
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());
         $this->assertEquals(3000, $options->getAccessTokenTtl());
         $this->assertEquals(30000, $options->getRefreshTokenTtl());

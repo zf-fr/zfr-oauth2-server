@@ -18,11 +18,9 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 use ZfrOAuth2\Server\Service\ClientService;
-use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -32,12 +30,7 @@ use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 class ClientServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $objectManager;
-
-    /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var ClientRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $clientRepository;
 
@@ -48,9 +41,8 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->objectManager    = $this->getMock(ObjectManager::class);
-        $this->clientRepository = $this->getMock(SelectableObjectRepository::class);
-        $this->clientService    = new ClientService($this->objectManager, $this->clientRepository);
+        $this->clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $this->clientService    = new ClientService($this->clientRepository);
     }
 
     public function testCanGetClient()
@@ -58,7 +50,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $client = new Client();
 
         $this->clientRepository->expects($this->once())
-                               ->method('find')
+                               ->method('findById')
                                ->with('client_id')
                                ->will($this->returnValue($client));
 
@@ -69,9 +61,10 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
     {
         $client = new Client();
 
-        $this->objectManager->expects($this->once())
-                            ->method('persist')
-                            ->with($this->isInstanceOf(Client::class));
+        $this->clientRepository->expects($this->once())
+                            ->method('save')
+                            ->with($client)
+                            ->willReturn($client);
 
         list($client, $secret) = $this->clientService->registerClient($client);
 
