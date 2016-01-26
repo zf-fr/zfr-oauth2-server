@@ -34,7 +34,7 @@ interface AuthorizationServerInterface
      * @param  string $grant
      * @return bool
      */
-    public function hasGrant($grant);
+    public function hasGrant(string $grant): bool;
 
     /**
      * Check if the authorization server supports this response type
@@ -42,7 +42,7 @@ interface AuthorizationServerInterface
      * @param  string $responseType
      * @return bool
      */
-    public function hasResponseType($responseType);
+    public function hasResponseType(string $responseType): bool;
 
     /**
      * @param  ServerRequestInterface   $request

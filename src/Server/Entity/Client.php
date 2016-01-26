@@ -70,9 +70,9 @@ class Client
      * @param  string $secret
      * @return void
      */
-    public function setSecret($secret)
+    public function setSecret(string $secret)
     {
-        $this->secret = (string) $secret;
+        $this->secret = $secret;
     }
 
     /**
@@ -91,9 +91,9 @@ class Client
      * @param  string $name
      * @return void
      */
-    public function setName($name)
+    public function setName(string$name)
     {
-        $this->name = (string) $name;
+        $this->name = $name;
     }
 
     /**
@@ -143,7 +143,7 @@ class Client
      * @param  string $redirectUri
      * @return bool
      */
-    public function hasRedirectUri($redirectUri): bool
+    public function hasRedirectUri(string $redirectUri): bool
     {
         return in_array($redirectUri, $this->redirectUris, true);
     }

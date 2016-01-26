@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\RefreshToken;
@@ -103,6 +104,7 @@ class RefreshTokenGrant extends AbstractGrant
         }
 
         // We can fetch the actual token, and validate it
+        /** @var RefreshToken $refreshToken */
         $refreshToken = $this->refreshTokenService->getToken($refreshToken);
 
         if (null === $refreshToken || $refreshToken->isExpired()) {
@@ -124,6 +126,8 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scopes);
+
+        /** @var AccessToken $accessToken */
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // We may want to revoke the old refresh token

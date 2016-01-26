@@ -120,7 +120,7 @@ class TokenService
      * @param  string $token
      * @return AbstractToken|null
      */
-    public function getToken($token)
+    public function getToken(string $token)
     {
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->findByToken($token);

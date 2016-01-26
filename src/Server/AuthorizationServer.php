@@ -101,7 +101,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $grantType
      * @return bool
      */
-    public function hasGrant($grantType): bool
+    public function hasGrant(string $grantType): bool
     {
         return isset($this->grants[$grantType]);
     }
@@ -132,7 +132,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $responseType
      * @return bool
      */
-    public function hasResponseType($responseType): bool
+    public function hasResponseType(string $responseType): bool
     {
         return isset($this->responseTypes[$responseType]);
     }
@@ -144,7 +144,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return GrantInterface
      * @throws Exception\OAuth2Exception
      */
-    public function getResponseType($responseType): GrantInterface
+    public function getResponseType(string $responseType): GrantInterface
     {
         if ($this->hasResponseType($responseType)) {
             return $this->responseTypes[$responseType];

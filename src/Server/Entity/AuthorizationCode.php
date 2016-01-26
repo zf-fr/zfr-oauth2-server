@@ -40,9 +40,9 @@ class AuthorizationCode extends AbstractToken
      * @param  string $redirectUri
      * @return void
      */
-    public function setRedirectUri($redirectUri)
+    public function setRedirectUri(string $redirectUri)
     {
-        $this->redirectUri = (string) $redirectUri;
+        $this->redirectUri = $redirectUri;
     }
 
     /**
