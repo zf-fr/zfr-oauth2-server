@@ -60,7 +60,7 @@ class ScopeService
      */
     public function getAll(): array
     {
-        return $this->scopeRepository->findAll();
+        return $this->scopeRepository->findAllScopes();
     }
 
     /**

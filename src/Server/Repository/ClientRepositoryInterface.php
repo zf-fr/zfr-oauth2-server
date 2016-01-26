@@ -35,5 +35,5 @@ interface ClientRepositoryInterface
      * @param  string $id
      * @return Client|null
      */
-    public function find($id);
+    public function findById(string $id);
 }

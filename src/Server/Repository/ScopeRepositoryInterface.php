@@ -34,7 +34,7 @@ interface ScopeRepositoryInterface
     /**
      * @return Scope[]
      */
-    public function findAll(): array;
+    public function findAllScopes(): array;
 
     /**
      * @return Scope[]

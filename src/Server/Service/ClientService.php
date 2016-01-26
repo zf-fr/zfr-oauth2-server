@@ -74,7 +74,7 @@ class ClientService
      */
     public function getClient($id)
     {
-        return $this->clientRepository->find($id);
+        return $this->clientRepository->findById($id);
     }
 
     /**
