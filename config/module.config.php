@@ -16,7 +16,6 @@
  * and is licensed under the MIT license.
  */
 
-use Doctrine\ORM\Mapping\Driver\XmlDriver;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\AuthorizationServerMiddleware;
 use ZfrOAuth2\Server\Container\AccessTokenServiceFactory;
@@ -33,7 +32,6 @@ use ZfrOAuth2\Server\Container\ResourceServerFactory;
 use ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
 use ZfrOAuth2\Server\Container\ServerOptionsFactory;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
@@ -51,22 +49,22 @@ return [
             /**
              * Middleware
              */
-            AuthorizationServerMiddleware::class   => AuthorizationServerMiddlewareFactory::class,
-            ResourceServerMiddleware::class        => ResourceServerMiddlewareFactory::class,
+            AuthorizationServerMiddleware::class     => AuthorizationServerMiddlewareFactory::class,
+            ResourceServerMiddleware::class          => ResourceServerMiddlewareFactory::class,
 
             /**
              * Services
              */
-            AuthorizationServer::class             => AuthorizationServerFactory::class,
-            ResourceServer::class                  => ResourceServerFactory::class,
-            ClientService::class                   => ClientServiceFactory::class,
-            ScopeService::class                    => ScopeServiceFactory::class,
+            AuthorizationServer::class               => AuthorizationServerFactory::class,
+            ResourceServer::class                    => ResourceServerFactory::class,
+            ClientService::class                     => ClientServiceFactory::class,
+            ScopeService::class                      => ScopeServiceFactory::class,
 
             /**
              * Grant Services
              */
-            ClientCredentialsGrant::class          => ClientCredentialsGrantFactory::class,
-            PasswordGrant::class                   => PasswordGrantFactory::class,
+            ClientCredentialsGrant::class            => ClientCredentialsGrantFactory::class,
+            PasswordGrant::class                     => PasswordGrantFactory::class,
             AuthorizationGrant::class                => AuthorizationGrantFactory::class,
             RefreshTokenGrant::class                 => RefreshTokenGrantFactory::class,
 
@@ -74,7 +72,6 @@ return [
              * Utils
              */
             ServerOptions::class                     => ServerOptionsFactory::class,
-            ManagerRegistry::class                   => My\ManagerRegistryFactory::class,
 
             /**
              * Factories that do not map to a class
@@ -85,58 +82,7 @@ return [
         ],
     ],
 
-    /**
-     * Use this config if you are using Doctrine 2 ORM. Otherwise, you can delete it
-     */
-    'doctrine'     => [
-        /**
-         * Set the resolver. You should change the value to your user class (or any class that
-         * implements the ZfrOAuth2/Server/Entity/TokenOwnerInterface interface
-         */
-        'entity_resolver' => [
-            'orm_default' => [
-                'resolvers' => [
-                    TokenOwnerInterface::class => My\Entity\User::class
-                ],
-            ],
-        ],
-        'driver'          => [
-            'zfr_oauth2_driver' => [
-                'class' => XmlDriver::class,
-                'paths' => 'vendor/zfr/zfr-oauth2-server/config/doctrine',
-            ],
-            'orm_default'       => [
-                'drivers' => [
-                    'ZfrOAuth2\Server\Entity' => 'zfr_oauth2_driver',
-                ],
-            ],
-        ],
-
-        'configuration' => [
-            'orm_default' => [
-                'second_level_cache' => [
-                    'enabled' => true,
-
-                    'regions' => [
-                        'oauth_token_region' => [
-                            'lifetime' => 3600
-                        ],
-
-                        'oauth_scope_region' => [
-                            'lifetime' => 300
-                        ]
-                    ],
-                ],
-            ],
-        ],
-    ],
-
     'zfr_oauth2_server' => [
-        /**
-         * Doctrine object manager key
-         */
-        // 'object_manager' => 'orm_default',
-
         /**
          * Various tokens TTL
          */
