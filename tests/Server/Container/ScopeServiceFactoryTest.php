@@ -22,12 +22,9 @@ use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Container\ResourceServerFactory;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
-use ZfrOAuth2\Server\Entity\Scope;
-use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -39,30 +36,13 @@ class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container    = $this->getMock(ContainerInterface::class);
-        $serverOptions = new ServerOptions(['object_manager' => 'my_object_manager']);
-
-        $objectManager = $this->getMock(ObjectManager::class);
-        $objectManager->expects($this->at(0))
-            ->method('getRepository')
-            ->with(Scope::class)
-            ->willReturn($this->getMock(ObjectRepository::class));
-
-        $managerRegistry = $this->getMock(ManagerRegistry::class, [], [], '', false);
-        $managerRegistry->expects($this->once())
-            ->method('getManager')
-            ->with($serverOptions->getObjectManager())
-            ->willReturn($objectManager);
+        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->getMock(ContainerInterface::class);
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(ManagerRegistry::class)
-            ->willReturn($managerRegistry);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
+            ->with(ScopeRepositoryInterface::class)
+            ->willReturn($this->getMock(ScopeRepositoryInterface::class, [], [], '', false));
 
         $factory = new ScopeServiceFactory();
         $service = $factory($container);

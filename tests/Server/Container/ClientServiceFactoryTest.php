@@ -18,13 +18,9 @@
 
 namespace ZfrOAuth2Test\Server\Container;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ClientServiceFactory;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 use ZfrOAuth2\Server\Service\ClientService;
 
 /**
@@ -35,32 +31,15 @@ use ZfrOAuth2\Server\Service\ClientService;
  */
 class ClientServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
+
     public function testCanCreateFromFactory()
     {
-        $container       = $this->getMock(ContainerInterface::class);
-        $managerRegistry = $this->getMock(ManagerRegistry::class, [], [], '', false);
-        $serverOptions   = new ServerOptions(['object_manager' => 'my_object_manager']);
-        $objectManager   = $this->getMock(ObjectManager::class);
+        $container = $this->getMock(ContainerInterface::class);
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(ManagerRegistry::class)
-            ->willReturn($managerRegistry);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
-
-        $managerRegistry->expects($this->at(0))
-            ->method('getManager')
-            ->with($serverOptions->getObjectManager())
-            ->willReturn($objectManager);
-
-        $objectManager->expects($this->at(0))
-            ->method('getRepository')
-            ->with(Client::class)
-            ->willReturn($this->getMock(ObjectRepository::class));
+            ->with(ClientRepositoryInterface::class)
+            ->willReturn($this->getMock(ClientRepositoryInterface::class, [], [], '', false));
 
         $factory = new ClientServiceFactory();
         $service = $factory($container);

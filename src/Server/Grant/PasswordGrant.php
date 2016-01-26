@@ -103,9 +103,9 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         $postParams = $request->getParsedBody();
 
         // Validate the user using its username and password
-        $username = isset($postParams['username']) ? $postParams['username'] : null;
-        $password = isset($postParams['password']) ? $postParams['password'] : null;
-        $scope    = isset($postParams['scope']) ? $postParams['scope'] : null;
+        $username = $postParams['username'] ?? null;
+        $password = $postParams['password'] ?? null;
+        $scope    = $postParams['scope'] ?? null;
 
         if (null === $username || null == $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');

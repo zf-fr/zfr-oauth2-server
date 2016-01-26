@@ -88,7 +88,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $queryParams = $request->getQueryParams();
 
         // We must validate some parameters first
-        $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
+        $responseType = $queryParams['response_type'] ?? null;
 
         if ($responseType !== self::GRANT_RESPONSE_TYPE) {
             throw OAuth2Exception::invalidRequest(sprintf(
@@ -99,9 +99,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         // We try to fetch the redirect URI from query param as per spec, and if none found, we just use
         // the first redirect URI defined in the client
-        $redirectUri = isset($queryParams['redirect_uri'])
-            ? $queryParams['redirect_uri']
-            : $client->getRedirectUris()[0];
+        $redirectUri = $queryParams['redirect_uri'] ?? $client->getRedirectUris()[0];
 
         // If the redirect URI cannot be found in the list, we throw an error as we don't want the user
         // to be redirected to an unauthorized URL
@@ -110,8 +108,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         // Scope and state allow to perform additional validation
-        $scope = isset($queryParams['scope']) ? $queryParams['scope'] : null;
-        $state = isset($queryParams['state']) ? $queryParams['state'] : null;
+        $scope = $queryParams['scope'] ?? null;
+        $state = $queryParams['state'] ?? null;
 
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setRedirectUri($redirectUri);
@@ -138,7 +136,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
-        $code = isset($postParams['code']) ? $postParams['code'] : null;
+        $code = $postParams['code'] ?? null;
 
         if (null === $code) {
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
@@ -151,7 +149,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             throw OAuth2Exception::invalidGrant('Authorization code cannot be found or is expired');
         }
 
-        $clientId = isset($postParams['client_id']) ? $postParams['client_id'] : null;
+        $clientId = $postParams['client_id'] ?? null;
 
         if ($authorizationCode->getClient()->getId() !== $clientId) {
             throw OAuth2Exception::invalidRequest(

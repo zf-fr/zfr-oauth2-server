@@ -18,12 +18,8 @@
 
 namespace ZfrOAuth2\Server\Container;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Entity\Scope;
-use ZfrOAuth2\Server\Options\ServerOptions;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
@@ -38,16 +34,9 @@ class ScopeServiceFactory
      */
     public function __invoke(ContainerInterface $container): ScopeService
     {
-        /** @var ManagerRegistry $managerRegistry */
-        $managerRegistry = $container->get(ManagerRegistry::class);
+        /** @var ScopeRepositoryInterface $clientRepository */
+        $scopeRepository = $container->get(ScopeRepositoryInterface::class);
 
-        /** @var ServerOptions $serverOptions */
-        $serverOptions = $container->get(ServerOptions::class);
-
-        /** @var ObjectManager $objectManager */
-        $objectManager   = $managerRegistry->getManager($serverOptions->getObjectManager() ?: null);
-        $scopeRepository = $objectManager->getRepository(Scope::class);
-
-        return new ScopeService($objectManager, $scopeRepository);
+        return new ScopeService($scopeRepository);
     }
 }

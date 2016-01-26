@@ -18,17 +18,13 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Scope;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
-use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -38,12 +34,7 @@ use ZfrOAuth2Test\Server\Asset\SelectableObjectRepository;
 class TokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var ObjectManager|\PHPUnit_Framework_MockObject_MockObject
-     */
-    protected $objectManager;
-
-    /**
-     * @var ObjectRepository|\PHPUnit_Framework_MockObject_MockObject
+     * @var TokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenRepository;
 
@@ -59,11 +50,9 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->objectManager   = $this->getMock(ObjectManager::class);
-        $this->tokenRepository = $this->getMock(SelectableObjectRepository::class);
+        $this->tokenRepository = $this->getMock(TokenRepositoryInterface::class);
         $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
         $this->tokenService    = new TokenService(
-            $this->objectManager,
             $this->tokenRepository,
             $this->scopeService
         );
@@ -75,7 +64,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $token->setToken('token');
 
         $this->tokenRepository->expects($this->once())
-                              ->method('find')
+                              ->method('findByToken')
                               ->with('token')
                               ->will($this->returnValue($token));
 
@@ -86,7 +75,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     {
         $this->tokenRepository
             ->expects($this->once())
-            ->method('find')
+            ->method('findByToken')
             ->with('token');
 
         $this->assertNull($this->tokenService->getToken('token'));
@@ -98,7 +87,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $token->setToken('Token');
 
         $this->tokenRepository->expects($this->once())
-                              ->method('find')
+                              ->method('findByToken')
                               ->with('token')
                               ->will($this->returnValue($token));
 
@@ -158,9 +147,9 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         }
 
         if (!$throwException) {
-            $this->objectManager->expects($this->once())
-                                ->method('persist')
-                                ->with($this->isInstanceOf(AbstractToken::class));
+            $this->tokenRepository->expects($this->once())
+                                  ->method('save')
+                                  ->with($this->isInstanceOf(AbstractToken::class));
         }
 
         $scopes = [];
@@ -191,12 +180,12 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->scopeService->expects($this->once())->method('getDefaultScopes')->will($this->returnValue(['read']));
 
         $this->tokenRepository->expects($this->at(0))
-                              ->method('find')
+                              ->method('findByToken')
                               ->with($this->isType('string'))
                               ->will($this->returnValue(new AccessToken()));
 
         $this->tokenRepository->expects($this->at(1))
-                              ->method('find')
+                              ->method('findByToken')
                               ->with($this->isType('string'))
                               ->will($this->returnValue(null));
 

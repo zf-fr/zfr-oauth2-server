@@ -16,24 +16,28 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Id;
+namespace ZfrOAuth2\Server\Repository;
 
-use Doctrine\ORM\EntityManager;
-use ZfrOAuth2\Server\Id\ClientIdGenerator;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
- *
- * @covers \ZfrOAuth2\Server\Id\ClientIdGenerator
+ * Interface ScopeRepositoryInterface
  */
-class ClientIdGeneratorTest extends \PHPUnit_Framework_TestCase
+interface ScopeRepositoryInterface
 {
-    public function testCanGenerateClientId()
-    {
-        $generator = new ClientIdGenerator();
-        $id        = $generator->generate($this->getMock(EntityManager::class, [], [], '', false), new \stdClass());
+    /**
+     * @param Scope $scope
+     * @return Scope
+     */
+    public function save(Scope $scope): Scope;
 
-        $this->assertEquals(13, strlen($id));
-    }
+    /**
+     * @return Scope[]
+     */
+    public function findAllScopes(): array;
+
+    /**
+     * @return Scope[]
+     */
+    public function findDefaultScopes(): array;
 }

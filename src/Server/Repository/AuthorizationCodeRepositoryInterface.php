@@ -16,24 +16,11 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Id;
-
-use Doctrine\ORM\EntityManager;
-use Doctrine\ORM\Id\AbstractIdGenerator;
+namespace ZfrOAuth2\Server\Repository;
 
 /**
- * Generate a custom identifier for clients
- *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Interface AuthorizationCodeRepositoryInterface
  */
-class ClientIdGenerator extends AbstractIdGenerator
+interface AuthorizationCodeRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function generate(EntityManager $em, $entity): string
-    {
-        return uniqid();
-    }
 }

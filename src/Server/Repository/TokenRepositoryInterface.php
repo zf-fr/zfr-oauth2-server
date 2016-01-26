@@ -16,26 +16,29 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2\Server\Repository;
 
-use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Entity\AbstractToken;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Interface TokenRepositoryInterface
  */
-class ServerOptionsFactory
+interface TokenRepositoryInterface
 {
     /**
-     * @param ContainerInterface $container
-     * @return ServerOptions
+     * @param AbstractToken $token
+     * @return AbstractToken
      */
-    public function __invoke(ContainerInterface $container): ServerOptions
-    {
-        $config  = $container->get('config');
-        $options = $config['zfr_oauth2_server'] ?? [];
+    public function save(AbstractToken $token): AbstractToken;
 
-        return new ServerOptions($options);
-    }
+    /**
+     * @param string $token
+     * @return AbstractToken|null
+     */
+    public function findByToken(string $token);
+
+    /**
+     * @param AbstractToken $token
+     */
+    public function deleteToken(AbstractToken $token);
 }

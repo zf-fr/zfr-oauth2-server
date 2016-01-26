@@ -16,17 +16,24 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Asset;
+namespace ZfrOAuth2\Server\Repository;
 
-use Doctrine\Common\Collections\Selectable;
-use Doctrine\Common\Persistence\ObjectRepository;
+use ZfrOAuth2\Server\Entity\Client;
 
 /**
- * Simple interface to simplify testing
- *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Interface ClientRepositoryInterface
  */
-interface SelectableObjectRepository extends ObjectRepository, Selectable
+interface ClientRepositoryInterface
 {
+    /**
+     * @param Client $client
+     * @return Client
+     */
+    public function save(Client $client): Client;
+
+    /**
+     * @param  string $id
+     * @return Client|null
+     */
+    public function findById(string $id);
 }

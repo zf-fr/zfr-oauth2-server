@@ -18,13 +18,11 @@
 
 namespace ZfrOAuth2Test\Server\Container;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\RefreshTokenServiceFactory;
 use ZfrOAuth2\Server\Entity\RefreshToken;
 use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -39,29 +37,17 @@ class RefreshTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getMock(ContainerInterface::class);
 
-        $serverOptions = new ServerOptions(['object_manager' => 'my_object_manager']);
-
-        $objectManager = $this->getMock(ObjectManager::class);
-        $objectManager->expects($this->at(0))
-            ->method('getRepository')
-            ->with(RefreshToken::class)
-            ->willReturn($this->getMock(ObjectRepository::class));
-
-        $managerRegistry = $this->getMock(ManagerRegistry::class, [], [], '', false);
-        $managerRegistry->expects($this->once())
-            ->method('getManager')
-            ->with($serverOptions->getObjectManager())
-            ->willReturn($objectManager);
+        $serverOptions = new ServerOptions();
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(ManagerRegistry::class)
-            ->willReturn($managerRegistry);
+            ->with(ServerOptions::class)
+            ->willReturn($serverOptions);
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
+            ->with(RefreshTokenRepositoryInterface::class)
+            ->willReturn($this->getMock(RefreshTokenRepositoryInterface::class, [], [], '', false));
 
         $container->expects($this->at(2))
             ->method('get')

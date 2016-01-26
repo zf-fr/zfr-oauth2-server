@@ -27,13 +27,6 @@ namespace ZfrOAuth2\Server\Options;
 class ServerOptions
 {
     /**
-     * Object manager key
-     *
-     * @var string
-     */
-    protected $objectManager = '';
-
-    /**
      * Authorization code TTL
      *
      * @var int
@@ -91,26 +84,6 @@ class ServerOptions
             $setter = 'set' . str_replace('_', '', $key);
             $this->{$setter}($value);
         }
-    }
-
-    /**
-     * Set the object manager key
-     *
-     * @param string $objectManager
-     */
-    public function setObjectManager($objectManager)
-    {
-        $this->objectManager = (string) $objectManager;
-    }
-
-    /**
-     * Get the object manager key
-     *
-     * @return string
-     */
-    public function getObjectManager(): string
-    {
-        return $this->objectManager;
     }
 
     /**

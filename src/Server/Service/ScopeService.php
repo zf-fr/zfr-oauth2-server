@@ -16,13 +16,10 @@
  * and is licensed under the MIT license.
  */
 
-declare(strict_types = 1);
-
 namespace ZfrOAuth2\Server\Service;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 
 /**
  * Scope service
@@ -33,22 +30,15 @@ use ZfrOAuth2\Server\Entity\Scope;
 class ScopeService
 {
     /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var ObjectRepository
+     * @var ScopeRepositoryInterface
      */
     protected $scopeRepository;
 
     /**
-     * @param ObjectManager    $objectManager
-     * @param ObjectRepository $scopeRepository
+     * @param ScopeRepositoryInterface $scopeRepository
      */
-    public function __construct(ObjectManager $objectManager, ObjectRepository $scopeRepository)
+    public function __construct(ScopeRepositoryInterface $scopeRepository)
     {
-        $this->objectManager   = $objectManager;
         $this->scopeRepository = $scopeRepository;
     }
 
@@ -60,10 +50,7 @@ class ScopeService
      */
     public function createScope(Scope $scope): Scope
     {
-        $this->objectManager->persist($scope);
-        $this->objectManager->flush();
-
-        return $scope;
+        return $this->scopeRepository->save($scope);
     }
 
     /**
@@ -73,7 +60,7 @@ class ScopeService
      */
     public function getAll(): array
     {
-        return $this->scopeRepository->findAll();
+        return $this->scopeRepository->findAllScopes();
     }
 
     /**
@@ -83,6 +70,6 @@ class ScopeService
      */
     public function getDefaultScopes(): array
     {
-        return $this->scopeRepository->findBy(['isDefault' => true]);
+        return $this->scopeRepository->findDefaultScopes();
     }
 }
