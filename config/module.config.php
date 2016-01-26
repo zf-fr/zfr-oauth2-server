@@ -82,7 +82,7 @@ return [
             TokenService::AuthorizationCodeService => AuthorizationCodeServiceFactory::class,
             TokenService::AccessTokenService       => AccessTokenServiceFactory::class,
             TokenService::RefreshTokenService      => RefreshTokenServiceFactory::class,
-        ]
+        ],
     ],
 
     /**
@@ -125,9 +125,9 @@ return [
                         'oauth_scope_region' => [
                             'lifetime' => 300
                         ]
-                    ]
-                ]
-            ]
+                    ],
+                ],
+            ],
         ],
     ],
 
@@ -154,5 +154,5 @@ return [
          * password grant
          */
         // 'owner_callable' => null,
-    ]
+    ],
 ];
