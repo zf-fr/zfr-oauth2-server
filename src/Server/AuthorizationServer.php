@@ -166,7 +166,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
     
         try {
             $queryParams  = $request->getQueryParams();
@@ -196,7 +196,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     public function handleTokenRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
     
         $postParams = $request->getParsedBody();
 
