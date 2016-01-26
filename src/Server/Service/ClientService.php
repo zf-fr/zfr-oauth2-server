@@ -20,7 +20,6 @@ namespace ZfrOAuth2\Server\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\Client;
 
 /**
@@ -61,10 +60,10 @@ class ClientService
      * @param  Client $client
      * @return array
      */
-    public function registerClient(Client $client)
+    public function registerClient(Client $client): array
     {
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
-        $secret = Rand::getString(40);
+        $secret = bin2hex(random_bytes(20));
         $client->setSecret(password_hash($secret, PASSWORD_DEFAULT));
 
         $this->objectManager->persist($client);
@@ -79,7 +78,7 @@ class ClientService
      * @param  Client $client
      * @return Client
      */
-    public function updateClient(Client $client)
+    public function updateClient(Client $client): Client
     {
         $this->objectManager->flush($client);
 
@@ -104,7 +103,7 @@ class ClientService
      * @param  string $secret
      * @return bool True if properly authenticated, false otherwise
      */
-    public function authenticate(Client $client, $secret)
+    public function authenticate(Client $client, $secret): bool
     {
         return password_verify($secret, $client->getSecret());
     }

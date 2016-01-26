@@ -16,8 +16,11 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Zend\Stratigility\MiddlewarePipe;
@@ -57,8 +60,11 @@ class AuthorizationServerMiddleware extends MiddlewarePipe
      * @param Response      $response
      * @param callable|null $next
      */
-    public function handleAuthorizeRequest(Request $request, Response $response, callable $next = null)
-    {
+    public function handleAuthorizeRequest(
+        Request $request,
+        Response $response,
+        callable $next = null
+    ):ResponseInterface {
         throw new \RuntimeException('Not implemented yet');
     }
 
@@ -70,7 +76,7 @@ class AuthorizationServerMiddleware extends MiddlewarePipe
      * @param  callable|null $next
      * @return Response
      */
-    public function handleTokenRequest(Request $request, Response $response, callable $next = null)
+    public function handleTokenRequest(Request $request, Response $response, callable $next = null): ResponseInterface
     {
         // @TODO: we should integrate with an authentication service to pass the logged user, if any. Currently,
         // it will work out of the box for password grant
@@ -86,8 +92,11 @@ class AuthorizationServerMiddleware extends MiddlewarePipe
      * @param  callable|null $next
      * @return Response
      */
-    public function handleRevocationRequest(Request $request, Response $response, callable $next = null)
-    {
+    public function handleRevocationRequest(
+        Request $request,
+        Response $response,
+        callable $next = null
+    ):ResponseInterface {
         return $this->authorizationServer->handleRevocationRequest($request);
     }
 }

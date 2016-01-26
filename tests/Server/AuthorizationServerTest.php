@@ -20,11 +20,9 @@ namespace ZfrOAuth2Test\Server;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\EventManager\EventManagerInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Event\TokenEvent;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
@@ -145,122 +143,6 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
         $this->assertArrayHasKey('error_description', $body);
-    }
-
-    public function testCanTriggerCreatedEventForToken()
-    {
-        $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
-
-        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
-        $grant               = $this->getMock(GrantInterface::class);
-
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
-
-        $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
-        $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
-
-        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-
-        $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
-        $response->expects($this->at(3))->method('getStatusCode')->willReturn(200);
-
-        $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
-
-        $eventManager = $this->getMock(EventManagerInterface::class);
-        $authorizationServer->setEventManager($eventManager);
-
-        $eventManager->expects($this->once())
-            ->method('trigger')
-            ->with(TokenEvent::EVENT_TOKEN_CREATED, $this->callback(
-                function(TokenEvent $event) use ($request, $response) {
-                    $this->assertSame($request, $event->getRequest());
-                    $this->assertSame($response, $event->getResponse());
-
-                    return true;
-                }));
-
-        $authorizationServer->handleTokenRequest($request);
-    }
-
-    public function testCanTriggerFailedEventForToken()
-    {
-        $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'grantType']);
-
-        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
-        $grant               = $this->getMock(GrantInterface::class);
-
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
-
-        $grant->expects($this->once())->method('allowPublicClients')->will($this->returnValue(true));
-        $grant->expects($this->once())->method('getType')->will($this->returnValue('grantType'));
-
-        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-
-        $response = $this->getMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('withAddedHeader')->with('Content-Type', 'application/json')->willReturnSelf();
-        $response->expects($this->at(1))->method('withAddedHeader')->with('Cache-Control', 'no-store')->willReturnSelf();
-        $response->expects($this->at(2))->method('withAddedHeader')->with('Pragma', 'no-cache')->willReturnSelf();
-        $response->expects($this->at(3))->method('getStatusCode')->willReturn(400);
-
-        $grant->expects($this->once())->method('createTokenResponse')->will($this->returnValue($response));
-
-        $eventManager = $this->getMock(EventManagerInterface::class);
-        $authorizationServer->setEventManager($eventManager);
-
-        $eventManager->expects($this->once())
-            ->method('trigger')
-            ->with(TokenEvent::EVENT_TOKEN_FAILED, $this->callback(
-                function(TokenEvent $event) use ($request, $response) {
-                    $this->assertSame($request, $event->getRequest());
-                    $this->assertSame($response, $event->getResponse());
-
-                    return true;
-                }));
-
-        $authorizationServer->handleTokenRequest($request);
-    }
-
-    public function testTriggerExceptionIfTokenIsNotPresentForRevocation()
-    {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-
-        $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
-
-        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
-        $grant               = $this->getMock(GrantInterface::class);
-
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
-
-        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-
-        $authorizationServer->handleRevocationRequest($request);
-    }
-
-    public function testTriggerExceptionIfTokenHintIsInvalidForRevocation()
-    {
-        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_token_type');
-
-        $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => 'invalid']);
-
-        $clientService       = $this->getMock(ClientService::class, [], [], '', false);
-        $grant               = $this->getMock(GrantInterface::class);
-
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
-
-        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-
-        $authorizationServer->handleRevocationRequest($request);
     }
 
     public function revocationProvider()

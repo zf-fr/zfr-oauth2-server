@@ -31,9 +31,9 @@ class ResourceServerMiddlewareFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ClientService
+     * @return ResourceServerMiddleware
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ResourceServerMiddleware
     {
         /** @var ResourceServer $resourceServer */
         $resourceServer = $container->get(ResourceServer::class);

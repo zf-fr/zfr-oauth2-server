@@ -16,25 +16,30 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Event;
+namespace ZfrOAuth2\Server\Container;
 
-use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
-use ZfrOAuth2\Server\Event\TokenEvent;
+use Interop\Container\ContainerInterface;
+use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Service\TokenService;
 
-class TokenEventTest extends \PHPUnit_Framework_TestCase
+/**
+ * @author  Michaël Gallego <mic.gallego@gmail.com>
+ * @licence MIT
+ */
+class RefreshTokenGrantFactory
 {
-    public function testGetters()
+    /**
+     * @param ContainerInterface $container
+     * @return RefreshTokenGrant
+     */
+    public function __invoke(ContainerInterface $container): RefreshTokenGrant
     {
-        $request  = $this->getMock(ServerRequestInterface::class);
-        $response = $this->getMock(ResponseInterface::class);
-        $owner    = $this->getMock(TokenOwnerInterface::class);
+        /* @var TokenService $accessTokenService */
+        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
 
-        $event = new TokenEvent($request, $response, $owner);
+        /* @var TokenService $refreshTokenService */
+        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
 
-        $this->assertSame($request, $event->getRequest());
-        $this->assertEquals($response, $event->getResponse());
-        $this->assertSame($owner, $event->getTokenOwner());
+        return new RefreshTokenGrant($accessTokenService, $refreshTokenService);
     }
 }

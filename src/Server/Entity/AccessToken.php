@@ -29,7 +29,7 @@ class AccessToken extends AbstractToken
     /**
      * {@inheritDoc}
      */
-    public function isExpired()
+    public function isExpired(): bool
     {
         return parent::isExpired() && $this->expiresAt !== null;
     }

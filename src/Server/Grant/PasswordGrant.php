@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2\Server\Grant;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -41,7 +42,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     use AuthorizationServerAwareTrait;
 
     const GRANT_TYPE          = 'password';
-    const GRANT_RESPONSE_TYPE = null;
+    const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Access token service (used to create access token)
@@ -98,7 +99,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ) {
+    ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Validate the user using its username and password
@@ -139,7 +140,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients()
+    public function allowPublicClients(): bool
     {
         return true;
     }

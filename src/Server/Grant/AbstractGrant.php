@@ -63,7 +63,7 @@ abstract class AbstractGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function getType()
+    public function getType(): string
     {
         return static::GRANT_TYPE;
     }
@@ -71,7 +71,7 @@ abstract class AbstractGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function getResponseType()
+    public function getResponseType(): string
     {
         return static::GRANT_RESPONSE_TYPE;
     }

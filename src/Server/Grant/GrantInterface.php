@@ -39,8 +39,8 @@ interface GrantInterface
     /**
      * Constants that need to be overridden for each grant
      */
-    const GRANT_TYPE          = null;
-    const GRANT_RESPONSE_TYPE = null;
+    const GRANT_TYPE          = '';
+    const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Create an authorization code
@@ -77,19 +77,19 @@ interface GrantInterface
      *
      * @return string
      */
-    public function getType();
+    public function getType(): string;
 
     /**
      * Get the grant response type
      *
-     * @return string|null
+     * @return string
      */
-    public function getResponseType();
+    public function getResponseType(): string;
 
     /**
      * Does this authorization grant allow public clients?
      *
      * @return bool
      */
-    public function allowPublicClients();
+    public function allowPublicClients(): bool;
 }

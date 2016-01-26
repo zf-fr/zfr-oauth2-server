@@ -19,14 +19,10 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
-use Doctrine\Common\Collections\Criteria;
-use Doctrine\Common\Collections\Selectable;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Exception\RuntimeException;
 
 /**
  * Token service
@@ -34,7 +30,7 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
  * You'll need to create one token service per type of token, as the repositories are not the same (as well
  * as the token TTL)
  *
- * @TODO: should we create one service per token type? I think it's a bit useless, as the only thing that would
+ * @TODO    : should we create one service per token type? I think it's a bit useless, as the only thing that would
  *        be overridden is the token TTL
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -42,10 +38,10 @@ use ZfrOAuth2\Server\Exception\RuntimeException;
  */
 class TokenService
 {
-    /**
-     * @var string
-     */
-    protected $tokenCharlist = 'abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789+-';
+
+    const AUTHORIZATION_CODE_SERVICE = 'ZfrOAuth2\Server\Service\AuthorizationCodeService';
+    const ACCESS_TOKEN_SERVICE       = 'ZfrOAuth2\Server\Service\AccessTokenService';
+    const REFRESH_TOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
 
     /**
      * @var ObjectManager
@@ -101,7 +97,7 @@ class TokenService
      * @param  AbstractToken $token
      * @return AbstractToken
      */
-    public function createToken(AbstractToken $token)
+    public function createToken(AbstractToken $token): AbstractToken
     {
         $scopes = $token->getScopes();
 
@@ -118,8 +114,7 @@ class TokenService
         $token->setExpiresAt($expiresAt);
 
         do {
-            // @TODO: once we require PHP 7, we can use native random_bytes
-            $tokenHash = Rand::getString(40, $this->tokenCharlist);
+            $tokenHash = bin2hex(random_bytes(20));
         } while ($this->tokenRepository->find($tokenHash) !== null);
 
         $token->setToken($tokenHash);
@@ -196,16 +191,16 @@ class TokenService
      */
     private function compareStrings($expected, $actual)
     {
-        $expected     = (string) $expected;
-        $actual       = (string) $actual;
+        $expected = (string) $expected;
+        $actual   = (string) $actual;
 
         if (function_exists('hash_equals')) {
             return hash_equals($expected, $actual);
         }
 
-        $lenExpected  = strlen($expected);
-        $lenActual    = strlen($actual);
-        $len          = min($lenExpected, $lenActual);
+        $lenExpected = strlen($expected);
+        $lenActual   = strlen($actual);
+        $len         = min($lenExpected, $lenActual);
 
         $result = 0;
         for ($i = 0; $i < $len; $i++) {

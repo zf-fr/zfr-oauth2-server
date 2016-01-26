@@ -20,8 +20,10 @@ namespace ZfrOAuth2\Server\Container;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
 use Doctrine\Common\Persistence\ObjectManager;
+use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\ClientService;
 
 /**
@@ -34,13 +36,18 @@ class ClientServiceFactory
      * @param  ContainerInterface $container
      * @return ClientService
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container): ClientService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
 
+        /** @var ServerOptions $serverOptions */
+        $serverOptions = $container->get(ServerOptions::class);
+
         /** @var ObjectManager $objectManager */
-        $objectManager    = $managerRegistry->getManager();
+        $objectManager = $managerRegistry->getManager($serverOptions->getObjectManager() ?: null);
+
+        /** @var ObjectRepository $clientRepository */
         $clientRepository = $objectManager->getRepository(Client::class);
 
         return new ClientService($objectManager, $clientRepository);
