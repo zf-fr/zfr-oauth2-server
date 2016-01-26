@@ -138,7 +138,7 @@ class TokenService
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure
         // that the token matches case
-        if (!$tokenFromDb || !$this->compareStrings($tokenFromDb->getToken(), $token)) {
+        if (!$tokenFromDb || !hash_equals($tokenFromDb->getToken(), $token)) {
             return null;
         }
 
@@ -180,34 +180,5 @@ class TokenService
                 implode(', ', $diff)
             ));
         }
-    }
-
-    /**
-     * This method is extracted from Zend\Crypt (so that we avoid the whole dependency)
-     *
-     * @param  string $expected
-     * @param  string $actual
-     * @return bool
-     */
-    private function compareStrings($expected, $actual)
-    {
-        $expected = (string) $expected;
-        $actual   = (string) $actual;
-
-        if (function_exists('hash_equals')) {
-            return hash_equals($expected, $actual);
-        }
-
-        $lenExpected = strlen($expected);
-        $lenActual   = strlen($actual);
-        $len         = min($lenExpected, $lenActual);
-
-        $result = 0;
-        for ($i = 0; $i < $len; $i++) {
-            $result |= ord($expected[$i]) ^ ord($actual[$i]);
-        }
-        $result |= $lenExpected ^ $lenActual;
-
-        return ($result === 0);
     }
 }
