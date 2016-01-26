@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -32,7 +34,7 @@ class ResourceServerFactory
      * @param  ContainerInterface $container
      * @return ResourceServer
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):ResourceServer
     {
         /** @var TokenService $tokenService */
         $tokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);

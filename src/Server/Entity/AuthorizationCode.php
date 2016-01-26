@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Entity;
 
 /**
@@ -32,7 +34,7 @@ class AuthorizationCode extends AbstractToken
     /**
      * @var string
      */
-    protected $redirectUri;
+    protected $redirectUri = '';
 
     /**
      * Set the redirect URI
@@ -48,7 +50,7 @@ class AuthorizationCode extends AbstractToken
     /**
      * @return string
      */
-    public function getRedirectUri()
+    public function getRedirectUri():string
     {
         return $this->redirectUri;
     }

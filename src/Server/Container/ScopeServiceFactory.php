@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -36,7 +38,7 @@ class ScopeServiceFactory
      * @param  ContainerInterface $container
      * @return ScopeService
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):ScopeService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
@@ -45,7 +47,7 @@ class ScopeServiceFactory
         $serverOptions = $container->get(ServerOptions::class);
 
         /** @var ObjectManager $objectManager */
-        $objectManager   = $managerRegistry->getManager($serverOptions->getObjectManager());
+        $objectManager   = $managerRegistry->getManager($serverOptions->getObjectManager() ?: null);
         $scopeRepository = $objectManager->getRepository(Scope::class);
 
         return new ScopeService($objectManager, $scopeRepository);

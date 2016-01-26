@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Entity;
 
 /**
@@ -29,7 +31,7 @@ class AccessToken extends AbstractToken
     /**
      * {@inheritDoc}
      */
-    public function isExpired()
+    public function isExpired():bool
     {
         return parent::isExpired() && $this->expiresAt !== null;
     }

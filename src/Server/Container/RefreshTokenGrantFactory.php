@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -32,7 +34,7 @@ class RefreshTokenGrantFactory
      * @param ContainerInterface $container
      * @return RefreshTokenGrant
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):RefreshTokenGrant
     {
         /* @var TokenService $accessTokenService */
         $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);

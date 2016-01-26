@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -33,7 +35,7 @@ class PasswordGrantFactory
      * @param ContainerInterface $container
      * @return PasswordGrant
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):PasswordGrant
     {
         /* @var ServerOptions $options */
         $options = $container->get(ServerOptions::class);

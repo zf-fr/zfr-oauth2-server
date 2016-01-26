@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Id;
 
 use Doctrine\ORM\EntityManager;
@@ -32,7 +34,7 @@ class ClientIdGenerator extends AbstractIdGenerator
     /**
      * {@inheritDoc}
      */
-    public function generate(EntityManager $em, $entity)
+    public function generate(EntityManager $em, $entity):string
     {
         return uniqid();
     }

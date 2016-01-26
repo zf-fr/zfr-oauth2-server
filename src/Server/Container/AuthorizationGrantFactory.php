@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -32,7 +34,7 @@ class AuthorizationGrantFactory
      * @param ContainerInterface $container
      * @return AuthorizationGrant
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):AuthorizationGrant
     {
         /* @var \ZfrOAuth2\Server\Service\TokenService $authorizationCodeService */
         $authorizationCodeService = $container->get(TokenService::AUTHORIZATION_CODE_SERVICE);

@@ -16,8 +16,11 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Grant;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -92,7 +95,7 @@ class RefreshTokenGrant extends AbstractGrant
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ) {
+    ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
         $refreshToken = isset($postParams['refresh_token']) ? $postParams['refresh_token'] : null;
@@ -142,7 +145,7 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients()
+    public function allowPublicClients():bool
     {
         return true;
     }

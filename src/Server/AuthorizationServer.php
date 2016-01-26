@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
@@ -101,7 +103,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $grantType
      * @return bool
      */
-    public function hasGrant($grantType)
+    public function hasGrant($grantType):bool
     {
         return isset($this->grants[$grantType]);
     }
@@ -113,7 +115,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return GrantInterface
      * @throws OAuth2Exception If grant type is not registered by this authorization server
      */
-    public function getGrant($grantType)
+    public function getGrant($grantType):GrantInterface
     {
         if ($this->hasGrant($grantType)) {
             return $this->grants[$grantType];
@@ -132,7 +134,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $responseType
      * @return bool
      */
-    public function hasResponseType($responseType)
+    public function hasResponseType($responseType):bool
     {
         return isset($this->responseTypes[$responseType]);
     }
@@ -144,7 +146,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return GrantInterface
      * @throws Exception\OAuth2Exception
      */
-    public function getResponseType($responseType)
+    public function getResponseType($responseType):GrantInterface
     {
         if ($this->hasResponseType($responseType)) {
             return $this->responseTypes[$responseType];
@@ -163,8 +165,11 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
      */
-    public function handleAuthorizationRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
-    {
+    public function handleAuthorizationRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface {
+    
         try {
             $queryParams  = $request->getQueryParams();
             $responseType = isset($queryParams['response_type']) ? $queryParams['response_type'] : null;
@@ -190,8 +195,11 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
      */
-    public function handleTokenRequest(ServerRequestInterface $request, TokenOwnerInterface $owner = null)
-    {
+    public function handleTokenRequest(
+        ServerRequestInterface $request,
+        TokenOwnerInterface $owner = null
+    ):ResponseInterface {
+    
         $postParams = $request->getParsedBody();
 
         try {
@@ -220,7 +228,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(ServerRequestInterface $request)
+    public function handleRevocationRequest(ServerRequestInterface $request):ResponseInterface
     {
         $postParams = $request->getParsedBody();
 
@@ -318,9 +326,9 @@ class AuthorizationServer implements AuthorizationServerInterface
      *
      * @link   http://tools.ietf.org/html/rfc6749#section-5.2
      * @param  OAuth2Exception $exception
-     * @return Response
+     * @return ResponseInterface
      */
-    protected function createResponseFromOAuthException(OAuth2Exception $exception)
+    protected function createResponseFromOAuthException(OAuth2Exception $exception):ResponseInterface
     {
         $payload = [
             'error'             => $exception->getCode(),
@@ -336,7 +344,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  ServerRequestInterface $request
      * @return array
      */
-    private function extractClientCredentials(ServerRequestInterface $request)
+    private function extractClientCredentials(ServerRequestInterface $request):array
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
         if ($request->hasHeader('Authorization')) {

@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
@@ -51,8 +53,11 @@ class ResourceServerMiddleware implements MiddlewareInterface
     /**
      * {@inheritDoc}
      */
-    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
-    {
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $out = null
+    ):ResponseInterface {
         try {
             $token = $this->resourceServer->getAccessToken($request);
         } catch (InvalidAccessTokenException $exception) {

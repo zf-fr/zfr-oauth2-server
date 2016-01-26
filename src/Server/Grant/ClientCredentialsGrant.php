@@ -16,8 +16,11 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Grant;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Entity\Client;
@@ -37,7 +40,7 @@ use ZfrOAuth2\Server\Service\TokenService;
 class ClientCredentialsGrant extends AbstractGrant
 {
     const GRANT_TYPE          = 'client_credentials';
-    const GRANT_RESPONSE_TYPE = null;
+    const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Access token service (used to create access token)
@@ -72,7 +75,7 @@ class ClientCredentialsGrant extends AbstractGrant
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ) {
+    ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Everything is okey, we can start tokens generation!
@@ -88,7 +91,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients()
+    public function allowPublicClients():bool
     {
         return false;
     }

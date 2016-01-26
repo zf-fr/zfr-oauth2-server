@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -60,7 +62,7 @@ class ClientService
      * @param  Client $client
      * @return array
      */
-    public function registerClient(Client $client)
+    public function registerClient(Client $client):array
     {
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
         $secret = hash('sha512', random_bytes(40));
@@ -79,7 +81,7 @@ class ClientService
      * @param  Client $client
      * @return Client
      */
-    public function updateClient(Client $client)
+    public function updateClient(Client $client):Client
     {
         $this->objectManager->flush($client);
 
@@ -104,7 +106,7 @@ class ClientService
      * @param  string $secret
      * @return bool True if properly authenticated, false otherwise
      */
-    public function authenticate(Client $client, $secret)
+    public function authenticate(Client $client, $secret):bool
     {
         return password_verify($secret, $client->getSecret());
     }

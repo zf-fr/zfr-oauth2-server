@@ -16,8 +16,11 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Grant;
 
+use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use ZfrOAuth2\Server\Entity\AccessToken;
@@ -134,7 +137,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ) {
+    ):ResponseInterface {
         $postParams = $request->getParsedBody();
 
         $code = isset($postParams['code']) ? $postParams['code'] : null;
@@ -184,7 +187,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients()
+    public function allowPublicClients():bool
     {
         return true;
     }

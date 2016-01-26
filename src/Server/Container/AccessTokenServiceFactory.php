@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Doctrine\Common\Persistence\ManagerRegistry;
@@ -37,7 +39,7 @@ class AccessTokenServiceFactory
      * @param  ContainerInterface $container
      * @return TokenService
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):TokenService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);
@@ -46,7 +48,7 @@ class AccessTokenServiceFactory
         $serverOptions = $container->get(ServerOptions::class);
 
         /** @var ObjectManager $objectManager */
-        $objectManager = $managerRegistry->getManager($serverOptions->getObjectManager());
+        $objectManager = $managerRegistry->getManager($serverOptions->getObjectManager() ?: null);
 
         /** @var ObjectRepository $accessTokenRepository */
         $accessTokenRepository = $objectManager->getRepository(AccessToken::class);

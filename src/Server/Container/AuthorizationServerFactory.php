@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -34,7 +36,7 @@ class AuthorizationServerFactory
      * @param  ContainerInterface $container
      * @return AuthorizationServer
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):AuthorizationServer
     {
         /* @var ClientService $clientService */
         $clientService = $container->get(ClientService::class);

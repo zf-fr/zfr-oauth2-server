@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
@@ -31,7 +33,7 @@ class ServerOptionsFactory
      * @param ContainerInterface $container
      * @return ServerOptions
      */
-    public function __invoke(ContainerInterface $container)
+    public function __invoke(ContainerInterface $container):ServerOptions
     {
         $config  = $container->get('config');
         $options = isset($config['zfr_oauth2_server']) ? $config['zfr_oauth2_server'] : [];

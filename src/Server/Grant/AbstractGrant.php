@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
@@ -63,7 +65,7 @@ abstract class AbstractGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function getType()
+    public function getType():string
     {
         return static::GRANT_TYPE;
     }
@@ -71,7 +73,7 @@ abstract class AbstractGrant implements GrantInterface
     /**
      * {@inheritDoc}
      */
-    public function getResponseType()
+    public function getResponseType():string
     {
         return static::GRANT_RESPONSE_TYPE;
     }

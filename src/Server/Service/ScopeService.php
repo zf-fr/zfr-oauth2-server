@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types = 1);
+
 namespace ZfrOAuth2\Server\Service;
 
 use Doctrine\Common\Persistence\ObjectManager;
@@ -56,7 +58,7 @@ class ScopeService
      * @param  Scope $scope
      * @return Scope
      */
-    public function createScope(Scope $scope)
+    public function createScope(Scope $scope):Scope
     {
         $this->objectManager->persist($scope);
         $this->objectManager->flush();
@@ -69,7 +71,7 @@ class ScopeService
      *
      * @return Scope[]
      */
-    public function getAll()
+    public function getAll():array
     {
         return $this->scopeRepository->findAll();
     }
@@ -79,7 +81,7 @@ class ScopeService
      *
      * @return Scope[]
      */
-    public function getDefaultScopes()
+    public function getDefaultScopes():array
     {
         return $this->scopeRepository->findBy(['isDefault' => true]);
     }

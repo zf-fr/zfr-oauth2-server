@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Options;
 
 /**
@@ -29,9 +31,9 @@ class ServerOptions
     /**
      * Object manager key
      *
-     * @var string|null
+     * @var string
      */
-    protected $objectManager;
+    protected $objectManager = '';
 
     /**
      * Authorization code TTL
@@ -108,7 +110,7 @@ class ServerOptions
      *
      * @return string
      */
-    public function getObjectManager()
+    public function getObjectManager():string
     {
         return $this->objectManager;
     }
@@ -128,7 +130,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getAuthorizationCodeTtl()
+    public function getAuthorizationCodeTtl():int
     {
         return $this->authorizationCodeTtl;
     }
@@ -148,7 +150,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getAccessTokenTtl()
+    public function getAccessTokenTtl():int
     {
         return $this->accessTokenTtl;
     }
@@ -168,7 +170,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getRefreshTokenTtl()
+    public function getRefreshTokenTtl():int
     {
         return $this->refreshTokenTtl;
     }
@@ -208,7 +210,7 @@ class ServerOptions
      *
      * @return array
      */
-    public function getGrants()
+    public function getGrants():array
     {
         return $this->grants;
     }

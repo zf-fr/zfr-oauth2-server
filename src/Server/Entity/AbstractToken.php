@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Entity;
 
 use DateTime;
@@ -72,7 +74,7 @@ abstract class AbstractToken
      *
      * @return string
      */
-    public function getToken()
+    public function getToken():string
     {
         return $this->token;
     }
@@ -91,7 +93,7 @@ abstract class AbstractToken
     /**
      * Get the client that issued this token
      *
-     * @return Client
+     * @return Client|null
      */
     public function getClient()
     {
@@ -114,7 +116,7 @@ abstract class AbstractToken
      *
      * @return TokenOwnerInterface
      */
-    public function getOwner()
+    public function getOwner():TokenOwnerInterface
     {
         return $this->owner;
     }
@@ -135,7 +137,7 @@ abstract class AbstractToken
      *
      * @return DateTime
      */
-    public function getExpiresAt()
+    public function getExpiresAt():DateTime
     {
         return clone $this->expiresAt;
     }
@@ -145,7 +147,7 @@ abstract class AbstractToken
      *
      * @return int
      */
-    public function getExpiresIn()
+    public function getExpiresIn():int
     {
         return $this->expiresAt->getTimestamp() - (new DateTime('now'))->getTimestamp();
     }
@@ -155,7 +157,7 @@ abstract class AbstractToken
      *
      * @return bool
      */
-    public function isExpired()
+    public function isExpired():bool
     {
         return $this->expiresAt < new DateTime('now');
     }
@@ -184,7 +186,7 @@ abstract class AbstractToken
      *
      * @return array
      */
-    public function getScopes()
+    public function getScopes():array
     {
         return $this->scopes;
     }
@@ -195,7 +197,7 @@ abstract class AbstractToken
      * @param  array|string $scopes
      * @return bool
      */
-    public function matchScopes($scopes)
+    public function matchScopes($scopes):bool
     {
         $scopes = is_string($scopes) ? explode(' ', $scopes) : $scopes;
         $diff   = array_diff($scopes, $this->scopes);
@@ -209,7 +211,7 @@ abstract class AbstractToken
      * @param  array|string $scopes
      * @return bool
      */
-    public function isValid($scopes)
+    public function isValid($scopes):bool
     {
         if ($this->isExpired()) {
             return false;

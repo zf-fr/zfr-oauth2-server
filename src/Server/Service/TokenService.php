@@ -16,6 +16,8 @@
  * and is licensed under the MIT license.
  */
 
+declare(strict_types=1);
+
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
@@ -97,7 +99,7 @@ class TokenService
      * @param  AbstractToken $token
      * @return AbstractToken
      */
-    public function createToken(AbstractToken $token)
+    public function createToken(AbstractToken $token):AbstractToken
     {
         $scopes = $token->getScopes();
 
