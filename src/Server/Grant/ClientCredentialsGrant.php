@@ -89,7 +89,7 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients():bool
+    public function allowPublicClients(): bool
     {
         return false;
     }

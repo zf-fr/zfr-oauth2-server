@@ -103,7 +103,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $grantType
      * @return bool
      */
-    public function hasGrant($grantType):bool
+    public function hasGrant($grantType): bool
     {
         return isset($this->grants[$grantType]);
     }
@@ -115,7 +115,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return GrantInterface
      * @throws OAuth2Exception If grant type is not registered by this authorization server
      */
-    public function getGrant($grantType):GrantInterface
+    public function getGrant($grantType): GrantInterface
     {
         if ($this->hasGrant($grantType)) {
             return $this->grants[$grantType];
@@ -134,7 +134,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  string $responseType
      * @return bool
      */
-    public function hasResponseType($responseType):bool
+    public function hasResponseType($responseType): bool
     {
         return isset($this->responseTypes[$responseType]);
     }
@@ -146,7 +146,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return GrantInterface
      * @throws Exception\OAuth2Exception
      */
-    public function getResponseType($responseType):GrantInterface
+    public function getResponseType($responseType): GrantInterface
     {
         if ($this->hasResponseType($responseType)) {
             return $this->responseTypes[$responseType];
@@ -228,7 +228,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(ServerRequestInterface $request):ResponseInterface
+    public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface
     {
         $postParams = $request->getParsedBody();
 
@@ -328,7 +328,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  OAuth2Exception $exception
      * @return ResponseInterface
      */
-    protected function createResponseFromOAuthException(OAuth2Exception $exception):ResponseInterface
+    protected function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
         $payload = [
             'error'             => $exception->getCode(),
@@ -344,7 +344,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  ServerRequestInterface $request
      * @return array
      */
-    private function extractClientCredentials(ServerRequestInterface $request):array
+    private function extractClientCredentials(ServerRequestInterface $request): array
     {
         // We first try to get the Authorization header, as this is the recommended way according to the spec
         if ($request->hasHeader('Authorization')) {

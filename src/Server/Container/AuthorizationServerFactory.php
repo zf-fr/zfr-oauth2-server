@@ -34,7 +34,7 @@ class AuthorizationServerFactory
      * @param  ContainerInterface $container
      * @return AuthorizationServer
      */
-    public function __invoke(ContainerInterface $container):AuthorizationServer
+    public function __invoke(ContainerInterface $container): AuthorizationServer
     {
         /* @var ClientService $clientService */
         $clientService = $container->get(ClientService::class);

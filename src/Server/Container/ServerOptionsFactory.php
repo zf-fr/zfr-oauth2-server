@@ -31,7 +31,7 @@ class ServerOptionsFactory
      * @param ContainerInterface $container
      * @return ServerOptions
      */
-    public function __invoke(ContainerInterface $container):ServerOptions
+    public function __invoke(ContainerInterface $container): ServerOptions
     {
         $config  = $container->get('config');
         $options = isset($config['zfr_oauth2_server']) ? $config['zfr_oauth2_server'] : [];

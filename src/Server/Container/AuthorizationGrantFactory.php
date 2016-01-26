@@ -32,7 +32,7 @@ class AuthorizationGrantFactory
      * @param ContainerInterface $container
      * @return AuthorizationGrant
      */
-    public function __invoke(ContainerInterface $container):AuthorizationGrant
+    public function __invoke(ContainerInterface $container): AuthorizationGrant
     {
         /* @var \ZfrOAuth2\Server\Service\TokenService $authorizationCodeService */
         $authorizationCodeService = $container->get(TokenService::AUTHORIZATION_CODE_SERVICE);

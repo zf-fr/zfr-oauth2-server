@@ -73,5 +73,5 @@ interface AuthorizationServerInterface
      * @return ResponseInterface
      * @throws OAuth2Exception If no "token" is present
      */
-    public function handleRevocationRequest(ServerRequestInterface $request):ResponseInterface;
+    public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface;
 }

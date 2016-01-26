@@ -33,7 +33,7 @@ class AuthorizationServerMiddlewareFactory
      * @param  ContainerInterface $container
      * @return AuthorizationServerMiddleware
      */
-    public function __invoke(ContainerInterface $container):AuthorizationServerMiddleware
+    public function __invoke(ContainerInterface $container): AuthorizationServerMiddleware
     {
         /** @var AuthorizationServer $authorizationServer */
         $authorizationServer = $container->get(AuthorizationServer::class);

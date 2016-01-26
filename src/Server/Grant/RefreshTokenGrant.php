@@ -143,7 +143,7 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients():bool
+    public function allowPublicClients(): bool
     {
         return true;
     }

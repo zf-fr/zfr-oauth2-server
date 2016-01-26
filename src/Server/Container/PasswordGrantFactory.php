@@ -33,7 +33,7 @@ class PasswordGrantFactory
      * @param ContainerInterface $container
      * @return PasswordGrant
      */
-    public function __invoke(ContainerInterface $container):PasswordGrant
+    public function __invoke(ContainerInterface $container): PasswordGrant
     {
         /* @var ServerOptions $options */
         $options = $container->get(ServerOptions::class);

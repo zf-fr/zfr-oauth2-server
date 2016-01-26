@@ -58,7 +58,7 @@ class ScopeService
      * @param  Scope $scope
      * @return Scope
      */
-    public function createScope(Scope $scope):Scope
+    public function createScope(Scope $scope): Scope
     {
         $this->objectManager->persist($scope);
         $this->objectManager->flush();
@@ -71,7 +71,7 @@ class ScopeService
      *
      * @return Scope[]
      */
-    public function getAll():array
+    public function getAll(): array
     {
         return $this->scopeRepository->findAll();
     }
@@ -81,7 +81,7 @@ class ScopeService
      *
      * @return Scope[]
      */
-    public function getDefaultScopes():array
+    public function getDefaultScopes(): array
     {
         return $this->scopeRepository->findBy(['isDefault' => true]);
     }

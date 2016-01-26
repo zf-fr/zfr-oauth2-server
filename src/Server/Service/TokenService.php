@@ -97,7 +97,7 @@ class TokenService
      * @param  AbstractToken $token
      * @return AbstractToken
      */
-    public function createToken(AbstractToken $token):AbstractToken
+    public function createToken(AbstractToken $token): AbstractToken
     {
         $scopes = $token->getScopes();
 

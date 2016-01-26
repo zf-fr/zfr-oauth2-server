@@ -36,7 +36,7 @@ class ClientServiceFactory
      * @param  ContainerInterface $container
      * @return ClientService
      */
-    public function __invoke(ContainerInterface $container):ClientService
+    public function __invoke(ContainerInterface $container): ClientService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);

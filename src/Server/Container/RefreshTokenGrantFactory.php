@@ -32,7 +32,7 @@ class RefreshTokenGrantFactory
      * @param ContainerInterface $container
      * @return RefreshTokenGrant
      */
-    public function __invoke(ContainerInterface $container):RefreshTokenGrant
+    public function __invoke(ContainerInterface $container): RefreshTokenGrant
     {
         /* @var TokenService $accessTokenService */
         $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);

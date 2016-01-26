@@ -37,7 +37,7 @@ class RefreshTokenServiceFactory
      * @param  ContainerInterface $container
      * @return TokenService
      */
-    public function __invoke(ContainerInterface $container):TokenService
+    public function __invoke(ContainerInterface $container): TokenService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);

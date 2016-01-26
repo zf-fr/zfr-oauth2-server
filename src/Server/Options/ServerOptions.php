@@ -108,7 +108,7 @@ class ServerOptions
      *
      * @return string
      */
-    public function getObjectManager():string
+    public function getObjectManager(): string
     {
         return $this->objectManager;
     }
@@ -128,7 +128,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getAuthorizationCodeTtl():int
+    public function getAuthorizationCodeTtl(): int
     {
         return $this->authorizationCodeTtl;
     }
@@ -148,7 +148,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getAccessTokenTtl():int
+    public function getAccessTokenTtl(): int
     {
         return $this->accessTokenTtl;
     }
@@ -168,7 +168,7 @@ class ServerOptions
      *
      * @return int
      */
-    public function getRefreshTokenTtl():int
+    public function getRefreshTokenTtl(): int
     {
         return $this->refreshTokenTtl;
     }
@@ -208,7 +208,7 @@ class ServerOptions
      *
      * @return array
      */
-    public function getGrants():array
+    public function getGrants(): array
     {
         return $this->grants;
     }

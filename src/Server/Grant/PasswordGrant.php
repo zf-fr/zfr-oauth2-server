@@ -140,7 +140,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients():bool
+    public function allowPublicClients(): bool
     {
         return true;
     }

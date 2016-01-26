@@ -185,7 +185,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     /**
      * {@inheritDoc}
      */
-    public function allowPublicClients():bool
+    public function allowPublicClients(): bool
     {
         return true;
     }

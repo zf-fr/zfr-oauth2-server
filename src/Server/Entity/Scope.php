@@ -72,7 +72,7 @@ class Scope
      *
      * @return string
      */
-    public function getName():string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -93,7 +93,7 @@ class Scope
      *
      * @return string
      */
-    public function getDescription():string
+    public function getDescription(): string
     {
         return $this->description;
     }
@@ -114,7 +114,7 @@ class Scope
      *
      * @return bool
      */
-    public function isDefault():bool
+    public function isDefault(): bool
     {
         return $this->isDefault;
     }

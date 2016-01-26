@@ -36,7 +36,7 @@ class ScopeServiceFactory
      * @param  ContainerInterface $container
      * @return ScopeService
      */
-    public function __invoke(ContainerInterface $container):ScopeService
+    public function __invoke(ContainerInterface $container): ScopeService
     {
         /** @var ManagerRegistry $managerRegistry */
         $managerRegistry = $container->get(ManagerRegistry::class);

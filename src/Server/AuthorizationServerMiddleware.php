@@ -76,7 +76,7 @@ class AuthorizationServerMiddleware extends MiddlewarePipe
      * @param  callable|null $next
      * @return Response
      */
-    public function handleTokenRequest(Request $request, Response $response, callable $next = null):ResponseInterface
+    public function handleTokenRequest(Request $request, Response $response, callable $next = null): ResponseInterface
     {
         // @TODO: we should integrate with an authentication service to pass the logged user, if any. Currently,
         // it will work out of the box for password grant

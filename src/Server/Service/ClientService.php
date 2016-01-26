@@ -60,7 +60,7 @@ class ClientService
      * @param  Client $client
      * @return array
      */
-    public function registerClient(Client $client):array
+    public function registerClient(Client $client): array
     {
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
         $secret = bin2hex(random_bytes(20));
@@ -78,7 +78,7 @@ class ClientService
      * @param  Client $client
      * @return Client
      */
-    public function updateClient(Client $client):Client
+    public function updateClient(Client $client): Client
     {
         $this->objectManager->flush($client);
 
@@ -103,7 +103,7 @@ class ClientService
      * @param  string $secret
      * @return bool True if properly authenticated, false otherwise
      */
-    public function authenticate(Client $client, $secret):bool
+    public function authenticate(Client $client, $secret): bool
     {
         return password_verify($secret, $client->getSecret());
     }

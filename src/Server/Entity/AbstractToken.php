@@ -72,7 +72,7 @@ abstract class AbstractToken
      *
      * @return string
      */
-    public function getToken():string
+    public function getToken(): string
     {
         return $this->token;
     }
@@ -114,7 +114,7 @@ abstract class AbstractToken
      *
      * @return TokenOwnerInterface
      */
-    public function getOwner():TokenOwnerInterface
+    public function getOwner(): TokenOwnerInterface
     {
         return $this->owner;
     }
@@ -135,7 +135,7 @@ abstract class AbstractToken
      *
      * @return DateTime
      */
-    public function getExpiresAt():DateTime
+    public function getExpiresAt(): DateTime
     {
         return clone $this->expiresAt;
     }
@@ -145,7 +145,7 @@ abstract class AbstractToken
      *
      * @return int
      */
-    public function getExpiresIn():int
+    public function getExpiresIn(): int
     {
         return $this->expiresAt->getTimestamp() - (new DateTime('now'))->getTimestamp();
     }
@@ -155,7 +155,7 @@ abstract class AbstractToken
      *
      * @return bool
      */
-    public function isExpired():bool
+    public function isExpired(): bool
     {
         return $this->expiresAt < new DateTime('now');
     }
@@ -184,7 +184,7 @@ abstract class AbstractToken
      *
      * @return array
      */
-    public function getScopes():array
+    public function getScopes(): array
     {
         return $this->scopes;
     }
@@ -195,7 +195,7 @@ abstract class AbstractToken
      * @param  array|string $scopes
      * @return bool
      */
-    public function matchScopes($scopes):bool
+    public function matchScopes($scopes): bool
     {
         $scopes = is_string($scopes) ? explode(' ', $scopes) : $scopes;
         $diff   = array_diff($scopes, $this->scopes);
@@ -209,7 +209,7 @@ abstract class AbstractToken
      * @param  array|string $scopes
      * @return bool
      */
-    public function isValid($scopes):bool
+    public function isValid($scopes): bool
     {
         if ($this->isExpired()) {
             return false;

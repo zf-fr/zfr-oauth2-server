@@ -59,7 +59,7 @@ class Client
      *
      * @return string
      */
-    public function getId():string
+    public function getId(): string
     {
         return $this->id;
     }
@@ -80,7 +80,7 @@ class Client
      *
      * @return string
      */
-    public function getSecret():string
+    public function getSecret(): string
     {
         return $this->secret;
     }
@@ -101,7 +101,7 @@ class Client
      *
      * @return string
      */
-    public function getName():string
+    public function getName(): string
     {
         return $this->name;
     }
@@ -132,7 +132,7 @@ class Client
      *
      * @return array
      */
-    public function getRedirectUris():array
+    public function getRedirectUris(): array
     {
         return $this->redirectUris;
     }
@@ -143,7 +143,7 @@ class Client
      * @param  string $redirectUri
      * @return bool
      */
-    public function hasRedirectUri($redirectUri):bool
+    public function hasRedirectUri($redirectUri): bool
     {
         return in_array($redirectUri, $this->redirectUris, true);
     }
@@ -153,7 +153,7 @@ class Client
      *
      * @return bool
      */
-    public function isPublic():bool
+    public function isPublic(): bool
     {
         return empty($this->secret);
     }

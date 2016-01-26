@@ -32,7 +32,7 @@ class ClientCredentialsGrantFactory
      * @param ContainerInterface $container
      * @return ClientCredentialsGrant
      */
-    public function __invoke(ContainerInterface $container):ClientCredentialsGrant
+    public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
         /* @var TokenService $accessTokenService */
         $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);

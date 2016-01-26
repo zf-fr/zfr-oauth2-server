@@ -77,19 +77,19 @@ interface GrantInterface
      *
      * @return string
      */
-    public function getType():string;
+    public function getType(): string;
 
     /**
      * Get the grant response type
      *
      * @return string
      */
-    public function getResponseType():string;
+    public function getResponseType(): string;
 
     /**
      * Does this authorization grant allow public clients?
      *
      * @return bool
      */
-    public function allowPublicClients():bool;
+    public function allowPublicClients(): bool;
 }
