@@ -33,7 +33,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
     {
         $options = new ServerOptions();
 
-        $this->assertNull($options->getObjectManager());
+        $this->assertEmpty($options->getObjectManager());
         $this->assertEquals(120, $options->getAuthorizationCodeTtl());
         $this->assertEquals(3600, $options->getAccessTokenTtl());
         $this->assertEquals(86400, $options->getRefreshTokenTtl());
