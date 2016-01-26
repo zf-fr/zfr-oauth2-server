@@ -21,7 +21,6 @@ namespace ZfrOAuth2\Server\Service;
 use DateTime;
 use Doctrine\Common\Persistence\ObjectManager;
 use Doctrine\Common\Persistence\ObjectRepository;
-use Zend\Math\Rand;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
@@ -120,8 +119,8 @@ class TokenService
         $token->setExpiresAt($expiresAt);
 
         do {
-            // @TODO: once we require PHP 7, we can use native random_bytes
-            $tokenHash = Rand::getString(40, $this->tokenCharlist);
+            $tokenHash = hash('sha512', random_bytes(40));
+            $tokenHash = substr($tokenHash, 0, 40);
         } while ($this->tokenRepository->find($tokenHash) !== null);
 
         $token->setToken($tokenHash);
