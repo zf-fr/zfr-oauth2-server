@@ -76,16 +76,4 @@ class ClientService
     {
         return $this->clientRepository->findById($id);
     }
-
-    /**
-     * Authenticate the client
-     *
-     * @param  Client $client
-     * @param  string $secret
-     * @return bool True if properly authenticated, false otherwise
-     */
-    public function authenticate(Client $client, string $secret): bool
-    {
-        return password_verify($secret, $client->getSecret());
-    }
 }

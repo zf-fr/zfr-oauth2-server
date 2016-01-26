@@ -91,7 +91,7 @@ class Client
      * @param  string $name
      * @return void
      */
-    public function setName(string$name)
+    public function setName(string $name)
     {
         $this->name = $name;
     }
@@ -156,5 +156,16 @@ class Client
     public function isPublic(): bool
     {
         return empty($this->secret);
+    }
+
+    /**
+     * Authenticate the client
+     *
+     * @param  string $secret
+     * @return bool True if properly authenticated, false otherwise
+     */
+    public function authenticate(string $secret): bool
+    {
+        return password_verify($secret, $this->getSecret());
     }
 }

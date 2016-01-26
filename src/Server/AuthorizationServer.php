@@ -312,7 +312,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || (!$allowPublicClients && !$this->clientService->authenticate($client, $secret))) {
+        if (null === $client || (!$allowPublicClients && !$client->authenticate($client, $secret))) {
             throw OAuth2Exception::invalidClient('Client authentication failed');
         }
 
