@@ -21,12 +21,8 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use Zend\EventManager\EventManagerAwareInterface;
-use Zend\EventManager\EventManagerAwareTrait;
 use ZfrOAuth2\Server\Entity\Client;
 use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
-use ZfrOAuth2\Server\Event\AuthorizationCodeEvent;
-use ZfrOAuth2\Server\Event\TokenEvent;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
@@ -39,10 +35,8 @@ use ZfrOAuth2\Server\Service\TokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationServer implements AuthorizationServerInterface, EventManagerAwareInterface
+class AuthorizationServer implements AuthorizationServerInterface
 {
-    use EventManagerAwareTrait;
-
     /**
      * @var ClientService
      */
@@ -187,21 +181,7 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
             $response = $this->createResponseFromOAuthException($exception);
         }
 
-        /** @var ResponseInterface $response */
-        $response = $response->withHeader('Content-Type', 'application/json');
-
-        $event = new AuthorizationCodeEvent($request, $response, $owner);
-        $event->setTarget($this);
-
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode >= 200 && $statusCode <= 399) {
-            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_CREATED, $event);
-        } else {
-            $this->getEventManager()->trigger(AuthorizationCodeEvent::EVENT_CODE_FAILED, $event);
-        }
-
-        return $event->getResponse();
+        return $response->withHeader('Content-Type', 'application/json');
     }
 
     /**
@@ -230,24 +210,9 @@ class AuthorizationServer implements AuthorizationServerInterface, EventManagerA
         }
 
         // According to the spec, we must set those headers (http://tools.ietf.org/html/rfc6749#section-5.1)
-
-        /** @var ResponseInterface $response */
-        $response = $response->withHeader('Content-Type', 'application/json')
-                             ->withHeader('Cache-Control', 'no-store')
-                             ->withHeader('Pragma', 'no-cache');
-
-        $event = new TokenEvent($request, $response, $owner);
-        $event->setTarget($this);
-
-        $statusCode = $response->getStatusCode();
-
-        if ($statusCode >= 200 && $statusCode <= 399) {
-            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_CREATED, $event);
-        } else {
-            $this->getEventManager()->trigger(TokenEvent::EVENT_TOKEN_FAILED, $event);
-        }
-
-        return $event->getResponse();
+        return $response->withHeader('Content-Type', 'application/json')
+                        ->withHeader('Cache-Control', 'no-store')
+                        ->withHeader('Pragma', 'no-cache');
     }
 
     /**
