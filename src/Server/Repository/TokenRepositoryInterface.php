@@ -38,11 +38,6 @@ interface TokenRepositoryInterface
     public function findByToken(string $token);
 
     /**
-     * @return AbstractToken[]
-     */
-    public function findAll(): array;
-
-    /**
      * @param AbstractToken $token
      */
     public function deleteToken(AbstractToken $token);
