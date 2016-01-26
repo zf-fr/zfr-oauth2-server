@@ -37,7 +37,7 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->once())
             ->method('get')
-            ->with(TokenService::AccessTokenService)
+            ->with(TokenService::ACCESSTOKEN_SERVICE)
             ->willReturn($tokenService);
 
         $factory = new ResourceServerFactory();

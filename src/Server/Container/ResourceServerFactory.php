@@ -35,7 +35,7 @@ class ResourceServerFactory
     public function __invoke(ContainerInterface $container)
     {
         /** @var TokenService $tokenService */
-        $tokenService = $container->get(TokenService::AccessTokenService);
+        $tokenService = $container->get(TokenService::ACCESSTOKEN_SERVICE);
 
         return new ResourceServer($tokenService);
     }

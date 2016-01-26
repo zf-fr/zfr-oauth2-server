@@ -42,10 +42,10 @@ class PasswordGrantFactory
         $ownerCallable = is_string($ownerCallable) ? $container->get($ownerCallable) : $ownerCallable;
 
         /* @var TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::AccessTokenService);
+        $accessTokenService = $container->get(TokenService::ACCESSTOKEN_SERVICE);
 
         /* @var TokenService $refreshTokenService */
-        $refreshTokenService = $container->get(TokenService::RefreshTokenService);
+        $refreshTokenService = $container->get(TokenService::REFRESHTOKEN_SERVICE);
 
         return new PasswordGrant($accessTokenService, $refreshTokenService, $ownerCallable);
     }

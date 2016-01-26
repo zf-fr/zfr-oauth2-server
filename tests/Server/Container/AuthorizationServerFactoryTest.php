@@ -56,7 +56,7 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(3))
             ->method('get')
-            ->with(TokenService::AccessTokenService)
+            ->with(TokenService::ACCESSTOKEN_SERVICE)
             ->willReturn($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
 
         $container->expects($this->at(4))

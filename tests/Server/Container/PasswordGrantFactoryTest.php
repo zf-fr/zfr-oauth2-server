@@ -46,12 +46,12 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with(TokenService::AccessTokenService)
+            ->with(TokenService::ACCESSTOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $container->expects($this->at(2))
             ->method('get')
-            ->with(TokenService::RefreshTokenService)
+            ->with(TokenService::REFRESHTOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $factory = new PasswordGrantFactory();
@@ -79,12 +79,12 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(2))
             ->method('get')
-            ->with(TokenService::AccessTokenService)
+            ->with(TokenService::ACCESSTOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $container->expects($this->at(3))
             ->method('get')
-            ->with(TokenService::RefreshTokenService)
+            ->with(TokenService::REFRESHTOKEN_SERVICE)
             ->willReturn($this->getMock(TokenService::class, [], [], '', false));
 
         $factory = new PasswordGrantFactory();
