@@ -16,24 +16,11 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Id;
-
-use Doctrine\ORM\EntityManager;
-use ZfrOAuth2\Server\Id\ClientIdGenerator;
+namespace ZfrOAuth2\Server\Repository;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
- *
- * @covers \ZfrOAuth2\Server\Id\ClientIdGenerator
+ * Interface AuthorizationCodeRepositoryInterface
  */
-class ClientIdGeneratorTest extends \PHPUnit_Framework_TestCase
+interface AuthorizationCodeRepositoryInterface extends TokenRepositoryInterface
 {
-    public function testCanGenerateClientId()
-    {
-        $generator = new ClientIdGenerator();
-        $id        = $generator->generate($this->getMock(EntityManager::class, [], [], '', false), new \stdClass());
-
-        $this->assertEquals(13, strlen($id));
-    }
 }

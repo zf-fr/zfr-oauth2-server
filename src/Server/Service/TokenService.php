@@ -19,10 +19,10 @@
 namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
+use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Entity\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
 /**
  * Token service
@@ -44,12 +44,7 @@ class TokenService
     const REFRESH_TOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
 
     /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var ObjectRepository
+     * @var TokenRepositoryInterface
      */
     protected $tokenRepository;
 
@@ -66,16 +61,13 @@ class TokenService
     protected $tokenTTL = 3600;
 
     /**
-     * @param ObjectManager    $objectManager
-     * @param ObjectRepository $tokenRepository
-     * @param ScopeService     $scopeService
+     * @param TokenRepositoryInterface $tokenRepository
+     * @param ScopeService             $scopeService
      */
     public function __construct(
-        ObjectManager $objectManager,
-        ObjectRepository $tokenRepository,
+        TokenRepositoryInterface $tokenRepository,
         ScopeService $scopeService
     ) {
-        $this->objectManager   = $objectManager;
         $this->tokenRepository = $tokenRepository;
         $this->scopeService    = $scopeService;
     }
@@ -115,14 +107,11 @@ class TokenService
 
         do {
             $tokenHash = bin2hex(random_bytes(20));
-        } while ($this->tokenRepository->find($tokenHash) !== null);
+        } while ($this->tokenRepository->findByToken($tokenHash) !== null);
 
         $token->setToken($tokenHash);
 
-        $this->objectManager->persist($token);
-        $this->objectManager->flush();
-
-        return $token;
+        return $this->tokenRepository->save($token);
     }
 
     /**
@@ -134,7 +123,7 @@ class TokenService
     public function getToken($token)
     {
         /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
-        $tokenFromDb = $this->tokenRepository->find($token);
+        $tokenFromDb = $this->tokenRepository->findByToken($token);
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure
         // that the token matches case
@@ -153,8 +142,7 @@ class TokenService
      */
     public function deleteToken(AbstractToken $token)
     {
-        $this->objectManager->remove($token);
-        $this->objectManager->flush();
+        $this->tokenRepository->deleteToken($token);
     }
 
     /**

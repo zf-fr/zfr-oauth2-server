@@ -16,27 +16,28 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2\Server\Repository;
 
-use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
-use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Entity\Scope;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Interface ScopeRepositoryInterface
  */
-class ClientServiceFactory
+interface ScopeRepositoryInterface
 {
     /**
-     * @param  ContainerInterface $container
-     * @return ClientService
+     * @param Scope $scope
+     * @return Scope
      */
-    public function __invoke(ContainerInterface $container): ClientService
-    {
-        /** @var ClientRepositoryInterface $clientRepository */
-        $clientRepository = $container->get(ClientRepositoryInterface::class);
+    public function save(Scope $scope): Scope;
 
-        return new ClientService($clientRepository);
-    }
+    /**
+     * @return Scope[]
+     */
+    public function findAll(): array;
+
+    /**
+     * @return Scope[]
+     */
+    public function findDefaultScopes(): array;
 }

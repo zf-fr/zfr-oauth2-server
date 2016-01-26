@@ -18,9 +18,8 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 
 /**
  * Client service
@@ -30,23 +29,19 @@ use ZfrOAuth2\Server\Entity\Client;
  */
 class ClientService
 {
-    /**
-     * @var ObjectManager
-     */
-    protected $objectManager;
 
     /**
-     * @var ObjectRepository
+     * @var ClientRepositoryInterface
      */
     protected $clientRepository;
 
     /**
-     * @param ObjectManager    $objectManager
-     * @param ObjectRepository $clientRepository
+     * ClientService constructor.
+     *
+     * @param ClientRepositoryInterface $clientRepository
      */
-    public function __construct(ObjectManager $objectManager, ObjectRepository $clientRepository)
+    public function __construct(ClientRepositoryInterface $clientRepository)
     {
-        $this->objectManager    = $objectManager;
         $this->clientRepository = $clientRepository;
     }
 
@@ -66,8 +61,7 @@ class ClientService
         $secret = bin2hex(random_bytes(20));
         $client->setSecret(password_hash($secret, PASSWORD_DEFAULT));
 
-        $this->objectManager->persist($client);
-        $this->objectManager->flush();
+        $client = $this->clientRepository->save($client);
 
         return [$client, $secret];
     }

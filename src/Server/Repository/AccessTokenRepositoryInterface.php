@@ -16,27 +16,11 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
-
-use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
-use ZfrOAuth2\Server\Service\ClientService;
+namespace ZfrOAuth2\Server\Repository;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Interface AccessTokenRepositoryInterface
  */
-class ClientServiceFactory
+interface AccessTokenRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return ClientService
-     */
-    public function __invoke(ContainerInterface $container): ClientService
-    {
-        /** @var ClientRepositoryInterface $clientRepository */
-        $clientRepository = $container->get(ClientRepositoryInterface::class);
-
-        return new ClientService($clientRepository);
-    }
 }
