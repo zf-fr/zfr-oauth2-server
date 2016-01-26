@@ -73,19 +73,6 @@ class ClientService
     }
 
     /**
-     * Update an existing client
-     *
-     * @param  Client $client
-     * @return Client
-     */
-    public function updateClient(Client $client): Client
-    {
-        $this->objectManager->flush($client);
-
-        return $client;
-    }
-
-    /**
      * Get the client using its id
      *
      * @param  string $id
