@@ -40,17 +40,17 @@ class RefreshTokenGrant extends AbstractGrant
     /**
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * @var TokenService
      */
-    protected $refreshTokenService;
+    private $refreshTokenService;
 
     /**
      * @var bool
      */
-    protected $rotateRefreshTokens = false;
+    private $rotateRefreshTokens = false;
 
     /**
      * @param TokenService $accessTokenService

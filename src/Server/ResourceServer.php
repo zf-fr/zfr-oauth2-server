@@ -38,7 +38,7 @@ class ResourceServer implements ResourceServerInterface
     /**
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * @param TokenService $accessTokenService

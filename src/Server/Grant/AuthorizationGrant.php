@@ -45,21 +45,21 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     /**
      * @var TokenService
      */
-    protected $authorizationCodeService;
+    private $authorizationCodeService;
 
     /**
      * Access token service (used to create access token)
      *
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
      *
      * @var TokenService
      */
-    protected $refreshTokenService;
+    private $refreshTokenService;
 
     /**
      * @param TokenService $authorizationCodeService

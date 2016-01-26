@@ -32,7 +32,7 @@ class AuthorizationCode extends AbstractToken
     /**
      * @var string
      */
-    protected $redirectUri = '';
+    private $redirectUri = '';
 
     /**
      * Set the redirect URI

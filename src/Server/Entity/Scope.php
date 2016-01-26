@@ -29,22 +29,22 @@ class Scope
     /**
      * @var int
      */
-    protected $id;
+    private $id;
 
     /**
      * @var string
      */
-    protected $name = '';
+    private $name = '';
 
     /**
      * @var string
      */
-    protected $description = '';
+    private $description = '';
 
     /**
      * @var bool
      */
-    protected $isDefault = false;
+    private $isDefault = false;
 
     /**
      * Get the scope id

@@ -29,7 +29,7 @@ trait AuthorizationServerAwareTrait
     /**
      * @var AuthorizationServerInterface
      */
-    protected $authorizationServer;
+    private $authorizationServer;
 
     /**
      * {@inheritDoc}

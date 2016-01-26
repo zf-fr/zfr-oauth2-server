@@ -33,7 +33,7 @@ class ClientService
     /**
      * @var ClientRepositoryInterface
      */
-    protected $clientRepository;
+    private $clientRepository;
 
     /**
      * ClientService constructor.

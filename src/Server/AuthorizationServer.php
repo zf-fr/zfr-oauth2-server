@@ -40,31 +40,31 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * @var ClientService
      */
-    protected $clientService;
+    private $clientService;
 
     /**
      * A list of grant
      *
      * @var GrantInterface[]
      */
-    protected $grants = [];
+    private $grants = [];
 
     /**
      * A list of grant that can answer to an authorization request
      *
      * @var GrantInterface[]
      */
-    protected $responseTypes = [];
+    private $responseTypes = [];
 
     /**
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * @var TokenService
      */
-    protected $refreshTokenService;
+    private $refreshTokenService;
 
     /**
      * @param ClientService    $clientService
@@ -294,7 +294,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @return Client|null
      * @throws Exception\OAuth2Exception
      */
-    protected function getClient(ServerRequestInterface $request, $allowPublicClients)
+    private function getClient(ServerRequestInterface $request, $allowPublicClients)
     {
         list($id, $secret) = $this->extractClientCredentials($request);
 
@@ -326,7 +326,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  OAuth2Exception $exception
      * @return ResponseInterface
      */
-    protected function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
+    private function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
         $payload = [
             'error'             => $exception->getCode(),

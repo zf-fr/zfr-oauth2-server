@@ -37,22 +37,22 @@ class Client
     /**
      * @var string
      */
-    protected $id = '';
+    private $id = '';
 
     /**
      * @var string
      */
-    protected $secret = '';
+    private $secret = '';
 
     /**
      * @var string
      */
-    protected $name = '';
+    private $name = '';
 
     /**
      * @var array
      */
-    protected $redirectUris = [];
+    private $redirectUris = [];
 
     /**
      * Get the client id

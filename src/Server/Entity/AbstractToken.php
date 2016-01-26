@@ -34,7 +34,7 @@ abstract class AbstractToken
     /**
      * @var string
      */
-    protected $token;
+    private $token;
 
     /**
      * @var Client

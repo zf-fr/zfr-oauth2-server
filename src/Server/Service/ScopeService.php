@@ -32,7 +32,7 @@ class ScopeService
     /**
      * @var ScopeRepositoryInterface
      */
-    protected $scopeRepository;
+    private $scopeRepository;
 
     /**
      * @param ScopeRepositoryInterface $scopeRepository

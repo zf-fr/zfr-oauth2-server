@@ -49,14 +49,14 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      *
      * @var TokenService
      */
-    protected $accessTokenService;
+    private $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
      *
      * @var TokenService
      */
-    protected $refreshTokenService;
+    private $refreshTokenService;
 
     /**
      * Callable that is used to verify the username and password
@@ -66,7 +66,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      *
      * @var callable
      */
-    protected $callback;
+    private $callback;
 
     /**
      * @param TokenService $accessTokenService
