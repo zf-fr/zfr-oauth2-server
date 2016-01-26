@@ -18,8 +18,6 @@
 
 namespace ZfrOAuth2\Server\Options;
 
-use Zend\Stdlib\AbstractOptions;
-
 
 /**
  * Options class
@@ -27,7 +25,7 @@ use Zend\Stdlib\AbstractOptions;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ServerOptions extends AbstractOptions
+class ServerOptions
 {
     /**
      * Object manager key
@@ -72,12 +70,28 @@ class ServerOptions extends AbstractOptions
     protected $grants = [];
 
     /**
-     * @param array|null $options
+     * Constructor
+     *
+     * @param  array|null $options
      */
     public function __construct($options = null)
     {
-        $this->__strictMode__ = false;
-        parent::__construct($options);
+        if (null !== $options) {
+            $this->setFromArray($options);
+        }
+    }
+
+    /**
+     * Set one or more configuration properties
+     *
+     * @param  array $options
+     */
+    public function setFromArray(array $options)
+    {
+        foreach ($options as $key => $value) {
+            $setter = 'set' . str_replace('_', '', $key);
+            $this->{$setter}($value);
+        }
     }
 
     /**
