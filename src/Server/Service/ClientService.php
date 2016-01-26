@@ -65,8 +65,7 @@ class ClientService
     public function registerClient(Client $client):array
     {
         // Finally, we must generate a strong, unique secret, and crypt it before storing it
-        $secret = hash('sha512', random_bytes(40));
-        $secret = substr($secret, 0, 40);
+        $secret = bin2hex(random_bytes(20));
         $client->setSecret(password_hash($secret, PASSWORD_DEFAULT));
 
         $this->objectManager->persist($client);

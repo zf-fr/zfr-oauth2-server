@@ -116,8 +116,7 @@ class TokenService
         $token->setExpiresAt($expiresAt);
 
         do {
-            $tokenHash = hash('sha512', random_bytes(40));
-            $tokenHash = substr($tokenHash, 0, 40);
+            $tokenHash = bin2hex(random_bytes(20));
         } while ($this->tokenRepository->find($tokenHash) !== null);
 
         $token->setToken($tokenHash);
