@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server\Service;
 
 use DateTime;
 use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
-use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
@@ -122,7 +122,7 @@ class TokenService
      */
     public function getToken(string $token)
     {
-        /* @var \ZfrOAuth2\Server\Entity\AbstractToken $tokenFromDb */
+        /* @var \ZfrOAuth2\Server\Model\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->findByToken($token);
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure

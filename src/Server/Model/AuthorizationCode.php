@@ -16,21 +16,40 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Access token entity
+ * Authorization code entity
+ *
+ * An authorization code is a special token that acts as an intermediary between the client and
+ * the resource owner. An authorization code can then be exchanged against an access token
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AccessToken extends AbstractToken
+class AuthorizationCode extends AbstractToken
 {
     /**
-     * {@inheritDoc}
+     * @var string
      */
-    public function isExpired(): bool
+    private $redirectUri = '';
+
+    /**
+     * Set the redirect URI
+     *
+     * @param  string $redirectUri
+     * @return void
+     */
+    public function setRedirectUri(string $redirectUri)
     {
-        return parent::isExpired() && $this->expiresAt !== null;
+        $this->redirectUri = $redirectUri;
+    }
+
+    /**
+     * @return string
+     */
+    public function getRedirectUri(): string
+    {
+        return $this->redirectUri;
     }
 }

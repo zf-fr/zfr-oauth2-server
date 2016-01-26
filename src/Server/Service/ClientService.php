@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 
 /**

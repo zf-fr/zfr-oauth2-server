@@ -20,11 +20,11 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
-use ZfrOAuth2\Server\Entity\AbstractToken;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AbstractToken;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>

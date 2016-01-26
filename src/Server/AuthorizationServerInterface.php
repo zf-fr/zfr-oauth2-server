@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
 /**

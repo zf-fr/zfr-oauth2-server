@@ -16,40 +16,23 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Authorization code entity
+ * Interface for token owner
  *
- * An authorization code is a special token that acts as an intermediary between the client and
- * the resource owner. An authorization code can then be exchanged against an access token
+ * A token owner is someone (most likely a user) that contains the actual data. It's the entity that holds
+ * the data that the client is asking permission to see
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationCode extends AbstractToken
+interface TokenOwnerInterface
 {
     /**
-     * @var string
-     */
-    private $redirectUri = '';
-
-    /**
-     * Set the redirect URI
+     * Get the id of the token owner
      *
-     * @param  string $redirectUri
-     * @return void
+     * @return mixed
      */
-    public function setRedirectUri(string $redirectUri)
-    {
-        $this->redirectUri = $redirectUri;
-    }
-
-    /**
-     * @return string
-     */
-    public function getRedirectUri(): string
-    {
-        return $this->redirectUri;
-    }
+    public function getTokenOwnerId();
 }

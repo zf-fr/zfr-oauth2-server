@@ -16,23 +16,21 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Interface for token owner
- *
- * A token owner is someone (most likely a user) that contains the actual data. It's the entity that holds
- * the data that the client is asking permission to see
+ * Refresh token entity
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface TokenOwnerInterface
+class RefreshToken extends AbstractToken
 {
     /**
-     * Get the id of the token owner
-     *
-     * @return mixed
+     * {@inheritDoc}
      */
-    public function getTokenOwnerId();
+    public function isExpired(): bool
+    {
+        return parent::isExpired() && $this->expiresAt !== null;
+    }
 }

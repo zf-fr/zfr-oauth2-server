@@ -16,15 +16,15 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Refresh token entity
+ * Access token entity
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class RefreshToken extends AbstractToken
+class AccessToken extends AbstractToken
 {
     /**
      * {@inheritDoc}

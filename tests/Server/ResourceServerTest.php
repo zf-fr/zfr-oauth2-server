@@ -21,7 +21,7 @@ namespace ZfrOAuth2Test\Server;
 use DateInterval;
 use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\AccessToken;
+use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\ResourceServer;
 use ZfrOAuth2\Server\Service\TokenService;

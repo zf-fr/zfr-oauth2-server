@@ -20,7 +20,7 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\RefreshTokenServiceFactory;
-use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;

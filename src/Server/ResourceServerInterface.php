@@ -19,8 +19,8 @@
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Scope;
 
 /**
  * The resource server main role is to validate the access token and that its scope covers the

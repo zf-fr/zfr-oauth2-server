@@ -16,14 +16,14 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Entity;
+namespace ZfrOAuth2Test\Server\Model;
 
-use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Model\Client;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Entity\Client
+ * @covers \ZfrOAuth2\Server\Model\Client
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {

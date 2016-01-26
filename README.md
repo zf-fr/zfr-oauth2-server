@@ -119,7 +119,7 @@ that is compliant with the OAuth2 specification.
 
 Most of the time, you want to associate an access token to a user. This is the only way to map a token to a user
 of your system. To do this, you can pass an optional second parameter to the `handleRequest`. This class must
-implements the `ZfrOAuth2\Server\Entity\TokenOwnerInterface` interface:
+implements the `ZfrOAuth2\Server\Model\TokenOwnerInterface` interface:
 
 ```php
 $user = new User(); // must implement TokenOwnerInterface

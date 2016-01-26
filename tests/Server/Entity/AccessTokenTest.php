@@ -16,20 +16,20 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Entity;
+namespace ZfrOAuth2Test\Server\Model;
 
 use DateInterval;
 use DateTime;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\Scope;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\Scope;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Entity\AbstractToken
- * @covers \ZfrOAuth2\Server\Entity\AccessToken
+ * @covers \ZfrOAuth2\Server\Model\AbstractToken
+ * @covers \ZfrOAuth2\Server\Model\AccessToken
  */
 class AccessTokenTest extends \PHPUnit_Framework_TestCase
 {

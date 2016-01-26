@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
-use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Model\AbstractToken;
 
 /**
  * Interface TokenRepositoryInterface

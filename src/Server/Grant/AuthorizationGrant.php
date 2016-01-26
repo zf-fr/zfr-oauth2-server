@@ -21,11 +21,11 @@ namespace ZfrOAuth2\Server\Grant;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\AuthorizationCode;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -142,7 +142,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
         }
 
-        /* @var \ZfrOAuth2\Server\Entity\AuthorizationCode  $authorizationCode */
+        /* @var \ZfrOAuth2\Server\Model\AuthorizationCode  $authorizationCode */
         $authorizationCode = $this->authorizationCodeService->getToken($code);
 
         if (null === $authorizationCode || $authorizationCode->isExpired()) {

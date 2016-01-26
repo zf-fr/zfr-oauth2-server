@@ -21,7 +21,7 @@ namespace ZfrOAuth2Test\Server\Container;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\PasswordGrantFactory;
 use ZfrOAuth2\Server\Container\RefreshTokenGrantFactory;
-use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;

@@ -20,7 +20,7 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
+use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;

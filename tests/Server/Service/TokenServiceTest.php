@@ -18,9 +18,9 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
-use ZfrOAuth2\Server\Entity\AbstractToken;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Model\AbstractToken;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
