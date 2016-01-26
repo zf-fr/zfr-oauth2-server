@@ -18,7 +18,6 @@
 
 namespace ZfrOAuth2\Server\Options;
 
-
 /**
  * Options class
  *
