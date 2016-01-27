@@ -16,13 +16,14 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server;
+namespace ZfrOAuth2\Server\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use Zend\Stratigility\MiddlewareInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
+use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
  * Middleware for a resource server

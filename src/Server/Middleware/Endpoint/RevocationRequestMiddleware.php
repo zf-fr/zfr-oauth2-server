@@ -16,28 +16,39 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Container;
+namespace ZfrOAuth2\Server\Middleware\Endpoint;
 
-use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
-use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Service\ClientService;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Zend\Stratigility\MiddlewareInterface;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
+ * Token revocation request middleware endpoint of the authorization server
  */
-class AuthorizationServerMiddlewareFactory
+class RevocationRequestMiddleware implements MiddlewareInterface
 {
     /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServerMiddleware
+     * @var AuthorizationServerInterface
      */
-    public function __invoke(ContainerInterface $container): AuthorizationServerMiddleware
-    {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+    private $authorizationServer;
 
-        return new AuthorizationServerMiddleware($authorizationServer);
+    /**
+     * @param AuthorizationServerInterface $authorizationServer
+     */
+    public function __construct(AuthorizationServerInterface $authorizationServer)
+    {
+        $this->authorizationServer = $authorizationServer;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function __invoke(
+        ServerRequestInterface $request,
+        ResponseInterface $response,
+        callable $out = null
+    ): ResponseInterface {
+        return $this->authorizationServer->handleRevocationRequest($request);
     }
 }

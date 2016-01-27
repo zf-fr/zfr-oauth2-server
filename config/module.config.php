@@ -17,12 +17,11 @@
  */
 
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\AuthorizationServerMiddleware;
 use ZfrOAuth2\Server\Container\AccessTokenServiceFactory;
 use ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory;
 use ZfrOAuth2\Server\Container\AuthorizationGrantFactory;
+use ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Container\AuthorizationServerFactory;
-use ZfrOAuth2\Server\Container\AuthorizationServerMiddlewareFactory;
 use ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory;
 use ZfrOAuth2\Server\Container\ClientServiceFactory;
 use ZfrOAuth2\Server\Container\PasswordGrantFactory;
@@ -30,15 +29,20 @@ use ZfrOAuth2\Server\Container\RefreshTokenGrantFactory;
 use ZfrOAuth2\Server\Container\RefreshTokenServiceFactory;
 use ZfrOAuth2\Server\Container\ResourceServerFactory;
 use ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory;
+use ZfrOAuth2\Server\Container\RevocationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
 use ZfrOAuth2\Server\Container\ServerOptionsFactory;
+use ZfrOAuth2\Server\Container\TokenRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Middleware\Endpoint\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\Endpoint\TokenRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServer;
-use ZfrOAuth2\Server\ResourceServerMiddleware;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ClientService;
@@ -51,8 +55,10 @@ return [
             /**
              * Middleware
              */
-            AuthorizationServerMiddleware::class => AuthorizationServerMiddlewareFactory::class,
-            ResourceServerMiddleware::class      => ResourceServerMiddlewareFactory::class,
+            AuthorizationRequestMiddleware::class    => AuthorizationRequestMiddlewareFactory::class,
+            RevocationRequestMiddleware::class       => RevocationRequestMiddlewareFactory::class,
+            TokenRequestMiddleware::class            => TokenRequestMiddlewareFactory::class,
+            ResourceServerMiddleware::class          => ResourceServerMiddlewareFactory::class,
 
             /**
              * Services

@@ -19,24 +19,24 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
-use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ResourceServerMiddlewareFactory
+class RevocationRequestMiddlewareFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return ResourceServerMiddleware
+     * @return RevocationRequestMiddleware
      */
-    public function __invoke(ContainerInterface $container): ResourceServerMiddleware
+    public function __invoke(ContainerInterface $container): RevocationRequestMiddleware
     {
-        /** @var ResourceServer $resourceServer */
-        $resourceServer = $container->get(ResourceServer::class);
+        /** @var AuthorizationServer $authorizationServer */
+        $authorizationServer = $container->get(AuthorizationServer::class);
 
-        return new ResourceServerMiddleware($resourceServer);
+        return new RevocationRequestMiddleware($authorizationServer);
     }
 }
