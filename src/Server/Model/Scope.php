@@ -47,6 +47,22 @@ class Scope
     private $isDefault = false;
 
     /**
+     * Scope constructor.
+     *
+     * @param int    $id
+     * @param string $name
+     * @param string $description
+     * @param bool   $isDefault
+     */
+    public function __construct(int $id, string $name, string $description = null, bool $isDefault = false)
+    {
+        $this->id          = $id;
+        $this->name        = $name;
+        $this->description = $description;
+        $this->isDefault   = $isDefault;
+    }
+
+    /**
      * Get the scope id
      *
      * @return int|null
@@ -54,17 +70,6 @@ class Scope
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set the scope's name
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
     }
 
     /**
@@ -78,17 +83,6 @@ class Scope
     }
 
     /**
-     * Set the scope's description
-     *
-     * @param  string $description
-     * @return void
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-    }
-
-    /**
      * Get the scope's description
      *
      * @return string
@@ -96,17 +90,6 @@ class Scope
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    /**
-     * Set if the scope is a default scope
-     *
-     * @param  bool $isDefault
-     * @return void
-     */
-    public function setIsDefault(bool $isDefault)
-    {
-        $this->isDefault = $isDefault;
     }
 
     /**
