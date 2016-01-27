@@ -42,17 +42,39 @@ class Client
     /**
      * @var string
      */
-    private $secret = '';
+    private $name = '';
 
     /**
      * @var string
      */
-    private $name = '';
+    private $secret = null;
 
     /**
      * @var array
      */
     private $redirectUris = [];
+
+    /**
+     * Client constructor.
+     *
+     * @param string      $id           Client id
+     * @param string      $name         Clients name
+     * @param string|null $secret       Clients secret
+     * @param array|null  $redirectUris Client allowed redirect direct url's
+     */
+    public function __construct(string $id, string $name, string $secret = null, array $redirectUris = null)
+    {
+        $this->id     = $id;
+        $this->name   = $name;
+        $this->secret = $secret;
+
+        if (null !== $redirectUris) {
+            foreach ($redirectUris as &$redirectUri) {
+                $redirectUri = (string) $redirectUri;
+            }
+            $this->redirectUris = $redirectUris;
+        }
+    }
 
     /**
      * Get the client id
@@ -64,37 +86,6 @@ class Client
         return $this->id;
     }
 
-    /**
-     * Set the client secret
-     *
-     * @param  string $secret
-     * @return void
-     */
-    public function setSecret(string $secret)
-    {
-        $this->secret = $secret;
-    }
-
-    /**
-     * Get the client secret
-     *
-     * @return string
-     */
-    public function getSecret(): string
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Set the client name
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
-    }
 
     /**
      * Get the client name
@@ -107,24 +98,13 @@ class Client
     }
 
     /**
-     * Set the redirect URIs
+     * Get the client secret
      *
-     * You can either set a string of comma separated string, or an array
-     *
-     * @param  array|string $redirectUris
-     * @return void
+     * @return string
      */
-    public function setRedirectUris($redirectUris)
+    public function getSecret(): string
     {
-        if (is_string($redirectUris)) {
-            $redirectUris = explode(',', str_replace(' ', '', $redirectUris));
-        } else {
-            foreach ($redirectUris as &$redirectUri) {
-                $redirectUri = (string) $redirectUri;
-            }
-        }
-
-        $this->redirectUris = $redirectUris;
+        return $this->secret;
     }
 
     /**
@@ -167,5 +147,18 @@ class Client
     public function authenticate(string $secret): bool
     {
         return password_verify($secret, $this->getSecret());
+    }
+
+    /**
+     * Creates a strong, unique secret and crypt it on the model
+     *
+     * @return string Secret not encrypted
+     */
+    public function generateSecret()
+    {
+        $secret       = bin2hex(random_bytes(20));
+        $this->secret = password_hash($secret, PASSWORD_DEFAULT);
+
+        return $secret;
     }
 }
