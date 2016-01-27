@@ -136,8 +136,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
         $token = new AccessToken();
 
         if (empty($tokenScope)) {
-            $scope = new Scope();
-            $scope->setName('read');
+            $scope = new Scope(1, 'read');
 
             $this->scopeService->expects($this->once())
                                ->method('getDefaultScopes')
@@ -154,8 +153,7 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
         $scopes = [];
         foreach ($registeredScopes as $registeredScope) {
-            $scope = new Scope();
-            $scope->setName($registeredScope);
+            $scope = new Scope(1, $registeredScope);
 
             $scopes[] = $scope;
         }

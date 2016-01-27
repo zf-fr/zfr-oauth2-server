@@ -27,19 +27,13 @@ use ZfrOAuth2\Server\Model\Scope;
  */
 class ScopeTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGettersAndSetters()
+    public function testGetters()
     {
-        $scope = new Scope();
+        $scope = new Scope(1, 'scope', 'Fooo', true);
 
-        $this->assertNull($scope->getId());
-
-        $scope->setName('scope');
+        $this->assertEquals(1, $scope->getId());
         $this->assertEquals('scope', $scope->getName());
-
-        $scope->setDescription('Fooo');
         $this->assertEquals('Fooo', $scope->getDescription());
-
-        $scope->setIsDefault(true);
         $this->assertTrue($scope->isDefault());
     }
 }

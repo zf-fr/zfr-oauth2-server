@@ -67,8 +67,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCanSetScopesFromInstances()
     {
-        $scope = new Scope();
-        $scope->setName('bar');
+        $scope = new Scope(1, 'bar');
 
         $refreshToken = new RefreshToken();
         $refreshToken->setScopes([$scope]);
