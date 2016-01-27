@@ -53,14 +53,11 @@ class ClientService
      * in the client object
      *
      * @param  Client $client
-     * @return array
+     * @return array [$client, $secret]
      */
     public function registerClient(Client $client): array
     {
-        // Finally, we must generate a strong, unique secret, and crypt it before storing it
-        $secret = bin2hex(random_bytes(20));
-        $client->setSecret(password_hash($secret, PASSWORD_DEFAULT));
-
+        $secret = $client->generateSecret();
         $client = $this->clientRepository->save($client);
 
         return [$client, $secret];
