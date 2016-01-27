@@ -165,6 +165,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scopes);
+
+        /** @var AccessToken $accessToken */
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant

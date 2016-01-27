@@ -122,6 +122,8 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         $accessToken = new AccessToken();
 
         $this->populateToken($accessToken, $client, $owner, $scope);
+
+        /** @var AccessToken $accessToken */
         $accessToken = $this->accessTokenService->createToken($accessToken);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
