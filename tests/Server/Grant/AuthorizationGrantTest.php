@@ -75,7 +75,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['response_type' => 'foo']));
 
-        $this->grant->createAuthorizationResponse($request, new Client());
+        $this->grant->createAuthorizationResponse($request, new Client('id', 'name'));
     }
 
     public function testCanCreateAuthorizationCodeUsingClientRedirectUri()
@@ -88,9 +88,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
-        $client   = new Client();
-        $client->setRedirectUris('http://www.example.com');
-        $response = $this->grant->createAuthorizationResponse($request, $client);
+        $response = $this->grant->createAuthorizationResponse($request, new Client('id', 'name', null, ['http://www.example.com']));
 
         $location = $response->getHeaderLine('Location');
         $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
@@ -111,9 +109,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
-        $client   = new Client();
-        $client->setRedirectUris('http://www.example.com,http://www.custom-example.com');
-        $response = $this->grant->createAuthorizationResponse($request, $client);
+        $response = $this->grant->createAuthorizationResponse($request, new Client('id', 'name', null, ['http://www.example.com','http://www.custom-example.com']));
 
         $location = $response->getHeaderLine('Location');
         $this->assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
@@ -136,9 +132,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects($this->never())->method('createToken')->will($this->returnValue($token));
 
-        $client   = new Client();
-        $client->setRedirectUris('http://www.example.com');
-        $this->grant->createAuthorizationResponse($request, $client);
+        $this->grant->createAuthorizationResponse($request, new Client('id', 'name', null, ['http://www.example.com']));
     }
 
     public function testAssertInvalidIfNoCodeIsSet()
@@ -147,7 +141,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testAssertInvalidGrantIfCodeIsInvalid()
@@ -158,11 +152,11 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123']);
 
         $this->authorizationCodeService->expects($this->once())
-                                       ->method('getToken')
-                                       ->with('123')
-                                       ->will($this->returnValue(null));
+            ->method('getToken')
+            ->with('123')
+            ->will($this->returnValue(null));
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testAssertInvalidGrantIfCodeIsExpired()
@@ -173,11 +167,11 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123']);
 
         $this->authorizationCodeService->expects($this->once())
-                                       ->method('getToken')
-                                       ->with('123')
-                                       ->will($this->returnValue($this->getInvalidAuthorizationCode()));
+            ->method('getToken')
+            ->with('123')
+            ->will($this->returnValue($this->getInvalidAuthorizationCode()));
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testInvalidRequestIfAuthClientIsNotSame()
@@ -188,14 +182,15 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);
 
         $token = $this->getValidAuthorizationCode();
-        $token->setClient(new Client());
+        $client = new Client('id', 'name');
+        $token->setClient($client);
 
         $this->authorizationCodeService->expects($this->once())
-                                       ->method('getToken')
-                                       ->with('123')
-                                       ->will($this->returnValue($token));
+            ->method('getToken')
+            ->with('123')
+            ->will($this->returnValue($token));
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function hasRefreshGrant()
@@ -212,23 +207,19 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'client_123']);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['code'      => '123',
+                                                                               'client_id' => 'client_123'
+        ]);
 
-        $token  = $this->getValidAuthorizationCode();
+        $token = $this->getValidAuthorizationCode();
 
-        $client = new Client();
-
-        // We use reflection because there is no setter on client
-        $reflProperty = new \ReflectionProperty($client, 'id');
-        $reflProperty->setAccessible(true);
-        $reflProperty->setValue($client, 'client_123');
-
+        $client = new Client('client_123', 'name');
         $token->setClient($client);
 
         $this->authorizationCodeService->expects($this->once())
-                                       ->method('getToken')
-                                       ->with('123')
-                                       ->will($this->returnValue($token));
+            ->method('getToken')
+            ->with('123')
+            ->will($this->returnValue($token));
 
         $owner = $this->getMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
@@ -244,14 +235,16 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
         $authorizationServer = $this->getMock(AuthorizationServer::class, [], [], '', false);
         $authorizationServer->expects($this->once())
-                            ->method('hasGrant')
-                            ->with(RefreshTokenGrant::GRANT_TYPE)
-                            ->will($this->returnValue($hasRefreshGrant));
+            ->method('hasGrant')
+            ->with(RefreshTokenGrant::GRANT_TYPE)
+            ->will($this->returnValue($hasRefreshGrant));
 
-        $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
+        $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService,
+            $this->refreshTokenService);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, new Client(), $owner);
+        $client = new Client('client_123', 'name');
+        $response = $this->grant->createTokenResponse($request, $client, $owner);
 
         $body = json_decode($response->getBody(), true);
 
@@ -274,7 +267,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $refreshToken = new RefreshToken();
         $refreshToken->setToken('azerty_refresh');
         $refreshToken->setScopes('read');
-        $validDate    = new DateTime();
+        $validDate = new DateTime();
         $validDate->add(new DateInterval('P1D'));
 
         $refreshToken->setExpiresAt($validDate);
@@ -290,7 +283,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $accessToken = new AccessToken();
         $accessToken->setToken('azerty_access');
         $accessToken->setScopes('read');
-        $validDate   = new DateTime();
+        $validDate = new DateTime();
         $validDate->add(new DateInterval('PT1H'));
 
         $accessToken->setExpiresAt($validDate);
@@ -306,7 +299,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setToken('azerty_auth');
         $authorizationCode->setScopes('read');
-        $invalidDate   = new DateTime();
+        $invalidDate = new DateTime();
         $invalidDate->sub(new DateInterval('PT1H'));
 
         $authorizationCode->setExpiresAt($invalidDate);
@@ -322,7 +315,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $authorizationCode = new AuthorizationCode();
         $authorizationCode->setToken('azerty_auth');
         $authorizationCode->setScopes('read');
-        $validDate   = new DateTime();
+        $validDate = new DateTime();
         $validDate->add(new DateInterval('PT1H'));
 
         $authorizationCode->setExpiresAt($validDate);

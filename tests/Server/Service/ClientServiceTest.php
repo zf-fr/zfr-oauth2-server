@@ -47,7 +47,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetClient()
     {
-        $client = new Client();
+        $client = new Client('client_id', 'name');
 
         $this->clientRepository->expects($this->once())
                                ->method('findById')
@@ -57,9 +57,12 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
+    /**
+     * @todo move (part of) test to Model/ClientTest
+     */
     public function testRegisterClient()
     {
-        $client = new Client();
+        $client = new Client('client_id', 'name');
 
         $this->clientRepository->expects($this->once())
                             ->method('save')

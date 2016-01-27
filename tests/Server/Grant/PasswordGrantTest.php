@@ -70,7 +70,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client('id', 'name'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
@@ -79,7 +79,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
@@ -98,7 +98,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
 
-        $this->grant->createTokenResponse($request, new Client());
+        $client = new Client('id', 'name');
+        $this->grant->createTokenResponse($request, $client);
     }
 
     public function hasRefreshGrant()
@@ -142,7 +143,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, new Client());
+        $response = $this->grant->createTokenResponse($request, new Client('id', 'name'));
 
         $body = json_decode($response->getBody(), true);
 

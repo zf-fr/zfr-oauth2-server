@@ -36,7 +36,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
     public function testGettersAndSetters()
     {
         $owner     = $this->getMock(TokenOwnerInterface::class);
-        $client    = new Client();
+        $client    = new Client('id', 'name', 'secret', ['http://www.example.com']);
         $expiresAt = new DateTime();
 
         $authorizationCode = new AuthorizationCode();

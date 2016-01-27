@@ -23,18 +23,15 @@ use ZfrOAuth2\Server\Model\Client;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Model\Client
+ * @covers  \ZfrOAuth2\Server\Model\Client
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGettersAndSetters()
+    public function testGetters()
     {
-        $client = new Client();
+        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
 
-        $client->setSecret('secret');
-        $client->setName('name');
-        $client->setRedirectUris('http://www.example.com');
-
+        $this->assertEquals('id', $client->getId());
         $this->assertEquals('secret', $client->getSecret());
         $this->assertEquals('name', $client->getName());
         $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
@@ -42,37 +39,48 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckPublicClient()
     {
-        $client = new Client();
+        $client = new Client('id', 'name', null, ['http://www.example.com']);
         $this->assertTrue($client->isPublic());
 
-        $client->setSecret('secret');
+        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
         $this->assertFalse($client->isPublic());
     }
 
     public function testRedirectUri()
     {
-        $client = new Client();
-        $client->setRedirectUris('http://www.example.com');
+        $client = new Client('id', 'name', null, ['http://www.example.com']);
         $this->assertCount(1, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
         $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
 
-        $client->setRedirectUris('http://www.example1.com,http://www.example2.com');
+        $client = new Client('id', 'name', null, ['http://www.example1.com', 'http://www.example2.com']);
         $this->assertCount(2, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
         $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
         $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
-
-        $client->setRedirectUris('http://www.example1.com, http://www.example2.com');
-        $this->assertCount(2, $client->getRedirectUris());
-
-        $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
-        $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
-        $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
-
-        $client->setRedirectUris(['http://www.example.com']);
-        $this->assertCount(1, $client->getRedirectUris());
-        $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
-        $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
     }
+
+    public function testGenerateSecret()
+    {
+        $client = new Client('client_id', 'name');
+
+        $secret = $client->generateSecret();
+
+        $this->assertEquals(60, strlen($client->getSecret()));
+        $this->assertEquals(40, strlen($secret));
+
+        $this->assertFalse($client->authenticate('azerty'));
+        $this->assertTrue($client->authenticate($secret));
+        $this->assertFalse($client->authenticate($client->getSecret()));
+    }
+
+    public function testAuthenticate()
+    {
+        $client = new Client('client_id', 'name', '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6');
+
+        $this->assertFalse($client->authenticate('azerty'));
+        $this->assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));
+        $this->assertFalse($client->authenticate($client->getSecret()));
+    }
+
 }

@@ -62,7 +62,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client('id', 'name'));
     }
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
@@ -71,7 +71,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testAssertInvalidIfRefreshTokenIsExpired()
@@ -88,7 +88,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                   ->with('123')
                                   ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
@@ -106,7 +106,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                    ->with('123')
                                    ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, new Client('id', 'name'));
     }
 
     public function rotateRefreshToken()
@@ -151,7 +151,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         $this->grant->setRotateRefreshTokens($rotateRefreshToken);
-        $response = $this->grant->createTokenResponse($request, new Client());
+        $response = $this->grant->createTokenResponse($request, new Client('id', 'name'));
 
         $body = json_decode($response->getBody(), true);
 
