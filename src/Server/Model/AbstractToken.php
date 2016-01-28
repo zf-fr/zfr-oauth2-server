@@ -30,7 +30,7 @@ use DateTimeImmutable;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-abstract class AbstractToken
+abstract class AbstractToken implements ReconsituteInterface
 {
     /**
      * @var string
@@ -40,22 +40,22 @@ abstract class AbstractToken
     /**
      * @var Client
      */
-    protected $client;
+    private $client;
 
     /**
      * @var TokenOwnerInterface
      */
-    protected $owner;
+    private $owner;
 
     /**
      * @var DateTimeImmutable
      */
-    protected $expiresAt;
+    private $expiresAt;
 
     /**
      * @var array
      */
-    protected $scopes = [];
+    private $scopes = [];
 
     /**
      * AbstractToken constructor.
@@ -65,27 +65,31 @@ abstract class AbstractToken
     }
 
     /**
-     * @param int                      $ttl
-     * @param TokenOwnerInterface|null $owner
-     * @param Client|null              $client
-     * @param null                     $scopes
+     * @param int                          $ttl
+     * @param TokenOwnerInterface|null     $owner
+     * @param Client|null                  $client
+     * @param string|string[]|Scope[]|null $scopes
      * @return AbstractToken
      */
-    public static function generateNew(
-        int $ttl = 0,
+    protected static function generateNew(
+        int $ttl,
         TokenOwnerInterface $owner = null,
         Client $client = null,
         $scopes = null
-    ) {
+    ): AbstractToken {
+
+        if (isset($scopes) && $scopes instanceof Scope) {
+            $scopes = $scopes->getName();
+        }
+
+        if (is_string($scopes)) {
+            $scopes = explode(' ', $scopes);
+        }
 
         if (is_array($scopes)) {
             foreach ($scopes as &$scope) {
                 $scope = $scope instanceof Scope ? $scope->getName() : (string) $scope;
             }
-        }
-
-        if (is_string($scopes)) {
-            $scopes = explode(' ', $scopes);
         }
 
         $class = get_called_class();
@@ -106,16 +110,15 @@ abstract class AbstractToken
      */
     public static function reconstitute(array $data)
     {
-        $data['owner']     = $data['owner'] ?? null;
-        $data['client']    = $data['client'] ?? null;
-        $data['scopes']    = $data['scopes'] ?? [];
-        $data['expiresAt'] = $data['expiresAt'] ?? null;
+        if (isset($data['scopes']) && $data['scopes'] instanceof Scope) {
+            $data['scopes'] = $data['scopes']->getName();
+        }
 
-        if (is_string($data['scopes'])) {
+        if (isset($data['scopes']) && is_string($data['scopes'])) {
             $data['scopes'] = explode(' ', $data['scopes']);
         }
 
-        if (is_array($data['scopes'])) {
+        if (isset($data['scopes']) && is_array($data['scopes'])) {
             foreach ($data['scopes'] as &$scope) {
                 $scope = $scope instanceof Scope ? $scope->getName() : trim((string) $scope);
             }
@@ -125,10 +128,10 @@ abstract class AbstractToken
         $token = new $class();
 
         $token->token     = $data['token'];
-        $token->expiresAt = $data['expiresAt'];
-        $token->owner     = $data['owner'];
-        $token->client    = $data['client'];
-        $token->scopes    = $data['scopes'];
+        $token->expiresAt = $data['expiresAt'] ?? null;
+        $token->owner     = $data['owner'] ?? null;
+        $token->client    = $data['client'] ?? null;
+        $token->scopes    = $data['scopes'] ?? [];
 
         return $token;
     }

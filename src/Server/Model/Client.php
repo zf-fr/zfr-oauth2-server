@@ -32,7 +32,7 @@ namespace ZfrOAuth2\Server\Model;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Client
+class Client implements ReconsituteInterface
 {
     /**
      * @var string
@@ -47,7 +47,7 @@ class Client
     /**
      * @var string
      */
-    private $secret = null;
+    private $secret = '';
 
     /**
      * @var array
@@ -57,23 +57,58 @@ class Client
     /**
      * Client constructor.
      *
-     * @param string      $id           Client id
-     * @param string      $name         Clients name
-     * @param string|null $secret       Clients secret
-     * @param array|null  $redirectUris Client allowed redirect direct url's
+     * @param string               $id           Client id
+     * @param string               $name         Clients name
+     * @param string|null          $secret       Clients secret
+     * @param string|string[]|null $redirectUris Client allowed redirect direct url's
      */
-    public function __construct(string $id, string $name, string $secret = null, array $redirectUris = null)
+    public static function createNewClient(string $id, string $name, string $secret = null, $redirectUris = null)
     {
-        $this->id     = $id;
-        $this->name   = $name;
-        $this->secret = $secret;
-
-        if (null !== $redirectUris) {
-            foreach ($redirectUris as &$redirectUri) {
-                $redirectUri = (string) $redirectUri;
-            }
-            $this->redirectUris = $redirectUris;
+        if (isset($redirectUris) && is_string($redirectUris)) {
+            $redirectUris = explode(' ', $redirectUris);
         }
+
+        if (isset($redirectUris) && is_array($redirectUris)) {
+            foreach ($redirectUris as &$redirectUri) {
+                $redirectUri = trim((string) $redirectUri);
+            }
+        }
+
+        $client = new self();
+
+        $client->id           = $id;
+        $client->name         = $name;
+        $client->secret       = $secret ?? '';
+        $client->redirectUris = $redirectUris ?? [];
+
+        return $client;
+    }
+
+    /**
+     * @param array $data
+     * @return Client
+     */
+    public static function reconstitute(array $data)
+    {
+        if (isset($data['redirectUris']) && is_string($data['redirectUris'])) {
+            $data['redirectUris'] = explode(' ', $data['redirectUris']);
+        }
+
+        if (isset($data['redirectUris']) && is_array($data['redirectUris'])) {
+            foreach ($data['redirectUris'] as &$redirectUri) {
+                $redirectUri = trim((string) $redirectUri);
+            }
+        }
+
+
+        $client = new self();
+
+        $client->id           = $data['id'] ?? '';
+        $client->name         = $data['name'] ?? '';
+        $client->secret       = $data['secret'] ?? '';
+        $client->redirectUris = $data['redirectUris'] ?? [];
+
+        return $client;
     }
 
     /**

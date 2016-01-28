@@ -32,17 +32,42 @@ class AuthorizationCode extends AbstractToken
     /**
      * @var string
      */
-    private $redirectUri = '';
+    private $redirectUri;
 
     /**
-     * Set the redirect URI
+     * Generate a new AuthorizationCode
      *
-     * @param  string $redirectUri
-     * @return void
+     * @param int                          $ttl
+     * @param TokenOwnerInterface|null     $owner
+     * @param Client|null                  $client
+     * @param string|string[]|Scope[]|null $scopes
+     * @param string                       $redirectUri
+     * @return AbstractToken
      */
-    public function setRedirectUri(string $redirectUri)
-    {
-        $this->redirectUri = $redirectUri;
+    public static function generateNewAuthorizationCode(
+        int $ttl,
+        string $redirectUri = null,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ): AbstractToken {
+        $token = static::generateNew($ttl, $owner, $client, $scopes);
+
+        $token->redirectUri = $redirectUri ?? '';
+
+        return $token;
+    }
+
+    /**
+     * @param array $data
+     * @return AbstractToken
+     */
+    public static function reconstitute(array $data) {
+        $token = parent::reconstitute($data);
+
+        $token->redirectUri = $data['redirectUri'] ?? '';
+
+        return $token;
     }
 
     /**
@@ -50,6 +75,7 @@ class AuthorizationCode extends AbstractToken
      */
     public function getRedirectUri(): string
     {
+
         return $this->redirectUri;
     }
 }

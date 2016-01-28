@@ -27,10 +27,28 @@ namespace ZfrOAuth2\Server\Model;
 class AccessToken extends AbstractToken
 {
     /**
+     * Generate a new AccessToken
+     *
+     * @param int                          $ttl
+     * @param TokenOwnerInterface|null     $owner
+     * @param Client|null                  $client
+     * @param string|string[]|Scope[]|null $scopes
+     * @return AccessToken
+     */
+    public static function generateNewAccessToken(
+        int $ttl,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ): AccessToken {
+        return static::generateNew($ttl, $owner, $client, $scopes);
+    }
+
+    /**
      * {@inheritDoc}
      */
     public function isExpired(): bool
     {
-        return parent::isExpired() && $this->expiresAt !== null;
+        return $this->getExpiresAt() !== null && parent::isExpired();
     }
 }

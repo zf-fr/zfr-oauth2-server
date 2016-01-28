@@ -24,7 +24,7 @@ namespace ZfrOAuth2\Server\Model;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Scope
+class Scope implements ReconsituteInterface
 {
     /**
      * @var int
@@ -48,18 +48,44 @@ class Scope
 
     /**
      * Scope constructor.
-     *
-     * @param int    $id
-     * @param string $name
-     * @param string $description
-     * @param bool   $isDefault
      */
-    public function __construct(int $id, string $name, string $description = null, bool $isDefault = false)
+    private function __construct()
     {
-        $this->id          = $id;
-        $this->name        = $name;
-        $this->description = $description;
-        $this->isDefault   = $isDefault;
+    }
+
+    /**
+     * @param int         $id
+     * @param string      $name
+     * @param string|null $description
+     * @param bool        $isDefault
+     * @return Scope
+     */
+    public static function createNewScope(int $id, string $name, string $description = null, bool $isDefault = false): Scope
+    {
+        $scope = new self();
+
+        $scope->id          = $id;
+        $scope->name        = $name;
+        $scope->description = $description;
+        $scope->isDefault   = $isDefault;
+
+        return $scope;
+    }
+
+    /**
+     * @param array $data
+     * @return
+     */
+    public static function reconstitute(array $data)
+    {
+        $scope = new self();
+
+        $scope->id          = $data['id'] ?? null;
+        $scope->name        = $data['name'] ?? '';
+        $scope->description = $data['description'] ?? '';
+        $scope->isDefault   = $data['isDefault'] ?? false;
+
+        return $scope;
     }
 
     /**

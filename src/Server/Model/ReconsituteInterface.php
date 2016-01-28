@@ -18,37 +18,15 @@
 
 namespace ZfrOAuth2\Server\Model;
 
-/**
- * Refresh token model
- *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @licence MIT
- */
-class RefreshToken extends AbstractToken
+use stdClass;
+
+interface ReconsituteInterface
 {
-
     /**
-     * Generate a new RefreshToken
+     * Hydrate an model
      *
-     * @param int                      $ttl
-     * @param TokenOwnerInterface|null $owner
-     * @param Client|null              $client
-     * @param null                     $scopes
-     * @return AccessToken
+     * @param array $data
+     * @return stdClass
      */
-    public static function generateNewRefreshToken(int $ttl,
-        TokenOwnerInterface $owner = null,
-        Client $client = null,
-        $scopes = null
-    ): RefreshToken {
-        return static::generateNew($ttl, $owner, $client, $scopes);
-    }
-
-    /**
-     * {@inheritDoc}
-     */
-    public function isExpired(): bool
-    {
-        return $this->getExpiresAt() !== null && parent::isExpired();
-    }
+    public static function reconstitute(array $data);
 }
