@@ -18,28 +18,25 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
-use DateInterval;
-use DateTime;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
-use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Model\AbstractToken
- * @covers \ZfrOAuth2\Server\Model\AccessToken
+ * @covers  \ZfrOAuth2\Server\Model\AbstractToken
+ * @covers  \ZfrOAuth2\Server\Model\AccessToken
  */
 class AccessTokenTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider providerCreateToken
+     * @dataProvider providerGenerateNew
      */
-    public function testCreateToken($ttl, $owner, $client, $scopes)
+    public function testGenerateNew($ttl, $owner, $client, $scopes)
     {
         /** @var AccessToken $accessToken */
-        $accessToken = AccessToken::createToken($ttl, $owner, $client, $scopes);
+        $accessToken = AccessToken::generateNew($ttl, $owner, $client, $scopes);
 
         $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
 
@@ -51,7 +48,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($owner, $accessToken->getOwner());
     }
 
-    public function providerCreateToken()
+    public function providerGenerateNew()
     {
         return [
             [
@@ -71,32 +68,74 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
     }
 
     /**
-     * @dataProvider providerHydrateToken
+     * @dataProvider providerReconstitute
      */
-    public function testHydrateToken($token, $owner, $client, $expiresAt, $scopes)
+    public function testReconstitute($data)
     {
         /** @var AccessToken $accessToken */
-        $accessToken = AccessToken::hydrateToken($token, $owner, $client, $scopes, $expiresAt);
+        $accessToken = AccessToken::reconstitute($data);
 
-        $this->assertEquals($token, $accessToken->getToken());
-        $this->assertCount(count($scopes), $accessToken->getScopes());
-        $this->assertSame($client, $accessToken->getClient());
-        $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
-        $this->assertSame($owner, $accessToken->getOwner());
+
+        $this->assertEquals($data['token'], $accessToken->getToken());
+
+        if (isset($data['scopes'])) {
+            if (is_string($data['scopes'])) {
+                $data['scopes'] = explode(" ", $data['scopes']);
+            }
+            $this->assertCount(count($data['scopes']), $accessToken->getScopes());
+        } else {
+            $this->assertTrue(is_array($accessToken->getScopes()));
+            $this->assertEmpty($accessToken->getScopes());
+        }
+
+        if (isset($data['owner'])) {
+            $this->assertSame($data['owner'], $accessToken->getOwner());
+        } else {
+            $this->assertNull($accessToken->getOwner());
+        }
+
+        if (isset($data['client'])) {
+            $this->assertSame($data['client'], $accessToken->getClient());
+        } else {
+            $this->assertNull($accessToken->getClient());
+        }
+
+        if (isset($data['expiresAt'])) {
+            $this->assertInstanceOf(\DateTimeImmutable::class, $accessToken->getExpiresAt());
+            $this->assertSame(($data['expiresAt'])->getTimeStamp(), $accessToken->getExpiresAt()->getTimestamp());
+        } else {
+            $this->assertNull($accessToken->getExpiresAt());
+        }
     }
 
 
-    public function providerHydrateToken()
+    public function providerReconstitute()
     {
         return [
             [
-                'token',
-                $this->getMock(TokenOwnerInterface::class),
-                $this->getMock(Client::class, [], [], '', false),
-                new \DateTimeImmutable(),
-                ['scope1', 'scope2']
+                [ // data set with all options
+                  'token'     => 'token',
+                  'owner'     => $this->getMock(TokenOwnerInterface::class),
+                  'client'    => $this->getMock(Client::class, [], [], '', false),
+                  'expiresAt' => new \DateTimeImmutable(),
+                  'scopes'    => ['scope1', 'scope2'],
+                ]
             ],
-            ['token', null, null, null, null],
+            [
+                [ // data set with minimum options
+                  'token'     => 'token',
+                  'owner'     => null,
+                  'client'    => null,
+                  'expiresAt' => null,
+                  'scopes'    => null,
+                ]
+            ],
+            [
+                [ // data set with minimum options
+                  'token'  => 'token',
+                  'scopes' => 'read write',
+                ]
+            ],
         ];
     }
 //

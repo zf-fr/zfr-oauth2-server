@@ -57,13 +57,26 @@ abstract class AbstractToken
      */
     protected $scopes = [];
 
-
-    protected function __construct(string $token, TokenOwnerInterface $owner = null, Client $client = null, $scopes = null, DateTimeImmutable $expiresAt = null)
+    /**
+     * AbstractToken constructor.
+     */
+    private function __construct()
     {
-        $this->token     = $token;
-        $this->expiresAt = $expiresAt ?? null;
-        $this->owner     = $owner ?? null;
-        $this->client    = $client ?? null;
+    }
+
+    /**
+     * @param int                      $ttl
+     * @param TokenOwnerInterface|null $owner
+     * @param Client|null              $client
+     * @param null                     $scopes
+     * @return AbstractToken
+     */
+    public static function generateNew(
+        int $ttl = 0,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ) {
 
         if (is_array($scopes)) {
             foreach ($scopes as &$scope) {
@@ -75,24 +88,49 @@ abstract class AbstractToken
             $scopes = explode(' ', $scopes);
         }
 
-        $this->scopes    = $scopes ?? [];
+        $class = get_called_class();
+        $token = new $class();
+
+        $token->token     = bin2hex(random_bytes(20));
+        $token->owner     = $owner;
+        $token->client    = $client;
+        $token->scopes    = $scopes ?? [];
+        $token->expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds") : null;
+
+        return $token;
     }
 
-    public static function createToken(int $ttl = 0, TokenOwnerInterface $owner = null, Client $client = null, $scopes = null)
+    /**
+     * @param array $data
+     * @return AbstractToken
+     */
+    public static function reconstitute(array $data)
     {
-        $token     = bin2hex(random_bytes(20));
-        $expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds") : null;
+        $data['owner']     = $data['owner'] ?? null;
+        $data['client']    = $data['client'] ?? null;
+        $data['scopes']    = $data['scopes'] ?? [];
+        $data['expiresAt'] = $data['expiresAt'] ?? null;
+
+        if (is_string($data['scopes'])) {
+            $data['scopes'] = explode(' ', $data['scopes']);
+        }
+
+        if (is_array($data['scopes'])) {
+            foreach ($data['scopes'] as &$scope) {
+                $scope = $scope instanceof Scope ? $scope->getName() : trim((string) $scope);
+            }
+        }
 
         $class = get_called_class();
+        $token = new $class();
 
-        return new $class($token, $owner, $client, $scopes, $expiresAt);
-    }
+        $token->token     = $data['token'];
+        $token->expiresAt = $data['expiresAt'];
+        $token->owner     = $data['owner'];
+        $token->client    = $data['client'];
+        $token->scopes    = $data['scopes'];
 
-    public static function hydrateToken(string $token, TokenOwnerInterface $owner = null, Client $client = null, $scopes = null, DateTimeImmutable $expiresAt = null)
-    {
-        $class = get_called_class();
-
-        return new $class($token, $owner, $client, $scopes, $expiresAt);
+        return $token;
     }
 
     /**
