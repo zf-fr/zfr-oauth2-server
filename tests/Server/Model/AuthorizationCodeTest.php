@@ -18,72 +18,95 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
-use DateInterval;
-use DateTime;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
-use ZfrOAuth2\Server\Model\Client;
-use ZfrOAuth2\Server\Model\Scope;
-use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Model\AbstractToken
- * @covers \ZfrOAuth2\Server\Model\AuthorizationCode
+ * @covers  \ZfrOAuth2\Server\Model\AbstractToken
+ * @covers  \ZfrOAuth2\Server\Model\AuthorizationCode
  */
 class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGettersAndSetters()
+    /**
+     * @dataProvider providerGenerateNewAuthorizationCode
+     */
+    public function testGenerateNewAuthorizationCode($redirectUri)
     {
-        $owner     = $this->getMock(TokenOwnerInterface::class);
-        $client    = new Client('id', 'name', 'secret', ['http://www.example.com']);
-        $expiresAt = new DateTime();
+        /** @var AuthorizationCode $authorizationCode */
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(3600, $redirectUri);
 
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setToken('token');
-        $authorizationCode->setScopes(['scope1', 'scope2']);
-        $authorizationCode->setClient($client);
-        $authorizationCode->setExpiresAt($expiresAt);
-        $authorizationCode->setOwner($owner);
-        $authorizationCode->setRedirectUri('http://www.example.com');
-
-        $this->assertEquals('token', $authorizationCode->getToken());
-        $this->assertCount(2, $authorizationCode->getScopes());
-        $this->assertTrue($authorizationCode->matchScopes('scope1'));
-        $this->assertFalse($authorizationCode->matchScopes('scope3'));
-        $this->assertSame($client, $authorizationCode->getClient());
-        $this->assertEquals($expiresAt, $authorizationCode->getExpiresAt());
-        $this->assertSame($owner, $authorizationCode->getOwner());
-        $this->assertEquals('http://www.example.com', $authorizationCode->getRedirectUri());
+        if (null !== $redirectUri) {
+            $this->assertSame($redirectUri, $authorizationCode->getRedirectUri());
+        } else {
+            $this->assertEmpty($authorizationCode->getRedirectUri());
+        }
     }
 
-    public function testCanSetScopesFromString()
+    public function providerGenerateNewAuthorizationCode()
     {
-        $scopes = 'foo bar';
-
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setScopes($scopes);
-
-        $this->assertCount(2, $authorizationCode->getScopes());
+        return [
+            [''],
+            ['http://www.example.com'],
+            [null]
+        ];
     }
 
-    public function testCanSetScopesFromInstances()
+
+    /**
+     * @dataProvider providerReconstitute
+     */
+    public function testReconstitute($data)
     {
-        $scope = new Scope(1, 'bar');
+        /** @var AuthorizationCode $authorizationCode */
+        $authorizationCode = AuthorizationCode::reconstitute($data);
 
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setScopes([$scope]);
 
-        $this->assertCount(1, $authorizationCode->getScopes());
+        $this->assertEquals($data['token'], $authorizationCode->getToken());
+
+        if (isset($data['redirectUri'])) {
+            if (null !== $data['redirectUri']) {
+                $this->assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
+            } else {
+                $this->assertEmpty($authorizationCode->getRedirectUri());
+            }
+        } else {
+
+        }
+    }
+
+    public function providerReconstitute()
+    {
+        return [
+            [
+                [
+                    'token'       => 'token',
+                    'redirectUri' => 'http://www.example.com',
+                ]
+            ],
+            [
+                [
+                    'token'       => 'token',
+                    'redirectUri' => '',
+                ]
+            ],
+            [
+                [
+                    'token'       => 'token',
+                    'redirectUri' => null,
+                ]
+            ],
+            [
+                [
+                    'token' => 'token',
+                ]
+            ],
+        ];
     }
 
     public function testCalculateExpiresIn()
     {
-        $expiresAt = new DateTime();
-        $expiresAt->add(new DateInterval('PT60S'));
-
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setExpiresAt($expiresAt);
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60);
 
         $this->assertFalse($authorizationCode->isExpired());
         $this->assertEquals(60, $authorizationCode->getExpiresIn());
@@ -91,18 +114,35 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckIfATokenIsExpired()
     {
-        $expiresAt = new DateTime();
-        $expiresAt->sub(new DateInterval('PT60S'));
-
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setExpiresAt($expiresAt);
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(-60);
 
         $this->assertTrue($authorizationCode->isExpired());
     }
 
+    public function testSupportLongLiveToken()
+    {
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60);
+        $this->assertFalse($authorizationCode->isExpired());
+    }
+
+    public function testIsValid()
+    {
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
+        $this->assertTrue($authorizationCode->isValid('read'));
+
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(-60, 'http://www.example.com', null, null, 'read write');
+        $this->assertFalse($authorizationCode->isValid('read'));
+
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
+        $this->assertFalse($authorizationCode->isValid('delete'));
+    }
+
+    /**
+     * @todo I don't get this check
+     */
     public function testDoNotSupportLongLiveToken()
     {
-        $accessToken = new AuthorizationCode();
-        $this->assertTrue($accessToken->isExpired());
+        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(0, 'http://www.example.com', null, null, 'read write');
+        $this->assertTrue($authorizationCode->isExpired());
     }
 }

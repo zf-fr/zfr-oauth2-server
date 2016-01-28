@@ -20,6 +20,7 @@ namespace ZfrOAuth2Test\Server\Model;
 
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
@@ -31,12 +32,12 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 class AccessTokenTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @dataProvider providerGenerateNew
+     * @dataProvider providerGenerateNewAccessToken
      */
-    public function testGenerateNew($ttl, $owner, $client, $scopes)
+    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
     {
         /** @var AccessToken $accessToken */
-        $accessToken = AccessToken::generateNew($ttl, $owner, $client, $scopes);
+        $accessToken = AccessToken::generateNewAccessToken($ttl, $owner, $client, $scopes);
 
         $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
 
@@ -48,20 +49,20 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($owner, $accessToken->getOwner());
     }
 
-    public function providerGenerateNew()
+    public function providerGenerateNewAccessToken()
     {
         return [
             [
                 3600,
                 $this->getMock(TokenOwnerInterface::class),
                 $this->getMock(Client::class, [], [], '', false),
-                ['scope1', 'scope2']
+                ['read', 'write']
             ],
             [
                 3600,
                 $this->getMock(TokenOwnerInterface::class),
                 $this->getMock(Client::class, [], [], '', false),
-                'scope1'
+                Scope::createNewScope(1, 'read')
             ],
             [3600, null, null, null]
         ];
@@ -78,16 +79,6 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($data['token'], $accessToken->getToken());
 
-        if (isset($data['scopes'])) {
-            if (is_string($data['scopes'])) {
-                $data['scopes'] = explode(" ", $data['scopes']);
-            }
-            $this->assertCount(count($data['scopes']), $accessToken->getScopes());
-        } else {
-            $this->assertTrue(is_array($accessToken->getScopes()));
-            $this->assertEmpty($accessToken->getScopes());
-        }
-
         if (isset($data['owner'])) {
             $this->assertSame($data['owner'], $accessToken->getOwner());
         } else {
@@ -102,9 +93,21 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
         if (isset($data['expiresAt'])) {
             $this->assertInstanceOf(\DateTimeImmutable::class, $accessToken->getExpiresAt());
-            $this->assertSame(($data['expiresAt'])->getTimeStamp(), $accessToken->getExpiresAt()->getTimestamp());
+            /** @var \DateTimeImmutable $expiresAt */
+            $expiresAt = $data['expiresAt'];
+            $this->assertSame($expiresAt->getTimeStamp(), $accessToken->getExpiresAt()->getTimestamp());
         } else {
             $this->assertNull($accessToken->getExpiresAt());
+        }
+
+        if (isset($data['scopes'])) {
+            if (is_string($data['scopes'])) {
+                $data['scopes'] = explode(" ", $data['scopes']);
+            }
+            $this->assertCount(count($data['scopes']), $accessToken->getScopes());
+        } else {
+            $this->assertTrue(is_array($accessToken->getScopes()));
+            $this->assertEmpty($accessToken->getScopes());
         }
     }
 
@@ -113,100 +116,74 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                [ // data set with all options
+                [
                   'token'     => 'token',
                   'owner'     => $this->getMock(TokenOwnerInterface::class),
                   'client'    => $this->getMock(Client::class, [], [], '', false),
                   'expiresAt' => new \DateTimeImmutable(),
-                  'scopes'    => ['scope1', 'scope2'],
+                  'scopes'    => ['read', 'write'],
                 ]
             ],
-            [
-                [ // data set with minimum options
+            [ // test set - null values
+              [
                   'token'     => 'token',
                   'owner'     => null,
                   'client'    => null,
                   'expiresAt' => null,
                   'scopes'    => null,
-                ]
+              ]
             ],
-            [
-                [ // data set with minimum options
+            [ // test set - scopes from string
+              [
                   'token'  => 'token',
                   'scopes' => 'read write',
-                ]
+              ]
+            ],
+            [ // test set - scope from instance
+              [
+                  'token'  => 'token',
+                  'scopes' => Scope::createNewScope(1, 'read'),
+              ]
+            ],
+            [ // test set - scope from mixed array
+              [
+                  'token'  => 'token',
+                  'scopes' => [Scope::createNewScope(1, 'read'), 'write'],
+              ]
             ],
         ];
     }
-//
-//    public function testGettersAndSetters()
-//    {
-//        $owner     = $this->getMock(TokenOwnerInterface::class);
-//        $client    = new Client('id', 'name', 'secret', ['http://www.example.com']);
-//        $expiresAt = new DateTime();
-//
-//        $accessToken = new AccessToken();
-//        $accessToken->setToken('token');
-//        $accessToken->setScopes(['scope1', 'scope2']);
-//        $accessToken->setClient($client);
-//        $accessToken->setExpiresAt($expiresAt);
-//        $accessToken->setOwner($owner);
-//
-//        $this->assertEquals('token', $accessToken->getToken());
-//        $this->assertCount(2, $accessToken->getScopes());
-//        $this->assertTrue($accessToken->matchScopes('scope1'));
-//        $this->assertFalse($accessToken->matchScopes('scope3'));
-//        $this->assertSame($client, $accessToken->getClient());
-//        $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
-//        $this->assertSame($owner, $accessToken->getOwner());
-//    }
-//
-//    public function testCanSetScopesFromString()
-//    {
-//        $scopes = 'foo bar';
-//
-//        $accessToken = new AccessToken();
-//        $accessToken->setScopes($scopes);
-//
-//        $this->assertCount(2, $accessToken->getScopes());
-//    }
-//
-//    public function testCanSetScopesFromInstances()
-//    {
-//        $scope = new Scope(1, 'bar');
-//
-//        $accessToken = new AccessToken();
-//        $accessToken->setScopes([$scope]);
-//
-//        $this->assertCount(1, $accessToken->getScopes());
-//    }
-//
-//    public function testCalculateExpiresIn()
-//    {
-//        $expiresAt = new DateTime();
-//        $expiresAt->add(new DateInterval('PT60S'));
-//
-//        $accessToken = new AccessToken();
-//        $accessToken->setExpiresAt($expiresAt);
-//
-//        $this->assertFalse($accessToken->isExpired());
-//        $this->assertEquals(60, $accessToken->getExpiresIn());
-//    }
-//
-//    public function testCanCheckIfATokenIsExpired()
-//    {
-//        $expiresAt = new DateTime();
-//        $expiresAt->sub(new DateInterval('PT60S'));
-//
-//        $accessToken = new AccessToken();
-//        $accessToken->setExpiresAt($expiresAt);
-//
-//        $this->assertTrue($accessToken->isExpired());
-//    }
-//
-//    public function testSupportLongLiveToken()
-//    {
-//        $accessToken = new AccessToken();
-//        $this->assertFalse($accessToken->isExpired());
-//    }
+
+    public function testCalculateExpiresIn()
+    {
+        $accessToken = AccessToken::generateNewAccessToken(60);
+
+        $this->assertFalse($accessToken->isExpired());
+        $this->assertEquals(60, $accessToken->getExpiresIn());
+    }
+
+    public function testCanCheckIfATokenIsExpired()
+    {
+        $accessToken = AccessToken::generateNewAccessToken(-60);
+
+        $this->assertTrue($accessToken->isExpired());
+    }
+
+    public function testSupportLongLiveToken()
+    {
+        $accessToken = AccessToken::generateNewAccessToken(60);
+        $this->assertFalse($accessToken->isExpired());
+    }
+
+    public function testIsValid()
+    {
+        $accessToken = AccessToken::generateNewAccessToken(60, null, null, 'read write');
+        $this->assertTrue($accessToken->isValid('read'));
+
+        $accessToken = AccessToken::generateNewAccessToken(-60, null, null, 'read write');
+        $this->assertFalse($accessToken->isValid('read'));
+
+        $accessToken = AccessToken::generateNewAccessToken(60, null, null, 'read write');
+        $this->assertFalse($accessToken->isValid('delete'));
+    }
 }

@@ -27,9 +27,86 @@ use ZfrOAuth2\Server\Model\Client;
  */
 class ClientTest extends \PHPUnit_Framework_TestCase
 {
+
+    /**
+     * @dataProvider providerGenerateNewClient
+     */
+    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris)
+    {
+        /** @var Client $refreshToken */
+        $client = Client::createNewClient($id, $name, $secret, $redirectUris);
+
+        $this->assertEquals($id, $client->getId());
+        $this->assertEquals($name, $client->getName());
+        $this->assertEquals($secret, $client->getSecret());
+
+        if (null !== $redirectUris) {
+            if (is_string($redirectUris)) {
+                $redirectUris = explode(" ", $redirectUris);
+            }
+            $this->assertCount(count($redirectUris), $client->getRedirectUris());
+        } else {
+            $this->assertTrue(is_array($client->getRedirectUris()));
+            $this->assertEmpty($client->getRedirectUris());
+        }
+
+    }
+
+    public function providerGenerateNewClient()
+    {
+        return [
+            [1, 'name', 'secret', 'http://www.example.com'],
+            [1, 'name', null, null],
+        ];
+    }
+
+    /**
+     * @dataProvider providerReconstitute
+     */
+    public function testReconstitute($data)
+    {
+        /** @var Client $client */
+        $client = Client::reconstitute($data);
+
+
+        $this->assertEquals($data['id'], $client->getId());
+
+        if (isset($data['name'])) {
+            $this->assertSame($data['name'], $client->getName());
+        } else {
+            $this->assertNull($client->getName());
+        }
+
+        if (isset($data['secret'])) {
+            $this->assertSame($data['secret'], $client->getSecret());
+        } else {
+            $this->assertEquals('', $client->getSecret());
+        }
+
+        if (isset($data['redirectUris'])) {
+            if (is_string($data['redirectUris'])) {
+                $data['redirectUris'] = explode(" ", $data['redirectUris']);
+            }
+            $this->assertCount(count($data['redirectUris']), $client->getRedirectUris());
+        } else {
+            $this->assertTrue(is_array($client->getRedirectUris()));
+            $this->assertEmpty($client->getRedirectUris());
+        }
+    }
+
+    public function providerReconstitute()
+    {
+        return [
+            [
+                ['id' => 1, 'name' => 'name', 'secret' => 'secret', 'redirectUris' => 'http://www.example.com'],
+                ['id' => 1, 'name' => 'name', 'secret' => null, 'redirectUris' => null],
+            ],
+        ];
+    }
+
     public function testGetters()
     {
-        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
 
         $this->assertEquals('id', $client->getId());
         $this->assertEquals('secret', $client->getSecret());
@@ -39,21 +116,21 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckPublicClient()
     {
-        $client = new Client('id', 'name', null, ['http://www.example.com']);
+        $client = Client::createNewClient('id', 'name', null, ['http://www.example.com']);
         $this->assertTrue($client->isPublic());
 
-        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
         $this->assertFalse($client->isPublic());
     }
 
     public function testRedirectUri()
     {
-        $client = new Client('id', 'name', null, ['http://www.example.com']);
+        $client = Client::createNewClient('id', 'name', null, ['http://www.example.com']);
         $this->assertCount(1, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
         $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
 
-        $client = new Client('id', 'name', null, ['http://www.example1.com', 'http://www.example2.com']);
+        $client = Client::createNewClient('id', 'name', null, ['http://www.example1.com', 'http://www.example2.com']);
         $this->assertCount(2, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
         $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
@@ -62,7 +139,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateSecret()
     {
-        $client = new Client('client_id', 'name');
+        $client = Client::createNewClient('client_id', 'name');
 
         $secret = $client->generateSecret();
 
@@ -76,7 +153,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testAuthenticate()
     {
-        $client = new Client('client_id', 'name', '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6');
+        $client = Client::createNewClient('client_id', 'name',
+            '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6');
 
         $this->assertFalse($client->authenticate('azerty'));
         $this->assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));

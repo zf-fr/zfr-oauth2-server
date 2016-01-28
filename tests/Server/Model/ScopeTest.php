@@ -27,13 +27,67 @@ use ZfrOAuth2\Server\Model\Scope;
  */
 class ScopeTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGetters()
+    /**
+     * @dataProvider providerGenerateNewScope
+     */
+    public function testGenerateNewScope($id, $name, $description, $isDefault)
     {
-        $scope = new Scope(1, 'scope', 'Fooo', true);
+        /** @var Scope $scope */
+        $scope = Scope::createNewScope($id, $name, $description, $isDefault);
 
-        $this->assertEquals(1, $scope->getId());
-        $this->assertEquals('scope', $scope->getName());
-        $this->assertEquals('Fooo', $scope->getDescription());
-        $this->assertTrue($scope->isDefault());
+        $this->assertEquals($id, $scope->getId());
+        $this->assertEquals($name, $scope->getName());
+        $this->assertEquals($description, $scope->getDescription());
+        $this->assertEquals($isDefault, $scope->isDefault());
+    }
+
+    public function providerGenerateNewScope()
+    {
+        return [
+            [1, 'name', 'description', false],
+            [1, 'name', 'description', true],
+        ];
+    }
+
+    /**
+     * @dataProvider providerReconstitute
+     */
+    public function testReconstitute($data)
+    {
+        /** @var Scope $scope */
+        $scope = Scope::reconstitute($data);
+
+
+        $this->assertEquals($data['id'], $scope->getId());
+
+        if (isset($data['name'])) {
+            $this->assertSame($data['name'], $scope->getName());
+        } else {
+            $this->assertEmpty($scope->getName());
+        }
+
+        if (isset($data['description'])) {
+            $this->assertSame($data['description'], $scope->getDescription());
+        } else {
+            $this->assertEquals('', $scope->getDescription());
+        }
+
+        if (isset($data['isDefault'])) {
+            $this->assertEquals($data['isDefault'], $scope->isDefault());
+        } else {
+            $this->assertFalse($scope->isDefault());
+        }
+    }
+
+    public function providerReconstitute()
+    {
+        return [
+            [
+                ['id' => 1, 'name' => 'name', 'description' => 'description', 'isDefault' => true],
+                ['id' => 1, 'name' => 'name', 'description' => null, 'isDefault' => false],
+                ['id' => 1, 'name' => 'name', 'description' => null, 'isDefault' => null],
+                ['id' => 1],
+            ],
+        ];
     }
 }

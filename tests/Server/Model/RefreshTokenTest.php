@@ -33,55 +33,132 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  */
 class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGettersAndSetters()
+    /**
+     * @dataProvider providerGenerateNewRefreshToken
+     */
+    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
     {
-        $owner     = $this->getMock(TokenOwnerInterface::class);
-        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
-        $expiresAt = new DateTime();
+        /** @var RefreshToken $refreshToken */
+        $refreshToken = RefreshToken::generateNewRefreshToken($ttl, $owner, $client, $scopes);
 
-        $refreshToken = new RefreshToken();
-        $refreshToken->setToken('token');
-        $refreshToken->setScopes(['scope1', 'scope2']);
-        $refreshToken->setClient($client);
-        $refreshToken->setExpiresAt($expiresAt);
-        $refreshToken->setOwner($owner);
+        $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
 
-        $this->assertEquals('token', $refreshToken->getToken());
-        $this->assertCount(2, $refreshToken->getScopes());
-        $this->assertTrue($refreshToken->matchScopes('scope1'));
-        $this->assertFalse($refreshToken->matchScopes('scope3'));
+        $this->assertNotEmpty($refreshToken->getToken());
+        $this->assertEquals(40, strlen($refreshToken->getToken()));
+        $this->assertCount(count($scopes), $refreshToken->getScopes());
         $this->assertSame($client, $refreshToken->getClient());
         $this->assertEquals($expiresAt, $refreshToken->getExpiresAt());
         $this->assertSame($owner, $refreshToken->getOwner());
     }
 
-    public function testCanSetScopesFromString()
+    public function providerGenerateNewRefreshToken()
     {
-        $scopes = 'foo bar';
-
-        $refreshToken = new RefreshToken();
-        $refreshToken->setScopes($scopes);
-
-        $this->assertCount(2, $refreshToken->getScopes());
+        return [
+            [
+                3600,
+                $this->getMock(TokenOwnerInterface::class),
+                $this->getMock(Client::class, [], [], '', false),
+                ['scope1', 'scope2']
+            ],
+            [
+                3600,
+                $this->getMock(TokenOwnerInterface::class),
+                $this->getMock(Client::class, [], [], '', false),
+                'scope1'
+            ],
+            [3600, null, null, null]
+        ];
     }
 
-    public function testCanSetScopesFromInstances()
+    /**
+     * @dataProvider providerReconstitute
+     */
+    public function testReconstitute($data)
     {
-        $scope = new Scope(1, 'bar');
+        /** @var RefreshToken $refreshToken */
+        $refreshToken = RefreshToken::reconstitute($data);
 
-        $refreshToken = new RefreshToken();
-        $refreshToken->setScopes([$scope]);
 
-        $this->assertCount(1, $refreshToken->getScopes());
+        $this->assertEquals($data['token'], $refreshToken->getToken());
+
+        if (isset($data['owner'])) {
+            $this->assertSame($data['owner'], $refreshToken->getOwner());
+        } else {
+            $this->assertNull($refreshToken->getOwner());
+        }
+
+        if (isset($data['client'])) {
+            $this->assertSame($data['client'], $refreshToken->getClient());
+        } else {
+            $this->assertNull($refreshToken->getClient());
+        }
+
+        if (isset($data['expiresAt'])) {
+            $this->assertInstanceOf(\DateTimeImmutable::class, $refreshToken->getExpiresAt());
+            /** @var \DateTimeImmutable $expiresAt */
+            $expiresAt = $data['expiresAt'];
+            $this->assertSame($expiresAt->getTimeStamp(), $refreshToken->getExpiresAt()->getTimestamp());
+        } else {
+            $this->assertNull($refreshToken->getExpiresAt());
+        }
+
+        if (isset($data['scopes'])) {
+            if (is_string($data['scopes'])) {
+                $data['scopes'] = explode(" ", $data['scopes']);
+            }
+            $this->assertCount(count($data['scopes']), $refreshToken->getScopes());
+        } else {
+            $this->assertTrue(is_array($refreshToken->getScopes()));
+            $this->assertEmpty($refreshToken->getScopes());
+        }
+    }
+
+
+    public function providerReconstitute()
+    {
+        return [
+            [
+                [
+                    'token'     => 'token',
+                    'owner'     => $this->getMock(TokenOwnerInterface::class),
+                    'client'    => $this->getMock(Client::class, [], [], '', false),
+                    'expiresAt' => new \DateTimeImmutable(),
+                    'scopes'    => ['scope1', 'scope2'],
+                ]
+            ],
+            [ // test set - null values
+                [
+                    'token'     => 'token',
+                    'owner'     => null,
+                    'client'    => null,
+                    'expiresAt' => null,
+                    'scopes'    => null,
+                ]
+            ],
+            [ // test set - scopes from string
+                [
+                  'token'  => 'token',
+                  'scopes' => 'read write',
+                ]
+            ],
+            [ // test set - scope from instance
+                [
+                    'token'  => 'token',
+                    'scopes' => Scope::createNewScope(1, 'read'),
+                ]
+            ],
+            [ // test set - scope from mixed array
+              [
+                  'token'  => 'token',
+                  'scopes' => [Scope::createNewScope(1, 'read'), 'write'],
+              ]
+            ],
+        ];
     }
 
     public function testCalculateExpiresIn()
     {
-        $expiresAt = new DateTime();
-        $expiresAt->add(new DateInterval('PT60S'));
-
-        $refreshToken = new RefreshToken();
-        $refreshToken->setExpiresAt($expiresAt);
+        $refreshToken = RefreshToken::generateNewRefreshToken(60);
 
         $this->assertFalse($refreshToken->isExpired());
         $this->assertEquals(60, $refreshToken->getExpiresIn());
@@ -89,18 +166,26 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckIfATokenIsExpired()
     {
-        $expiresAt = new DateTime();
-        $expiresAt->sub(new DateInterval('PT60S'));
-
-        $refreshToken = new RefreshToken();
-        $refreshToken->setExpiresAt($expiresAt);
+        $refreshToken = RefreshToken::generateNewRefreshToken(-60);
 
         $this->assertTrue($refreshToken->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
-        $accessToken = new RefreshToken();
-        $this->assertFalse($accessToken->isExpired());
+        $refreshToken = RefreshToken::generateNewRefreshToken(60);
+        $this->assertFalse($refreshToken->isExpired());
+    }
+
+    public function testIsValid()
+    {
+        $accessToken = RefreshToken::generateNewRefreshToken(60, null, null, 'read write');
+        $this->assertTrue($accessToken->isValid('read'));
+
+        $accessToken = RefreshToken::generateNewRefreshToken(-60, null, null, 'read write');
+        $this->assertFalse($accessToken->isValid('read'));
+
+        $accessToken = RefreshToken::generateNewRefreshToken(60, null, null, 'read write');
+        $this->assertFalse($accessToken->isValid('delete'));
     }
 }
