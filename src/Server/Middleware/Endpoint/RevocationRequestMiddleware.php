@@ -20,13 +20,12 @@ namespace ZfrOAuth2\Server\Middleware\Endpoint;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use Zend\Stratigility\MiddlewareInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 
 /**
  * Token revocation request middleware endpoint of the authorization server
  */
-class RevocationRequestMiddleware implements MiddlewareInterface
+class RevocationRequestMiddleware
 {
     /**
      * @var AuthorizationServerInterface

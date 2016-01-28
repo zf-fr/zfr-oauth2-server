@@ -21,7 +21,6 @@ namespace ZfrOAuth2\Server\Middleware;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
-use Zend\Stratigility\MiddlewareInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\ResourceServerInterface;
 
@@ -34,7 +33,7 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can
  * be used later one by a permission system, for instance
  */
-class ResourceServerMiddleware implements MiddlewareInterface
+class ResourceServerMiddleware
 {
     /**
      * @var ResourceServerInterface
@@ -56,7 +55,7 @@ class ResourceServerMiddleware implements MiddlewareInterface
         ServerRequestInterface $request,
         ResponseInterface $response,
         callable $out = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         try {
             $token = $this->resourceServer->getAccessToken($request);
         } catch (InvalidAccessTokenException $exception) {
