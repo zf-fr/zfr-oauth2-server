@@ -26,12 +26,6 @@ use ZfrOAuth2\Server\Model\AbstractToken;
 interface TokenRepositoryInterface
 {
     /**
-     * @param AbstractToken $token
-     * @return AbstractToken
-     */
-    public function save(AbstractToken $token): AbstractToken;
-
-    /**
      * @param string $token
      * @return AbstractToken|null
      */

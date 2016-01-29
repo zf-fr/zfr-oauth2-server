@@ -18,9 +18,16 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
+use ZfrOAuth2\Server\Model\AuthorizationCode;
+
 /**
  * Interface AuthorizationCodeRepositoryInterface
  */
 interface AuthorizationCodeRepositoryInterface extends TokenRepositoryInterface
 {
+    /**
+     * @param AuthorizationCode $token
+     * @return AuthorizationCode
+     */
+    public function save(AuthorizationCode $token): AuthorizationCode;
 }

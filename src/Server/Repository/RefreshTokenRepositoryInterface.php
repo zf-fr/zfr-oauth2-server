@@ -18,9 +18,16 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
+use ZfrOAuth2\Server\Model\RefreshToken;
+
 /**
  * Interface RefreshTokenRepositoryInterface
  */
 interface RefreshTokenRepositoryInterface extends TokenRepositoryInterface
 {
+    /**
+     * @param RefreshToken $token
+     * @return RefreshToken
+     */
+    public function save(RefreshToken $token): RefreshToken;
 }
