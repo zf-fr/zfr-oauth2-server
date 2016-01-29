@@ -19,19 +19,19 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
-use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Grant\ClientCredentialsGrant
+ * @covers  \ZfrOAuth2\Server\Grant\ClientCredentialsGrant
  */
 class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 {
@@ -47,28 +47,32 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService = $this->getMock(TokenService::class, [], [], '', false);
-        $this->grant = new ClientCredentialsGrant($this->tokenService);
+        $this->tokenService = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $this->grant        = new ClientCredentialsGrant($this->tokenService);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client('id', 'name'));
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class),
+            Client::createNewClient('id', 'name'));
     }
 
     public function testCanCreateTokenResponse()
     {
         $request = $this->getMock(ServerRequestInterface::class);
 
-        $client = new Client('id', 'name', 'secret', ['http://www.example.com']);
-        $owner   = $this->getMock(TokenOwnerInterface::class);
+        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
+        $owner  = $this->getMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
-        $token = new AccessToken();
-        $token->setToken('azerty');
-        $token->setOwner($owner);
-        $token->setExpiresAt((new DateTime())->add(new DateInterval('PT1H')));
+        $token = AccessToken::reconstitute([
+            'token'     => 'azerty',
+            'owner'     => $owner,
+            'client'    => null,
+            'expiresAt' => (new \DateTimeImmutable())->add(new DateInterval('PT1H')),
+            'scopes'    => []
+        ]);
 
         $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 

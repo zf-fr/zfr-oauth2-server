@@ -35,19 +35,19 @@ abstract class TokenService
     /**
      * @var TokenRepositoryInterface
      */
-    private $tokenRepository;
+    protected $tokenRepository;
 
     /**
      * @var ScopeService
      */
-    private $scopeService;
+    protected $scopeService;
 
     /**
      * Token TTL (in seconds)
      *
      * @var int
      */
-    private $tokenTTL = 3600;
+    protected $tokenTTL = 3600;
 
     /**
      * @param TokenRepositoryInterface $tokenRepository
@@ -70,37 +70,6 @@ abstract class TokenService
     public function setTokenTTL($tokenTTL)
     {
         $this->tokenTTL = (int) $tokenTTL;
-    }
-
-    /**
-     * Create a new token (and generate the token)
-     *
-     * @param  AbstractToken $token
-     * @return AbstractToken
-     */
-    public function createToken(AbstractToken $token): AbstractToken
-    {
-        $scopes = $token->getScopes();
-
-        if (empty($scopes)) {
-            $defaultScopes = $this->scopeService->getDefaultScopes();
-            $token->setScopes($defaultScopes);
-        } else {
-            $this->validateTokenScopes($scopes);
-        }
-
-        $expiresAt = new DateTime();
-        $expiresAt->setTimestamp(time() + $this->tokenTTL);
-
-        $token->setExpiresAt($expiresAt);
-
-        do {
-            $tokenHash = bin2hex(random_bytes(20));
-        } while ($this->tokenRepository->findByToken($tokenHash) !== null);
-
-        $token->setToken($tokenHash);
-
-        return $this->tokenRepository->save($token);
     }
 
     /**
@@ -141,7 +110,7 @@ abstract class TokenService
      * @return void
      * @throws OAuth2Exception
      */
-    private function validateTokenScopes(array $scopes)
+    protected function validateTokenScopes(array $scopes)
     {
         $registeredScopes = $this->scopeService->getAll();
 

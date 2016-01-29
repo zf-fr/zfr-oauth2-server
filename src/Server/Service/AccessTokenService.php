@@ -18,11 +18,12 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use DateTime;
 use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
-use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\Scope;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * AccessTokenService
@@ -32,36 +33,27 @@ use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
  */
 class AccessTokenService extends TokenService
 {
-
     /**
      * Create a new token (and generate the token)
      *
-     * @param  AbstractToken $token
-     * @return AbstractToken
+     * @param TokenOwnerInterface     $owner
+     * @param Client                  $client
+     * @param string|string[]|Scope[] $scopes
+     * @return AccessToken
+     * @throws OAuth2Exception
      */
-    public function createToken(AbstractToken $token): AbstractToken
+    public function createToken($owner, $client, $scopes): AccessToken
     {
-        $scopes = $token->getScopes();
-
         if (empty($scopes)) {
-            $defaultScopes = $this->scopeService->getDefaultScopes();
-            $token->setScopes($defaultScopes);
+            $scopes = $this->scopeService->getDefaultScopes();
         } else {
             $this->validateTokenScopes($scopes);
         }
 
-        $expiresAt = new DateTime();
-        $expiresAt->setTimestamp(time() + $this->tokenTTL);
-
-        $token->setExpiresAt($expiresAt);
-
         do {
-            $tokenHash = bin2hex(random_bytes(20));
-        } while ($this->tokenRepository->findByToken($tokenHash) !== null);
-
-        $token->setToken($tokenHash);
+            $token = AccessToken::generateNewAccessToken($this->tokenTTL, $owner, $client, $scopes);
+        } while ($this->tokenRepository->tokenDoesNotExist($token->getToken()));
 
         return $this->tokenRepository->save($token);
     }
-
 }

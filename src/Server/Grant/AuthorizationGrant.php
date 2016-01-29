@@ -113,11 +113,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $scope = $queryParams['scope'] ?? null;
         $state = $queryParams['state'] ?? null;
 
-        $authorizationCode = new AuthorizationCode();
-        $authorizationCode->setRedirectUri($redirectUri);
-
-        $this->populateToken($authorizationCode, $client, $owner, $scope);
-        $authorizationCode = $this->authorizationCodeService->createToken($authorizationCode);
+        $authorizationCode = $this->authorizationCodeService->createToken($redirectUri, $owner, $client, $scope);
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
@@ -164,21 +160,14 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         // Everything is okey, let's start the token generation!
         $scopes      = $authorizationCode->getScopes(); // reuse the scopes from the authorization code
-        $accessToken = new AccessToken();
 
-        $this->populateToken($accessToken, $client, $owner, $scopes);
-
-        /** @var AccessToken $accessToken */
-        $accessToken = $this->accessTokenService->createToken($accessToken);
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $refreshToken = new RefreshToken();
-
-            $this->populateToken($refreshToken, $client, $owner, $scopes);
-            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
+            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scopes);
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);

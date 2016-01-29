@@ -41,4 +41,9 @@ interface TokenRepositoryInterface
      * @param AbstractToken $token
      */
     public function deleteToken(AbstractToken $token);
+
+    /**
+     * @return bool
+     */
+    public function tokenDoesNotExist(string $token): bool;
 }

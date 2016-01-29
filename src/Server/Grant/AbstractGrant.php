@@ -33,34 +33,6 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 abstract class AbstractGrant implements GrantInterface
 {
     /**
-     * Populate a token
-     *
-     * The actual token (sensitive part) is generated in the token service
-     *
-     * @param  AbstractToken            $token
-     * @param  Client|null              $client
-     * @param  TokenOwnerInterface|null $owner
-     * @param  array|string             $scopes
-     * @return void
-     */
-    protected function populateToken(
-        AbstractToken $token,
-        Client $client = null,
-        TokenOwnerInterface $owner = null,
-        $scopes = []
-    ) {
-        if (null !== $client) {
-            $token->setClient($client);
-        }
-
-        if (null !== $owner) {
-            $token->setOwner($owner);
-        }
-
-        $token->setScopes($scopes ?: []);
-    }
-
-    /**
      * {@inheritDoc}
      */
     public function getType(): string

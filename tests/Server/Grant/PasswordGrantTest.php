@@ -29,6 +29,8 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -60,8 +62,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $this->refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $this->accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $this->refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $callable    = function(){};
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
@@ -70,7 +72,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client('id', 'name'));
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
@@ -79,7 +81,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, new Client('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
@@ -98,8 +100,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
 
-        $client = new Client('id', 'name');
-        $this->grant->createTokenResponse($request, $client);
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
 
     public function hasRefreshGrant()
@@ -125,8 +126,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
             return $owner;
         };
 
-        $accessToken = $this->getValidAccessToken();
-        $accessToken->setOwner($owner);
+        $accessToken = $this->getValidAccessToken($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
@@ -143,7 +143,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, new Client('id', 'name'));
+        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
 
         $body = json_decode($response->getBody(), true);
 
@@ -161,32 +161,34 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     /**
      * @return RefreshToken
      */
-    private function getValidRefreshToken()
+    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $refreshToken = new RefreshToken();
-        $refreshToken->setToken('azerty_refresh');
-        $refreshToken->setScopes('read');
-        $validDate    = new DateTime();
-        $validDate->add(new DateInterval('P1D'));
+        $validDate = (new \DateTimeImmutable())->add(new DateInterval('P1D'));
+        $token     = RefreshToken::reconstitute([
+            'token'     => 'azerty_refresh',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
+            'expiresAt' => $validDate
+        ]);
 
-        $refreshToken->setExpiresAt($validDate);
-
-        return $refreshToken;
+        return $token;
     }
 
     /**
      * @return AccessToken
      */
-    private function getValidAccessToken()
+    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $accessToken = new AccessToken();
-        $accessToken->setToken('azerty_access');
-        $accessToken->setScopes('read');
-        $validDate   = new DateTime();
-        $validDate->add(new DateInterval('PT1H'));
+        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $token     = AccessToken::reconstitute([
+            'token'     => 'azerty_access',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
+            'expiresAt' => $validDate
+        ]);
 
-        $accessToken->setExpiresAt($validDate);
-
-        return $accessToken;
+        return $token;
     }
 }

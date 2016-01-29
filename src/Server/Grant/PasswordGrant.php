@@ -124,21 +124,13 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         }
 
         // Everything is okay, we can start tokens generation!
-        $accessToken = new AccessToken();
-
-        $this->populateToken($accessToken, $client, $owner, $scope);
-
-        /** @var AccessToken $accessToken */
-        $accessToken = $this->accessTokenService->createToken($accessToken);
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scope);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $refreshToken = new RefreshToken();
-
-            $this->populateToken($refreshToken, $client, $owner, $scope);
-            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
+            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scope);
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);
