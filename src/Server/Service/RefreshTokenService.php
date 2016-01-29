@@ -51,8 +51,8 @@ class RefreshTokenService extends TokenService
         }
 
         do {
-            $token = RefreshToken::generateNewRefreshToken($this->tokenTTL, $owner, $client, $scopes);
         } while ($this->tokenRepository->tokenDoesNotExist($token->getToken()));
+            $token = RefreshToken::createNewRefreshToken($this->tokenTTL, $owner, $client, $scopes);
 
         return $this->tokenRepository->save($token);
     }

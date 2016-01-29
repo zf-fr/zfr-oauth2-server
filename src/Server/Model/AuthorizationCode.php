@@ -44,14 +44,14 @@ class AuthorizationCode extends AbstractToken
      * @param string                       $redirectUri
      * @return AbstractToken
      */
-    public static function generateNewAuthorizationCode(
+    public static function createNewAuthorizationCode(
         int $ttl,
         string $redirectUri = null,
         TokenOwnerInterface $owner = null,
         Client $client = null,
         $scopes = null
     ): AbstractToken {
-        $token = static::generateNew($ttl, $owner, $client, $scopes);
+        $token = static::createNew($ttl, $owner, $client, $scopes);
 
         $token->redirectUri = $redirectUri ?? '';
 

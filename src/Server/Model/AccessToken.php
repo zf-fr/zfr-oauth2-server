@@ -35,13 +35,13 @@ class AccessToken extends AbstractToken
      * @param string|string[]|Scope[]|null $scopes
      * @return AccessToken
      */
-    public static function generateNewAccessToken(
+    public static function createNewAccessToken(
         int $ttl,
         TokenOwnerInterface $owner = null,
         Client $client = null,
         $scopes = null
     ): AccessToken {
-        return static::generateNew($ttl, $owner, $client, $scopes);
+        return static::createNew($ttl, $owner, $client, $scopes);
     }
 
     /**

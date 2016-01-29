@@ -71,7 +71,7 @@ abstract class AbstractToken
      * @param string|string[]|Scope[]|null $scopes
      * @return AbstractToken
      */
-    protected static function generateNew(
+    protected static function createNew(
         int $ttl,
         TokenOwnerInterface $owner = null,
         Client $client = null,
