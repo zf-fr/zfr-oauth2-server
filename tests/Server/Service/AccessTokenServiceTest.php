@@ -18,23 +18,23 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
-use ZfrOAuth2\Server\Model\AbstractToken;
-use ZfrOAuth2\Server\Model\AccessToken;
-use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Service\TokenService
+ * @covers  \ZfrOAuth2\Server\Service\TokenService
  */
-class TokenServiceTest extends \PHPUnit_Framework_TestCase
+class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenRepository;
 
@@ -44,15 +44,15 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
     protected $scopeService;
 
     /**
-     * @var TokenService
+     * @var AccessTokenService
      */
     protected $tokenService;
 
     public function setUp()
     {
-        $this->tokenRepository = $this->getMock(TokenRepositoryInterface::class);
+        $this->tokenRepository = $this->getMock(AccessTokenRepositoryInterface::class);
         $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
-        $this->tokenService    = new TokenService(
+        $this->tokenService    = new AccessTokenService(
             $this->tokenRepository,
             $this->scopeService
         );
@@ -60,13 +60,20 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetToken()
     {
-        $token = new AccessToken();
-        $token->setToken('token');
+        $token = AccessToken::reconstitute(
+            [
+                'token'     => 'token',
+                'owner'     => $this->getMock(TokenOwnerInterface::class),
+                'client'    => $this->getMock(Client::class),
+                'expiresAt' => new \DateTimeImmutable(),
+                'scopes'    => [],
+            ]
+        );
 
         $this->tokenRepository->expects($this->once())
-                              ->method('findByToken')
-                              ->with('token')
-                              ->will($this->returnValue($token));
+            ->method('findByToken')
+            ->with('token')
+            ->will($this->returnValue($token));
 
         $this->assertSame($token, $this->tokenService->getToken('token'));
     }
@@ -83,13 +90,20 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testDoesCaseSensitiveTest()
     {
-        $token = new AccessToken();
-        $token->setToken('Token');
+        $token = AccessToken::reconstitute(
+            [
+                'token'     => 'Token',
+                'owner'     => $this->getMock(TokenOwnerInterface::class),
+                'client'    => $this->getMock(Client::class),
+                'expiresAt' => new \DateTimeImmutable(),
+                'scopes'    => [],
+            ]
+        );
 
         $this->tokenRepository->expects($this->once())
-                              ->method('findByToken')
-                              ->with('token')
-                              ->will($this->returnValue($token));
+            ->method('findByToken')
+            ->with('token')
+            ->will($this->returnValue($token));
 
         $this->assertNull($this->tokenService->getToken('token'));
     }
@@ -100,25 +114,25 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             // With no scope
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => '',
+                'token_scope'       => [],
                 'throw_exception'   => false
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => 'read',
+                'token_scope'       => ['read'],
                 'throw_exception'   => false
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => 'read write',
+                'token_scope'       => ['read', 'write'],
                 'throw_exception'   => false
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => 'read write delete',
+                'token_scope'       => ['read', 'write', 'delete'],
                 'throw_exception'   => true
             ],
         ];
@@ -133,62 +147,66 @@ class TokenServiceTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
-        $token = new AccessToken();
+        $owner  = $this->getMock(TokenOwnerInterface::class);
+        $client = $this->getMock(Client::class);
 
         if (empty($tokenScope)) {
-            $scope = new Scope(1, 'read');
-
             $this->scopeService->expects($this->once())
-                               ->method('getDefaultScopes')
-                               ->will($this->returnValue([$scope]));
-        } else {
-            $token->setScopes($tokenScope);
+                ->method('getDefaultScopes')
+                ->will($this->returnValue(['read']));
         }
 
         if (!$throwException) {
             $this->tokenRepository->expects($this->once())
-                                  ->method('save')
-                                  ->with($this->isInstanceOf(AbstractToken::class));
+                ->method('tokenExists')
+                ->willReturn(false);
+
+            $this->tokenRepository->expects($this->once())
+                ->method('save')
+                ->will($this->returnArgument(0));
         }
 
         $scopes = [];
         foreach ($registeredScopes as $registeredScope) {
-            $scope = new Scope(1, $registeredScope);
-
-            $scopes[] = $scope;
+            $scopes[] = $registeredScope;
         }
 
-        $this->scopeService->expects($this->any())->method('getAll')->will($this->returnValue($scopes));
+        $this->scopeService->expects($this->any())->method('getAll')->willReturn($scopes);
 
-        $this->tokenService->createToken($token);
+        $token = $this->tokenService->createToken($owner, $client, $tokenScope);
 
+        $this->assertInstanceOf(AccessToken::class, $token);
         $this->assertEquals(40, strlen($token->getToken()));
 
         if (empty($tokenScope)) {
             $this->assertCount(1, $token->getScopes());
         } else {
-            $this->assertEquals(explode(' ', $tokenScope), $token->getScopes());
+            $this->assertEquals($tokenScope, $token->getScopes());
         }
     }
 
     public function testCreateNewTokenUntilOneDoesNotExist()
     {
-        $token = new AccessToken();
-
         $this->scopeService->expects($this->once())->method('getDefaultScopes')->will($this->returnValue(['read']));
 
         $this->tokenRepository->expects($this->at(0))
-                              ->method('findByToken')
-                              ->with($this->isType('string'))
-                              ->will($this->returnValue(new AccessToken()));
+            ->method('tokenExists')
+            ->with($this->isType('string'))
+            ->willReturn(true);
 
         $this->tokenRepository->expects($this->at(1))
-                              ->method('findByToken')
-                              ->with($this->isType('string'))
-                              ->will($this->returnValue(null));
+            ->method('tokenExists')
+            ->with($this->isType('string'))
+            ->willReturn(false);
 
-        $this->tokenService->createToken($token);
+        $this->tokenRepository->expects($this->once())
+            ->method('save')
+            ->will($this->returnArgument(0));
 
+        $owner  = $this->getMock(TokenOwnerInterface::class);
+        $client = $this->getMock(Client::class);
+
+        $token = $this->tokenService->createToken($owner, $client, []);
         $this->assertEquals(40, strlen($token->getToken()));
     }
 }

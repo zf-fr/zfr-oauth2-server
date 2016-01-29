@@ -36,7 +36,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
     public function testGenerateNewAuthorizationCode($redirectUri)
     {
         /** @var AuthorizationCode $authorizationCode */
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(3600, $redirectUri);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(3600, $redirectUri);
 
         if (null !== $redirectUri) {
             $this->assertSame($redirectUri, $authorizationCode->getRedirectUri());
@@ -93,7 +93,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCalculateExpiresIn()
     {
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60);
 
         $this->assertFalse($authorizationCode->isExpired());
         $this->assertEquals(60, $authorizationCode->getExpiresIn());
@@ -101,26 +101,26 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckIfATokenIsExpired()
     {
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(-60);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(-60);
 
         $this->assertTrue($authorizationCode->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60);
         $this->assertFalse($authorizationCode->isExpired());
     }
 
     public function testIsValid()
     {
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
         $this->assertTrue($authorizationCode->isValid('read'));
 
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(-60, 'http://www.example.com', null, null, 'read write');
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(-60, 'http://www.example.com', null, null, 'read write');
         $this->assertFalse($authorizationCode->isValid('read'));
 
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
         $this->assertFalse($authorizationCode->isValid('delete'));
     }
 
@@ -129,7 +129,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
      */
     public function testDoNotSupportLongLiveToken()
     {
-        $authorizationCode = AuthorizationCode::generateNewAuthorizationCode(0, 'http://www.example.com', null, null, 'read write');
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(0, 'http://www.example.com', null, null, 'read write');
         $this->assertTrue($authorizationCode->isExpired());
     }
 }

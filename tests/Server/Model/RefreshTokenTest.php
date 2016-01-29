@@ -39,7 +39,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
     public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
     {
         /** @var RefreshToken $refreshToken */
-        $refreshToken = RefreshToken::generateNewRefreshToken($ttl, $owner, $client, $scopes);
+        $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
 
         $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
 
@@ -120,7 +120,7 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCalculateExpiresIn()
     {
-        $refreshToken = RefreshToken::generateNewRefreshToken(60);
+        $refreshToken = RefreshToken::createNewRefreshToken(60);
 
         $this->assertFalse($refreshToken->isExpired());
         $this->assertEquals(60, $refreshToken->getExpiresIn());
@@ -128,26 +128,26 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckIfATokenIsExpired()
     {
-        $refreshToken = RefreshToken::generateNewRefreshToken(-60);
+        $refreshToken = RefreshToken::createNewRefreshToken(-60);
 
         $this->assertTrue($refreshToken->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
-        $refreshToken = RefreshToken::generateNewRefreshToken(60);
+        $refreshToken = RefreshToken::createNewRefreshToken(60);
         $this->assertFalse($refreshToken->isExpired());
     }
 
     public function testIsValid()
     {
-        $accessToken = RefreshToken::generateNewRefreshToken(60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
         $this->assertTrue($accessToken->isValid('read'));
 
-        $accessToken = RefreshToken::generateNewRefreshToken(-60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(-60, null, null, 'read write');
         $this->assertFalse($accessToken->isValid('read'));
 
-        $accessToken = RefreshToken::generateNewRefreshToken(60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
         $this->assertFalse($accessToken->isValid('delete'));
     }
 }

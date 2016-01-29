@@ -24,6 +24,7 @@ use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -34,7 +35,7 @@ use ZfrOAuth2\Server\Service\TokenService;
 class ResourceServerTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $tokenService;
 
@@ -45,7 +46,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService   = $this->getMock(TokenService::class, [], [], '', false);
+        $this->tokenService   = $this->getMock(AccessTokenService::class, [], [], '', false);
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
@@ -55,7 +56,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
-        $token = $this->getMock(AccessToken::class);
+        $token = $this->getMock(AccessToken::class, [], [], '', false);
         $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
 
         $this->tokenService->expects($this->once())
@@ -72,7 +73,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(false));
         $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['access_token' => 'token']));
 
-        $token = $this->getMock(AccessToken::class);
+        $token = $this->getMock(AccessToken::class, [], [], '', false);
         $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
 
         $this->tokenService->expects($this->once())
@@ -146,17 +147,11 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 
-        $accessToken = new AccessToken();
-        $date        = new DateTime();
-
         if ($expiredToken) {
-            $date->sub(new DateInterval('P1D'));
+            $accessToken = AccessToken::createNewAccessToken(-3600, null, null, $tokenScope);
         } else {
-            $date->add(new DateInterval('P1D'));
+            $accessToken = AccessToken::createNewAccessToken(3600, null, null, $tokenScope);
         }
-
-        $accessToken->setExpiresAt($date);
-        $accessToken->setScopes($tokenScope);
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')

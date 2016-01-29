@@ -37,7 +37,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
     public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
     {
         /** @var AccessToken $accessToken */
-        $accessToken = AccessToken::generateNewAccessToken($ttl, $owner, $client, $scopes);
+        $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
 
         $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
 
@@ -118,7 +118,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCalculateExpiresIn()
     {
-        $accessToken = AccessToken::generateNewAccessToken(60);
+        $accessToken = AccessToken::createNewAccessToken(60);
 
         $this->assertFalse($accessToken->isExpired());
         $this->assertEquals(60, $accessToken->getExpiresIn());
@@ -126,26 +126,26 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckIfATokenIsExpired()
     {
-        $accessToken = AccessToken::generateNewAccessToken(-60);
+        $accessToken = AccessToken::createNewAccessToken(-60);
 
         $this->assertTrue($accessToken->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
-        $accessToken = AccessToken::generateNewAccessToken(60);
+        $accessToken = AccessToken::createNewAccessToken(60);
         $this->assertFalse($accessToken->isExpired());
     }
 
     public function testIsValid()
     {
-        $accessToken = AccessToken::generateNewAccessToken(60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(60, null, null, 'read write');
         $this->assertTrue($accessToken->isValid('read'));
 
-        $accessToken = AccessToken::generateNewAccessToken(-60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(-60, null, null, 'read write');
         $this->assertFalse($accessToken->isValid('read'));
 
-        $accessToken = AccessToken::generateNewAccessToken(60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(60, null, null, 'read write');
         $this->assertFalse($accessToken->isValid('delete'));
     }
 }
