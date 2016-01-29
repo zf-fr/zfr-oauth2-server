@@ -21,13 +21,15 @@ namespace ZfrOAuth2\Server\Grant;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\AuthorizationCodeService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * Implementation of the authorization grant
@@ -43,33 +45,33 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     const GRANT_RESPONSE_TYPE = 'code';
 
     /**
-     * @var TokenService
+     * @var AuthorizationCodeService
      */
     private $authorizationCodeService;
 
     /**
      * Access token service (used to create access token)
      *
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
      *
-     * @var TokenService
+     * @var RefreshTokenService
      */
     private $refreshTokenService;
 
     /**
-     * @param TokenService $authorizationCodeService
-     * @param TokenService $accessTokenService
-     * @param TokenService $refreshTokenService
+     * @param AuthorizationCodeService $authorizationCodeService
+     * @param AccessTokenService       $accessTokenService
+     * @param RefreshTokenService      $refreshTokenService
      */
     public function __construct(
-        TokenService $authorizationCodeService,
-        TokenService $accessTokenService,
-        TokenService $refreshTokenService
+        AuthorizationCodeService $authorizationCodeService,
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService
     ) {
         $this->authorizationCodeService = $authorizationCodeService;
         $this->accessTokenService       = $accessTokenService;

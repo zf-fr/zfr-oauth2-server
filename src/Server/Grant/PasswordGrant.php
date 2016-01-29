@@ -20,11 +20,13 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -47,14 +49,14 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     /**
      * Access token service (used to create access token)
      *
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
      *
-     * @var TokenService
+     * @var RefreshTokenService
      */
     private $refreshTokenService;
 
@@ -69,12 +71,15 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     private $callback;
 
     /**
-     * @param TokenService $accessTokenService
-     * @param TokenService $refreshTokenService
-     * @param callable     $callback
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
+     * @param callable            $callback
      */
-    public function __construct(TokenService $accessTokenService, TokenService $refreshTokenService, callable $callback)
-    {
+    public function __construct(
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService,
+        callable $callback
+    ) {
         $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
         $this->callback            = $callback;

@@ -24,6 +24,7 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -43,14 +44,14 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * Access token service (used to create access token)
      *
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
-     * @param TokenService $accessTokenService
+     * @param AccessTokenService $accessTokenService
      */
-    public function __construct(TokenService $accessTokenService)
+    public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }

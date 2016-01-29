@@ -39,9 +39,11 @@ use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServer;
 use ZfrOAuth2\Server\ResourceServerMiddleware;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 return [
     'dependencies' => [
@@ -49,37 +51,33 @@ return [
             /**
              * Middleware
              */
-            AuthorizationServerMiddleware::class     => AuthorizationServerMiddlewareFactory::class,
-            ResourceServerMiddleware::class          => ResourceServerMiddlewareFactory::class,
+            AuthorizationServerMiddleware::class => AuthorizationServerMiddlewareFactory::class,
+            ResourceServerMiddleware::class      => ResourceServerMiddlewareFactory::class,
 
             /**
              * Services
              */
-            AuthorizationServer::class               => AuthorizationServerFactory::class,
-            ResourceServer::class                    => ResourceServerFactory::class,
-            ClientService::class                     => ClientServiceFactory::class,
-            ScopeService::class                      => ScopeServiceFactory::class,
+            AuthorizationServer::class           => AuthorizationServerFactory::class,
+            ResourceServer::class                => ResourceServerFactory::class,
+            ClientService::class                 => ClientServiceFactory::class,
+            ScopeService::class                  => ScopeServiceFactory::class,
+            AuthorizationCodeService::class      => AuthorizationCodeServiceFactory::class,
+            AccessTokenService::class            => AccessTokenServiceFactory::class,
+            RefreshTokenService::class           => RefreshTokenServiceFactory::class,
 
             /**
              * Grant Services
              */
-            ClientCredentialsGrant::class            => ClientCredentialsGrantFactory::class,
-            PasswordGrant::class                     => PasswordGrantFactory::class,
-            AuthorizationGrant::class                => AuthorizationGrantFactory::class,
-            RefreshTokenGrant::class                 => RefreshTokenGrantFactory::class,
+            ClientCredentialsGrant::class        => ClientCredentialsGrantFactory::class,
+            PasswordGrant::class                 => PasswordGrantFactory::class,
+            AuthorizationGrant::class            => AuthorizationGrantFactory::class,
+            RefreshTokenGrant::class             => RefreshTokenGrantFactory::class,
 
             /**
              * Utils
              */
-            ServerOptions::class                     => ServerOptionsFactory::class,
-
-            /**
-             * Factories that do not map to a class
-             */
-            TokenService::AUTHORIZATION_CODE_SERVICE => AuthorizationCodeServiceFactory::class,
-            TokenService::ACCESS_TOKEN_SERVICE       => AccessTokenServiceFactory::class,
-            TokenService::REFRESH_TOKEN_SERVICE      => RefreshTokenServiceFactory::class,
-        ],
+            ServerOptions::class                 => ServerOptionsFactory::class,
+        ]
     ],
 
     'zfr_oauth2_server' => [

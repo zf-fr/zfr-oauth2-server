@@ -23,7 +23,9 @@ use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Container\AuthorizationServerFactory;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -42,7 +44,7 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->at(0))
             ->method('get')
             ->with(ClientService::class)
-            ->willReturn($this->getMock('ZfrOAuth2\Server\Service\ClientService', [], [], '', false));
+            ->willReturn($this->getMock(ClientService::class, [], [], '', false));
 
         $container->expects($this->at(1))
             ->method('get')
@@ -56,13 +58,13 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(3))
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
-            ->willReturn($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
+            ->with(AccessTokenService::class)
+            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $container->expects($this->at(4))
             ->method('get')
-            ->with('ZfrOAuth2\Server\Service\RefreshTokenService')
-            ->willReturn($this->getMock('ZfrOAuth2\Server\Service\TokenService', [], [], '', false));
+            ->with(RefreshTokenService::class)
+            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
 
         $factory = new AuthorizationServerFactory();
         $service = $factory($container);

@@ -21,6 +21,7 @@ namespace ZfrOAuth2\Server\Container;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -45,7 +46,7 @@ class AccessTokenServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $service = new TokenService($tokenRepository, $scopeService);
+        $service = new AccessTokenService($tokenRepository, $scopeService);
 
         $service->setTokenTTL($serverOptions->getAccessTokenTtl());
 

@@ -27,22 +27,11 @@ use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 /**
  * Token service
  *
- * You'll need to create one token service per type of token, as the repositories are not the same (as well
- * as the token TTL)
- *
- * @TODO    : should we create one service per token type? I think it's a bit useless, as the only thing that would
- *        be overridden is the token TTL
- *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class TokenService
+abstract class TokenService
 {
-
-    const AUTHORIZATION_CODE_SERVICE = 'ZfrOAuth2\Server\Service\AuthorizationCodeService';
-    const ACCESS_TOKEN_SERVICE       = 'ZfrOAuth2\Server\Service\AccessTokenService';
-    const REFRESH_TOKEN_SERVICE      = 'ZfrOAuth2\Server\Service\RefreshTokenService';
-
     /**
      * @var TokenRepositoryInterface
      */

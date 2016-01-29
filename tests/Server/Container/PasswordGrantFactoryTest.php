@@ -22,6 +22,8 @@ use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\PasswordGrantFactory;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -37,7 +39,7 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock(ContainerInterface::class);
         $callable  = function () {
         };
-        $options = new ServerOptions(['owner_callable' => $callable]);
+        $options   = new ServerOptions(['owner_callable' => $callable]);
 
         $container->expects($this->at(0))
             ->method('get')
@@ -46,13 +48,13 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(AccessTokenService::class)
+            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $container->expects($this->at(2))
             ->method('get')
-            ->with(TokenService::REFRESH_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(RefreshTokenService::class)
+            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
@@ -65,7 +67,7 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock(ContainerInterface::class);
         $callable  = function () {
         };
-        $options = new ServerOptions(['owner_callable' => 'service_name']);
+        $options   = new ServerOptions(['owner_callable' => 'service_name']);
 
         $container->expects($this->at(0))
             ->method('get')
@@ -79,13 +81,13 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(2))
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(AccessTokenService::class)
+            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $container->expects($this->at(3))
             ->method('get')
-            ->with(TokenService::REFRESH_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(RefreshTokenService::class)
+            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);

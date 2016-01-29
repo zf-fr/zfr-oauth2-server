@@ -19,13 +19,10 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Container\PasswordGrantFactory;
 use ZfrOAuth2\Server\Container\RefreshTokenGrantFactory;
-use ZfrOAuth2\Server\Model\RefreshToken;
-use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
-use ZfrOAuth2\Server\Options\ServerOptions;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -41,13 +38,13 @@ class RefreshTokenGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(AccessTokenService::class)
+            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $container->expects($this->at(1))
             ->method('get')
-            ->with(TokenService::REFRESH_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(RefreshTokenService::class)
+            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
 
         $factory = new RefreshTokenGrantFactory();
         $service = $factory($container);

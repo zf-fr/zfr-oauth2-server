@@ -21,6 +21,7 @@ namespace ZfrOAuth2Test\Server\Container;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -37,8 +38,8 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
-            ->willReturn($this->getMock(TokenService::class, [], [], '', false));
+            ->with(AccessTokenService::class)
+            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $factory = new ClientCredentialsGrantFactory();
         $service = $factory($container);

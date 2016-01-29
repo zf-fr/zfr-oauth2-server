@@ -22,6 +22,7 @@ use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
 use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2\Server\Service\TokenService;
 
@@ -46,7 +47,7 @@ class RefreshTokenServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $service = new TokenService($tokenRepository, $scopeService);
+        $service = new RefreshTokenService($tokenRepository, $scopeService);
 
         $service->setTokenTTL($serverOptions->getRefreshTokenTtl());
 
