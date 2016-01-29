@@ -18,7 +18,6 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
@@ -51,8 +50,8 @@ class RefreshTokenService extends TokenService
         }
 
         do {
-        } while ($this->tokenRepository->tokenDoesNotExist($token->getToken()));
             $token = RefreshToken::createNewRefreshToken($this->tokenTTL, $owner, $client, $scopes);
+        } while ($this->tokenRepository->tokenExists($token->getToken()));
 
         return $this->tokenRepository->save($token);
     }

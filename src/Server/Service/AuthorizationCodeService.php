@@ -18,7 +18,6 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
@@ -59,7 +58,7 @@ class AuthorizationCodeService extends TokenService
                 $client,
                 $scopes
             );
-        } while ($this->tokenRepository->tokenDoesNotExist($token->getToken()));
+        } while ($this->tokenRepository->tokenExists($token->getToken()));
 
         return $this->tokenRepository->save($token);
     }

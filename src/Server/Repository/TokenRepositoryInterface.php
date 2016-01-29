@@ -45,5 +45,5 @@ interface TokenRepositoryInterface
     /**
      * @return bool
      */
-    public function tokenDoesNotExist(string $token): bool;
+    public function tokenExists(string $token): bool;
 }
