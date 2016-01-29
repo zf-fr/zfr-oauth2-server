@@ -19,17 +19,16 @@
 namespace ZfrOAuth2Test\Server\Factory;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\Container\ScopeServiceFactory;
-use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
-use ZfrOAuth2\Server\Service\ScopeService;
+use ZfrOAuth2\Server\Container\ServerOptionsFactory;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ScopeServiceFactory
+ * @covers  ZfrOAuth2\Server\Container\ServerOptionsFactory
  */
-class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
+class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
@@ -37,12 +36,12 @@ class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(ScopeRepositoryInterface::class)
-            ->willReturn($this->getMock(ScopeRepositoryInterface::class, [], [], '', false));
+            ->with('config')
+            ->willReturn(['zfr_oauth2_server' => []]);
 
-        $factory = new ScopeServiceFactory();
+        $factory = new ServerOptionsFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(ScopeService::class, $service);
+        $this->assertInstanceOf(ServerOptions::class, $service);
     }
 }
