@@ -60,8 +60,12 @@ class Scope
      * @param bool        $isDefault
      * @return Scope
      */
-    public static function createNewScope(int $id, string $name, string $description = null, bool $isDefault = false): Scope
-    {
+    public static function createNewScope(
+        int $id,
+        string $name,
+        string $description = null,
+        bool $isDefault = false
+    ): Scope {
         $scope = new self();
 
         $scope->id          = $id;
