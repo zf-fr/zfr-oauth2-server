@@ -110,28 +110,14 @@ abstract class AbstractToken
      */
     public static function reconstitute(array $data)
     {
-        if (isset($data['scopes']) && $data['scopes'] instanceof Scope) {
-            $data['scopes'] = $data['scopes']->getName();
-        }
-
-        if (isset($data['scopes']) && is_string($data['scopes'])) {
-            $data['scopes'] = explode(' ', $data['scopes']);
-        }
-
-        if (isset($data['scopes']) && is_array($data['scopes'])) {
-            foreach ($data['scopes'] as &$scope) {
-                $scope = $scope instanceof Scope ? $scope->getName() : trim((string) $scope);
-            }
-        }
-
         $class = get_called_class();
         $token = new $class();
 
         $token->token     = $data['token'];
-        $token->expiresAt = $data['expiresAt'] ?? null;
-        $token->owner     = $data['owner'] ?? null;
-        $token->client    = $data['client'] ?? null;
-        $token->scopes    = $data['scopes'] ?? [];
+        $token->expiresAt = $data['expiresAt'];
+        $token->owner     = $data['owner'];
+        $token->client    = $data['client'];
+        $token->scopes    = (array) $data['scopes'];
 
         return $token;
     }

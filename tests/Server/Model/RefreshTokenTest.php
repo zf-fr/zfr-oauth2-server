@@ -80,21 +80,10 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals($data['token'], $refreshToken->getToken());
+        $this->assertSame($data['owner'], $refreshToken->getOwner());
+        $this->assertSame($data['client'], $refreshToken->getClient());
 
-        if (isset($data['owner'])) {
-            $this->assertSame($data['owner'], $refreshToken->getOwner());
-        } else {
-            $this->assertNull($refreshToken->getOwner());
-        }
-
-        if (isset($data['client'])) {
-            $this->assertSame($data['client'], $refreshToken->getClient());
-        } else {
-            $this->assertNull($refreshToken->getClient());
-        }
-
-        if (isset($data['expiresAt'])) {
-            $this->assertInstanceOf(\DateTimeImmutable::class, $refreshToken->getExpiresAt());
+        if ($data['expiresAt'] instanceof \DateTimeImmutable) {
             /** @var \DateTimeImmutable $expiresAt */
             $expiresAt = $data['expiresAt'];
             $this->assertSame($expiresAt->getTimeStamp(), $refreshToken->getExpiresAt()->getTimestamp());
@@ -102,17 +91,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
             $this->assertNull($refreshToken->getExpiresAt());
         }
 
-        if (isset($data['scopes'])) {
-            if (is_string($data['scopes'])) {
-                $data['scopes'] = explode(" ", $data['scopes']);
-            }
-            $this->assertCount(count($data['scopes']), $refreshToken->getScopes());
-        } else {
-            $this->assertTrue(is_array($refreshToken->getScopes()));
-            $this->assertEmpty($refreshToken->getScopes());
-        }
+        $this->assertSame($data['scopes'], $refreshToken->getScopes());
     }
-
 
     public function providerReconstitute()
     {
@@ -132,26 +112,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
                     'owner'     => null,
                     'client'    => null,
                     'expiresAt' => null,
-                    'scopes'    => null,
+                    'scopes'    => [],
                 ]
-            ],
-            [ // test set - scopes from string
-                [
-                  'token'  => 'token',
-                  'scopes' => 'read write',
-                ]
-            ],
-            [ // test set - scope from instance
-                [
-                    'token'  => 'token',
-                    'scopes' => Scope::createNewScope(1, 'read'),
-                ]
-            ],
-            [ // test set - scope from mixed array
-              [
-                  'token'  => 'token',
-                  'scopes' => [Scope::createNewScope(1, 'read'), 'write'],
-              ]
             ],
         ];
     }

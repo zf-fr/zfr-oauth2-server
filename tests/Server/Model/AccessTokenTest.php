@@ -78,21 +78,10 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
 
 
         $this->assertEquals($data['token'], $accessToken->getToken());
+        $this->assertSame($data['owner'], $accessToken->getOwner());
+        $this->assertSame($data['client'], $accessToken->getClient());
 
-        if (isset($data['owner'])) {
-            $this->assertSame($data['owner'], $accessToken->getOwner());
-        } else {
-            $this->assertNull($accessToken->getOwner());
-        }
-
-        if (isset($data['client'])) {
-            $this->assertSame($data['client'], $accessToken->getClient());
-        } else {
-            $this->assertNull($accessToken->getClient());
-        }
-
-        if (isset($data['expiresAt'])) {
-            $this->assertInstanceOf(\DateTimeImmutable::class, $accessToken->getExpiresAt());
+        if ($data['expiresAt'] instanceof \DateTimeImmutable) {
             /** @var \DateTimeImmutable $expiresAt */
             $expiresAt = $data['expiresAt'];
             $this->assertSame($expiresAt->getTimeStamp(), $accessToken->getExpiresAt()->getTimestamp());
@@ -100,28 +89,19 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
             $this->assertNull($accessToken->getExpiresAt());
         }
 
-        if (isset($data['scopes'])) {
-            if (is_string($data['scopes'])) {
-                $data['scopes'] = explode(" ", $data['scopes']);
-            }
-            $this->assertCount(count($data['scopes']), $accessToken->getScopes());
-        } else {
-            $this->assertTrue(is_array($accessToken->getScopes()));
-            $this->assertEmpty($accessToken->getScopes());
-        }
+        $this->assertSame($data['scopes'], $accessToken->getScopes());
     }
-
 
     public function providerReconstitute()
     {
         return [
             [
                 [
-                  'token'     => 'token',
-                  'owner'     => $this->getMock(TokenOwnerInterface::class),
-                  'client'    => $this->getMock(Client::class, [], [], '', false),
-                  'expiresAt' => new \DateTimeImmutable(),
-                  'scopes'    => ['read', 'write'],
+                    'token'     => 'token',
+                    'owner'     => $this->getMock(TokenOwnerInterface::class),
+                    'client'    => $this->getMock(Client::class, [], [], '', false),
+                    'expiresAt' => new \DateTimeImmutable(),
+                    'scopes'    => ['scope1', 'scope2'],
                 ]
             ],
             [ // test set - null values
@@ -130,25 +110,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
                   'owner'     => null,
                   'client'    => null,
                   'expiresAt' => null,
-                  'scopes'    => null,
-              ]
-            ],
-            [ // test set - scopes from string
-              [
-                  'token'  => 'token',
-                  'scopes' => 'read write',
-              ]
-            ],
-            [ // test set - scope from instance
-              [
-                  'token'  => 'token',
-                  'scopes' => Scope::createNewScope(1, 'read'),
-              ]
-            ],
-            [ // test set - scope from mixed array
-              [
-                  'token'  => 'token',
-                  'scopes' => [Scope::createNewScope(1, 'read'), 'write'],
+                  'scopes'    => [],
               ]
             ],
         ];

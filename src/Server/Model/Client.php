@@ -90,23 +90,12 @@ class Client
      */
     public static function reconstitute(array $data)
     {
-        if (isset($data['redirectUris']) && is_string($data['redirectUris'])) {
-            $data['redirectUris'] = explode(' ', $data['redirectUris']);
-        }
-
-        if (isset($data['redirectUris']) && is_array($data['redirectUris'])) {
-            foreach ($data['redirectUris'] as &$redirectUri) {
-                $redirectUri = trim((string) $redirectUri);
-            }
-        }
-
-
         $client = new self();
 
-        $client->id           = $data['id'] ?? '';
-        $client->name         = $data['name'] ?? '';
-        $client->secret       = $data['secret'] ?? '';
-        $client->redirectUris = $data['redirectUris'] ?? [];
+        $client->id           = $data['id'];
+        $client->name         = $data['name'];
+        $client->secret       = $data['secret'];
+        $client->redirectUris = $data['redirectUris'];
 
         return $client;
     }

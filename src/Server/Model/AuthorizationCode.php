@@ -65,7 +65,7 @@ class AuthorizationCode extends AbstractToken
     public static function reconstitute(array $data) {
         $token = parent::reconstitute($data);
 
-        $token->redirectUri = $data['redirectUri'] ?? '';
+        $token->redirectUri = $data['redirectUri'];
 
         return $token;
     }

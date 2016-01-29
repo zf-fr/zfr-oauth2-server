@@ -98,8 +98,8 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['id' => 1, 'name' => 'name', 'secret' => 'secret', 'redirectUris' => 'http://www.example.com'],
-                ['id' => 1, 'name' => 'name', 'secret' => null, 'redirectUris' => null],
+                ['id' => 1, 'name' => 'name', 'secret' => 'secret', 'redirectUris' => ['http://www.example.com']],
+                ['id' => 1, 'name' => 'name', 'secret' => '', 'redirectUris' => []],
             ],
         ];
     }

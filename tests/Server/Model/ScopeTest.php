@@ -57,26 +57,10 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
         /** @var Scope $scope */
         $scope = Scope::reconstitute($data);
 
-
         $this->assertEquals($data['id'], $scope->getId());
-
-        if (isset($data['name'])) {
-            $this->assertSame($data['name'], $scope->getName());
-        } else {
-            $this->assertEmpty($scope->getName());
-        }
-
-        if (isset($data['description'])) {
-            $this->assertSame($data['description'], $scope->getDescription());
-        } else {
-            $this->assertEquals('', $scope->getDescription());
-        }
-
-        if (isset($data['isDefault'])) {
-            $this->assertEquals($data['isDefault'], $scope->isDefault());
-        } else {
-            $this->assertFalse($scope->isDefault());
-        }
+        $this->assertSame($data['name'], $scope->getName());
+        $this->assertSame($data['description'], $scope->getDescription());
+        $this->assertEquals($data['isDefault'], $scope->isDefault());
     }
 
     public function providerReconstitute()
@@ -85,8 +69,6 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
             [
                 ['id' => 1, 'name' => 'name', 'description' => 'description', 'isDefault' => true],
                 ['id' => 1, 'name' => 'name', 'description' => null, 'isDefault' => false],
-                ['id' => 1, 'name' => 'name', 'description' => null, 'isDefault' => null],
-                ['id' => 1],
             ],
         ];
     }

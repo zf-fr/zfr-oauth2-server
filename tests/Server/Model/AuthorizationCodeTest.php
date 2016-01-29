@@ -19,6 +19,8 @@
 namespace ZfrOAuth2Test\Server\Model;
 
 use ZfrOAuth2\Server\Model\AuthorizationCode;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -52,7 +54,6 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         ];
     }
 
-
     /**
      * @dataProvider providerReconstitute
      */
@@ -61,18 +62,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         /** @var AuthorizationCode $authorizationCode */
         $authorizationCode = AuthorizationCode::reconstitute($data);
 
-
-        $this->assertEquals($data['token'], $authorizationCode->getToken());
-
-        if (isset($data['redirectUri'])) {
-            if (null !== $data['redirectUri']) {
-                $this->assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
-            } else {
-                $this->assertEmpty($authorizationCode->getRedirectUri());
-            }
-        } else {
-
-        }
+        $this->assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
     }
 
     public function providerReconstitute()
@@ -80,25 +70,22 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 [
-                    'token'       => 'token',
+                    'token'     => 'token',
+                    'owner'     => null,
+                    'client'    => null,
+                    'expiresAt' => null,
+                    'scopes'    => [],
                     'redirectUri' => 'http://www.example.com',
                 ]
             ],
             [
                 [
-                    'token'       => 'token',
+                    'token'     => 'token',
+                    'owner'     => null,
+                    'client'    => null,
+                    'expiresAt' => null,
+                    'scopes'    => [],
                     'redirectUri' => '',
-                ]
-            ],
-            [
-                [
-                    'token'       => 'token',
-                    'redirectUri' => null,
-                ]
-            ],
-            [
-                [
-                    'token' => 'token',
                 ]
             ],
         ];

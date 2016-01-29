@@ -80,10 +80,10 @@ class Scope
     {
         $scope = new self();
 
-        $scope->id          = $data['id'] ?? null;
-        $scope->name        = $data['name'] ?? '';
-        $scope->description = $data['description'] ?? '';
-        $scope->isDefault   = $data['isDefault'] ?? false;
+        $scope->id          = $data['id'];
+        $scope->name        = $data['name'];
+        $scope->description = $data['description'];
+        $scope->isDefault   = $data['isDefault'];
 
         return $scope;
     }
