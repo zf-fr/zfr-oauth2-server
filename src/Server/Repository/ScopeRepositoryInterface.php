@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
-use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\Model\Scope;
 
 /**
  * Interface ScopeRepositoryInterface

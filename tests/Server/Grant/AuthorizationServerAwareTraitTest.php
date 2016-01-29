@@ -16,30 +16,27 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Entity;
+namespace ZfrOAuth2Test\Server\Grant;
 
-use ZfrOAuth2\Server\Entity\Scope;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
+use ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Entity\Scope
+ * @covers \ZfrOAuth2\Server\Grant\AuthorizationServerAwareTrait
  */
-class ScopeTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerAwareTraitTest extends \PHPUnit_Framework_TestCase
 {
-    public function testGettersAndSetters()
+    public function testSetAuthorizationServer()
     {
-        $scope = new Scope();
+        $mock = $this->getMockForTrait(AuthorizationServerAwareTrait::class);
 
-        $this->assertNull($scope->getId());
+        $authorizationServer = $this->getMock(AuthorizationServerInterface::class);
+        $mock->expects($this->any())
+            ->method('setAuthorizationServer')
+            ->with($authorizationServer);
 
-        $scope->setName('scope');
-        $this->assertEquals('scope', $scope->getName());
-
-        $scope->setDescription('Fooo');
-        $this->assertEquals('Fooo', $scope->getDescription());
-
-        $scope->setIsDefault(true);
-        $this->assertTrue($scope->isDefault());
+        $mock->setAuthorizationServer($authorizationServer);
     }
 }

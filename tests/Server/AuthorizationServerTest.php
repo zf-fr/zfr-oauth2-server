@@ -21,14 +21,17 @@ namespace ZfrOAuth2Test\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\RefreshToken;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -42,13 +45,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     {
         $clientService = $this->getMock(ClientService::class, [], [], '', false);
         $grant         = new PasswordGrant(
-            $this->getMock(TokenService::class, [], [], '', false),
-            $this->getMock(TokenService::class, [], [], '', false),
+            $this->getMock(AccessTokenService::class, [], [], '', false),
+            $this->getMock(RefreshTokenService::class, [], [], '', false),
             function() {}
         );
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -65,13 +68,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
     {
         $clientService = $this->getMock(ClientService::class, [], [], '', false);
         $grant         = new AuthorizationGrant(
-            $this->getMock(TokenService::class, [], [], '', false),
-            $this->getMock(TokenService::class, [], [], '', false),
-            $this->getMock(TokenService::class, [], [], '', false)
+            $this->getMock(AuthorizationCodeService::class, [], [], '', false),
+            $this->getMock(AccessTokenService::class, [], [], '', false),
+            $this->getMock(RefreshTokenService::class, [], [], '', false)
         );
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -90,8 +93,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getQueryParams')->willReturn([]);
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
@@ -110,8 +113,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
@@ -128,12 +131,12 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
 
-        $grant = new ClientCredentialsGrant($this->getMock(TokenService::class, [], [], '', false));
+        $grant = new ClientCredentialsGrant($this->getMock(AccessTokenService::class, [], [], '', false));
 
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -164,8 +167,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
         $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
@@ -194,18 +197,18 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
         $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         if ($tokenType === 'access_token') {
-            $token = new AccessToken();
+            $token = AccessToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
 
             $accessTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $accessTokenService->expects($this->once())->method('deleteToken')->with($token);
         } elseif ($tokenType === 'refresh_token') {
-            $token = new RefreshToken();
+            $token = RefreshToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
 
             $refreshTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $refreshTokenService->expects($this->once())->method('deleteToken')->with($token);
@@ -228,13 +231,13 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $clientService       = $this->getMock(ClientService::class, [], [], '', false);
         $grant               = $this->getMock(GrantInterface::class);
 
-        $accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         if ($tokenType === 'access_token') {
-            $token = new AccessToken();
+            $token = AccessToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
 
             $accessTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $accessTokenService->expects($this->once())
@@ -242,7 +245,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
                                ->with($token)
                                ->will($this->throwException(new \RuntimeException()));
         } elseif ($tokenType === 'refresh_token') {
-            $token = new RefreshToken();
+            $token = RefreshToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
 
             $refreshTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $refreshTokenService->expects($this->once())

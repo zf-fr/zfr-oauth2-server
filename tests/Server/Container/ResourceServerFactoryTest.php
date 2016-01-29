@@ -20,24 +20,24 @@ namespace ZfrOAuth2Test\Server\Factory;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ResourceServerFactory;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Factory\ResourceServerFactory
+ * @covers  ZfrOAuth2\Server\Container\ResourceServerFactory
  */
 class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
         $container    = $this->getMock(ContainerInterface::class);
-        $tokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $tokenService = $this->getMock(AccessTokenService::class, [], [], '', false);
 
         $container->expects($this->once())
             ->method('get')
-            ->with(TokenService::ACCESS_TOKEN_SERVICE)
+            ->with(AccessTokenService::class)
             ->willReturn($tokenService);
 
         $factory = new ResourceServerFactory();

@@ -18,19 +18,13 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
-use ZfrOAuth2\Server\Entity\AbstractToken;
+use ZfrOAuth2\Server\Model\AbstractToken;
 
 /**
  * Interface TokenRepositoryInterface
  */
 interface TokenRepositoryInterface
 {
-    /**
-     * @param AbstractToken $token
-     * @return AbstractToken
-     */
-    public function save(AbstractToken $token): AbstractToken;
-
     /**
      * @param string $token
      * @return AbstractToken|null
@@ -41,4 +35,9 @@ interface TokenRepositoryInterface
      * @param AbstractToken $token
      */
     public function deleteToken(AbstractToken $token);
+
+    /**
+     * @return bool
+     */
+    public function tokenExists(string $token): bool;
 }

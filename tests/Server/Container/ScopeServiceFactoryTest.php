@@ -18,9 +18,6 @@
 
 namespace ZfrOAuth2Test\Server\Factory;
 
-use Doctrine\Common\Persistence\ManagerRegistry;
-use Doctrine\Common\Persistence\ObjectManager;
-use Doctrine\Common\Persistence\ObjectRepository;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
 use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
@@ -30,13 +27,12 @@ use ZfrOAuth2\Server\Service\ScopeService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Factory\ScopeServiceFactory
+ * @covers  ZfrOAuth2\Server\Container\ScopeServiceFactory
  */
 class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
         $container = $this->getMock(ContainerInterface::class);
 
         $container->expects($this->at(0))

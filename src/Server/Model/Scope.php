@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
  * A scope is associated to a token and define the permissions of the token
@@ -47,6 +47,52 @@ class Scope
     private $isDefault = false;
 
     /**
+     * Scope constructor.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * @param int         $id
+     * @param string      $name
+     * @param string|null $description
+     * @param bool        $isDefault
+     * @return Scope
+     */
+    public static function createNewScope(
+        int $id,
+        string $name,
+        string $description = null,
+        bool $isDefault = false
+    ): Scope {
+        $scope = new static();
+
+        $scope->id          = $id;
+        $scope->name        = $name;
+        $scope->description = $description;
+        $scope->isDefault   = $isDefault;
+
+        return $scope;
+    }
+
+    /**
+     * @param array $data
+     * @return
+     */
+    public static function reconstitute(array $data)
+    {
+        $scope = new static();
+
+        $scope->id          = $data['id'];
+        $scope->name        = $data['name'];
+        $scope->description = $data['description'];
+        $scope->isDefault   = $data['isDefault'];
+
+        return $scope;
+    }
+
+    /**
      * Get the scope id
      *
      * @return int|null
@@ -54,17 +100,6 @@ class Scope
     public function getId()
     {
         return $this->id;
-    }
-
-    /**
-     * Set the scope's name
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function setName(string $name)
-    {
-        $this->name = $name;
     }
 
     /**
@@ -78,17 +113,6 @@ class Scope
     }
 
     /**
-     * Set the scope's description
-     *
-     * @param  string $description
-     * @return void
-     */
-    public function setDescription(string $description)
-    {
-        $this->description = $description;
-    }
-
-    /**
      * Get the scope's description
      *
      * @return string
@@ -96,17 +120,6 @@ class Scope
     public function getDescription(): string
     {
         return $this->description;
-    }
-
-    /**
-     * Set if the scope is a default scope
-     *
-     * @param  bool $isDefault
-     * @return void
-     */
-    public function setIsDefault(bool $isDefault)
-    {
-        $this->isDefault = $isDefault;
     }
 
     /**

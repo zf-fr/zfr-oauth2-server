@@ -20,7 +20,9 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\AuthorizationCodeService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -34,14 +36,14 @@ class AuthorizationGrantFactory
      */
     public function __invoke(ContainerInterface $container): AuthorizationGrant
     {
-        /* @var \ZfrOAuth2\Server\Service\TokenService $authorizationCodeService */
-        $authorizationCodeService = $container->get(TokenService::AUTHORIZATION_CODE_SERVICE);
+        /* @var AuthorizationCodeService $authorizationCodeService */
+        $authorizationCodeService = $container->get(AuthorizationCodeService::class);
 
-        /* @var \ZfrOAuth2\Server\Service\TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
+        /* @var AccessTokenService $accessTokenService */
+        $accessTokenService = $container->get(AccessTokenService::class);
 
-        /* @var \ZfrOAuth2\Server\Service\TokenService $refreshTokenService */
-        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
+        /* @var RefreshTokenService $refreshTokenService */
+        $refreshTokenService = $container->get(RefreshTokenService::class);
 
         return new AuthorizationGrant($authorizationCodeService, $accessTokenService, $refreshTokenService);
     }

@@ -16,40 +16,40 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Authorization code entity
- *
- * An authorization code is a special token that acts as an intermediary between the client and
- * the resource owner. An authorization code can then be exchanged against an access token
+ * Refresh token model
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class AuthorizationCode extends AbstractToken
+class RefreshToken extends AbstractToken
 {
-    /**
-     * @var string
-     */
-    private $redirectUri = '';
 
     /**
-     * Set the redirect URI
+     * Generate a new RefreshToken
      *
-     * @param  string $redirectUri
-     * @return void
+     * @param int                      $ttl
+     * @param TokenOwnerInterface|null $owner
+     * @param Client|null              $client
+     * @param null                     $scopes
+     * @return RefreshToken
      */
-    public function setRedirectUri(string $redirectUri)
-    {
-        $this->redirectUri = $redirectUri;
+    public static function createNewRefreshToken(
+        int $ttl,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ): RefreshToken {
+        return static::createNew($ttl, $owner, $client, $scopes);
     }
 
     /**
-     * @return string
+     * {@inheritDoc}
      */
-    public function getRedirectUri(): string
+    public function isExpired(): bool
     {
-        return $this->redirectUri;
+        return $this->getExpiresAt() !== null && parent::isExpired();
     }
 }

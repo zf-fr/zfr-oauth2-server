@@ -20,11 +20,10 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\AccessTokenServiceFactory;
-use ZfrOAuth2\Server\Entity\AccessToken;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -57,6 +56,6 @@ class AccessTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AccessTokenServiceFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(TokenService::class, $service);
+        $this->assertInstanceOf(AccessTokenService::class, $service);
     }
 }

@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
-use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 use ZfrOAuth2\Server\Service\ClientService;
 
@@ -47,7 +47,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetClient()
     {
-        $client = new Client();
+        $client = new Client('client_id', 'name');
 
         $this->clientRepository->expects($this->once())
                                ->method('findById')
@@ -57,9 +57,12 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
+    /**
+     * @todo move (part of) test to Model/ClientTest
+     */
     public function testRegisterClient()
     {
-        $client = new Client();
+        $client = new Client('client_id', 'name');
 
         $this->clientRepository->expects($this->once())
                             ->method('save')
@@ -71,8 +74,8 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(60, strlen($client->getSecret()));
         $this->assertEquals(40, strlen($secret));
 
-        $this->assertFalse($this->clientService->authenticate($client, 'azerty'));
-        $this->assertTrue($this->clientService->authenticate($client, $secret));
-        $this->assertFalse($this->clientService->authenticate($client, $client->getSecret()));
+        $this->assertFalse($client->authenticate('azerty'));
+        $this->assertTrue($client->authenticate($secret));
+        $this->assertFalse($client->authenticate($client->getSecret()));
     }
 }

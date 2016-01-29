@@ -20,11 +20,12 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\AbstractTokenService;
 
 /**
  * Implementation of the client credentials grant
@@ -43,14 +44,14 @@ class ClientCredentialsGrant extends AbstractGrant
     /**
      * Access token service (used to create access token)
      *
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
-     * @param TokenService $accessTokenService
+     * @param AccessTokenService $accessTokenService
      */
-    public function __construct(TokenService $accessTokenService)
+    public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }
@@ -78,10 +79,9 @@ class ClientCredentialsGrant extends AbstractGrant
 
         // Everything is okey, we can start tokens generation!
         $scope       = $postParams['scope'] ?? null;
-        $accessToken = new AccessToken();
 
-        $this->populateToken($accessToken, $client, $owner, $scope);
-        $accessToken = $this->accessTokenService->createToken($accessToken);
+        /** @var AccessToken $accessToken */
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scope);
 
         return $this->prepareTokenResponse($accessToken);
     }

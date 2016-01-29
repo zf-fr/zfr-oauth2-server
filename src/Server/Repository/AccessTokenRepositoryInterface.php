@@ -18,9 +18,16 @@
 
 namespace ZfrOAuth2\Server\Repository;
 
+use ZfrOAuth2\Server\Model\AccessToken;
+
 /**
  * Interface AccessTokenRepositoryInterface
  */
 interface AccessTokenRepositoryInterface extends TokenRepositoryInterface
 {
+    /**
+     * @param AccessToken $token
+     * @return AccessToken
+     */
+    public function save(AccessToken $token): AccessToken;
 }

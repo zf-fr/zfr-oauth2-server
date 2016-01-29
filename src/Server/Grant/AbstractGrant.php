@@ -20,11 +20,11 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Zend\Diactoros\Response;
-use ZfrOAuth2\Server\Entity\AbstractToken;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AbstractToken;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -32,34 +32,6 @@ use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
  */
 abstract class AbstractGrant implements GrantInterface
 {
-    /**
-     * Populate a token
-     *
-     * The actual token (sensitive part) is generated in the token service
-     *
-     * @param  AbstractToken            $token
-     * @param  Client|null              $client
-     * @param  TokenOwnerInterface|null $owner
-     * @param  array|string             $scopes
-     * @return void
-     */
-    protected function populateToken(
-        AbstractToken $token,
-        Client $client = null,
-        TokenOwnerInterface $owner = null,
-        $scopes = []
-    ) {
-        if (null !== $client) {
-            $token->setClient($client);
-        }
-
-        if (null !== $owner) {
-            $token->setOwner($owner);
-        }
-
-        $token->setScopes($scopes ?: []);
-    }
-
     /**
      * {@inheritDoc}
      */

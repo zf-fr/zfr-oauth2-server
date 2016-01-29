@@ -21,7 +21,8 @@ namespace ZfrOAuth2\Server\Container;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -41,11 +42,11 @@ class PasswordGrantFactory
         $ownerCallable = $options->getOwnerCallable();
         $ownerCallable = is_string($ownerCallable) ? $container->get($ownerCallable) : $ownerCallable;
 
-        /* @var TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
+        /* @var AccessTokenService $accessTokenService */
+        $accessTokenService = $container->get(AccessTokenService::class);
 
-        /* @var TokenService $refreshTokenService */
-        $refreshTokenService = $container->get(TokenService::REFRESH_TOKEN_SERVICE);
+        /* @var RefreshTokenService $refreshTokenService */
+        $refreshTokenService = $container->get(RefreshTokenService::class);
 
         return new PasswordGrant($accessTokenService, $refreshTokenService, $ownerCallable);
     }

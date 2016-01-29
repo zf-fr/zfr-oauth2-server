@@ -16,9 +16,10 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 use DateTime;
+use DateTimeImmutable;
 
 /**
  * Provide basic functionality for both access tokens, refresh tokens and authorization codes
@@ -39,32 +40,84 @@ abstract class AbstractToken
     /**
      * @var Client
      */
-    protected $client;
+    private $client;
 
     /**
      * @var TokenOwnerInterface
      */
-    protected $owner;
+    private $owner;
 
     /**
-     * @var DateTime
+     * @var DateTimeImmutable
      */
-    protected $expiresAt;
+    private $expiresAt;
 
     /**
      * @var array
      */
-    protected $scopes = [];
+    private $scopes = [];
 
     /**
-     * Set the token (either access or refresh token)
-     *
-     * @param  string $token
-     * @return void
+     * AbstractToken constructor.
      */
-    public function setToken($token)
+    private function __construct()
     {
-        $this->token = (string) $token;
+    }
+
+    /**
+     * @param int                          $ttl
+     * @param TokenOwnerInterface|null     $owner
+     * @param Client|null                  $client
+     * @param string|string[]|Scope[]|null $scopes
+     * @return AbstractToken
+     */
+    protected static function createNew(
+        int $ttl,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ): AbstractToken {
+
+        if (isset($scopes) && $scopes instanceof Scope) {
+            $scopes = $scopes->getName();
+        }
+
+        if (is_string($scopes)) {
+            $scopes = explode(' ', $scopes);
+        }
+
+        if (is_array($scopes)) {
+            foreach ($scopes as &$scope) {
+                $scope = $scope instanceof Scope ? $scope->getName() : (string) $scope;
+            }
+        }
+
+        $token = new static();
+
+        $token->token     = bin2hex(random_bytes(20));
+        $token->owner     = $owner;
+        $token->client    = $client;
+        $token->scopes    = $scopes ?? [];
+        $token->expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds") : null;
+
+        return $token;
+    }
+
+    /**
+     * @param array $data
+     * @return AbstractToken
+     */
+    public static function reconstitute(array $data)
+    {
+        $token = new static();
+
+        $token->token     = $data['token'];
+        $token->expiresAt = $data['expiresAt'];
+        $token->owner     = $data['owner'];
+        $token->client    = $data['client'];
+        $token->scopes    = (array) $data['scopes'];
+
+        return $token;
     }
 
     /**
@@ -78,17 +131,6 @@ abstract class AbstractToken
     }
 
     /**
-     * Set the client that issued this token
-     *
-     * @param  Client $client
-     * @return void
-     */
-    public function setClient(Client $client)
-    {
-        $this->client = $client;
-    }
-
-    /**
      * Get the client that issued this token
      *
      * @return Client|null
@@ -99,45 +141,23 @@ abstract class AbstractToken
     }
 
     /**
-     * Set the token owner
-     *
-     * @param  TokenOwnerInterface $owner
-     * @return void
-     */
-    public function setOwner(TokenOwnerInterface $owner)
-    {
-        $this->owner = $owner;
-    }
-
-    /**
      * Get the token owner
      *
-     * @return TokenOwnerInterface
+     * @return TokenOwnerInterface|null
      */
-    public function getOwner(): TokenOwnerInterface
+    public function getOwner()
     {
         return $this->owner;
     }
 
     /**
-     * Set when this token should expire
-     *
-     * @param  DateTime $expiresAt
-     * @return void
-     */
-    public function setExpiresAt(DateTime $expiresAt)
-    {
-        $this->expiresAt = clone $expiresAt;
-    }
-
-    /**
      * Get when this token should expire
      *
-     * @return DateTime
+     * @return DateTimeImmutable|null
      */
-    public function getExpiresAt(): DateTime
+    public function getExpiresAt()
     {
-        return clone $this->expiresAt;
+        return $this->expiresAt ? clone $this->expiresAt : null;
     }
 
     /**
@@ -158,25 +178,6 @@ abstract class AbstractToken
     public function isExpired(): bool
     {
         return $this->expiresAt < new DateTime('now');
-    }
-
-    /**
-     * Set the scopes of this token
-     *
-     * @param  array|string|Scope[] $scopes
-     * @return void
-     */
-    public function setScopes($scopes)
-    {
-        if (is_string($scopes)) {
-            $scopes = explode(' ', $scopes);
-        } else {
-            foreach ($scopes as &$scope) {
-                $scope = $scope instanceof Scope ? $scope->getName() : (string) $scope;
-            }
-        }
-
-        $this->scopes = $scopes;
     }
 
     /**

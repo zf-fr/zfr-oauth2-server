@@ -21,12 +21,14 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ClientService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\TokenService;
 
 /**
@@ -57,26 +59,26 @@ class AuthorizationServer implements AuthorizationServerInterface
     private $responseTypes = [];
 
     /**
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
-     * @var TokenService
+     * @var RefreshTokenService
      */
     private $refreshTokenService;
 
     /**
-     * @param ClientService    $clientService
-     * @param GrantInterface[] $grants
-     * @param TokenService     $accessTokenService
-     * @param TokenService     $refreshTokenService
+     * @param ClientService       $clientService
+     * @param GrantInterface[]    $grants
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
      */
     public function __construct(
         ClientService $clientService,
         array $grants,
-        TokenService $accessTokenService,
-        TokenService $refreshTokenService
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService
     ) {
         $this->clientService       = $clientService;
         $this->accessTokenService  = $accessTokenService;
@@ -312,7 +314,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || (!$allowPublicClients && !$this->clientService->authenticate($client, $secret))) {
+        if (null === $client || (!$allowPublicClients && !$client->authenticate($secret))) {
             throw OAuth2Exception::invalidClient('Client authentication failed');
         }
 

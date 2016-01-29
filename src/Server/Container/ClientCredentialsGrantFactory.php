@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -34,8 +34,8 @@ class ClientCredentialsGrantFactory
      */
     public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
-        /* @var TokenService $accessTokenService */
-        $accessTokenService = $container->get(TokenService::ACCESS_TOKEN_SERVICE);
+        /* @var AccessTokenService $accessTokenService */
+        $accessTokenService = $container->get(AccessTokenService::class);
 
         return new ClientCredentialsGrant($accessTokenService);
     }

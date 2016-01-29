@@ -18,58 +18,41 @@
 
 namespace ZfrOAuth2\Server\Service;
 
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\Scope;
-use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
- * Scope service
+ * RefreshTokenService
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ScopeService
+class RefreshTokenService extends AbstractTokenService
 {
     /**
-     * @var ScopeRepositoryInterface
-     */
-    private $scopeRepository;
-
-    /**
-     * @param ScopeRepositoryInterface $scopeRepository
-     */
-    public function __construct(ScopeRepositoryInterface $scopeRepository)
-    {
-        $this->scopeRepository = $scopeRepository;
-    }
-
-    /**
-     * Create a new scope
+     * Create a new token (and generate the token)
      *
-     * @param  Scope $scope
-     * @return Scope
+     * @param TokenOwnerInterface     $owner
+     * @param Client                  $client
+     * @param string|string[]|Scope[] $scopes
+     * @return RefreshToken
+     * @throws OAuth2Exception
      */
-    public function createScope(Scope $scope): Scope
+    public function createToken($owner, $client, $scopes): RefreshToken
     {
-        return $this->scopeRepository->save($scope);
-    }
+        if (empty($scopes)) {
+            $scopes = $this->scopeService->getDefaultScopes();
+        } else {
+            $this->validateTokenScopes($scopes);
+        }
 
-    /**
-     * Get all the scopes
-     *
-     * @return Scope[]
-     */
-    public function getAll(): array
-    {
-        return $this->scopeRepository->findAllScopes();
-    }
+        do {
+            $token = RefreshToken::createNewRefreshToken($this->tokenTTL, $owner, $client, $scopes);
+        } while ($this->tokenRepository->tokenExists($token->getToken()));
 
-    /**
-     * Get all the default scopes
-     *
-     * @return Scope[]
-     */
-    public function getDefaultScopes(): array
-    {
-        return $this->scopeRepository->findDefaultScopes();
+        return $this->tokenRepository->save($token);
     }
 }

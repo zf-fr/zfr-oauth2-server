@@ -16,10 +16,10 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Client entity
+ * Client model
  *
  * A client is typically an application (either a third-party or your own application) that integrates with the
  * provider (in this case, you are the provider)
@@ -42,17 +42,64 @@ class Client
     /**
      * @var string
      */
-    private $secret = '';
+    private $name = '';
 
     /**
      * @var string
      */
-    private $name = '';
+    private $secret = '';
 
     /**
      * @var array
      */
     private $redirectUris = [];
+
+    /**
+     * Client constructor.
+     *
+     * @param string               $id           Client id
+     * @param string               $name         Clients name
+     * @param string|null          $secret       Clients secret
+     * @param string|string[]|null $redirectUris Client allowed redirect direct url's
+     * @return Client
+     */
+    public static function createNewClient(string $id, string $name, string $secret = null, $redirectUris = null)
+    {
+        if (isset($redirectUris) && is_string($redirectUris)) {
+            $redirectUris = explode(' ', $redirectUris);
+        }
+
+        if (isset($redirectUris) && is_array($redirectUris)) {
+            foreach ($redirectUris as &$redirectUri) {
+                $redirectUri = trim((string) $redirectUri);
+            }
+        }
+
+        $client = new static();
+
+        $client->id           = $id;
+        $client->name         = $name;
+        $client->secret       = $secret ?? '';
+        $client->redirectUris = $redirectUris ?? [];
+
+        return $client;
+    }
+
+    /**
+     * @param array $data
+     * @return Client
+     */
+    public static function reconstitute(array $data)
+    {
+        $client = new static();
+
+        $client->id           = $data['id'];
+        $client->name         = $data['name'];
+        $client->secret       = $data['secret'];
+        $client->redirectUris = $data['redirectUris'];
+
+        return $client;
+    }
 
     /**
      * Get the client id
@@ -64,37 +111,6 @@ class Client
         return $this->id;
     }
 
-    /**
-     * Set the client secret
-     *
-     * @param  string $secret
-     * @return void
-     */
-    public function setSecret(string $secret)
-    {
-        $this->secret = $secret;
-    }
-
-    /**
-     * Get the client secret
-     *
-     * @return string
-     */
-    public function getSecret(): string
-    {
-        return $this->secret;
-    }
-
-    /**
-     * Set the client name
-     *
-     * @param  string $name
-     * @return void
-     */
-    public function setName(string$name)
-    {
-        $this->name = $name;
-    }
 
     /**
      * Get the client name
@@ -107,24 +123,13 @@ class Client
     }
 
     /**
-     * Set the redirect URIs
+     * Get the client secret
      *
-     * You can either set a string of comma separated string, or an array
-     *
-     * @param  array|string $redirectUris
-     * @return void
+     * @return string
      */
-    public function setRedirectUris($redirectUris)
+    public function getSecret(): string
     {
-        if (is_string($redirectUris)) {
-            $redirectUris = explode(',', str_replace(' ', '', $redirectUris));
-        } else {
-            foreach ($redirectUris as &$redirectUri) {
-                $redirectUri = (string) $redirectUri;
-            }
-        }
-
-        $this->redirectUris = $redirectUris;
+        return $this->secret;
     }
 
     /**
@@ -156,5 +161,29 @@ class Client
     public function isPublic(): bool
     {
         return empty($this->secret);
+    }
+
+    /**
+     * Authenticate the client
+     *
+     * @param  string $secret
+     * @return bool True if properly authenticated, false otherwise
+     */
+    public function authenticate(string $secret): bool
+    {
+        return password_verify($secret, $this->getSecret());
+    }
+
+    /**
+     * Creates a strong, unique secret and crypt it on the model
+     *
+     * @return string Secret not encrypted
+     */
+    public function generateSecret()
+    {
+        $secret       = bin2hex(random_bytes(20));
+        $this->secret = password_hash($secret, PASSWORD_DEFAULT);
+
+        return $secret;
     }
 }

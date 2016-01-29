@@ -20,12 +20,11 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * Implementation of the password grant model
@@ -47,14 +46,14 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     /**
      * Access token service (used to create access token)
      *
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
      *
-     * @var TokenService
+     * @var RefreshTokenService
      */
     private $refreshTokenService;
 
@@ -62,19 +61,22 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      * Callable that is used to verify the username and password
      *
      * This callable MUST return an object that implement the TokenOwnerInterface, or
-     * null if no identity can be matched with the given credentials
+     * null if no idmodel can be matched with the given credentials
      *
      * @var callable
      */
     private $callback;
 
     /**
-     * @param TokenService $accessTokenService
-     * @param TokenService $refreshTokenService
-     * @param callable     $callback
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
+     * @param callable            $callback
      */
-    public function __construct(TokenService $accessTokenService, TokenService $refreshTokenService, callable $callback)
-    {
+    public function __construct(
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService,
+        callable $callback
+    ) {
         $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
         $this->callback            = $callback;
@@ -119,19 +121,13 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         }
 
         // Everything is okay, we can start tokens generation!
-        $accessToken = new AccessToken();
-
-        $this->populateToken($accessToken, $client, $owner, $scope);
-        $accessToken = $this->accessTokenService->createToken($accessToken);
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scope);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $refreshToken = new RefreshToken();
-
-            $this->populateToken($refreshToken, $client, $owner, $scope);
-            $refreshToken = $this->refreshTokenService->createToken($refreshToken);
+            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scope);
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);

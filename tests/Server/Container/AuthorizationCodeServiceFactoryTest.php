@@ -20,11 +20,10 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory;
-use ZfrOAuth2\Server\Entity\AuthorizationCode;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
+use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -57,6 +56,6 @@ class AuthorizationCodeServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AuthorizationCodeServiceFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(TokenService::class, $service);
+        $this->assertInstanceOf(AuthorizationCodeService::class, $service);
     }
 }

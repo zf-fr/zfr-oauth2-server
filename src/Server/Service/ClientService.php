@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use ZfrOAuth2\Server\Entity\Client;
+use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 
 /**
@@ -53,14 +53,11 @@ class ClientService
      * in the client object
      *
      * @param  Client $client
-     * @return array
+     * @return array [$client, $secret]
      */
     public function registerClient(Client $client): array
     {
-        // Finally, we must generate a strong, unique secret, and crypt it before storing it
-        $secret = bin2hex(random_bytes(20));
-        $client->setSecret(password_hash($secret, PASSWORD_DEFAULT));
-
+        $secret = $client->generateSecret();
         $client = $this->clientRepository->save($client);
 
         return [$client, $secret];
@@ -75,17 +72,5 @@ class ClientService
     public function getClient(string $id)
     {
         return $this->clientRepository->findById($id);
-    }
-
-    /**
-     * Authenticate the client
-     *
-     * @param  Client $client
-     * @param  string $secret
-     * @return bool True if properly authenticated, false otherwise
-     */
-    public function authenticate(Client $client, string $secret): bool
-    {
-        return password_verify($secret, $client->getSecret());
     }
 }

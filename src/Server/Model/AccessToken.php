@@ -16,23 +16,39 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2\Server\Model;
 
 /**
- * Interface for token owner
- *
- * A token owner is someone (most likely a user) that contains the actual data. It's the entity that holds
- * the data that the client is asking permission to see
+ * Access token model
  *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-interface TokenOwnerInterface
+class AccessToken extends AbstractToken
 {
     /**
-     * Get the id of the token owner
+     * Generate a new AccessToken
      *
-     * @return mixed
+     * @param int                          $ttl
+     * @param TokenOwnerInterface|null     $owner
+     * @param Client|null                  $client
+     * @param string|string[]|Scope[]|null $scopes
+     * @return AccessToken
      */
-    public function getTokenOwnerId();
+    public static function createNewAccessToken(
+        int $ttl,
+        TokenOwnerInterface $owner = null,
+        Client $client = null,
+        $scopes = null
+    ): AccessToken {
+        return static::createNew($ttl, $owner, $client, $scopes);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function isExpired(): bool
+    {
+        return $this->getExpiresAt() !== null && parent::isExpired();
+    }
 }

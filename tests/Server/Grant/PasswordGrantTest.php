@@ -19,17 +19,17 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
-use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Entity\AccessToken;
-use ZfrOAuth2\Server\Entity\Client;
-use ZfrOAuth2\Server\Entity\RefreshToken;
-use ZfrOAuth2\Server\Entity\TokenOwnerInterface;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -39,12 +39,12 @@ use ZfrOAuth2\Server\Service\TokenService;
 class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $accessTokenService;
 
     /**
-     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var RefreshTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $refreshTokenService;
 
@@ -60,8 +60,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->getMock(TokenService::class, [], [], '', false);
-        $this->refreshTokenService = $this->getMock(TokenService::class, [], [], '', false);
+        $this->accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $this->refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
 
         $callable    = function(){};
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
@@ -70,7 +70,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), new Client());
+        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
@@ -79,7 +79,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
@@ -98,7 +98,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
 
-        $this->grant->createTokenResponse($request, new Client());
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
 
     public function hasRefreshGrant()
@@ -124,8 +124,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
             return $owner;
         };
 
-        $accessToken = $this->getValidAccessToken();
-        $accessToken->setOwner($owner);
+        $accessToken = $this->getValidAccessToken($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
@@ -142,7 +141,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, new Client());
+        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
 
         $body = json_decode($response->getBody(), true);
 
@@ -160,32 +159,34 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     /**
      * @return RefreshToken
      */
-    private function getValidRefreshToken()
+    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $refreshToken = new RefreshToken();
-        $refreshToken->setToken('azerty_refresh');
-        $refreshToken->setScopes('read');
-        $validDate    = new DateTime();
-        $validDate->add(new DateInterval('P1D'));
+        $validDate = (new \DateTimeImmutable())->add(new DateInterval('P1D'));
+        $token     = RefreshToken::reconstitute([
+            'token'     => 'azerty_refresh',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
+            'expiresAt' => $validDate
+        ]);
 
-        $refreshToken->setExpiresAt($validDate);
-
-        return $refreshToken;
+        return $token;
     }
 
     /**
      * @return AccessToken
      */
-    private function getValidAccessToken()
+    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $accessToken = new AccessToken();
-        $accessToken->setToken('azerty_access');
-        $accessToken->setScopes('read');
-        $validDate   = new DateTime();
-        $validDate->add(new DateInterval('PT1H'));
+        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $token     = AccessToken::reconstitute([
+            'token'     => 'azerty_access',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
+            'expiresAt' => $validDate
+        ]);
 
-        $accessToken->setExpiresAt($validDate);
-
-        return $accessToken;
+        return $token;
     }
 }

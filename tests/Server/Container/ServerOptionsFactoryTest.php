@@ -16,21 +16,32 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Entity;
+namespace ZfrOAuth2Test\Server\Factory;
+
+use Interop\Container\ContainerInterface;
+use ZfrOAuth2\Server\Container\ServerOptionsFactory;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
- * Access token entity
- *
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
+ *
+ * @covers  ZfrOAuth2\Server\Container\ServerOptionsFactory
  */
-class AccessToken extends AbstractToken
+class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * {@inheritDoc}
-     */
-    public function isExpired(): bool
+    public function testCanCreateFromFactory()
     {
-        return parent::isExpired() && $this->expiresAt !== null;
+        $container = $this->getMock(ContainerInterface::class);
+
+        $container->expects($this->at(0))
+            ->method('get')
+            ->with('config')
+            ->willReturn(['zfr_oauth2_server' => []]);
+
+        $factory = new ServerOptionsFactory();
+        $service = $factory($container);
+
+        $this->assertInstanceOf(ServerOptions::class, $service);
     }
 }
