@@ -92,8 +92,7 @@ abstract class AbstractToken
             }
         }
 
-        $class = get_called_class();
-        $token = new $class();
+        $token = new static();
 
         $token->token     = bin2hex(random_bytes(20));
         $token->owner     = $owner;
@@ -110,8 +109,7 @@ abstract class AbstractToken
      */
     public static function reconstitute(array $data)
     {
-        $class = get_called_class();
-        $token = new $class();
+        $token = new static();
 
         $token->token     = $data['token'];
         $token->expiresAt = $data['expiresAt'];

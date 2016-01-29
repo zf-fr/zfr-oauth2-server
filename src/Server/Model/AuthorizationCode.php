@@ -42,7 +42,7 @@ class AuthorizationCode extends AbstractToken
      * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
      * @param string                       $redirectUri
-     * @return AbstractToken
+     * @return AuthorizationCode
      */
     public static function createNewAuthorizationCode(
         int $ttl,
@@ -50,7 +50,7 @@ class AuthorizationCode extends AbstractToken
         TokenOwnerInterface $owner = null,
         Client $client = null,
         $scopes = null
-    ): AbstractToken {
+    ): AuthorizationCode {
         $token = static::createNew($ttl, $owner, $client, $scopes);
 
         $token->redirectUri = $redirectUri ?? '';
@@ -62,7 +62,8 @@ class AuthorizationCode extends AbstractToken
      * @param array $data
      * @return AbstractToken
      */
-    public static function reconstitute(array $data) {
+    public static function reconstitute(array $data)
+    {
         $token = parent::reconstitute($data);
 
         $token->redirectUri = $data['redirectUri'];

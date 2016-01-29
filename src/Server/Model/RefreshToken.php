@@ -34,7 +34,7 @@ class RefreshToken extends AbstractToken
      * @param TokenOwnerInterface|null $owner
      * @param Client|null              $client
      * @param null                     $scopes
-     * @return AccessToken
+     * @return RefreshToken
      */
     public static function createNewRefreshToken(
         int $ttl,

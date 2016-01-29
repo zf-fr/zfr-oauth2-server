@@ -23,7 +23,6 @@ use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -33,9 +32,9 @@ class AccessTokenServiceFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return TokenService
+     * @return AccessTokenService
      */
-    public function __invoke(ContainerInterface $container): TokenService
+    public function __invoke(ContainerInterface $container): AccessTokenService
     {
         /** @var ServerOptions $serverOptions */
         $serverOptions = $container->get(ServerOptions::class);

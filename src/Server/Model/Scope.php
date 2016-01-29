@@ -66,7 +66,7 @@ class Scope
         string $description = null,
         bool $isDefault = false
     ): Scope {
-        $scope = new self();
+        $scope = new static();
 
         $scope->id          = $id;
         $scope->name        = $name;
@@ -82,7 +82,7 @@ class Scope
      */
     public static function reconstitute(array $data)
     {
-        $scope = new self();
+        $scope = new static();
 
         $scope->id          = $data['id'];
         $scope->name        = $data['name'];

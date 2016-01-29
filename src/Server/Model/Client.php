@@ -61,6 +61,7 @@ class Client
      * @param string               $name         Clients name
      * @param string|null          $secret       Clients secret
      * @param string|string[]|null $redirectUris Client allowed redirect direct url's
+     * @return Client
      */
     public static function createNewClient(string $id, string $name, string $secret = null, $redirectUris = null)
     {
@@ -74,7 +75,7 @@ class Client
             }
         }
 
-        $client = new self();
+        $client = new static();
 
         $client->id           = $id;
         $client->name         = $name;
@@ -90,7 +91,7 @@ class Client
      */
     public static function reconstitute(array $data)
     {
-        $client = new self();
+        $client = new static();
 
         $client->id           = $data['id'];
         $client->name         = $data['name'];
