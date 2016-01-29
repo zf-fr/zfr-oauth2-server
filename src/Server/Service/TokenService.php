@@ -18,8 +18,6 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use DateTime;
-use ZfrOAuth2\Server\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
@@ -115,7 +113,7 @@ abstract class TokenService
         $registeredScopes = $this->scopeService->getAll();
 
         foreach ($registeredScopes as &$registeredScope) {
-            $registeredScope = $registeredScope->getName();
+            $registeredScope = is_string($registeredScope) ? $registeredScope : $registeredScope->getName();
         }
 
         $diff = array_diff($scopes, $registeredScopes);
