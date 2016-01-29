@@ -30,7 +30,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class RefreshTokenService extends TokenService
+class RefreshTokenService extends AbstractTokenService
 {
     /**
      * Create a new token (and generate the token)

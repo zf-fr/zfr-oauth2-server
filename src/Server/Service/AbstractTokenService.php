@@ -28,7 +28,7 @@ use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-abstract class TokenService
+abstract class AbstractTokenService
 {
     /**
      * @var TokenRepositoryInterface

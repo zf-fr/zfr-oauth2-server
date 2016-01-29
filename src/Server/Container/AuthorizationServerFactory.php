@@ -24,7 +24,6 @@ use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>

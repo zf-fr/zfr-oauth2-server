@@ -24,7 +24,7 @@ use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AbstractTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>

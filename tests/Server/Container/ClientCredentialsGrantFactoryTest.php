@@ -22,7 +22,7 @@ use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AbstractTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>

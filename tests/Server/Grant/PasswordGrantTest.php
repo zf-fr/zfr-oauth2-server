@@ -19,7 +19,6 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
-use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Model\AccessToken;
@@ -31,7 +30,6 @@ use ZfrOAuth2\Server\Grant\PasswordGrant;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -41,12 +39,12 @@ use ZfrOAuth2\Server\Service\TokenService;
 class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $accessTokenService;
 
     /**
-     * @var TokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var RefreshTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
     protected $refreshTokenService;
 

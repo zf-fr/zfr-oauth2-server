@@ -21,7 +21,7 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
-use ZfrOAuth2\Server\Service\TokenService;
+use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
  * The resource server main role is to validate the access token and that its scope covers the
@@ -36,14 +36,14 @@ use ZfrOAuth2\Server\Service\TokenService;
 class ResourceServer implements ResourceServerInterface
 {
     /**
-     * @var TokenService
+     * @var AccessTokenService
      */
     private $accessTokenService;
 
     /**
-     * @param TokenService $accessTokenService
+     * @param AccessTokenService $accessTokenService
      */
-    public function __construct(TokenService $accessTokenService)
+    public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }
