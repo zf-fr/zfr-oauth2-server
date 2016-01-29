@@ -75,7 +75,6 @@ class AuthorizationCode extends AbstractToken
      */
     public function getRedirectUri(): string
     {
-
         return $this->redirectUri;
     }
 }
