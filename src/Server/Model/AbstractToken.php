@@ -30,7 +30,7 @@ use DateTimeImmutable;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-abstract class AbstractToken implements ReconsituteInterface
+abstract class AbstractToken
 {
     /**
      * @var string

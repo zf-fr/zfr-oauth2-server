@@ -24,7 +24,7 @@ namespace ZfrOAuth2\Server\Model;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Scope implements ReconsituteInterface
+class Scope
 {
     /**
      * @var int

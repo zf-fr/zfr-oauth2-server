@@ -32,7 +32,7 @@ namespace ZfrOAuth2\Server\Model;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class Client implements ReconsituteInterface
+class Client
 {
     /**
      * @var string
