@@ -32,12 +32,12 @@
   },
   "autoload": {
     "psr-4": {
-      "ZfrOAuth2\\": "src/"
+      "ZfrOAuth2\\Server\\": "src/"
     }
   },
   "autoload-dev": {
     "psr-4": {
-      "ZfrOAuth2Test\\": "tests/"
+      "ZfrOAuth2Test\\Server\\": "tests/src/"
     }
   }
 }
