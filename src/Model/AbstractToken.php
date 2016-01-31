@@ -50,7 +50,7 @@ abstract class AbstractToken
     /**
      * @var DateTimeImmutable
      */
-    private $expiresAt;
+    protected $expiresAt;
 
     /**
      * @var array

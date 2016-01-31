@@ -50,6 +50,6 @@ class RefreshToken extends AbstractToken
      */
     public function isExpired(): bool
     {
-        return $this->getExpiresAt() !== null && parent::isExpired();
+        return null !== $this->expiresAt && parent::isExpired();
     }
 }
