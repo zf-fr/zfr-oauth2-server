@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Factory;
+namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;

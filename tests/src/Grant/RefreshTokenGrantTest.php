@@ -88,7 +88,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                   ->with('123')
                                   ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
@@ -105,7 +105,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                    ->with('123')
                                    ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
     public function rotateRefreshToken()
@@ -146,7 +146,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         $this->grant->setRotateRefreshTokens($rotateRefreshToken);
-        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $response = $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
 
         $body = json_decode($response->getBody(), true);
 

@@ -65,7 +65,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
             [
                 'token'     => 'token',
                 'owner'     => $this->getMock(TokenOwnerInterface::class),
-                'client'    => $this->getMock(Client::class),
+                'client'    => $this->getMock(Client::class, [], [], '', false),
                 'expiresAt' => new \DateTimeImmutable(),
                 'scopes'    => [],
             ]
@@ -95,7 +95,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
             [
                 'token'     => 'Token',
                 'owner'     => $this->getMock(TokenOwnerInterface::class),
-                'client'    => $this->getMock(Client::class),
+                'client'    => $this->getMock(Client::class, [], [], '', false),
                 'expiresAt' => new \DateTimeImmutable(),
                 'scopes'    => [],
             ]
@@ -149,7 +149,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
         }
 
         $owner  = $this->getMock(TokenOwnerInterface::class);
-        $client = $this->getMock(Client::class);
+        $client = $this->getMock(Client::class, [], [], '', false);
 
         if (empty($tokenScope)) {
             $this->scopeService->expects($this->once())
@@ -205,7 +205,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
             ->will($this->returnArgument(0));
 
         $owner  = $this->getMock(TokenOwnerInterface::class);
-        $client = $this->getMock(Client::class);
+        $client = $this->getMock(Client::class, [], [], '', false);
 
         $token = $this->tokenService->createToken('http://www.example.com', $owner, $client, []);
         $this->assertEquals(40, strlen($token->getToken()));

@@ -47,7 +47,13 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function testCanGetClient()
     {
-        $client = new Client('client_id', 'name');
+        $client = Client::reconstitute([
+                'id'           => 'client_id',
+                'name'         => 'name',
+                'secret'       => '',
+                'redirectUris' => [],
+            ]
+        );
 
         $this->clientRepository->expects($this->once())
                                ->method('findById')
@@ -57,25 +63,19 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
-    /**
-     * @todo move (part of) test to Model/ClientTest
-     */
     public function testRegisterClient()
     {
-        $client = new Client('client_id', 'name');
+        $this->clientRepository->expects($this->once())
+                            ->method('idExists')
+                            ->willReturn(false);
 
         $this->clientRepository->expects($this->once())
-                            ->method('save')
-                            ->with($client)
-                            ->willReturn($client);
+            ->method('save')
+            ->will($this->returnArgument(0));
 
-        list($client, $secret) = $this->clientService->registerClient($client);
+        list($client, $secret) = $this->clientService->registerClient('name', ['http://www.example.com']);
 
         $this->assertEquals(60, strlen($client->getSecret()));
         $this->assertEquals(40, strlen($secret));
-
-        $this->assertFalse($client->authenticate('azerty'));
-        $this->assertTrue($client->authenticate($secret));
-        $this->assertFalse($client->authenticate($client->getSecret()));
     }
 }

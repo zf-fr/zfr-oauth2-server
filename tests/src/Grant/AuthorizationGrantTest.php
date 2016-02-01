@@ -19,7 +19,6 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
-use DateTime;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -90,7 +89,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
-        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name', null, ['http://www.example.com']));
+        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', ['http://www.example.com']));
 
         $location = $response->getHeaderLine('Location');
         $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
@@ -111,7 +110,16 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
-        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name', null, ['http://www.example.com','http://www.custom-example.com']));
+        $client = Client::reconstitute(
+            [
+                'id'           => 'id',
+                'name'         => 'name',
+                'secret'       => '',
+                'redirectUris' => ['http://www.example.com','http://www.custom-example.com']
+            ]
+        );
+
+        $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaderLine('Location');
         $this->assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
@@ -211,7 +219,14 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
                                                                                'client_id' => 'client_123'
         ]);
 
-        $client = Client::createNewClient('client_123', 'name');
+        $client = Client::reconstitute(
+            [
+                'id'           => 'client_123',
+                'name'         => 'name',
+                'secret'       => '',
+                'redirectUris' => []
+            ]
+        );
         $token = $this->getValidAuthorizationCode(null, null, $client);
 
         $this->authorizationCodeService->expects($this->once())

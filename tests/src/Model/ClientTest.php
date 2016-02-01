@@ -33,12 +33,13 @@ class ClientTest extends \PHPUnit_Framework_TestCase
      */
     public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris)
     {
-        /** @var Client $refreshToken */
-        $client = Client::createNewClient($id, $name, $secret, $redirectUris);
+        /** @var Client $client */
+        $client = Client::createNewClient($name, $redirectUris);
 
-        $this->assertEquals($id, $client->getId());
         $this->assertEquals($name, $client->getName());
-        $this->assertEquals($secret, $client->getSecret());
+        $this->assertEmpty($client->getSecret());
+        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+                $client->getId(), $matches));
 
         if (null !== $redirectUris) {
             if (is_string($redirectUris)) {
@@ -98,39 +99,52 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         return [
             [
-                ['id' => 1, 'name' => 'name', 'secret' => 'secret', 'redirectUris' => ['http://www.example.com']],
-                ['id' => 1, 'name' => 'name', 'secret' => '', 'redirectUris' => []],
+                [
+                    'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                    'name'         => 'name',
+                    'secret'       => 'secret',
+                    'redirectUris' => ['http://www.example.com']
+                ],
+                [
+                    'id'           => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
+                    'name'         => 'name',
+                    'secret'       => '',
+                    'redirectUris' => []
+                ],
             ],
         ];
     }
 
     public function testGetters()
     {
-        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('name', ['http://www.example.com']);
 
-        $this->assertEquals('id', $client->getId());
-        $this->assertEquals('secret', $client->getSecret());
+        $this->assertEmpty($client->getSecret());
+        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+                $client->getId(), $matches));
         $this->assertEquals('name', $client->getName());
         $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
     }
 
     public function testCanCheckPublicClient()
     {
-        $client = Client::createNewClient('id', 'name', null, ['http://www.example.com']);
+        $client = Client::createNewClient('name', ['http://www.example.com']);
         $this->assertTrue($client->isPublic());
 
-        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('name', ['http://www.example.com']);
+
+        $client->generateSecret();
         $this->assertFalse($client->isPublic());
     }
 
     public function testRedirectUri()
     {
-        $client = Client::createNewClient('id', 'name', null, ['http://www.example.com']);
+        $client = Client::createNewClient('name', ['http://www.example.com']);
         $this->assertCount(1, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
         $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
 
-        $client = Client::createNewClient('id', 'name', null, ['http://www.example1.com', 'http://www.example2.com']);
+        $client = Client::createNewClient('name', ['http://www.example1.com', 'http://www.example2.com']);
         $this->assertCount(2, $client->getRedirectUris());
         $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
         $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
@@ -139,7 +153,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGenerateSecret()
     {
-        $client = Client::createNewClient('client_id', 'name');
+        $client = Client::createNewClient('name');
 
         $secret = $client->generateSecret();
 
@@ -153,8 +167,14 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testAuthenticate()
     {
-        $client = Client::createNewClient('client_id', 'name',
-            '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6');
+        $client = Client::reconstitute(
+            [
+                'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                'name'         => 'name',
+                'secret'       => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
+                'redirectUris' => []
+            ]
+        );
 
         $this->assertFalse($client->authenticate('azerty'));
         $this->assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));
