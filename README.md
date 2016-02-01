@@ -180,7 +180,7 @@ As of version 1.0 ZfrOAuth2Server has been rewritten to be persistence layer agn
 
 Currently these packages provide a persistence layer;
 
-- [ZfrOauthServerDoctrine](https://github.com/zf-fr/zfr-oauth2-server-doctrine) for Doctrine 2
+- [ZfrOAuth2ServerDoctrine](https://github.com/zf-fr/zfr-oauth2-server-doctrine) for Doctrine 2
 
 
 ### Event manager
