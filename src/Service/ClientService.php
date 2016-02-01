@@ -52,11 +52,16 @@ class ClientService
      * authorize the client. It is returned as a result of this method, as it's already encrypted
      * in the client object
      *
-     * @param  Client $client
+     * @param string $name
+     * @param array  $redirectUris
      * @return array [$client, $secret]
      */
-    public function registerClient(Client $client): array
+    public function registerClient(string $name, array $redirectUris): array
     {
+        do {
+            $client = Client::createNewClient($name, $redirectUris);
+        } while ($this->clientRepository->idExists($client->getId()));
+
         $secret = $client->generateSecret();
         $client = $this->clientRepository->save($client);
 

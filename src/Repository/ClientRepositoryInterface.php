@@ -36,4 +36,10 @@ interface ClientRepositoryInterface
      * @return Client|null
      */
     public function findById(string $id);
+
+    /**
+     * @param string $id
+     * @return bool
+     */
+    public function idExists(string $id): bool;
 }
