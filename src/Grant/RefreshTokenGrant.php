@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
 class RefreshTokenGrant extends AbstractGrant
 {
     const GRANT_TYPE          = 'refresh_token';
-    const GRANT_RESPONSE_TYPE = null;
+    const GRANT_RESPONSE_TYPE = '';
 
     /**
      * @var AccessTokenService
