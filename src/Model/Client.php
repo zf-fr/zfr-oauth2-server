@@ -18,6 +18,8 @@
 
 namespace ZfrOAuth2\Server\Model;
 
+use Ramsey\Uuid\Uuid;
+
 /**
  * Client model
  *
@@ -64,13 +66,11 @@ class Client
     /**
      * Create a new Client
      *
-     * @param string               $id           Client id
      * @param string               $name         Clients name
-     * @param string|null          $secret       Clients secret
      * @param string|string[]|null $redirectUris Client allowed redirect direct url's
      * @return Client
      */
-    public static function createNewClient(string $id, string $name, string $secret = null, $redirectUris = null)
+    public static function createNewClient(string $name, $redirectUris = null)
     {
         if (isset($redirectUris) && is_string($redirectUris)) {
             $redirectUris = explode(' ', $redirectUris);
@@ -84,9 +84,8 @@ class Client
 
         $client = new static();
 
-        $client->id           = $id;
+        $client->id           = (string) Uuid::uuid4();
         $client->name         = $name;
-        $client->secret       = $secret ?? '';
         $client->redirectUris = $redirectUris ?? [];
 
         return $client;
