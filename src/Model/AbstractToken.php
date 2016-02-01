@@ -65,6 +65,8 @@ abstract class AbstractToken
     }
 
     /**
+     * Create a new AbstractToken
+     *
      * @param int                          $ttl
      * @param TokenOwnerInterface|null     $owner
      * @param Client|null                  $client

@@ -28,7 +28,7 @@ class RefreshToken extends AbstractToken
 {
 
     /**
-     * Generate a new RefreshToken
+     * Create a new RefreshToken
      *
      * @param int                      $ttl
      * @param TokenOwnerInterface|null $owner

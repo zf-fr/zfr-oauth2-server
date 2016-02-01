@@ -35,7 +35,7 @@ class AuthorizationCode extends AbstractToken
     private $redirectUri;
 
     /**
-     * Generate a new AuthorizationCode
+     * Create a new AuthorizationCode
      *
      * @param int                          $ttl
      * @param TokenOwnerInterface|null     $owner

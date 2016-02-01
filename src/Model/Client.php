@@ -56,6 +56,13 @@ class Client
 
     /**
      * Client constructor.
+     */
+    private function __construct()
+    {
+    }
+
+    /**
+     * Create a new Client
      *
      * @param string               $id           Client id
      * @param string               $name         Clients name

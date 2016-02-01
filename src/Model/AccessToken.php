@@ -27,7 +27,7 @@ namespace ZfrOAuth2\Server\Model;
 class AccessToken extends AbstractToken
 {
     /**
-     * Generate a new AccessToken
+     * Create a new AccessToken
      *
      * @param int                          $ttl
      * @param TokenOwnerInterface|null     $owner

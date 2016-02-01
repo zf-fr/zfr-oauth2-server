@@ -54,6 +54,8 @@ class Scope
     }
 
     /**
+     * Create a new Scope
+     *
      * @param int         $id
      * @param string      $name
      * @param string|null $description
