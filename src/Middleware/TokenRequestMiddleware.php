@@ -49,7 +49,7 @@ class TokenRequestMiddleware
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        callable $out = null
+        callable $next
     ): ResponseInterface {
         return $this->authorizationServer->handleTokenRequest($request);
     }

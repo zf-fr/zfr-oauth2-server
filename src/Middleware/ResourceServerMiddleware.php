@@ -54,7 +54,7 @@ class ResourceServerMiddleware
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        callable $out = null
+        callable $next
     ): ResponseInterface {
         try {
             $token = $this->resourceServer->getAccessToken($request);
@@ -66,6 +66,6 @@ class ResourceServerMiddleware
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
 
-        return $out ? $out($request->withAttribute('oauth_token', $token), $response) : $response;
+        return $next($request->withAttribute('oauth_token', $token), $response);
     }
 }

@@ -48,7 +48,7 @@ class AuthorizationRequestMiddleware
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,
-        callable $out = null
+        callable $next
     ): ResponseInterface {
         return $this->authorizationServer->handleAuthorizationRequest($request);
     }
