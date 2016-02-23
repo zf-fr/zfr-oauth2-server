@@ -20,8 +20,8 @@ namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * The authorization server main role is to create access tokens or refresh tokens

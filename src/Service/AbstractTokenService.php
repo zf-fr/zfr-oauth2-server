@@ -18,8 +18,8 @@
 
 namespace ZfrOAuth2\Server\Service;
 
-use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
 /**

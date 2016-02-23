@@ -19,8 +19,8 @@
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
+use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**

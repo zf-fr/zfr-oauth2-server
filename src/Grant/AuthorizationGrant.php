@@ -22,10 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Model\AccessToken;
-use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
-use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
@@ -131,7 +128,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ):ResponseInterface
+    {
         $postParams = $request->getParsedBody();
 
         $code = $postParams['code'] ?? null;
