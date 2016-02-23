@@ -1,0 +1,145 @@
+<?php
+/*
+ * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+ * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+ * LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+ * A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT
+ * OWNER OR CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
+ * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
+ * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+ * DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+ * THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT
+ * (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE
+ * OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+ *
+ * This software consists of voluntary contributions made by many individuals
+ * and is licensed under the MIT license.
+ */
+
+namespace ZfrOAuth2\Server\Grant;
+
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Service\AccessTokenService;
+use ZfrOAuth2\Server\Service\RefreshTokenService;
+
+/**
+ * @author  Michaël Gallego <mic.gallego@gmail.com>
+ * @licence MIT
+ */
+class RefreshTokenGrant extends AbstractGrant
+{
+    const GRANT_TYPE          = 'refresh_token';
+    const GRANT_RESPONSE_TYPE = '';
+
+    /**
+     * @var AccessTokenService
+     */
+    private $accessTokenService;
+
+    /**
+     * @var RefreshTokenService
+     */
+    private $refreshTokenService;
+
+    /**
+     * @var bool
+     */
+    private $rotateRefreshTokens = false;
+
+    /**
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
+     */
+    public function __construct(AccessTokenService $accessTokenService, RefreshTokenService $refreshTokenService)
+    {
+        $this->accessTokenService  = $accessTokenService;
+        $this->refreshTokenService = $refreshTokenService;
+    }
+
+    /**
+     * Set if we should rotate refresh tokens
+     *
+     * If set to true, then a new refresh token will be created each time an access token is asked from it,
+     * and the old refresh token is deleted
+     *
+     * @param  bool $rotateTokens
+     * @return void
+     */
+    public function setRotateRefreshTokens($rotateTokens)
+    {
+        $this->rotateRefreshTokens = (bool) $rotateTokens;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createAuthorizationResponse(
+        ServerRequestInterface $request,
+        Client $client,
+        TokenOwnerInterface $owner = null
+    ) {
+        throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function createTokenResponse(
+        ServerRequestInterface $request,
+        Client $client = null,
+        TokenOwnerInterface $owner = null
+    ): ResponseInterface {
+        $postParams = $request->getParsedBody();
+
+        $refreshToken = $postParams['refresh_token'] ??  null;
+
+        if (null === $refreshToken) {
+            throw OAuth2Exception::invalidRequest('Refresh token is missing');
+        }
+
+        // We can fetch the actual token, and validate it
+        /** @var RefreshToken $refreshToken */
+        $refreshToken = $this->refreshTokenService->getToken($refreshToken);
+
+        if (null === $refreshToken || $refreshToken->isExpired()) {
+            throw OAuth2Exception::invalidGrant('Refresh token is expired');
+        }
+
+        // We can now create a new access token! First, we need to make some checks on the asked scopes,
+        // because according to the spec, a refresh token can create an access token with an equal or lesser
+        // scope, but not more
+        $scopes = $postParams['scope'] ?? $refreshToken->getScopes();
+
+        if (!$refreshToken->matchScopes($scopes)) {
+            throw OAuth2Exception::invalidScope(
+                'The scope of the new access token exceeds the scope(s) of the refresh token'
+            );
+        }
+
+        $owner       = $refreshToken->getOwner();
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
+
+        // We may want to revoke the old refresh token
+        if ($this->rotateRefreshTokens) {
+            $this->refreshTokenService->deleteToken($refreshToken);
+
+            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scopes);
+        }
+
+        // We can generate the response!
+        return $this->prepareTokenResponse($accessToken, $refreshToken, true);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    public function allowPublicClients(): bool
+    {
+        return true;
+    }
+}

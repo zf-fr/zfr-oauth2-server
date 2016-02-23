@@ -6,12 +6,14 @@
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/badges/quality-score.png?s=be36235c9898cfc55044f58d9bba789d2d4d102e)](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/)
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 
-ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's main goal is to be a clean, PHP 5.5+
-library that aims to be used with Doctrine 2 only. It is compatible with [PSR-7](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md) request and responses which makes it possible to use with any framework compatible with PSR-7.
+ZfrOAuth2Server is a PHP library that implements the OAuth 2 specification. It's main goal is to be a clean, PHP 7.0+
+library that aims to be used with any persistence layer of choice. It is compatible with
+[PSR-7](https://github.com/php-fig/fig-standards/blob/master/accepted/PSR-7-http-message.md) request and responses which makes
+it possible to use with any framework compatible with PSR-7.
 
-Currently, ZfrOAuth2Server does not implement the whole specification (implicit grant is missing), so you are
-encouraged to have a look at the doc if ZfrOAuth2Server can be used in your application. However, it implements the
-additional [token revocation](https://tools.ietf.org/html/rfc7009) specification.
+Currently, ZfrOAuth2Server does not implement the whole specification (implicit grant is missing), so you are encouraged to have a look at the doc if ZfrOAuth2Server can be used in your application. 
+
+However, it implements the additional [token revocation](https://tools.ietf.org/html/rfc7009) specification.
 
 Here are other OAuth2 library you can use:
 
@@ -20,8 +22,7 @@ Here are other OAuth2 library you can use:
 
 ## Requirements
 
-- PHP 5.5 or higher
-- Doctrine 2
+- PHP 7.0 or higher
 
 ## To-do
 
@@ -41,8 +42,21 @@ Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This
 Installation is only officially supported using Composer:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:0.7.*
+php composer.phar require zfr/zfr-oauth2-server:^1.0
 ```
+
+### Configuration
+
+Several Apache modules will strip HTTP authorization headers such as `Authorization` to try to enhance security by preventing scripts from seeing sensitive information unless the developer explicitly enables this.
+
+Many of these modules will allow such headers if you simply add the following line to .htaccess (or the vhost directory directive).
+
+```
+CGIPassAuth on
+```
+since: [Apache 2.4.13](https://httpd.apache.org/docs/trunk/mod/core.html#cgipassauth)
+
+
 
 ## Framework integration
 
@@ -119,7 +133,7 @@ that is compliant with the OAuth2 specification.
 
 Most of the time, you want to associate an access token to a user. This is the only way to map a token to a user
 of your system. To do this, you can pass an optional second parameter to the `handleRequest`. This class must
-implements the `ZfrOAuth2\Server\Entity\TokenOwnerInterface` interface:
+implements the `ZfrOAuth2\Server\Model\TokenOwnerInterface` interface:
 
 ```php
 $user = new User(); // must implement TokenOwnerInterface
@@ -160,10 +174,14 @@ if (!$token = $resourceServer->getAccessToken($request, ['write']) {
 }
 ```
 
-### Doctrine
+### Persistence layer
 
-ZfrOAuth2Server is built to be used with Doctrine (either ORM or ODM). Out of the box, it provides ORM mapping for
-Doctrine (in the `config/doctrine` folder).
+As of version 1.0 ZfrOAuth2Server has been rewritten to be persistence layer agnostic. Meaning it can by used with any prefered persistence layer.
+
+Currently these packages provide a persistence layer;
+
+- [ZfrOAuth2ServerDoctrine](https://github.com/zf-fr/zfr-oauth2-server-doctrine) for Doctrine 2
+
 
 ### Event manager
 
