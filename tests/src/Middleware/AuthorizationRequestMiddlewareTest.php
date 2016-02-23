@@ -27,7 +27,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers  \ZfrOAuth2\Server\Middleware\Endpoint\AuthorizationRequestMiddleware
+ * @covers  \ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware
  */
 class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 {

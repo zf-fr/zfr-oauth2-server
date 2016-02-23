@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers  \ZfrOAuth2\Server\Middleware\Endpoint\TokenRequestMiddleware
+ * @covers  \ZfrOAuth2\Server\Middleware\TokenRequestMiddleware
  */
 class TokenRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 {

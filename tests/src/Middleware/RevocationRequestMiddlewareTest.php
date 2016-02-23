@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers  \ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware
+ * @covers  \ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware
  */
 class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
