@@ -83,26 +83,6 @@ return [
              * Utils
              */
             ServerOptions::class                 => ServerOptionsFactory::class,
-        ]
-    ],
-
-    'zfr_oauth2_server' => [
-        /**
-         * Various tokens TTL
-         */
-        // 'authorization_code_ttl' => 120,
-        // 'access_token_ttl'       => 3600,
-        // 'refresh_token_ttl'      => 86400,
-
-        /**
-         * Registered grants for this server
-         */
-        // 'grants'         => [],
-
-        /**
-         * A callable used to validate the username and password when using the
-         * password grant
-         */
-        // 'owner_callable' => null,
+        ],
     ],
 ];
