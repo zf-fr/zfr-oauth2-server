@@ -35,7 +35,7 @@ interface ResourceServerInterface
      * Get the access token
      *
      * @param  ServerRequestInterface $request
-     * @param  array|string|Scope[] $scopes
+     * @param  array|string|Scope[]   $scopes
      * @return AccessToken|null
      * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
      */

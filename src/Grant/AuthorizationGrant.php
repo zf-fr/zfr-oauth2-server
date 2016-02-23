@@ -128,8 +128,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface
-    {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         $code = $postParams['code'] ?? null;
@@ -138,7 +137,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
         }
 
-        /* @var \ZfrOAuth2\Server\Model\AuthorizationCode  $authorizationCode */
+        /* @var \ZfrOAuth2\Server\Model\AuthorizationCode $authorizationCode */
         $authorizationCode = $this->authorizationCodeService->getToken($code);
 
         if (null === $authorizationCode || $authorizationCode->isExpired()) {
@@ -157,7 +156,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         $owner = $owner ?: $authorizationCode->getOwner();
 
         // Everything is okey, let's start the token generation!
-        $scopes      = $authorizationCode->getScopes(); // reuse the scopes from the authorization code
+        $scopes = $authorizationCode->getScopes(); // reuse the scopes from the authorization code
 
         $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 

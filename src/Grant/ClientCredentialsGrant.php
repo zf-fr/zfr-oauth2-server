@@ -77,7 +77,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $postParams = $request->getParsedBody();
 
         // Everything is okey, we can start tokens generation!
-        $scope       = $postParams['scope'] ?? null;
+        $scope = $postParams['scope'] ?? null;
 
         /** @var AccessToken $accessToken */
         $accessToken = $this->accessTokenService->createToken($owner, $client, $scope);

@@ -79,7 +79,6 @@ abstract class AbstractToken
         Client $client = null,
         $scopes = null
     ): AbstractToken {
-
         if (isset($scopes) && $scopes instanceof Scope) {
             $scopes = $scopes->getName();
         }

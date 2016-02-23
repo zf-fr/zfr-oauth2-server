@@ -24,8 +24,6 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
 
 /**
  * Authorization request middleware endpoint of the authorization server
- *
- * Typically middleware authenticating the user should have ran before this middleware is executed.
  */
 class AuthorizationRequestMiddleware
 {
