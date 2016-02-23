@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Middleware\Endpoint;
+namespace ZfrOAuth2\Server\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;

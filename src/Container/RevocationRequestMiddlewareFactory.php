@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>

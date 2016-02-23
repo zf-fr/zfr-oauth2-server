@@ -16,19 +16,19 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Middleware\Endpoint;
+namespace ZfrOAuth2Test\Server\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
-use ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers  \ZfrOAuth2\Server\Middleware\Endpoint\RevocationRequestMiddleware
+ * @covers  \ZfrOAuth2\Server\Middleware\Endpoint\TokenRequestMiddleware
  */
-class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
+class TokenRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
     /**
      * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationServerInterface
@@ -36,35 +36,23 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
     private $authorizationServer;
 
     /**
-     * @var RevocationRequestMiddleware
+     * @var TokenRequestMiddleware
      */
     private $middleware;
 
     public function setUp()
     {
         $this->authorizationServer = $this->getMock(AuthorizationServerInterface::class);
-        $this->middleware          = new RevocationRequestMiddleware($this->authorizationServer);
+        $this->middleware          = new TokenRequestMiddleware($this->authorizationServer);
     }
 
-//    public function testCanHandleTokenRequest()
-//    {
-//        $request  = $this->getMock(RequestInterface::class);
-//        $response = $this->getMock(ResponseInterface::class);
-//
-//        $this->authorizationServer->expects($this->once())
-//            ->method('handleTokenRequest')
-//            ->with($request)
-//            ->willReturn($this->getMock(ResponseInterface::class));
-//        $this->middleware->handleTokenRequest($request, $response);
-//    }
-
-    public function testCanHandleRevocationRequest()
+    public function testCanHandleTokenRequest()
     {
         $request  = $this->getMock(RequestInterface::class);
         $response = $this->getMock(ResponseInterface::class);
 
         $this->authorizationServer->expects($this->once())
-            ->method('handleRevocationRequest')
+            ->method('handleTokenRequest')
             ->with($request)
             ->willReturn($this->getMock(ResponseInterface::class));
 

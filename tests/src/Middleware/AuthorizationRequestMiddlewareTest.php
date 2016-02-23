@@ -16,12 +16,12 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server\Middleware\Endpoint;
+namespace ZfrOAuth2Test\Server\Middleware;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
-use ZfrOAuth2\Server\Middleware\Endpoint\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**

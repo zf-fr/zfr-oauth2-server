@@ -20,7 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Middleware\Endpoint\TokenRequestMiddleware;
+use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -30,7 +30,7 @@ class TokenRequestMiddlewareFactory
 {
     /**
      * @param  ContainerInterface $container
-     * @return TokenRequestMiddleware
+     * @return \ZfrOAuth2\Server\Middleware\TokenRequestMiddleware
      */
     public function __invoke(ContainerInterface $container): TokenRequestMiddleware
     {
