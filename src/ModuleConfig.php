@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2;
+namespace ZfrOAuth2\Server;
 
 /**
  * Class ModuleConfig
