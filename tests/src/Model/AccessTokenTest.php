@@ -18,6 +18,8 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use DateTimeImmutable;
+use DateTimeInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\Scope;
@@ -39,7 +41,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
 
-        $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
+        $expiresAt = (new DateTimeImmutable())->modify("+$ttl seconds");
 
         $this->assertNotEmpty($accessToken->getToken());
         $this->assertEquals(40, strlen($accessToken->getToken()));
@@ -81,8 +83,8 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['owner'], $accessToken->getOwner());
         $this->assertSame($data['client'], $accessToken->getClient());
 
-        if ($data['expiresAt'] instanceof \DateTimeImmutable) {
-            /** @var \DateTimeImmutable $expiresAt */
+        if ($data['expiresAt'] instanceof DateTimeInterface) {
+            /** @var DateTimeInterface $expiresAt */
             $expiresAt = $data['expiresAt'];
             $this->assertSame($expiresAt->getTimeStamp(), $accessToken->getExpiresAt()->getTimestamp());
         } else {
@@ -100,7 +102,7 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
                     'token'     => 'token',
                     'owner'     => $this->getMock(TokenOwnerInterface::class),
                     'client'    => $this->getMock(Client::class, [], [], '', false),
-                    'expiresAt' => new \DateTimeImmutable(),
+                    'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
                 ]
             ],
