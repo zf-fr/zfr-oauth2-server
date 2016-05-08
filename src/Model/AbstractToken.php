@@ -19,7 +19,7 @@
 namespace ZfrOAuth2\Server\Model;
 
 use DateTime;
-use DateTimeImmutable;
+use DateTimeInterface;
 
 /**
  * Provide basic functionality for both access tokens, refresh tokens and authorization codes
@@ -48,7 +48,7 @@ abstract class AbstractToken
     private $owner;
 
     /**
-     * @var DateTimeImmutable
+     * @var DateTime
      */
     protected $expiresAt;
 
@@ -99,7 +99,7 @@ abstract class AbstractToken
         $token->owner     = $owner;
         $token->client    = $client;
         $token->scopes    = $scopes ?? [];
-        $token->expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds") : null;
+        $token->expiresAt = $ttl ? (new DateTime())->modify("+$ttl seconds") : null;
 
         return $token;
     }
@@ -154,7 +154,7 @@ abstract class AbstractToken
     /**
      * Get when this token should expire
      *
-     * @return DateTimeImmutable|null
+     * @return DateTimeInterface|null
      */
     public function getExpiresAt()
     {
