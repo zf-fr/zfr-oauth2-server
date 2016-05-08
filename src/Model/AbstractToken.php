@@ -48,7 +48,7 @@ abstract class AbstractToken
     private $owner;
 
     /**
-     * @var DateTime
+     * @var DateTimeInterface
      */
     protected $expiresAt;
 
