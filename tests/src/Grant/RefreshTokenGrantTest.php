@@ -108,18 +108,20 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
-    public function rotateRefreshToken()
+    public function grantOptions()
     {
         return [
-            [true],
-            [false]
+            [true, false],
+            [false, true],
+            [true, true],
+            [false, false]
         ];
     }
 
     /**
-     * @dataProvider rotateRefreshToken
+     * @dataProvider grantOptions
      */
-    public function testCanCreateTokenResponse($rotateRefreshToken)
+    public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['refresh_token' => '123', 'scope' => 'read']);
@@ -134,9 +136,9 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
                                   ->will($this->returnValue($refreshToken));
 
         if ($rotateRefreshToken) {
-            $this->refreshTokenService->expects($this->once())
-                                      ->method('deleteToken')
-                                      ->with($refreshToken);
+            $this->refreshTokenService->expects($revokeRotatedRefreshToken ? $this->once() : $this->never())
+                ->method('deleteToken')
+                ->with($refreshToken);
 
             $refreshToken = $this->getValidRefreshToken();
             $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
@@ -146,6 +148,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         $this->grant->setRotateRefreshTokens($rotateRefreshToken);
+        $this->grant->setRevokeRotatedRefreshToken($revokeRotatedRefreshToken);
         $response = $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
 
         $body = json_decode($response->getBody(), true);
