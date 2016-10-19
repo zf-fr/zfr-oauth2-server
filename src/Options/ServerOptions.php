@@ -48,6 +48,13 @@ class ServerOptions
     private $refreshTokenTtl = 86400;
 
     /**
+     * Rotate refresh tokens (for RefreshTokenGrant)
+     *
+     * @var bool
+     */
+    private $rotateRefreshTokens = false;
+
+    /**
      * Revoke rotated refresh tokens (for RefreshTokenGrant)
      *
      * @var bool
@@ -151,6 +158,26 @@ class ServerOptions
     public function getRefreshTokenTtl(): int
     {
         return $this->refreshTokenTtl;
+    }
+
+    /**
+     * Get the rotate refresh token option while refreshing an access token
+     *
+     * @return boolean
+     */
+    public function getRotateRefreshTokens(): bool
+    {
+        return $this->rotateRefreshTokens;
+    }
+
+    /**
+     * Set the rotate refresh token option while refreshing an access token
+     *
+     * @param boolean $rotateRefreshTokens
+     */
+    public function setRotateRefreshTokens(bool $rotateRefreshTokens)
+    {
+        $this->rotateRefreshTokens = $rotateRefreshTokens;
     }
 
     /**
