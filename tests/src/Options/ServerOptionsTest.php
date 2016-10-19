@@ -49,6 +49,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
             'authorization_code_ttl' => 300,
             'access_token_ttl'       => 3000,
             'refresh_token_ttl'      => 30000,
+            'rotate_refresh_tokens'  => true,
             'owner_callable'         => $callable,
             'grants'                 => [ClientCredentialsGrant::class]
         ]);
@@ -56,6 +57,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());
         $this->assertEquals(3000, $options->getAccessTokenTtl());
         $this->assertEquals(30000, $options->getRefreshTokenTtl());
+        $this->assertEquals(true, $options->getRotateRefreshTokens());
         $this->assertSame($callable, $options->getOwnerCallable());
         $this->assertEquals([ClientCredentialsGrant::class], $options->getGrants());
     }
