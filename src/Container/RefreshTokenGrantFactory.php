@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
@@ -35,12 +36,19 @@ class RefreshTokenGrantFactory
      */
     public function __invoke(ContainerInterface $container): RefreshTokenGrant
     {
+        /** @var ServerOptions $serverOptions */
+        $serverOptions = $container->get(ServerOptions::class);
+
         /* @var AccessTokenService $accessTokenService */
         $accessTokenService = $container->get(AccessTokenService::class);
 
         /* @var RefreshTokenService $refreshTokenService */
         $refreshTokenService = $container->get(RefreshTokenService::class);
 
-        return new RefreshTokenGrant($accessTokenService, $refreshTokenService);
+        $service = new RefreshTokenGrant($accessTokenService, $refreshTokenService);
+
+        $service->setRevokeRotatedRefreshToken($serverOptions->getRevokeRotatedRefreshTokens());
+
+        return $service;
     }
 }

@@ -48,6 +48,13 @@ class ServerOptions
     private $refreshTokenTtl = 86400;
 
     /**
+     * Revoke rotated refresh tokens (for RefreshTokenGrant)
+     *
+     * @var bool
+     */
+    private $revokeRotatedRefreshTokens = true;
+
+    /**
      * Set the owner callable
      *
      * @var callable|string
@@ -144,6 +151,26 @@ class ServerOptions
     public function getRefreshTokenTtl(): int
     {
         return $this->refreshTokenTtl;
+    }
+
+    /**
+     * Get the revoke rotated refresh token option while refreshing an access token
+     *
+     * @return bool
+     */
+    public function getRevokeRotatedRefreshTokens(): bool
+    {
+        return $this->revokeRotatedRefreshTokens;
+    }
+
+    /**
+     * Set the revoke rotated refresh token option while refreshing an access token
+     *
+     * @param bool $revokeRotatedRefreshTokens
+     */
+    public function setRevokeRotatedRefreshTokens(bool $revokeRotatedRefreshTokens)
+    {
+        $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
     }
 
     /**

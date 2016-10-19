@@ -52,6 +52,11 @@ class RefreshTokenGrant extends AbstractGrant
     private $rotateRefreshTokens = false;
 
     /**
+     * @var bool
+     */
+    private $revokeRotatedRefreshTokens = true;
+
+    /**
      * @param AccessTokenService  $accessTokenService
      * @param RefreshTokenService $refreshTokenService
      */
@@ -73,6 +78,18 @@ class RefreshTokenGrant extends AbstractGrant
     public function setRotateRefreshTokens($rotateTokens)
     {
         $this->rotateRefreshTokens = (bool) $rotateTokens;
+    }
+
+    /**
+     * Set if we should revoke rotated refresh tokens
+     *
+     * Only useful when rotateRefreshTokens is true
+     *
+     * @param $revokeRotatedRefreshTokens
+     */
+    public function setRevokeRotatedRefreshToken($revokeRotatedRefreshTokens)
+    {
+        $this->revokeRotatedRefreshTokens = (bool) $revokeRotatedRefreshTokens;
     }
 
     /**
@@ -126,7 +143,9 @@ class RefreshTokenGrant extends AbstractGrant
 
         // We may want to revoke the old refresh token
         if ($this->rotateRefreshTokens) {
-            $this->refreshTokenService->deleteToken($refreshToken);
+            if ($this->revokeRotatedRefreshTokens) {
+                $this->refreshTokenService->deleteToken($refreshToken);
+            }
 
             $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scopes);
         }
