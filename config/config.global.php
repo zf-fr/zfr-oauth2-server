@@ -26,6 +26,11 @@ return [
         'refresh_token_ttl'      => 86400,
 
         /**
+         * Rotate the refresh token option while refreshing an access token
+         */
+        'rotate_refresh_tokens'  => false,
+
+        /**
          * Revoke the rotated refresh token while refreshing an access token
          */
         'revoke_rotated_refresh_tokens' => true,

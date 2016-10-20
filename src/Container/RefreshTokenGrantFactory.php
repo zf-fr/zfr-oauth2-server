@@ -47,6 +47,7 @@ class RefreshTokenGrantFactory
 
         $service = new RefreshTokenGrant($accessTokenService, $refreshTokenService);
 
+        $service->setRotateRefreshTokens($serverOptions->getRefreshTokenTtl());
         $service->setRevokeRotatedRefreshToken($serverOptions->getRevokeRotatedRefreshTokens());
 
         return $service;
