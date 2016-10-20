@@ -26,6 +26,11 @@ return [
         'refresh_token_ttl'      => 86400,
 
         /**
+         * Revoke the rotated refresh token while refreshing an access token
+         */
+        'revoke_rotated_refresh_tokens' => true,
+
+        /**
          * Registered grants for this server
          */
         'grants'                 => [],
