@@ -48,11 +48,6 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     protected $refreshTokenService;
 
     /**
-     * @var ServerOptions
-     */
-    protected $serverOptions;
-
-    /**
      * @var RefreshTokenGrant
      */
     protected $grant;
@@ -61,29 +56,32 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
         $this->refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
-        $this->serverOptions       = new ServerOptions();
-
-        $this->grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, $this->serverOptions);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class),
+        $grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class),
             Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
     {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfRefreshTokenIsExpired()
     {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->getMock(ServerRequestInterface::class);
@@ -96,11 +94,13 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ->with('123')
             ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
+        $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
     {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
 
         $request = $this->getMock(ServerRequestInterface::class);
@@ -116,7 +116,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
             ->with('123')
             ->will($this->returnValue($refreshToken));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
+        $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
     public function grantOptions()
@@ -134,8 +134,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
-        $this->serverOptions->setRotateRefreshTokens($rotateRefreshToken);
-        $this->serverOptions->setRevokeRotatedRefreshTokens($revokeRotatedRefreshToken);
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions([
+            'rotate_refresh_tokens' => $rotateRefreshToken,
+            'revoke_rotated_refresh_tokens' => $revokeRotatedRefreshToken
+        ]));
 
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([
@@ -164,7 +166,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $accessToken = $this->getValidAccessToken($owner);
         $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
-        $response = $this->grant->createTokenResponse($request, Client::createNewClient('name', []));
+        $response = $grant->createTokenResponse($request, Client::createNewClient('name', []));
 
         $body = json_decode($response->getBody(), true);
 
