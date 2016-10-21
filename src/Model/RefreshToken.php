@@ -26,7 +26,6 @@ namespace ZfrOAuth2\Server\Model;
  */
 class RefreshToken extends AbstractToken
 {
-
     /**
      * Create a new RefreshToken
      *
