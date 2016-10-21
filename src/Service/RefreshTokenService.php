@@ -50,7 +50,12 @@ class RefreshTokenService extends AbstractTokenService
         }
 
         do {
-            $token = RefreshToken::createNewRefreshToken($this->tokenTTL, $owner, $client, $scopes);
+            $token = RefreshToken::createNewRefreshToken(
+                $this->serverOptions->getRefreshTokenTtl(),
+                $owner,
+                $client,
+                $scopes
+            );
         } while ($this->tokenRepository->tokenExists($token->getToken()));
 
         return $this->tokenRepository->save($token);

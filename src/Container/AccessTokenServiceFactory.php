@@ -45,10 +45,6 @@ class AccessTokenServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $service = new AccessTokenService($tokenRepository, $scopeService);
-
-        $service->setTokenTTL($serverOptions->getAccessTokenTtl());
-
-        return $service;
+        return new AccessTokenService($tokenRepository, $scopeService, $serverOptions);
     }
 }

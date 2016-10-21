@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Service;
 
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AbstractToken;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
 /**
@@ -41,33 +42,23 @@ abstract class AbstractTokenService
     protected $scopeService;
 
     /**
-     * Token TTL (in seconds)
-     *
-     * @var int
+     * @var ServerOptions
      */
-    protected $tokenTTL = 3600;
+    protected $serverOptions;
 
     /**
      * @param TokenRepositoryInterface $tokenRepository
      * @param ScopeService             $scopeService
+     * @param ServerOptions            $serverOptions
      */
     public function __construct(
         TokenRepositoryInterface $tokenRepository,
-        ScopeService $scopeService
+        ScopeService $scopeService,
+        ServerOptions $serverOptions
     ) {
         $this->tokenRepository = $tokenRepository;
         $this->scopeService    = $scopeService;
-    }
-
-    /**
-     * Set the token TTL for this service
-     *
-     * @param  int $tokenTTL
-     * @return void
-     */
-    public function setTokenTTL($tokenTTL)
-    {
-        $this->tokenTTL = (int) $tokenTTL;
+        $this->serverOptions   = $serverOptions;
     }
 
     /**

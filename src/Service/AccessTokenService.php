@@ -50,7 +50,12 @@ class AccessTokenService extends AbstractTokenService
         }
 
         do {
-            $token = AccessToken::createNewAccessToken($this->tokenTTL, $owner, $client, $scopes);
+            $token = AccessToken::createNewAccessToken(
+                $this->serverOptions->getAccessTokenTtl(),
+                $owner,
+                $client,
+                $scopes
+            );
         } while ($this->tokenRepository->tokenExists($token->getToken()));
 
         return $this->tokenRepository->save($token);
