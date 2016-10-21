@@ -92,7 +92,7 @@ class ServerOptions
      *
      * @param  array $options
      */
-    public function setFromArray(array $options)
+    protected function setFromArray(array $options)
     {
         foreach ($options as $key => $value) {
             $setter = 'set' . str_replace('_', '', $key);
@@ -105,7 +105,7 @@ class ServerOptions
      *
      * @param int $authorizationCodeTtl
      */
-    public function setAuthorizationCodeTtl($authorizationCodeTtl)
+    protected function setAuthorizationCodeTtl($authorizationCodeTtl)
     {
         $this->authorizationCodeTtl = (int) $authorizationCodeTtl;
     }
@@ -125,7 +125,7 @@ class ServerOptions
      *
      * @param int $accessTokenTtl
      */
-    public function setAccessTokenTtl(int $accessTokenTtl)
+    protected function setAccessTokenTtl(int $accessTokenTtl)
     {
         $this->accessTokenTtl = $accessTokenTtl;
     }
@@ -145,7 +145,7 @@ class ServerOptions
      *
      * @param int $refreshTokenTtl
      */
-    public function setRefreshTokenTtl(int $refreshTokenTtl)
+    protected function setRefreshTokenTtl(int $refreshTokenTtl)
     {
         $this->refreshTokenTtl = $refreshTokenTtl;
     }
@@ -175,7 +175,7 @@ class ServerOptions
      *
      * @param boolean $rotateRefreshTokens
      */
-    public function setRotateRefreshTokens(bool $rotateRefreshTokens)
+    protected function setRotateRefreshTokens(bool $rotateRefreshTokens)
     {
         $this->rotateRefreshTokens = $rotateRefreshTokens;
     }
@@ -195,7 +195,7 @@ class ServerOptions
      *
      * @param bool $revokeRotatedRefreshTokens
      */
-    public function setRevokeRotatedRefreshTokens(bool $revokeRotatedRefreshTokens)
+    protected function setRevokeRotatedRefreshTokens(bool $revokeRotatedRefreshTokens)
     {
         $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
     }
@@ -205,7 +205,7 @@ class ServerOptions
      *
      * @param callable|string $ownerCallable
      */
-    public function setOwnerCallable($ownerCallable)
+    protected function setOwnerCallable($ownerCallable)
     {
         $this->ownerCallable = $ownerCallable;
     }
@@ -225,7 +225,7 @@ class ServerOptions
      *
      * @param array $grants
      */
-    public function setGrants(array $grants)
+    protected function setGrants(array $grants)
     {
         $this->grants = $grants;
     }
