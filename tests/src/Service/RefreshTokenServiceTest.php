@@ -23,6 +23,7 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
@@ -55,7 +56,8 @@ class RefreshTokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
         $this->tokenService    = new RefreshTokenService(
             $this->tokenRepository,
-            $this->scopeService
+            $this->scopeService,
+            new ServerOptions()
         );
     }
 
