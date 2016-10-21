@@ -24,7 +24,7 @@ namespace ZfrOAuth2\Server\Options;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ServerOptions
+final class ServerOptions
 {
     /**
      * Authorization code TTL
