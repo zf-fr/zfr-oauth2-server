@@ -23,6 +23,7 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
 
 /**
  * AccessTokenService
@@ -32,6 +33,11 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  */
 class AccessTokenService extends AbstractTokenService
 {
+    /**
+     * @var AccessTokenRepositoryInterface
+     */
+    protected $tokenRepository;
+
     /**
      * Create a new token (and generate the token)
      *
