@@ -71,14 +71,14 @@ abstract class AbstractToken
      * @param TokenOwnerInterface|null     $owner
      * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
-     * @return AbstractToken
+     * @return static
      */
     protected static function createNew(
         int $ttl,
         TokenOwnerInterface $owner = null,
         Client $client = null,
         $scopes = null
-    ): AbstractToken {
+    ): self {
         if (isset($scopes) && $scopes instanceof Scope) {
             $scopes = $scopes->getName();
         }
