@@ -57,7 +57,7 @@ class RefreshTokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->tokenService    = new RefreshTokenService(
             $this->tokenRepository,
             $this->scopeService,
-            new ServerOptions()
+            ServerOptions::fromArray()
         );
     }
 

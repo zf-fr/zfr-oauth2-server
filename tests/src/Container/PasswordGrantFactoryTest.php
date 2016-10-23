@@ -39,7 +39,7 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock(ContainerInterface::class);
         $callable  = function () {
         };
-        $options   = new ServerOptions(['owner_callable' => $callable]);
+        $options   = ServerOptions::fromArray(['owner_callable' => $callable]);
 
         $container->expects($this->at(0))
             ->method('get')
@@ -67,7 +67,7 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $container = $this->getMock(ContainerInterface::class);
         $callable  = function () {
         };
-        $options   = new ServerOptions(['owner_callable' => 'service_name']);
+        $options   = ServerOptions::fromArray(['owner_callable' => 'service_name']);
 
         $container->expects($this->at(0))
             ->method('get')

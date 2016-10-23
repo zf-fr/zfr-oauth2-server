@@ -60,7 +60,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class),
@@ -69,7 +69,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $request = $this->getMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
@@ -80,7 +80,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertInvalidIfRefreshTokenIsExpired()
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
 
@@ -99,7 +99,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions());
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
 
@@ -134,7 +134,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, new ServerOptions([
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray([
             'rotate_refresh_tokens' => $rotateRefreshToken,
             'revoke_rotated_refresh_tokens' => $revokeRotatedRefreshToken
         ]));

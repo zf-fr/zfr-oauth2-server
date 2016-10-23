@@ -57,7 +57,7 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
         $this->tokenService    = new AuthorizationCodeService(
             $this->tokenRepository,
             $this->scopeService,
-            new ServerOptions()
+            ServerOptions::fromArray()
         );
     }
 

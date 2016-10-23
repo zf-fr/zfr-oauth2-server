@@ -31,7 +31,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
 {
     public function testDefaults()
     {
-        $options = new ServerOptions();
+        $options = ServerOptions::fromArray();
 
         $this->assertEquals(120, $options->getAuthorizationCodeTtl());
         $this->assertEquals(3600, $options->getAccessTokenTtl());
@@ -47,7 +47,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
         $callable = function () {
         };
 
-        $options = new ServerOptions([
+        $options = ServerOptions::fromArray([
             'authorization_code_ttl'        => 300,
             'access_token_ttl'              => 3000,
             'refresh_token_ttl'             => 30000,

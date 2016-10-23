@@ -36,6 +36,6 @@ class ServerOptionsFactory
         $config  = $container->get('config');
         $options = $config['zfr_oauth2_server'] ?? [];
 
-        return new ServerOptions($options);
+        return ServerOptions::fromArray($options);
     }
 }

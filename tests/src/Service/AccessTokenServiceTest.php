@@ -56,7 +56,7 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->tokenService    = new AccessTokenService(
             $this->tokenRepository,
             $this->scopeService,
-            new ServerOptions()
+            ServerOptions::fromArray()
         );
     }
 
