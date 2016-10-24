@@ -18,8 +18,6 @@
 
 namespace ZfrOAuth2\Server\Options;
 
-use Assert\Assertion;
-
 /**
  * Options class
  *
@@ -78,49 +76,32 @@ final class ServerOptions
     private $grants = [];
 
     /**
-     * Constructor
+     * ServerOptions constructor.
      *
-     * @param  array $options
+     * @param int             $authorizationCodeTtl
+     * @param int             $accessTokenTtl
+     * @param int             $refreshTokenTtl
+     * @param bool            $rotateRefreshTokens
+     * @param bool            $revokeRotatedRefreshTokens
+     * @param callable|string $ownerCallable either a callable or the name of a container service
+     * @param array           $grants
      */
-    private function __construct(array $options)
-    {
-        if (isset($options['authorization_code_ttl'])) {
-            Assertion::nullOrInteger($options['authorization_code_ttl']);
-        }
-
-        if (isset($options['access_token_ttl'])) {
-            Assertion::nullOrInteger($options['access_token_ttl']);
-        }
-
-        if (isset($options['refresh_token_ttl'])) {
-            Assertion::nullOrInteger($options['refresh_token_ttl']);
-        }
-
-        if (isset($options['rotate_refresh_tokens'])) {
-            Assertion::nullOrBoolean($options['rotate_refresh_tokens']);
-        }
-
-        if (isset($options['revoke_rotated_refresh_tokens'])) {
-            Assertion::nullOrBoolean($options['revoke_rotated_refresh_tokens']);
-        }
-
-        if (isset($options['owner_callable'])) {
-            if (!is_string($options['owner_callable'])) {
-                Assertion::nullOrIsCallable($options['owner_callable']);
-            }
-        }
-
-        if (isset($options['grants'])) {
-            Assertion::nullOrIsArray($options['grants']);
-        }
-
-        $this->authorizationCodeTtl       = $options['authorization_code_ttl'] ?? 120;
-        $this->accessTokenTtl             = $options['access_token_ttl'] ?? 3600;
-        $this->refreshTokenTtl            = $options['refresh_token_ttl'] ?? 86400;
-        $this->rotateRefreshTokens        = $options['rotate_refresh_tokens'] ?? false;
-        $this->revokeRotatedRefreshTokens = $options['revoke_rotated_refresh_tokens'] ?? true;
-        $this->ownerCallable              = $options['owner_callable'] ?? null;
-        $this->grants                     = $options['grants'] ?? [];
+    private function __construct(
+        int $authorizationCodeTtl,
+        int $accessTokenTtl,
+        int $refreshTokenTtl,
+        bool $rotateRefreshTokens,
+        bool $revokeRotatedRefreshTokens,
+        $ownerCallable,
+        array $grants
+    ) {
+        $this->authorizationCodeTtl       = $authorizationCodeTtl;
+        $this->accessTokenTtl             = $accessTokenTtl;
+        $this->refreshTokenTtl            = $refreshTokenTtl;
+        $this->rotateRefreshTokens        = $rotateRefreshTokens;
+        $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
+        $this->ownerCallable              = $ownerCallable;
+        $this->grants                     = $grants;
     }
 
     /**
@@ -131,7 +112,15 @@ final class ServerOptions
      */
     public static function fromArray(array $options = []): self
     {
-        return new self($options);
+        return new self(
+            $options['authorization_code_ttl'] ?? 120,
+            $options['access_token_ttl'] ?? 3600,
+            $options['refresh_token_ttl'] ?? 86400,
+            $options['rotate_refresh_tokens'] ?? false,
+            $options['revoke_rotated_refresh_tokens'] ?? true,
+            $options['owner_callable'] ?? null,
+            $options['grants'] ?? []
+        );
     }
 
     /**
