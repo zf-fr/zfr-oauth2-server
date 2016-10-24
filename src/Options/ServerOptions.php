@@ -114,13 +114,13 @@ final class ServerOptions
             Assertion::nullOrIsArray($options['grants']);
         }
 
-        $this->authorizationCodeTtl      = $options['authorization_code_ttl'] ?? 120;
-        $this->accessTokenTtl            = $options['access_token_ttl'] ?? 3600;
-        $this->refreshTokenTtl           = $options['refresh_token_ttl'] ?? 86400;
-        $this->rotateRefreshTokens       = $options['rotate_refresh_tokens'] ?? false;
-        $this->revokeRotatedRefreshToken = $options['revoke_rotated_refresh_tokens'] ?? true;
-        $this->ownerCallable             = $options['owner_callable'] ?? null;
-        $this->grants                    = $options['grants'] ?? [];
+        $this->authorizationCodeTtl       = $options['authorization_code_ttl'] ?? 120;
+        $this->accessTokenTtl             = $options['access_token_ttl'] ?? 3600;
+        $this->refreshTokenTtl            = $options['refresh_token_ttl'] ?? 86400;
+        $this->rotateRefreshTokens        = $options['rotate_refresh_tokens'] ?? false;
+        $this->revokeRotatedRefreshTokens = $options['revoke_rotated_refresh_tokens'] ?? true;
+        $this->ownerCallable              = $options['owner_callable'] ?? null;
+        $this->grants                     = $options['grants'] ?? [];
     }
 
     /**
