@@ -30,7 +30,7 @@ use ZfrOAuth2\Server\Service\AbstractTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\PasswordGrantFactory
+ * @covers  \ZfrOAuth2\Server\Container\PasswordGrantFactory
  */
 class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {

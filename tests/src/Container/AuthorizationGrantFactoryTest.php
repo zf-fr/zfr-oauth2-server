@@ -29,7 +29,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\AuthorizationGrantFactory
+ * @covers  \ZfrOAuth2\Server\Container\AuthorizationGrantFactory
  */
 class AuthorizationGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {

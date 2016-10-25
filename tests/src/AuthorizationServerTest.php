@@ -37,7 +37,7 @@ use ZfrOAuth2\Server\Service\TokenService;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\AuthorizationServer
+ * @covers  \ZfrOAuth2\Server\AuthorizationServer
  */
 class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 {

@@ -32,7 +32,7 @@ use ZfrOAuth2\Server\Service\AbstractTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\AuthorizationServerFactory
+ * @covers  \ZfrOAuth2\Server\Container\AuthorizationServerFactory
  */
 class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
 {

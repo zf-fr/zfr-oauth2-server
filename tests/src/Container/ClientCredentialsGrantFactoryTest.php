@@ -28,7 +28,7 @@ use ZfrOAuth2\Server\Service\AbstractTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory
+ * @covers  \ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory
  */
 class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {

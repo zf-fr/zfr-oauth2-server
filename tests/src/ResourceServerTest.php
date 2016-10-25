@@ -27,7 +27,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\ResourceServer
+ * @covers  \ZfrOAuth2\Server\ResourceServer
  */
 class ResourceServerTest extends \PHPUnit_Framework_TestCase
 {

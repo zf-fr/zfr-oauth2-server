@@ -25,7 +25,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Options\ServerOptions
+ * @covers  \ZfrOAuth2\Server\Options\ServerOptions
  */
 class ServerOptionsTest extends \PHPUnit_Framework_TestCase
 {

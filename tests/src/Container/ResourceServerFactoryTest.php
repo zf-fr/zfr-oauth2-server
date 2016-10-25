@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ResourceServerFactory
+ * @covers  \ZfrOAuth2\Server\Container\ResourceServerFactory
  */
 class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {

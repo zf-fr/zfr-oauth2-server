@@ -27,7 +27,7 @@ use ZfrOAuth2\Server\Service\ScopeService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ScopeServiceFactory
+ * @covers  \ZfrOAuth2\Server\Container\ScopeServiceFactory
  */
 class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {

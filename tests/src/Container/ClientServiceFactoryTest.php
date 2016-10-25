@@ -27,7 +27,7 @@ use ZfrOAuth2\Server\Service\ClientService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ClientServiceFactory
+ * @covers  \ZfrOAuth2\Server\Container\ClientServiceFactory
  */
 class ClientServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
