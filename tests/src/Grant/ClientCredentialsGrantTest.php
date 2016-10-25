@@ -61,7 +61,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
 
-        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('name', ['http://www.example.com']);
         $owner  = $this->createMock(TokenOwnerInterface::class);
         $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
 

@@ -142,7 +142,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects(static::never())->method('createToken')->will(static::returnValue($token));
 
-        $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name', null, ['http://www.example.com']));
+        $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', ['http://www.example.com']));
     }
 
     public function testAssertInvalidIfNoCodeIsSet()
