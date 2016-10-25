@@ -46,18 +46,6 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
         $this->middleware          = new RevocationRequestMiddleware($this->authorizationServer);
     }
 
-//    public function testCanHandleTokenRequest()
-//    {
-//        $request  = $this->createMock(RequestInterface::class);
-//        $response = $this->createMock(ResponseInterface::class);
-//
-//        $this->authorizationServer->expects(static::once())
-//            ->method('handleTokenRequest')
-//            ->with($request)
-//            ->willReturn($this->createMock(ResponseInterface::class));
-//        $this->middleware->handleTokenRequest($request, $response);
-//    }
-
     public function testCanHandleRevocationRequest()
     {
         $request  = $this->createMock(RequestInterface::class);
