@@ -65,7 +65,6 @@ class ResourceServerMiddleware
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
-
         return $next($request->withAttribute('oauth_token', $token), $response);
     }
 }
