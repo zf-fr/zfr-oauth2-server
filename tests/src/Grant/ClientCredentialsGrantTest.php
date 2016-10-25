@@ -52,7 +52,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
             Client::createNewClient('id', 'http://www.example.com'));
     }

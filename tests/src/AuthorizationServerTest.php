@@ -60,7 +60,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         static::assertSame($grant, $authorizationServer->getGrant(PasswordGrant::GRANT_TYPE));
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_grant_type');
+        $this->expectException(OAuth2Exception::class, null, 'unsupported_grant_type');
         $authorizationServer->getGrant(ClientCredentialsGrant::GRANT_TYPE);
     }
 
@@ -83,7 +83,7 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
 
         static::assertSame($grant, $authorizationServer->getResponseType(AuthorizationGrant::GRANT_RESPONSE_TYPE));
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'unsupported_response_type');
+        $this->expectException(OAuth2Exception::class, null, 'unsupported_response_type');
         $authorizationServer->getResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
     }
 

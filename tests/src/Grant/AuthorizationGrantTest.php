@@ -71,7 +71,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertInvalidIfWrongResponseType()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getQueryParams')->will(static::returnValue(['response_type' => 'foo']));
@@ -127,7 +127,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized()
     {
-        $this->setExpectedException(OAuth2Exception::class);
+        $this->expectException(OAuth2Exception::class);
 
         $queryParams = [
             'response_type' => 'code',
@@ -150,13 +150,13 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidGrantIfCodeIsInvalid()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123']);
@@ -171,7 +171,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertInvalidGrantIfCodeIsExpired()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123']);
@@ -186,7 +186,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testInvalidRequestIfAuthClientIsNotSame()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);

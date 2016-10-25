@@ -147,7 +147,7 @@ class RefreshTokenServiceTest extends \PHPUnit_Framework_TestCase
     public function testCanSaveToken($registeredScopes, $tokenScope, $throwException)
     {
         if ($throwException) {
-            $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
+            $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
         $owner  = $this->createMock(TokenOwnerInterface::class);

@@ -69,7 +69,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'http://www.example.com'));
     }
 
@@ -78,13 +78,13 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'access_denied');
+        $this->expectException(OAuth2Exception::class, null, 'access_denied');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);

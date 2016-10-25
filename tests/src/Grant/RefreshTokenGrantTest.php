@@ -62,7 +62,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
             Client::createNewClient('id', 'http://www.example.com'));
     }
@@ -74,7 +74,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
@@ -82,7 +82,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['refresh_token' => '123']);
@@ -101,7 +101,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
     {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
+        $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn([

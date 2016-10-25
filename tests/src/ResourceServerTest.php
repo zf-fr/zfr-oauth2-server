@@ -92,7 +92,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
 
     public function testThrowExceptionIfTokenDoesNotExistAnymore()
     {
-        $this->setExpectedException(InvalidAccessTokenException::class);
+        $this->expectException(InvalidAccessTokenException::class);
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(true));
@@ -156,7 +156,7 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
                            ->will(static::returnValue($accessToken));
 
         if (!$match || $expiredToken) {
-            $this->setExpectedException(InvalidAccessTokenException::class);
+            $this->expectException(InvalidAccessTokenException::class);
         }
 
         $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
