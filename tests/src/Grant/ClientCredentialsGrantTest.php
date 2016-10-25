@@ -46,23 +46,23 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenService = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $this->tokenService = $this->createMock(AccessTokenService::class);
         $this->grant        = new ClientCredentialsGrant($this->tokenService);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class),
+        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
             Client::createNewClient('id', 'name'));
     }
 
     public function testCanCreateTokenResponse()
     {
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
 
         $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
-        $owner  = $this->getMock(TokenOwnerInterface::class);
+        $owner  = $this->createMock(TokenOwnerInterface::class);
         $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
 
         $token = AccessToken::reconstitute([

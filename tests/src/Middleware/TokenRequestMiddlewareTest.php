@@ -42,20 +42,20 @@ class TokenRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->authorizationServer = $this->getMock(AuthorizationServerInterface::class);
+        $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $this->middleware          = new TokenRequestMiddleware($this->authorizationServer);
     }
 
     public function testCanHandleTokenRequest()
     {
-        $request  = $this->getMock(RequestInterface::class);
-        $response = $this->getMock(ResponseInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
         $next = function() {};
 
         $this->authorizationServer->expects(static::once())
             ->method('handleTokenRequest')
             ->with($request)
-            ->willReturn($this->getMock(ResponseInterface::class));
+            ->willReturn($this->createMock(ResponseInterface::class));
 
         $middleware = $this->middleware;
         $middleware ($request, $response, $next);

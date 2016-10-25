@@ -60,8 +60,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->getMock(AccessTokenService::class, [], [], '', false);
-        $this->refreshTokenService = $this->getMock(RefreshTokenService::class, [], [], '', false);
+        $this->accessTokenService  = $this->createMock(AccessTokenService::class);
+        $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $callable    = function(){};
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
@@ -70,12 +70,12 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->getMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
+        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
     {
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
@@ -86,7 +86,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'access_denied');
 
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
 
         $callable = function($username, $password) {
@@ -114,10 +114,10 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
-        $request = $this->getMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
 
-        $owner = $this->getMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
 
         $callable = function($username, $password) use ($owner) {
@@ -132,7 +132,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
             $this->refreshTokenService->expects(static::once())->method('createToken')->will(static::returnValue($refreshToken));
         }
 
-        $authorizationServer = $this->getMock(AuthorizationServer::class, [], [], '', false);
+        $authorizationServer = $this->createMock(AuthorizationServer::class);
         $authorizationServer->expects(static::once())
                             ->method('hasGrant')
                             ->with(RefreshTokenGrant::GRANT_TYPE)

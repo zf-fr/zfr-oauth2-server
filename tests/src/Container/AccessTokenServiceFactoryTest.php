@@ -34,7 +34,7 @@ class AccessTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $serverOptions = ServerOptions::fromArray();
 
@@ -46,12 +46,12 @@ class AccessTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $container->expects(static::at(1))
             ->method('get')
             ->with(AccessTokenRepositoryInterface::class)
-            ->willReturn($this->getMock(AccessTokenRepositoryInterface::class, [], [], '', false));
+            ->willReturn($this->createMock(AccessTokenRepositoryInterface::class));
 
         $container->expects(static::at(2))
             ->method('get')
             ->with(ScopeService::class)
-            ->willReturn($this->getMock(ScopeService::class, [], [], '', false));
+            ->willReturn($this->createMock(ScopeService::class));
 
         $factory = new AccessTokenServiceFactory();
         $service = $factory($container);

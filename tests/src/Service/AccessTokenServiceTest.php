@@ -51,8 +51,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->tokenRepository = $this->getMock(AccessTokenRepositoryInterface::class);
-        $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
+        $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
+        $this->scopeService    = $this->createMock(ScopeService::class);
         $this->tokenService    = new AccessTokenService(
             $this->tokenRepository,
             $this->scopeService,
@@ -65,8 +65,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
         $token = AccessToken::reconstitute(
             [
                 'token'     => 'token',
-                'owner'     => $this->getMock(TokenOwnerInterface::class),
-                'client'    => $this->getMock(Client::class, [], [], '', false),
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
                 'scopes'    => [],
             ]
@@ -95,8 +95,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
         $token = AccessToken::reconstitute(
             [
                 'token'     => 'Token',
-                'owner'     => $this->getMock(TokenOwnerInterface::class),
-                'client'    => $this->getMock(Client::class, [], [], '', false),
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
                 'scopes'    => [],
             ]
@@ -149,8 +149,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
             $this->setExpectedException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
-        $owner  = $this->getMock(TokenOwnerInterface::class);
-        $client = $this->getMock(Client::class, [], [], '', false);
+        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $client = $this->createMock(Client::class);
 
         if (empty($tokenScope)) {
             $this->scopeService->expects(static::once())
@@ -205,8 +205,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
             ->method('save')
             ->will(static::returnArgument(0));
 
-        $owner  = $this->getMock(TokenOwnerInterface::class);
-        $client = $this->getMock(Client::class, [], [], '', false);
+        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $client = $this->createMock(Client::class);
 
         $token = $this->tokenService->createToken($owner, $client, []);
         static::assertEquals(40, strlen($token->getToken()));

@@ -41,7 +41,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->clientRepository = $this->getMock(ClientRepositoryInterface::class);
+        $this->clientRepository = $this->createMock(ClientRepositoryInterface::class);
         $this->clientService    = new ClientService($this->clientRepository);
     }
 

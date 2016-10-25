@@ -56,14 +56,14 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         return [
             [
                 3600,
-                $this->getMock(TokenOwnerInterface::class),
-                $this->getMock(Client::class, [], [], '', false),
+                $this->createMock(TokenOwnerInterface::class),
+                $this->createMock(Client::class),
                 ['read', 'write']
             ],
             [
                 3600,
-                $this->getMock(TokenOwnerInterface::class),
-                $this->getMock(Client::class, [], [], '', false),
+                $this->createMock(TokenOwnerInterface::class),
+                $this->createMock(Client::class),
                 Scope::createNewScope(1, 'read')
             ],
             [3600, null, null, null]
@@ -100,8 +100,8 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
             [
                 [
                     'token'     => 'token',
-                    'owner'     => $this->getMock(TokenOwnerInterface::class),
-                    'client'    => $this->getMock(Client::class, [], [], '', false),
+                    'owner'     => $this->createMock(TokenOwnerInterface::class),
+                    'client'    => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
                 ]

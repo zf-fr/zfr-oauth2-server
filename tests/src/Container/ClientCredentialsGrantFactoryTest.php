@@ -34,12 +34,12 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $container->expects(static::at(0))
             ->method('get')
             ->with(AccessTokenService::class)
-            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(AccessTokenService::class));
 
         $factory = new ClientCredentialsGrantFactory();
         $service = $factory($container);

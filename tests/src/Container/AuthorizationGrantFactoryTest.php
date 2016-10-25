@@ -35,22 +35,22 @@ class AuthorizationGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
         $container->expects(static::at(0))
             ->method('get')
             ->with(AuthorizationCodeService::class)
-            ->willReturn($this->getMock(AuthorizationCodeService::class, [], [], '', false));
+            ->willReturn($this->createMock(AuthorizationCodeService::class));
 
         $container->expects(static::at(1))
             ->method('get')
             ->with(AccessTokenService::class)
-            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(AccessTokenService::class));
 
         $container->expects(static::at(2))
             ->method('get')
             ->with(RefreshTokenService::class)
-            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(RefreshTokenService::class));
 
         $factory = new AuthorizationGrantFactory();
         $service = $factory($container);

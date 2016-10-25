@@ -32,8 +32,8 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container    = $this->getMock(ContainerInterface::class);
-        $tokenService = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $container    = $this->createMock(ContainerInterface::class);
+        $tokenService = $this->createMock(AccessTokenService::class);
 
         $container->expects(static::once())
             ->method('get')
