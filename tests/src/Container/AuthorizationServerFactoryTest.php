@@ -41,27 +41,27 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
         $container     = $this->getMock(ContainerInterface::class);
         $serverOptions = ServerOptions::fromArray(['grants' => ['MyGrant']]);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ClientService::class)
             ->willReturn($this->getMock(ClientService::class, [], [], '', false));
 
-        $container->expects($this->at(1))
+        $container->expects(static::at(1))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($serverOptions);
 
-        $container->expects($this->at(2))
+        $container->expects(static::at(2))
             ->method('get')
             ->with('MyGrant')
             ->willReturn($this->getMock(GrantInterface::class, [], [], '', false));
 
-        $container->expects($this->at(3))
+        $container->expects(static::at(3))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
 
-        $container->expects($this->at(4))
+        $container->expects(static::at(4))
             ->method('get')
             ->with(RefreshTokenService::class)
             ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
@@ -69,6 +69,6 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AuthorizationServerFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(AuthorizationServer::class, $service);
+        static::assertInstanceOf(AuthorizationServer::class, $service);
     }
 }

@@ -51,7 +51,7 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 //        $request  = $this->getMock(RequestInterface::class);
 //        $response = $this->getMock(ResponseInterface::class);
 //
-//        $this->authorizationServer->expects($this->once())
+//        $this->authorizationServer->expects(static::once())
 //            ->method('handleTokenRequest')
 //            ->with($request)
 //            ->willReturn($this->getMock(ResponseInterface::class));
@@ -64,7 +64,7 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
         $response = $this->getMock(ResponseInterface::class);
         $next  = function() {};
 
-        $this->authorizationServer->expects($this->once())
+        $this->authorizationServer->expects(static::once())
             ->method('handleRevocationRequest')
             ->with($request)
             ->willReturn($this->getMock(ResponseInterface::class));

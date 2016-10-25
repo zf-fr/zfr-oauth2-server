@@ -36,7 +36,7 @@ class ClientServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ClientRepositoryInterface::class)
             ->willReturn($this->getMock(ClientRepositoryInterface::class, [], [], '', false));
@@ -44,6 +44,6 @@ class ClientServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ClientServiceFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(ClientService::class, $service);
+        static::assertInstanceOf(ClientService::class, $service);
     }
 }

@@ -55,27 +55,27 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        $this->clientRepository->expects($this->once())
+        $this->clientRepository->expects(static::once())
                                ->method('findById')
                                ->with('client_id')
-                               ->will($this->returnValue($client));
+                               ->will(static::returnValue($client));
 
-        $this->assertSame($client, $this->clientService->getClient('client_id'));
+        static::assertSame($client, $this->clientService->getClient('client_id'));
     }
 
     public function testRegisterClient()
     {
-        $this->clientRepository->expects($this->once())
+        $this->clientRepository->expects(static::once())
                             ->method('idExists')
                             ->willReturn(false);
 
-        $this->clientRepository->expects($this->once())
+        $this->clientRepository->expects(static::once())
             ->method('save')
-            ->will($this->returnArgument(0));
+            ->will(static::returnArgument(0));
 
         list($client, $secret) = $this->clientService->registerClient('name', ['http://www.example.com']);
 
-        $this->assertEquals(60, strlen($client->getSecret()));
-        $this->assertEquals(40, strlen($secret));
+        static::assertEquals(60, strlen($client->getSecret()));
+        static::assertEquals(40, strlen($secret));
     }
 }

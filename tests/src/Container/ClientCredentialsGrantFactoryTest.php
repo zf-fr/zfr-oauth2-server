@@ -36,7 +36,7 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
@@ -44,6 +44,6 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ClientCredentialsGrantFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(ClientCredentialsGrant::class, $service);
+        static::assertInstanceOf(ClientCredentialsGrant::class, $service);
     }
 }

@@ -63,7 +63,7 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
         $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
         $owner  = $this->getMock(TokenOwnerInterface::class);
-        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
+        $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
 
         $token = AccessToken::reconstitute([
             'token'     => 'azerty',
@@ -73,15 +73,15 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
             'scopes'    => []
         ]);
 
-        $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));
+        $this->tokenService->expects(static::once())->method('createToken')->will(static::returnValue($token));
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
         $body = json_decode($response->getBody(), true);
 
-        $this->assertEquals('azerty', $body['access_token']);
-        $this->assertEquals('Bearer', $body['token_type']);
-        $this->assertEquals(3600, $body['expires_in']);
-        $this->assertEquals(1, $body['owner_id']);
+        static::assertEquals('azerty', $body['access_token']);
+        static::assertEquals('Bearer', $body['token_type']);
+        static::assertEquals(3600, $body['expires_in']);
+        static::assertEquals(1, $body['owner_id']);
     }
 }

@@ -74,7 +74,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['response_type' => 'foo']));
+        $request->expects(static::once())->method('getQueryParams')->will(static::returnValue(['response_type' => 'foo']));
 
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name'));
     }
@@ -84,15 +84,15 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $queryParams = ['response_type' => 'code', 'scope' => '', 'state' => 'xyz'];
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
+        $request->expects(static::once())->method('getQueryParams')->will(static::returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService->expects(static::once())->method('createToken')->will(static::returnValue($token));
 
         $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', ['http://www.example.com']));
 
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
+        static::assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
     }
 
     public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUriInList()
@@ -105,10 +105,10 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
+        $request->expects(static::once())->method('getQueryParams')->will(static::returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService->expects(static::once())->method('createToken')->will(static::returnValue($token));
 
         $client = Client::reconstitute(
             [
@@ -122,7 +122,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $response = $this->grant->createAuthorizationResponse($request, $client);
 
         $location = $response->getHeaderLine('Location');
-        $this->assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
+        static::assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
     }
 
     public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized()
@@ -137,10 +137,10 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         ];
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
+        $request->expects(static::once())->method('getQueryParams')->will(static::returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->never())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService->expects(static::never())->method('createToken')->will(static::returnValue($token));
 
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name', null, ['http://www.example.com']));
     }
@@ -148,7 +148,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertInvalidIfNoCodeIsSet()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
+        $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
@@ -159,12 +159,12 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123']);
+        $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123']);
 
-        $this->authorizationCodeService->expects($this->once())
+        $this->authorizationCodeService->expects(static::once())
             ->method('getToken')
             ->with('123')
-            ->will($this->returnValue(null));
+            ->will(static::returnValue(null));
 
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
@@ -174,12 +174,12 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123']);
+        $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123']);
 
-        $this->authorizationCodeService->expects($this->once())
+        $this->authorizationCodeService->expects(static::once())
             ->method('getToken')
             ->with('123')
-            ->will($this->returnValue($this->getInvalidAuthorizationCode()));
+            ->will(static::returnValue($this->getInvalidAuthorizationCode()));
 
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
     }
@@ -189,14 +189,14 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);
+        $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);
 
         $token = $this->getValidAuthorizationCode(null, null, CLient::createNewClient('id', 'name'));
 
-        $this->authorizationCodeService->expects($this->once())
+        $this->authorizationCodeService->expects(static::once())
             ->method('getToken')
             ->with('123')
-            ->will($this->returnValue($token));
+            ->will(static::returnValue($token));
 
         $this->grant->createTokenResponse($request, CLient::createNewClient('id', 'name'));
     }
@@ -215,7 +215,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code'      => '123',
+        $request->expects(static::once())->method('getParsedBody')->willReturn(['code'      => '123',
                                                                                'client_id' => 'client_123'
         ]);
 
@@ -229,27 +229,27 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         );
         $token = $this->getValidAuthorizationCode(null, null, $client);
 
-        $this->authorizationCodeService->expects($this->once())
+        $this->authorizationCodeService->expects(static::once())
             ->method('getToken')
             ->with('123')
-            ->will($this->returnValue($token));
+            ->will(static::returnValue($token));
 
         $owner = $this->getMock(TokenOwnerInterface::class);
-        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
+        $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
+        $this->accessTokenService->expects(static::once())->method('createToken')->will(static::returnValue($accessToken));
 
         if ($hasRefreshGrant) {
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
+            $this->refreshTokenService->expects(static::once())->method('createToken')->will(static::returnValue($refreshToken));
         }
 
         $authorizationServer = $this->getMock(AuthorizationServer::class, [], [], '', false);
-        $authorizationServer->expects($this->once())
+        $authorizationServer->expects(static::once())
             ->method('hasGrant')
             ->with(RefreshTokenGrant::GRANT_TYPE)
-            ->will($this->returnValue($hasRefreshGrant));
+            ->will(static::returnValue($hasRefreshGrant));
 
         $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService,
             $this->refreshTokenService);
@@ -259,14 +259,14 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
         $body = json_decode($response->getBody(), true);
 
-        $this->assertEquals('azerty_access', $body['access_token']);
-        $this->assertEquals('Bearer', $body['token_type']);
-        $this->assertEquals(3600, $body['expires_in']);
-        $this->assertEquals('read', $body['scope']);
-        $this->assertEquals(1, $body['owner_id']);
+        static::assertEquals('azerty_access', $body['access_token']);
+        static::assertEquals('Bearer', $body['token_type']);
+        static::assertEquals(3600, $body['expires_in']);
+        static::assertEquals('read', $body['scope']);
+        static::assertEquals(1, $body['owner_id']);
 
         if ($hasRefreshGrant) {
-            $this->assertEquals('azerty_refresh', $body['refresh_token']);
+            static::assertEquals('azerty_refresh', $body['refresh_token']);
         }
     }
 

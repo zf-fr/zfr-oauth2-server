@@ -35,7 +35,7 @@ class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ScopeRepositoryInterface::class)
             ->willReturn($this->getMock(ScopeRepositoryInterface::class, [], [], '', false));
@@ -43,6 +43,6 @@ class ScopeServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ScopeServiceFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(ScopeService::class, $service);
+        static::assertInstanceOf(ScopeService::class, $service);
     }
 }

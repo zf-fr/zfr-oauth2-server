@@ -50,44 +50,44 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
     public function testCanExtractAccessTokenFromAuthorizationHeader()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
-        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
+        $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(true));
+        $request->expects(static::once())->method('getHeaderLine')->will(static::returnValue('Bearer token'));
 
         $token = $this->getMock(AccessToken::class, [], [], '', false);
-        $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
+        $token->expects(static::once())->method('isValid')->will(static::returnValue(true));
 
-        $this->tokenService->expects($this->once())
+        $this->tokenService->expects(static::once())
                            ->method('getToken')
                            ->with('token')
-                           ->will($this->returnValue($token));
+                           ->will(static::returnValue($token));
 
-        $this->assertSame($token, $this->resourceServer->getAccessToken($request));
+        static::assertSame($token, $this->resourceServer->getAccessToken($request));
     }
 
     public function testCanExtractAccessTokenFromQueryString()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(false));
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['access_token' => 'token']));
+        $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(false));
+        $request->expects(static::once())->method('getQueryParams')->will(static::returnValue(['access_token' => 'token']));
 
         $token = $this->getMock(AccessToken::class, [], [], '', false);
-        $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
+        $token->expects(static::once())->method('isValid')->will(static::returnValue(true));
 
-        $this->tokenService->expects($this->once())
+        $this->tokenService->expects(static::once())
                            ->method('getToken')
                            ->with('token')
-                           ->will($this->returnValue($token));
+                           ->will(static::returnValue($token));
 
-        $this->assertSame($token, $this->resourceServer->getAccessToken($request));
+        static::assertSame($token, $this->resourceServer->getAccessToken($request));
     }
 
     public function testReturnNullIfNoAccessTokenIsInAuthorizationHeader()
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
-        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue(''));
+        $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(true));
+        $request->expects(static::once())->method('getHeaderLine')->will(static::returnValue(''));
 
-        $this->assertNull($this->resourceServer->getAccessToken($request));
+        static::assertNull($this->resourceServer->getAccessToken($request));
     }
 
     public function testThrowExceptionIfTokenDoesNotExistAnymore()
@@ -95,13 +95,13 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
         $this->setExpectedException(InvalidAccessTokenException::class);
 
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
-        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
+        $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(true));
+        $request->expects(static::once())->method('getHeaderLine')->will(static::returnValue('Bearer token'));
 
-        $this->tokenService->expects($this->once())
+        $this->tokenService->expects(static::once())
                            ->method('getToken')
                            ->with('token')
-                           ->will($this->returnValue(null));
+                           ->will(static::returnValue(null));
 
         $this->resourceServer->getAccessToken($request);
     }
@@ -141,8 +141,8 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
     public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
     {
         $request = $this->getMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
-        $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
+        $request->expects(static::once())->method('hasHeader')->with('Authorization')->will(static::returnValue(true));
+        $request->expects(static::once())->method('getHeaderLine')->will(static::returnValue('Bearer token'));
 
         if ($expiredToken) {
             $accessToken = AccessToken::createNewAccessToken(-3600, null, null, $tokenScope);
@@ -150,16 +150,16 @@ class ResourceServerTest extends \PHPUnit_Framework_TestCase
             $accessToken = AccessToken::createNewAccessToken(3600, null, null, $tokenScope);
         }
 
-        $this->tokenService->expects($this->once())
+        $this->tokenService->expects(static::once())
                            ->method('getToken')
                            ->with('token')
-                           ->will($this->returnValue($accessToken));
+                           ->will(static::returnValue($accessToken));
 
         if (!$match || $expiredToken) {
             $this->setExpectedException(InvalidAccessTokenException::class);
         }
 
         $tokenResult = $this->resourceServer->getAccessToken($request, $desiredScope);
-        $this->assertInstanceOf(AccessToken::class, $tokenResult);
+        static::assertInstanceOf(AccessToken::class, $tokenResult);
     }
 }
