@@ -40,7 +40,7 @@ class RefreshTokenGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $container->expects($this->at(0))
             ->method('get')
             ->with(ServerOptions::class)
-            ->willReturn(new ServerOptions());
+            ->willReturn(ServerOptions::fromArray());
 
         $container->expects($this->at(1))
             ->method('get')

@@ -36,7 +36,7 @@ class RefreshTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->getMock(ContainerInterface::class);
 
-        $serverOptions = new ServerOptions();
+        $serverOptions = ServerOptions::fromArray();
 
         $container->expects($this->at(0))
             ->method('get')

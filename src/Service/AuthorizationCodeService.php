@@ -52,7 +52,7 @@ class AuthorizationCodeService extends AbstractTokenService
 
         do {
             $token = AuthorizationCode::createNewAuthorizationCode(
-                $this->tokenTTL,
+                $this->serverOptions->getAuthorizationCodeTtl(),
                 $redirectUri,
                 $owner,
                 $client,

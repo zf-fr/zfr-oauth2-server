@@ -24,6 +24,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
@@ -47,49 +48,23 @@ class RefreshTokenGrant extends AbstractGrant
     private $refreshTokenService;
 
     /**
-     * @var bool
+     * @var ServerOptions
      */
-    private $rotateRefreshTokens = false;
-
-    /**
-     * @var bool
-     */
-    private $revokeRotatedRefreshTokens = true;
+    private $serverOptions;
 
     /**
      * @param AccessTokenService  $accessTokenService
      * @param RefreshTokenService $refreshTokenService
+     * @param ServerOptions       $serverOptions
      */
-    public function __construct(AccessTokenService $accessTokenService, RefreshTokenService $refreshTokenService)
-    {
+    public function __construct(
+        AccessTokenService $accessTokenService,
+        RefreshTokenService $refreshTokenService,
+        ServerOptions $serverOptions
+    ) {
         $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-    }
-
-    /**
-     * Set if we should rotate refresh tokens
-     *
-     * If set to true, then a new refresh token will be created each time an access token is asked from it,
-     * and the old refresh token is deleted
-     *
-     * @param  bool $rotateTokens
-     * @return void
-     */
-    public function setRotateRefreshTokens($rotateTokens)
-    {
-        $this->rotateRefreshTokens = (bool) $rotateTokens;
-    }
-
-    /**
-     * Set if we should revoke rotated refresh tokens
-     *
-     * Only useful when rotateRefreshTokens is true
-     *
-     * @param $revokeRotatedRefreshTokens
-     */
-    public function setRevokeRotatedRefreshToken($revokeRotatedRefreshTokens)
-    {
-        $this->revokeRotatedRefreshTokens = (bool) $revokeRotatedRefreshTokens;
+        $this->serverOptions       = $serverOptions;
     }
 
     /**
@@ -142,8 +117,8 @@ class RefreshTokenGrant extends AbstractGrant
         $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 
         // We may want to revoke the old refresh token
-        if ($this->rotateRefreshTokens) {
-            if ($this->revokeRotatedRefreshTokens) {
+        if ($this->serverOptions->getRotateRefreshTokens()) {
+            if ($this->serverOptions->getRevokeRotatedRefreshTokens()) {
                 $this->refreshTokenService->deleteToken($refreshToken);
             }
 

@@ -24,7 +24,7 @@ namespace ZfrOAuth2\Server\Options;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
-class ServerOptions
+final class ServerOptions
 {
     /**
      * Authorization code TTL
@@ -76,38 +76,51 @@ class ServerOptions
     private $grants = [];
 
     /**
-     * Constructor
+     * ServerOptions constructor.
      *
-     * @param  array|null $options
+     * @param int             $authorizationCodeTtl
+     * @param int             $accessTokenTtl
+     * @param int             $refreshTokenTtl
+     * @param bool            $rotateRefreshTokens
+     * @param bool            $revokeRotatedRefreshTokens
+     * @param callable|string $ownerCallable either a callable or the name of a container service
+     * @param array           $grants
      */
-    public function __construct($options = null)
-    {
-        if (null !== $options) {
-            $this->setFromArray($options);
-        }
+    private function __construct(
+        int $authorizationCodeTtl,
+        int $accessTokenTtl,
+        int $refreshTokenTtl,
+        bool $rotateRefreshTokens,
+        bool $revokeRotatedRefreshTokens,
+        $ownerCallable,
+        array $grants
+    ) {
+        $this->authorizationCodeTtl       = $authorizationCodeTtl;
+        $this->accessTokenTtl             = $accessTokenTtl;
+        $this->refreshTokenTtl            = $refreshTokenTtl;
+        $this->rotateRefreshTokens        = $rotateRefreshTokens;
+        $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
+        $this->ownerCallable              = $ownerCallable;
+        $this->grants                     = $grants;
     }
 
     /**
      * Set one or more configuration properties
      *
      * @param  array $options
+     * @return static
      */
-    public function setFromArray(array $options)
+    public static function fromArray(array $options = []): self
     {
-        foreach ($options as $key => $value) {
-            $setter = 'set' . str_replace('_', '', $key);
-            $this->{$setter}($value);
-        }
-    }
-
-    /**
-     * Set the authorization code TTL
-     *
-     * @param int $authorizationCodeTtl
-     */
-    public function setAuthorizationCodeTtl($authorizationCodeTtl)
-    {
-        $this->authorizationCodeTtl = (int) $authorizationCodeTtl;
+        return new self(
+            $options['authorization_code_ttl'] ?? 120,
+            $options['access_token_ttl'] ?? 3600,
+            $options['refresh_token_ttl'] ?? 86400,
+            $options['rotate_refresh_tokens'] ?? false,
+            $options['revoke_rotated_refresh_tokens'] ?? true,
+            $options['owner_callable'] ?? null,
+            $options['grants'] ?? []
+        );
     }
 
     /**
@@ -121,16 +134,6 @@ class ServerOptions
     }
 
     /**
-     * Set the access token TTL
-     *
-     * @param int $accessTokenTtl
-     */
-    public function setAccessTokenTtl(int $accessTokenTtl)
-    {
-        $this->accessTokenTtl = $accessTokenTtl;
-    }
-
-    /**
      * Get the access token TTL
      *
      * @return int
@@ -138,16 +141,6 @@ class ServerOptions
     public function getAccessTokenTtl(): int
     {
         return $this->accessTokenTtl;
-    }
-
-    /**
-     * Set the refresh token TTL
-     *
-     * @param int $refreshTokenTtl
-     */
-    public function setRefreshTokenTtl(int $refreshTokenTtl)
-    {
-        $this->refreshTokenTtl = $refreshTokenTtl;
     }
 
     /**
@@ -171,16 +164,6 @@ class ServerOptions
     }
 
     /**
-     * Set the rotate refresh token option while refreshing an access token
-     *
-     * @param boolean $rotateRefreshTokens
-     */
-    public function setRotateRefreshTokens(bool $rotateRefreshTokens)
-    {
-        $this->rotateRefreshTokens = $rotateRefreshTokens;
-    }
-
-    /**
      * Get the revoke rotated refresh token option while refreshing an access token
      *
      * @return bool
@@ -191,26 +174,6 @@ class ServerOptions
     }
 
     /**
-     * Set the revoke rotated refresh token option while refreshing an access token
-     *
-     * @param bool $revokeRotatedRefreshTokens
-     */
-    public function setRevokeRotatedRefreshTokens(bool $revokeRotatedRefreshTokens)
-    {
-        $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
-    }
-
-    /**
-     * Set the callable used to validate a user (or service name)
-     *
-     * @param callable|string $ownerCallable
-     */
-    public function setOwnerCallable($ownerCallable)
-    {
-        $this->ownerCallable = $ownerCallable;
-    }
-
-    /**
      * Get the callable used to validate a user
      *
      * @return callable|string
@@ -218,16 +181,6 @@ class ServerOptions
     public function getOwnerCallable()
     {
         return $this->ownerCallable;
-    }
-
-    /**
-     * Set the grants the authorization server must support
-     *
-     * @param array $grants
-     */
-    public function setGrants(array $grants)
-    {
-        $this->grants = $grants;
     }
 
     /**

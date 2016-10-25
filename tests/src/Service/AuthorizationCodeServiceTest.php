@@ -23,6 +23,7 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ScopeService;
@@ -55,7 +56,8 @@ class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
         $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
         $this->tokenService    = new AuthorizationCodeService(
             $this->tokenRepository,
-            $this->scopeService
+            $this->scopeService,
+            ServerOptions::fromArray()
         );
     }
 

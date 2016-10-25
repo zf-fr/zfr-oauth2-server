@@ -46,10 +46,6 @@ class RefreshTokenServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $service = new RefreshTokenService($tokenRepository, $scopeService);
-
-        $service->setTokenTTL($serverOptions->getRefreshTokenTtl());
-
-        return $service;
+        return new RefreshTokenService($tokenRepository, $scopeService, $serverOptions);
     }
 }

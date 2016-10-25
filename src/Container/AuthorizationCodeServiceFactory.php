@@ -45,10 +45,6 @@ class AuthorizationCodeServiceFactory
         /* @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
-        $service = new AuthorizationCodeService($tokenRepository, $scopeService);
-
-        $service->setTokenTTL($serverOptions->getAuthorizationCodeTtl());
-
-        return $service;
+        return new AuthorizationCodeService($tokenRepository, $scopeService, $serverOptions);
     }
 }

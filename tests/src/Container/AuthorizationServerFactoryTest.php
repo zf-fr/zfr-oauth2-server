@@ -39,7 +39,7 @@ class AuthorizationServerFactoryTest extends \PHPUnit_Framework_TestCase
     public function testCanCreateFromFactory()
     {
         $container     = $this->getMock(ContainerInterface::class);
-        $serverOptions = new ServerOptions(['grants' => ['MyGrant']]);
+        $serverOptions = ServerOptions::fromArray(['grants' => ['MyGrant']]);
 
         $container->expects($this->at(0))
             ->method('get')

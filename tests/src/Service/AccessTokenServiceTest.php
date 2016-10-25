@@ -22,6 +22,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
@@ -54,7 +55,8 @@ class AccessTokenServiceTest extends \PHPUnit_Framework_TestCase
         $this->scopeService    = $this->getMock(ScopeService::class, [], [], '', false);
         $this->tokenService    = new AccessTokenService(
             $this->tokenRepository,
-            $this->scopeService
+            $this->scopeService,
+            ServerOptions::fromArray()
         );
     }
 
