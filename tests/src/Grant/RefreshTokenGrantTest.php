@@ -64,7 +64,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
-            Client::createNewClient('id', 'name'));
+            Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
@@ -75,7 +75,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfRefreshTokenIsExpired()

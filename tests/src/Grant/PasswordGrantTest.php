@@ -70,7 +70,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testAssertDoesNotImplementAuthorization()
     {
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
+        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
@@ -79,7 +79,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
@@ -98,7 +98,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function hasRefreshGrant()
@@ -141,7 +141,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
 
         $body = json_decode($response->getBody(), true);
 

@@ -117,7 +117,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testGetters()
     {
-        $client = Client::createNewClient('name', ['http://www.example.com']);
+        $client = Client::createNewClient('name', 'http://www.example.com');
 
         static::assertEmpty($client->getSecret());
         static::assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
@@ -128,10 +128,10 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCheckPublicClient()
     {
-        $client = Client::createNewClient('name', ['http://www.example.com']);
+        $client = Client::createNewClient('name', 'http://www.example.com');
         static::assertTrue($client->isPublic());
 
-        $client = Client::createNewClient('name', ['http://www.example.com']);
+        $client = Client::createNewClient('name', 'http://www.example.com');
 
         $client->generateSecret();
         static::assertFalse($client->isPublic());
@@ -139,7 +139,7 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
     public function testRedirectUri()
     {
-        $client = Client::createNewClient('name', ['http://www.example.com']);
+        $client = Client::createNewClient('name', 'http://www.example.com');
         static::assertCount(1, $client->getRedirectUris());
         static::assertTrue($client->hasRedirectUri('http://www.example.com'));
         static::assertFalse($client->hasRedirectUri('http://www.example2.com'));

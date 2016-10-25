@@ -76,7 +76,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getQueryParams')->will(static::returnValue(['response_type' => 'foo']));
 
-        $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testCanCreateAuthorizationCodeUsingClientRedirectUri()
@@ -89,7 +89,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects(static::once())->method('createToken')->will(static::returnValue($token));
 
-        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', ['http://www.example.com']));
+        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', 'http://www.example.com'));
 
         $location = $response->getHeaderLine('Location');
         static::assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
@@ -142,7 +142,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $token = $this->getValidAuthorizationCode();
         $this->authorizationCodeService->expects(static::never())->method('createToken')->will(static::returnValue($token));
 
-        $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', ['http://www.example.com']));
+        $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfNoCodeIsSet()
@@ -151,7 +151,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request->expects(static::once())->method('getParsedBody')->willReturn([]);
 
         $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidGrantIfCodeIsInvalid()
@@ -166,7 +166,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
             ->with('123')
             ->will(static::returnValue(null));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidGrantIfCodeIsExpired()
@@ -181,7 +181,7 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
             ->with('123')
             ->will(static::returnValue($this->getInvalidAuthorizationCode()));
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testInvalidRequestIfAuthClientIsNotSame()
@@ -191,14 +191,14 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);
 
-        $token = $this->getValidAuthorizationCode(null, null, CLient::createNewClient('id', 'name'));
+        $token = $this->getValidAuthorizationCode(null, null, CLient::createNewClient('id', 'http://www.example.com'));
 
         $this->authorizationCodeService->expects(static::once())
             ->method('getToken')
             ->with('123')
             ->will(static::returnValue($token));
 
-        $this->grant->createTokenResponse($request, CLient::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, CLient::createNewClient('id', 'http://www.example.com'));
     }
 
     public function hasRefreshGrant()
