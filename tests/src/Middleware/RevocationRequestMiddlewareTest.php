@@ -42,32 +42,32 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->authorizationServer = $this->getMock(AuthorizationServerInterface::class);
+        $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $this->middleware          = new RevocationRequestMiddleware($this->authorizationServer);
     }
 
 //    public function testCanHandleTokenRequest()
 //    {
-//        $request  = $this->getMock(RequestInterface::class);
-//        $response = $this->getMock(ResponseInterface::class);
+//        $request  = $this->createMock(RequestInterface::class);
+//        $response = $this->createMock(ResponseInterface::class);
 //
-//        $this->authorizationServer->expects($this->once())
+//        $this->authorizationServer->expects(static::once())
 //            ->method('handleTokenRequest')
 //            ->with($request)
-//            ->willReturn($this->getMock(ResponseInterface::class));
+//            ->willReturn($this->createMock(ResponseInterface::class));
 //        $this->middleware->handleTokenRequest($request, $response);
 //    }
 
     public function testCanHandleRevocationRequest()
     {
-        $request  = $this->getMock(RequestInterface::class);
-        $response = $this->getMock(ResponseInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
         $next  = function() {};
 
-        $this->authorizationServer->expects($this->once())
+        $this->authorizationServer->expects(static::once())
             ->method('handleRevocationRequest')
             ->with($request)
-            ->willReturn($this->getMock(ResponseInterface::class));
+            ->willReturn($this->createMock(ResponseInterface::class));
 
         $middleware = $this->middleware;
         $middleware ($request, $response, $next);

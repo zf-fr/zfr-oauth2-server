@@ -34,16 +34,16 @@ class ClientServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ClientRepositoryInterface::class)
-            ->willReturn($this->getMock(ClientRepositoryInterface::class, [], [], '', false));
+            ->willReturn($this->createMock(ClientRepositoryInterface::class));
 
         $factory = new ClientServiceFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(ClientService::class, $service);
+        static::assertInstanceOf(ClientService::class, $service);
     }
 }

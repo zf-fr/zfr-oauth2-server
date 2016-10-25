@@ -36,62 +36,62 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $callable  = function () {
         };
         $options   = ServerOptions::fromArray(['owner_callable' => $callable]);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($options);
 
-        $container->expects($this->at(1))
+        $container->expects(static::at(1))
             ->method('get')
             ->with(AccessTokenService::class)
-            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(AccessTokenService::class));
 
-        $container->expects($this->at(2))
+        $container->expects(static::at(2))
             ->method('get')
             ->with(RefreshTokenService::class)
-            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(RefreshTokenService::class));
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(PasswordGrant::class, $service);
+        static::assertInstanceOf(PasswordGrant::class, $service);
     }
 
     public function testCanCreateFromFactoryOwnerCallableOptionsIsString()
     {
-        $container = $this->getMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $callable  = function () {
         };
         $options   = ServerOptions::fromArray(['owner_callable' => 'service_name']);
 
-        $container->expects($this->at(0))
+        $container->expects(static::at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($options);
 
-        $container->expects($this->at(1))
+        $container->expects(static::at(1))
             ->method('get')
             ->with('service_name')
             ->willReturn($callable);
 
-        $container->expects($this->at(2))
+        $container->expects(static::at(2))
             ->method('get')
             ->with(AccessTokenService::class)
-            ->willReturn($this->getMock(AccessTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(AccessTokenService::class));
 
-        $container->expects($this->at(3))
+        $container->expects(static::at(3))
             ->method('get')
             ->with(RefreshTokenService::class)
-            ->willReturn($this->getMock(RefreshTokenService::class, [], [], '', false));
+            ->willReturn($this->createMock(RefreshTokenService::class));
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf(PasswordGrant::class, $service);
+        static::assertInstanceOf(PasswordGrant::class, $service);
     }
 }

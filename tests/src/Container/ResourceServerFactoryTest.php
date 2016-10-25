@@ -32,10 +32,10 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container    = $this->getMock(ContainerInterface::class);
-        $tokenService = $this->getMock(AccessTokenService::class, [], [], '', false);
+        $container    = $this->createMock(ContainerInterface::class);
+        $tokenService = $this->createMock(AccessTokenService::class);
 
-        $container->expects($this->once())
+        $container->expects(static::once())
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($tokenService);
@@ -43,6 +43,6 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ResourceServerFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
+        static::assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
     }
 }

@@ -43,7 +43,7 @@ class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 
     public function setUp()
     {
-        $this->authorizationServer = $this->getMock(AuthorizationServerInterface::class);
+        $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $this->middleware          = new AuthorizationRequestMiddleware($this->authorizationServer);
     }
 
@@ -52,18 +52,18 @@ class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanHandleAuthorizationRequest()
     {
-        $this->markTestIncomplete(
+        static::markTestIncomplete(
             'This functionality has not been fully implemented yet.'
         );
 
-        $request  = $this->getMock(RequestInterface::class);
-        $response = $this->getMock(ResponseInterface::class);
-        $owner    = $this->getMock(TokenOwnerInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
+        $response = $this->createMock(ResponseInterface::class);
+        $owner    = $this->createMock(TokenOwnerInterface::class);
 
-        $this->authorizationServer->expects($this->once())
+        $this->authorizationServer->expects(static::once())
             ->method('handleAuthorizationRequest')
             ->with($request, $owner)
-            ->willReturn($this->getMock(ResponseInterface::class));
+            ->willReturn($this->createMock(ResponseInterface::class));
 
         $middleware = $this->middleware;
         $middleware ($request, $response);
