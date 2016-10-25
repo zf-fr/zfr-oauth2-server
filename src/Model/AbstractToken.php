@@ -106,7 +106,7 @@ abstract class AbstractToken
 
     /**
      * @param array $data
-     * @return AbstractToken
+     * @return static
      */
     public static function reconstitute(array $data)
     {

@@ -54,7 +54,6 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
      */
     public function testReconstitute($data)
     {
-        /** @var Scope $scope */
         $scope = Scope::reconstitute($data);
 
         static::assertEquals($data['id'], $scope->getId());

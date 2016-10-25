@@ -95,7 +95,7 @@ class Client
      * @param array $data
      * @return Client
      */
-    public static function reconstitute(array $data)
+    public static function reconstitute(array $data): Client
     {
         $client = new static();
 

@@ -80,9 +80,9 @@ class Scope
 
     /**
      * @param array $data
-     * @return
+     * @return Scope
      */
-    public static function reconstitute(array $data)
+    public static function reconstitute(array $data): Scope
     {
         $scope = new static();
 

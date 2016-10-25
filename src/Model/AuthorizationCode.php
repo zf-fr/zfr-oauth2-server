@@ -60,9 +60,9 @@ class AuthorizationCode extends AbstractToken
 
     /**
      * @param array $data
-     * @return AbstractToken
+     * @return AuthorizationCode
      */
-    public static function reconstitute(array $data)
+    public static function reconstitute(array $data): self
     {
         $token = parent::reconstitute($data);
 
