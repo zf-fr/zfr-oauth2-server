@@ -52,7 +52,7 @@ class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
      */
     public function testCanHandleAuthorizationRequest()
     {
-        static::markTestIncomplete(
+        $this->markTestIncomplete(
             'This functionality has not been fully implemented yet.'
         );
 
@@ -60,7 +60,7 @@ class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
         $response = $this->createMock(ResponseInterface::class);
         $owner    = $this->createMock(TokenOwnerInterface::class);
 
-        $this->authorizationServer->expects(static::once())
+        $this->authorizationServer->expects($this->once())
             ->method('handleAuthorizationRequest')
             ->with($request, $owner)
             ->willReturn($this->createMock(ResponseInterface::class));

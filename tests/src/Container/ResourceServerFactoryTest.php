@@ -35,7 +35,7 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $container    = $this->createMock(ContainerInterface::class);
         $tokenService = $this->createMock(AccessTokenService::class);
 
-        $container->expects(static::once())
+        $container->expects($this->once())
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($tokenService);
@@ -43,6 +43,6 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ResourceServerFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
+        $this->assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
     }
 }

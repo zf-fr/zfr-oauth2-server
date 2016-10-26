@@ -36,19 +36,19 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         /** @var Client $client */
         $client = Client::createNewClient($name, $redirectUris);
 
-        static::assertEquals($name, $client->getName());
-        static::assertEmpty($client->getSecret());
-        static::assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+        $this->assertEquals($name, $client->getName());
+        $this->assertEmpty($client->getSecret());
+        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
                 $client->getId(), $matches));
 
         if (null !== $redirectUris) {
             if (is_string($redirectUris)) {
                 $redirectUris = explode(" ", $redirectUris);
             }
-            static::assertCount(count($redirectUris), $client->getRedirectUris());
+            $this->assertCount(count($redirectUris), $client->getRedirectUris());
         } else {
-            static::assertTrue(is_array($client->getRedirectUris()));
-            static::assertEmpty($client->getRedirectUris());
+            $this->assertTrue(is_array($client->getRedirectUris()));
+            $this->assertEmpty($client->getRedirectUris());
         }
 
     }
@@ -70,28 +70,28 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = Client::reconstitute($data);
 
 
-        static::assertEquals($data['id'], $client->getId());
+        $this->assertEquals($data['id'], $client->getId());
 
         if (isset($data['name'])) {
-            static::assertSame($data['name'], $client->getName());
+            $this->assertSame($data['name'], $client->getName());
         } else {
-            static::assertNull($client->getName());
+            $this->assertNull($client->getName());
         }
 
         if (isset($data['secret'])) {
-            static::assertSame($data['secret'], $client->getSecret());
+            $this->assertSame($data['secret'], $client->getSecret());
         } else {
-            static::assertEquals('', $client->getSecret());
+            $this->assertEquals('', $client->getSecret());
         }
 
         if (isset($data['redirectUris'])) {
             if (is_string($data['redirectUris'])) {
                 $data['redirectUris'] = explode(" ", $data['redirectUris']);
             }
-            static::assertCount(count($data['redirectUris']), $client->getRedirectUris());
+            $this->assertCount(count($data['redirectUris']), $client->getRedirectUris());
         } else {
-            static::assertTrue(is_array($client->getRedirectUris()));
-            static::assertEmpty($client->getRedirectUris());
+            $this->assertTrue(is_array($client->getRedirectUris()));
+            $this->assertEmpty($client->getRedirectUris());
         }
     }
 
@@ -119,36 +119,36 @@ class ClientTest extends \PHPUnit_Framework_TestCase
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
 
-        static::assertEmpty($client->getSecret());
-        static::assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+        $this->assertEmpty($client->getSecret());
+        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
                 $client->getId(), $matches));
-        static::assertEquals('name', $client->getName());
-        static::assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
+        $this->assertEquals('name', $client->getName());
+        $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
     }
 
     public function testCanCheckPublicClient()
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
-        static::assertTrue($client->isPublic());
+        $this->assertTrue($client->isPublic());
 
         $client = Client::createNewClient('name', 'http://www.example.com');
 
         $client->generateSecret();
-        static::assertFalse($client->isPublic());
+        $this->assertFalse($client->isPublic());
     }
 
     public function testRedirectUri()
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
-        static::assertCount(1, $client->getRedirectUris());
-        static::assertTrue($client->hasRedirectUri('http://www.example.com'));
-        static::assertFalse($client->hasRedirectUri('http://www.example2.com'));
+        $this->assertCount(1, $client->getRedirectUris());
+        $this->assertTrue($client->hasRedirectUri('http://www.example.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example2.com'));
 
         $client = Client::createNewClient('name', ['http://www.example1.com', 'http://www.example2.com']);
-        static::assertCount(2, $client->getRedirectUris());
-        static::assertTrue($client->hasRedirectUri('http://www.example1.com'));
-        static::assertTrue($client->hasRedirectUri('http://www.example2.com'));
-        static::assertFalse($client->hasRedirectUri('http://www.example3.com'));
+        $this->assertCount(2, $client->getRedirectUris());
+        $this->assertTrue($client->hasRedirectUri('http://www.example1.com'));
+        $this->assertTrue($client->hasRedirectUri('http://www.example2.com'));
+        $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
     }
 
     public function testGenerateSecret()
@@ -157,12 +157,12 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $secret = $client->generateSecret();
 
-        static::assertEquals(60, strlen($client->getSecret()));
-        static::assertEquals(40, strlen($secret));
+        $this->assertEquals(60, strlen($client->getSecret()));
+        $this->assertEquals(40, strlen($secret));
 
-        static::assertFalse($client->authenticate('azerty'));
-        static::assertTrue($client->authenticate($secret));
-        static::assertFalse($client->authenticate($client->getSecret()));
+        $this->assertFalse($client->authenticate('azerty'));
+        $this->assertTrue($client->authenticate($secret));
+        $this->assertFalse($client->authenticate($client->getSecret()));
     }
 
     public function testAuthenticate()
@@ -176,9 +176,9 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             ]
         );
 
-        static::assertFalse($client->authenticate('azerty'));
-        static::assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));
-        static::assertFalse($client->authenticate($client->getSecret()));
+        $this->assertFalse($client->authenticate('azerty'));
+        $this->assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));
+        $this->assertFalse($client->authenticate($client->getSecret()));
     }
 
 }

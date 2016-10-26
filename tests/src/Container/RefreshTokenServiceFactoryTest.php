@@ -38,17 +38,17 @@ class RefreshTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $serverOptions = ServerOptions::fromArray();
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($serverOptions);
 
-        $container->expects(static::at(1))
+        $container->expects($this->at(1))
             ->method('get')
             ->with(RefreshTokenRepositoryInterface::class)
             ->willReturn($this->createMock(RefreshTokenRepositoryInterface::class));
 
-        $container->expects(static::at(2))
+        $container->expects($this->at(2))
             ->method('get')
             ->with(ScopeService::class)
             ->willReturn($this->createMock(ScopeService::class));
@@ -56,6 +56,6 @@ class RefreshTokenServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new RefreshTokenServiceFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(RefreshTokenService::class, $service);
+        $this->assertInstanceOf(RefreshTokenService::class, $service);
     }
 }

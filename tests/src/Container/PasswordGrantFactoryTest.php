@@ -41,17 +41,17 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         };
         $options   = ServerOptions::fromArray(['owner_callable' => $callable]);
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($options);
 
-        $container->expects(static::at(1))
+        $container->expects($this->at(1))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->createMock(AccessTokenService::class));
 
-        $container->expects(static::at(2))
+        $container->expects($this->at(2))
             ->method('get')
             ->with(RefreshTokenService::class)
             ->willReturn($this->createMock(RefreshTokenService::class));
@@ -59,7 +59,7 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(PasswordGrant::class, $service);
+        $this->assertInstanceOf(PasswordGrant::class, $service);
     }
 
     public function testCanCreateFromFactoryOwnerCallableOptionsIsString()
@@ -69,22 +69,22 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         };
         $options   = ServerOptions::fromArray(['owner_callable' => 'service_name']);
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($options);
 
-        $container->expects(static::at(1))
+        $container->expects($this->at(1))
             ->method('get')
             ->with('service_name')
             ->willReturn($callable);
 
-        $container->expects(static::at(2))
+        $container->expects($this->at(2))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->createMock(AccessTokenService::class));
 
-        $container->expects(static::at(3))
+        $container->expects($this->at(3))
             ->method('get')
             ->with(RefreshTokenService::class)
             ->willReturn($this->createMock(RefreshTokenService::class));
@@ -92,6 +92,6 @@ class PasswordGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(PasswordGrant::class, $service);
+        $this->assertInstanceOf(PasswordGrant::class, $service);
     }
 }

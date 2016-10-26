@@ -72,7 +72,7 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn([]);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
@@ -85,14 +85,14 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn(['refresh_token' => '123']);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['refresh_token' => '123']);
 
         $refreshToken = $this->getExpiredRefreshToken();
 
-        $this->refreshTokenService->expects(static::once())
+        $this->refreshTokenService->expects($this->once())
             ->method('getToken')
             ->with('123')
-            ->will(static::returnValue($refreshToken));
+            ->will($this->returnValue($refreshToken));
 
         $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
@@ -104,17 +104,17 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn([
+        $request->expects($this->once())->method('getParsedBody')->willReturn([
             'refresh_token' => '123',
             'scope'         => 'read write'
         ]);
 
         $refreshToken = $this->getValidRefreshToken(null, ['read']);
 
-        $this->refreshTokenService->expects(static::once())
+        $this->refreshTokenService->expects($this->once())
             ->method('getToken')
             ->with('123')
-            ->will(static::returnValue($refreshToken));
+            ->will($this->returnValue($refreshToken));
 
         $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
@@ -140,42 +140,42 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         ]));
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn([
+        $request->expects($this->once())->method('getParsedBody')->willReturn([
             'refresh_token' => '123',
             'scope'         => 'read'
         ]);
 
         $owner = $this->createMock(TokenOwnerInterface::class);
-        $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
+        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $refreshToken = $this->getValidRefreshToken($owner, ['read']);
-        $this->refreshTokenService->expects(static::once())
+        $this->refreshTokenService->expects($this->once())
             ->method('getToken')
             ->with('123')
-            ->will(static::returnValue($refreshToken));
+            ->will($this->returnValue($refreshToken));
 
         if ($rotateRefreshToken) {
-            $this->refreshTokenService->expects($revokeRotatedRefreshToken ? static::once() : static::never())
+            $this->refreshTokenService->expects($revokeRotatedRefreshToken ? $this->once() : $this->never())
                 ->method('deleteToken')
                 ->with($refreshToken);
 
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects(static::once())->method('createToken')->will(static::returnValue($refreshToken));
+            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
         }
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects(static::once())->method('createToken')->will(static::returnValue($accessToken));
+        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         $response = $grant->createTokenResponse($request, Client::createNewClient('name', []));
 
         $body = json_decode($response->getBody(), true);
 
-        static::assertEquals('azerty_access', $body['access_token']);
-        static::assertEquals('Bearer', $body['token_type']);
-        static::assertEquals(3600, $body['expires_in']);
-        static::assertEquals('read', $body['scope']);
-        static::assertEquals(1, $body['owner_id']);
-        static::assertEquals('azerty_refresh', $body['refresh_token']);
+        $this->assertEquals('azerty_access', $body['access_token']);
+        $this->assertEquals('Bearer', $body['token_type']);
+        $this->assertEquals(3600, $body['expires_in']);
+        $this->assertEquals('read', $body['scope']);
+        $this->assertEquals(1, $body['owner_id']);
+        $this->assertEquals('azerty_refresh', $body['refresh_token']);
     }
 
     /**

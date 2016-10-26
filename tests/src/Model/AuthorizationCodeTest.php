@@ -39,9 +39,9 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(3600, $redirectUri);
 
         if (null !== $redirectUri) {
-            static::assertSame($redirectUri, $authorizationCode->getRedirectUri());
+            $this->assertSame($redirectUri, $authorizationCode->getRedirectUri());
         } else {
-            static::assertEmpty($authorizationCode->getRedirectUri());
+            $this->assertEmpty($authorizationCode->getRedirectUri());
         }
     }
 
@@ -62,7 +62,7 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
         /** @var AuthorizationCode $authorizationCode */
         $authorizationCode = AuthorizationCode::reconstitute($data);
 
-        static::assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
+        $this->assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
     }
 
     public function providerReconstitute()
@@ -95,33 +95,33 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
     {
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60);
 
-        static::assertFalse($authorizationCode->isExpired());
-        static::assertEquals(60, $authorizationCode->getExpiresIn());
+        $this->assertFalse($authorizationCode->isExpired());
+        $this->assertEquals(60, $authorizationCode->getExpiresIn());
     }
 
     public function testCanCheckIfATokenIsExpired()
     {
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(-60);
 
-        static::assertTrue($authorizationCode->isExpired());
+        $this->assertTrue($authorizationCode->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60);
-        static::assertFalse($authorizationCode->isExpired());
+        $this->assertFalse($authorizationCode->isExpired());
     }
 
     public function testIsValid()
     {
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
-        static::assertTrue($authorizationCode->isValid('read'));
+        $this->assertTrue($authorizationCode->isValid('read'));
 
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(-60, 'http://www.example.com', null, null, 'read write');
-        static::assertFalse($authorizationCode->isValid('read'));
+        $this->assertFalse($authorizationCode->isValid('read'));
 
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, 'read write');
-        static::assertFalse($authorizationCode->isValid('delete'));
+        $this->assertFalse($authorizationCode->isValid('delete'));
     }
 
     /**
@@ -130,6 +130,6 @@ class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
     public function testDoNotSupportLongLiveToken()
     {
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(0, 'http://www.example.com', null, null, 'read write');
-        static::assertTrue($authorizationCode->isExpired());
+        $this->assertTrue($authorizationCode->isExpired());
     }
 }

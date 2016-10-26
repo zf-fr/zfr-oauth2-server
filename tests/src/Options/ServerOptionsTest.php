@@ -33,13 +33,13 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
     {
         $options = ServerOptions::fromArray();
 
-        static::assertEquals(120, $options->getAuthorizationCodeTtl());
-        static::assertEquals(3600, $options->getAccessTokenTtl());
-        static::assertEquals(86400, $options->getRefreshTokenTtl());
-        static::assertNull($options->getOwnerCallable());
-        static::assertEmpty($options->getGrants());
-        static::assertFalse($options->getRotateRefreshTokens());
-        static::assertTrue($options->getRevokeRotatedRefreshTokens());
+        $this->assertEquals(120, $options->getAuthorizationCodeTtl());
+        $this->assertEquals(3600, $options->getAccessTokenTtl());
+        $this->assertEquals(86400, $options->getRefreshTokenTtl());
+        $this->assertNull($options->getOwnerCallable());
+        $this->assertEmpty($options->getGrants());
+        $this->assertFalse($options->getRotateRefreshTokens());
+        $this->assertTrue($options->getRevokeRotatedRefreshTokens());
     }
 
     public function testGetters()
@@ -57,12 +57,12 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
             'grants'                        => [ClientCredentialsGrant::class]
         ]);
 
-        static::assertEquals(300, $options->getAuthorizationCodeTtl());
-        static::assertEquals(3000, $options->getAccessTokenTtl());
-        static::assertEquals(30000, $options->getRefreshTokenTtl());
-        static::assertEquals(true, $options->getRotateRefreshTokens());
-        static::assertEquals(false, $options->getRevokeRotatedRefreshTokens());
-        static::assertSame($callable, $options->getOwnerCallable());
-        static::assertEquals([ClientCredentialsGrant::class], $options->getGrants());
+        $this->assertEquals(300, $options->getAuthorizationCodeTtl());
+        $this->assertEquals(3000, $options->getAccessTokenTtl());
+        $this->assertEquals(30000, $options->getRefreshTokenTtl());
+        $this->assertEquals(true, $options->getRotateRefreshTokens());
+        $this->assertEquals(false, $options->getRevokeRotatedRefreshTokens());
+        $this->assertSame($callable, $options->getOwnerCallable());
+        $this->assertEquals([ClientCredentialsGrant::class], $options->getGrants());
     }
 }

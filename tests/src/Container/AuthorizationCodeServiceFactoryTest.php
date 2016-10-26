@@ -38,17 +38,17 @@ class AuthorizationCodeServiceFactoryTest extends \PHPUnit_Framework_TestCase
 
         $serverOptions = ServerOptions::fromArray();
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(ServerOptions::class)
             ->willReturn($serverOptions);
 
-        $container->expects(static::at(1))
+        $container->expects($this->at(1))
             ->method('get')
             ->with(AuthorizationCodeRepositoryInterface::class)
             ->willReturn($this->createMock(AuthorizationCodeRepositoryInterface::class));
 
-        $container->expects(static::at(2))
+        $container->expects($this->at(2))
             ->method('get')
             ->with(ScopeService::class)
             ->willReturn($this->createMock(ScopeService::class));
@@ -56,6 +56,6 @@ class AuthorizationCodeServiceFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AuthorizationCodeServiceFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(AuthorizationCodeService::class, $service);
+        $this->assertInstanceOf(AuthorizationCodeService::class, $service);
     }
 }

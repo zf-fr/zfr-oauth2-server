@@ -35,10 +35,10 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
         /** @var Scope $scope */
         $scope = Scope::createNewScope($id, $name, $description, $isDefault);
 
-        static::assertEquals($id, $scope->getId());
-        static::assertEquals($name, $scope->getName());
-        static::assertEquals($description, $scope->getDescription());
-        static::assertEquals($isDefault, $scope->isDefault());
+        $this->assertEquals($id, $scope->getId());
+        $this->assertEquals($name, $scope->getName());
+        $this->assertEquals($description, $scope->getDescription());
+        $this->assertEquals($isDefault, $scope->isDefault());
     }
 
     public function providerGenerateNewScope()
@@ -56,10 +56,10 @@ class ScopeTest extends \PHPUnit_Framework_TestCase
     {
         $scope = Scope::reconstitute($data);
 
-        static::assertEquals($data['id'], $scope->getId());
-        static::assertSame($data['name'], $scope->getName());
-        static::assertSame($data['description'], $scope->getDescription());
-        static::assertEquals($data['isDefault'], $scope->isDefault());
+        $this->assertEquals($data['id'], $scope->getId());
+        $this->assertSame($data['name'], $scope->getName());
+        $this->assertSame($data['description'], $scope->getDescription());
+        $this->assertEquals($data['isDefault'], $scope->isDefault());
     }
 
     public function providerReconstitute()

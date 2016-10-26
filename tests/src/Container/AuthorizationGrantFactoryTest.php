@@ -37,17 +37,17 @@ class AuthorizationGrantFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(AuthorizationCodeService::class)
             ->willReturn($this->createMock(AuthorizationCodeService::class));
 
-        $container->expects(static::at(1))
+        $container->expects($this->at(1))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->createMock(AccessTokenService::class));
 
-        $container->expects(static::at(2))
+        $container->expects($this->at(2))
             ->method('get')
             ->with(RefreshTokenService::class)
             ->willReturn($this->createMock(RefreshTokenService::class));
@@ -55,6 +55,6 @@ class AuthorizationGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new AuthorizationGrantFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(AuthorizationGrant::class, $service);
+        $this->assertInstanceOf(AuthorizationGrant::class, $service);
     }
 }
