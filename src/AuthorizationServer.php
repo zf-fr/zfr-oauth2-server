@@ -21,9 +21,9 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server;
 
-use Exception;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Throwable;
 use Zend\Diactoros\Response;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
@@ -277,7 +277,7 @@ class AuthorizationServer implements AuthorizationServerInterface
             } else {
                 $this->refreshTokenService->deleteToken($token);
             }
-        } catch (Exception $exception) {
+        } catch (Throwable $exception) {
             // According to spec (https://tools.ietf.org/html/rfc7009#section-2.2.1), we should return a server 503
             // error if we cannot delete the token for any reason
             $response = $response->withStatus(503, 'An error occurred while trying to delete the token');
