@@ -22,6 +22,7 @@ declare(strict_types = 1);
 namespace ZfrOAuth2\Server;
 
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Scope;
 
@@ -40,7 +41,7 @@ interface ResourceServerInterface
      * @param  ServerRequestInterface $request
      * @param  array|string|Scope[]   $scopes
      * @return AccessToken|null
-     * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
+     * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = []);
 }

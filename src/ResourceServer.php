@@ -62,7 +62,7 @@ class ResourceServer implements ResourceServerInterface
      * @param  ServerRequestInterface $request
      * @param  array                  $scopes
      * @return AccessToken|null
-     * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
+     * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = [])
     {

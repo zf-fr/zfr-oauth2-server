@@ -147,7 +147,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      *
      * @param  string $responseType
      * @return GrantInterface
-     * @throws Exception\OAuth2Exception
+     * @throws OAuth2Exception
      */
     public function getResponseType(string $responseType): GrantInterface
     {
@@ -295,7 +295,7 @@ class AuthorizationServer implements AuthorizationServerInterface
      * @param  ServerRequestInterface $request
      * @param  bool                   $allowPublicClients
      * @return Client|null
-     * @throws Exception\OAuth2Exception
+     * @throws OAuth2Exception
      */
     private function getClient(ServerRequestInterface $request, $allowPublicClients)
     {
