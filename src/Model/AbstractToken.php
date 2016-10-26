@@ -74,7 +74,6 @@ abstract class AbstractToken
      * @param TokenOwnerInterface|null     $owner
      * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
-     * @return static
      */
     protected static function createNew(
         int $ttl,
