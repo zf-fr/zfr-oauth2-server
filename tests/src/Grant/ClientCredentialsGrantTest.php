@@ -84,4 +84,17 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(3600, $body['expires_in']);
         $this->assertEquals(1, $body['owner_id']);
     }
+
+    public function testMethodGetType() {
+        $this->assertSame('client_credentials', $this->grant->getType());
+    }
+
+    public function testMethodGetResponseType() {
+        $this->assertSame('', $this->grant->getResponseType());
+    }
+
+    public function testMethodAllowPublicClients()
+    {
+        $this->assertFalse($this->grant->allowPublicClients());
+    }
 }

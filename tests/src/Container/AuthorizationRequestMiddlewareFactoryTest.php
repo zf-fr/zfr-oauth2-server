@@ -16,31 +16,33 @@
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2Test\Server;
+namespace ZfrOAuth2Test\Server\Container;
 
-use ZfrOAuth2\Server\ModuleConfig;
+use Interop\Container\ContainerInterface;
+use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory;
+use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
- * @covers  \ZfrOAuth2\Server\ModuleConfig
+ * @covers  \ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory
  */
-class ModuleConfigTest extends \PHPUnit_Framework_TestCase
+class AuthorizationRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
 {
-    public function testCanBeInvoked()
+    public function testCanCreateFromFactory()
     {
-        $moduleConfig = new ModuleConfig();
+        $container = $this->createMock(ContainerInterface::class);
 
-        static::assertTrue(is_callable($moduleConfig));
-    }
+        $container->expects($this->at(0))
+            ->method('get')
+            ->with(AuthorizationServer::class)
+            ->willReturn($this->createMock(AuthorizationServer::class));
 
-    public function testGetArrayWith()
-    {
-        $moduleConfig = new ModuleConfig();
-        $config       = $moduleConfig->__invoke();
+        $factory = new AuthorizationRequestMiddlewareFactory();
+        $service = $factory($container);
 
-        $this->assertInternalType('array', $config);
-        $this->assertArrayHasKey('zfr_oauth2_server', $config);
-        $this->assertArrayHasKey('dependencies', $config);
+        $this->assertInstanceOf(AuthorizationRequestMiddleware::class, $service);
     }
 }

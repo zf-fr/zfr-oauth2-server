@@ -228,4 +228,20 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
 
         return $token;
     }
+
+    public function testMethodGetType() {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $this->assertSame('refresh_token', $grant->getType());
+    }
+
+    public function testMethodGetResponseType() {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $this->assertSame('', $grant->getResponseType());
+    }
+
+    public function testMethodAllowPublicClients()
+    {
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $this->assertTrue($grant->allowPublicClients());
+    }
 }

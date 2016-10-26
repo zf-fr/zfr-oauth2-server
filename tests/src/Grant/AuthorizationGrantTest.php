@@ -338,4 +338,17 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
 
         return $token;
     }
+
+    public function testMethodGetType() {
+        $this->assertSame('authorization_code', $this->grant->getType());
+    }
+
+    public function testMethodGetResponseType() {
+        $this->assertSame('code', $this->grant->getResponseType());
+    }
+
+    public function testMethodAllowPublicClients()
+    {
+        $this->assertTrue($this->grant->allowPublicClients());
+    }
 }
