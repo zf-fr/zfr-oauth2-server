@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -107,7 +110,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Validate the user using its username and password
