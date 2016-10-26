@@ -48,9 +48,7 @@ php composer.phar require zfr/zfr-oauth2-server:^1.0
 ## Support
 
 - File issues at [https://github.com/zf-fr/zfr-oauth2-server/issues](https://github.com/zf-fr/zfr-oauth2-server/issues).
-- Say hello in the [prooph gitter](https://gitter.im/prolic/zfc-rbac) chat.
-
-Happy messaging!
+- Say hello in the [prooph gitter](https://gitter.im/prolic/zfr-oauth2-server) chat.
 
 ### Configuration
 
