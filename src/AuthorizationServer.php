@@ -32,7 +32,6 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
-use ZfrOAuth2\Server\Service\TokenService;
 
 /**
  * The authorization server main role is to create access tokens or refresh tokens
@@ -172,7 +171,6 @@ class AuthorizationServer implements AuthorizationServerInterface
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
     ): ResponseInterface {
-    
         try {
             $queryParams  = $request->getQueryParams();
             $responseType = $queryParams['response_type'] ?? null;
@@ -202,7 +200,6 @@ class AuthorizationServer implements AuthorizationServerInterface
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
     ): ResponseInterface {
-    
         $postParams = $request->getParsedBody();
 
         try {

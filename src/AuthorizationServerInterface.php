@@ -56,7 +56,7 @@ interface AuthorizationServerInterface
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * @param  ServerRequestInterface   $request
@@ -67,7 +67,7 @@ interface AuthorizationServerInterface
     public function handleTokenRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface;
+    ): ResponseInterface;
 
     /**
      * @param  ServerRequestInterface $request
