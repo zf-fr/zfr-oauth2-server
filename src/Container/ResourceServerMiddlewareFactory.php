@@ -23,7 +23,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
-use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -37,8 +37,8 @@ class ResourceServerMiddlewareFactory
      */
     public function __invoke(ContainerInterface $container): ResourceServerMiddleware
     {
-        /** @var ResourceServer $resourceServer */
-        $resourceServer = $container->get(ResourceServer::class);
+        /** @var ResourceServerInterface $resourceServer */
+        $resourceServer = $container->get(ResourceServerInterface::class);
 
         return new ResourceServerMiddleware($resourceServer);
     }

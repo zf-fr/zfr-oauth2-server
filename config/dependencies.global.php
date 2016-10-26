@@ -16,7 +16,7 @@
  * and is licensed under the MIT license.
  */
 
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\AccessTokenServiceFactory;
 use ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory;
 use ZfrOAuth2\Server\Container\AuthorizationGrantFactory;
@@ -42,7 +42,7 @@ use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 use ZfrOAuth2\Server\Options\ServerOptions;
-use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\ResourceServerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ClientService;
@@ -55,34 +55,34 @@ return [
             /**
              * Middleware
              */
-            AuthorizationRequestMiddleware::class    => AuthorizationRequestMiddlewareFactory::class,
-            RevocationRequestMiddleware::class       => RevocationRequestMiddlewareFactory::class,
-            TokenRequestMiddleware::class            => TokenRequestMiddlewareFactory::class,
-            ResourceServerMiddleware::class          => ResourceServerMiddlewareFactory::class,
+            AuthorizationRequestMiddleware::class => AuthorizationRequestMiddlewareFactory::class,
+            RevocationRequestMiddleware::class    => RevocationRequestMiddlewareFactory::class,
+            TokenRequestMiddleware::class         => TokenRequestMiddlewareFactory::class,
+            ResourceServerMiddleware::class       => ResourceServerMiddlewareFactory::class,
 
             /**
              * Services
              */
-            AuthorizationServer::class           => AuthorizationServerFactory::class,
-            ResourceServer::class                => ResourceServerFactory::class,
-            ClientService::class                 => ClientServiceFactory::class,
-            ScopeService::class                  => ScopeServiceFactory::class,
-            AuthorizationCodeService::class      => AuthorizationCodeServiceFactory::class,
-            AccessTokenService::class            => AccessTokenServiceFactory::class,
-            RefreshTokenService::class           => RefreshTokenServiceFactory::class,
+            AuthorizationServerInterface::class   => AuthorizationServerFactory::class,
+            ResourceServerInterface::class        => ResourceServerFactory::class,
+            ClientService::class                  => ClientServiceFactory::class,
+            ScopeService::class                   => ScopeServiceFactory::class,
+            AuthorizationCodeService::class       => AuthorizationCodeServiceFactory::class,
+            AccessTokenService::class             => AccessTokenServiceFactory::class,
+            RefreshTokenService::class            => RefreshTokenServiceFactory::class,
 
             /**
              * Grant Services
              */
-            ClientCredentialsGrant::class        => ClientCredentialsGrantFactory::class,
-            PasswordGrant::class                 => PasswordGrantFactory::class,
-            AuthorizationGrant::class            => AuthorizationGrantFactory::class,
-            RefreshTokenGrant::class             => RefreshTokenGrantFactory::class,
+            ClientCredentialsGrant::class         => ClientCredentialsGrantFactory::class,
+            PasswordGrant::class                  => PasswordGrantFactory::class,
+            AuthorizationGrant::class             => AuthorizationGrantFactory::class,
+            RefreshTokenGrant::class              => RefreshTokenGrantFactory::class,
 
             /**
              * Utils
              */
-            ServerOptions::class                 => ServerOptionsFactory::class,
+            ServerOptions::class                  => ServerOptionsFactory::class,
         ],
     ],
 ];

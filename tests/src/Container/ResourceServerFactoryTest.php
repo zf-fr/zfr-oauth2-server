@@ -20,6 +20,7 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ResourceServerFactory;
+use ZfrOAuth2\Server\ResourceServerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
@@ -43,6 +44,6 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ResourceServerFactory();
         $service = $factory($container);
 
-        $this->assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
+        $this->assertInstanceOf(ResourceServerInterface::class, $service);
     }
 }

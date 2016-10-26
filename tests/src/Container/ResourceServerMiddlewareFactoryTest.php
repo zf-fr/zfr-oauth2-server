@@ -26,6 +26,7 @@ use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServer;
+use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
  * @author  Bas Kamer <baskamer@gmail.com>
@@ -40,8 +41,8 @@ class ResourceServerMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(ResourceServer::class)
-            ->willReturn($this->createMock(ResourceServer::class));
+            ->with(ResourceServerInterface::class)
+            ->willReturn($this->createMock(ResourceServerInterface::class));
 
         $factory = new ResourceServerMiddlewareFactory();
         $service = $factory($container);
