@@ -179,7 +179,7 @@ class AuthorizationServer implements AuthorizationServerInterface
                 throw OAuth2Exception::invalidRequest('No grant response type was found in the request');
             }
 
-            $responseType = $this->getResponseType($responseType);
+            $responseType = $this->getResponseType((string) $responseType);
             $client       = $this->getClient($request, $responseType->allowPublicClients());
 
             $response = $responseType->createAuthorizationResponse($request, $client, $owner);
@@ -249,9 +249,9 @@ class AuthorizationServer implements AuthorizationServerInterface
         }
 
         if ($tokenHint === 'access_token') {
-            $token = $this->accessTokenService->getToken($token);
+            $token = $this->accessTokenService->getToken((string) $token);
         } else {
-            $token = $this->refreshTokenService->getToken($token);
+            $token = $this->refreshTokenService->getToken((string) $token);
         }
 
         $response = new Response();
