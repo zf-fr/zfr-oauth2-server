@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
@@ -41,14 +42,22 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
 
-        $expiresAt = (new DateTimeImmutable())->modify("+$ttl seconds");
-
         $this->assertNotEmpty($accessToken->getToken());
         $this->assertEquals(40, strlen($accessToken->getToken()));
         $this->assertCount(count($scopes), $accessToken->getScopes());
         $this->assertSame($client, $accessToken->getClient());
-        $this->assertEquals($expiresAt, $accessToken->getExpiresAt());
         $this->assertSame($owner, $accessToken->getOwner());
+
+        // with a ttl = 0, getExpiresAt must return null
+        if ($ttl === 0) {
+            $this->assertNull($accessToken->getExpiresAt());
+        } else {
+            $this->assertInstanceOf(DateTimeInterface::class, $accessToken->getExpiresAt());
+            $this->assertEquals(
+                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601),
+                $accessToken->getExpiresAt()->format(DateTime::ISO8601)
+            );
+        }
     }
 
     public function providerGenerateNewAccessToken()
@@ -66,7 +75,8 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
                 $this->createMock(Client::class),
                 Scope::createNewScope(1, 'read')
             ],
-            [3600, null, null, null]
+            [3600, null, null, null],
+            [0, null, null, null]
         ];
     }
 

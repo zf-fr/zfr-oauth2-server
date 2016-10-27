@@ -18,18 +18,17 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
-use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
-use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Model\AbstractToken
- * @covers \ZfrOAuth2\Server\Model\RefreshToken
+ * @covers  \ZfrOAuth2\Server\Model\AbstractToken
+ * @covers  \ZfrOAuth2\Server\Model\RefreshToken
  */
 class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,14 +40,24 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
 
-        $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
+        $expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601) : null;
 
         $this->assertNotEmpty($refreshToken->getToken());
         $this->assertEquals(40, strlen($refreshToken->getToken()));
         $this->assertCount(count($scopes), $refreshToken->getScopes());
         $this->assertSame($client, $refreshToken->getClient());
-        $this->assertEquals($expiresAt, $refreshToken->getExpiresAt());
         $this->assertSame($owner, $refreshToken->getOwner());
+
+        // with a ttl = 0, getExpiresAt must return null
+        if ($ttl === 0) {
+            $this->assertNull($refreshToken->getExpiresAt());
+        } else {
+            $this->assertInstanceOf(\DateTimeInterface::class, $refreshToken->getExpiresAt());
+            $this->assertEquals(
+                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601),
+                $refreshToken->getExpiresAt()->format(\DateTime::ISO8601)
+            );
+        }
     }
 
     public function providerGenerateNewRefreshToken()
@@ -66,7 +75,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
                 $this->createMock(Client::class),
                 'scope1'
             ],
-            [3600, null, null, null]
+            [3600, null, null, null],
+            [0, null, null, null]
         ];
     }
 
@@ -83,8 +93,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $this->assertSame($data['owner'], $refreshToken->getOwner());
         $this->assertSame($data['client'], $refreshToken->getClient());
 
-        if ($data['expiresAt'] instanceof \DateTimeImmutable) {
-            /** @var \DateTimeImmutable $expiresAt */
+        if ($data['expiresAt'] instanceof DateTimeImmutable) {
+            /** @var DateTimeImmutable $expiresAt */
             $expiresAt = $data['expiresAt'];
             $this->assertSame($expiresAt->getTimeStamp(), $refreshToken->getExpiresAt()->getTimestamp());
         } else {
@@ -102,18 +112,18 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
                     'token'     => 'token',
                     'owner'     => $this->createMock(TokenOwnerInterface::class),
                     'client'    => $this->createMock(Client::class),
-                    'expiresAt' => new \DateTimeImmutable(),
+                    'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
                 ]
             ],
             [ // test set - null values
-                [
-                    'token'     => 'token',
-                    'owner'     => null,
-                    'client'    => null,
-                    'expiresAt' => null,
-                    'scopes'    => [],
-                ]
+              [
+                  'token'     => 'token',
+                  'owner'     => null,
+                  'client'    => null,
+                  'expiresAt' => null,
+                  'scopes'    => [],
+              ]
             ],
         ];
     }
