@@ -20,6 +20,7 @@ namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
@@ -38,8 +39,6 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
-    use AuthorizationServerAwareTrait;
-
     const GRANT_TYPE          = 'password';
     const GRANT_RESPONSE_TYPE = '';
 
@@ -49,6 +48,13 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      * @var AccessTokenService
      */
     private $accessTokenService;
+
+    /**
+     * An AuthorizationServer will inject itself into the grant when it is constructed
+     *
+     * @var AuthorizationServerInterface
+     */
+    private $authorizationServer;
 
     /**
      * Refresh token service (used to create refresh token)
@@ -131,6 +137,16 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);
+    }
+
+    /**
+     * Set AuthorizationServer
+     *
+     * @param AuthorizationServerInterface $authorizationServer
+     */
+    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
+    {
+        $this->authorizationServer = $authorizationServer;
     }
 
     /**
