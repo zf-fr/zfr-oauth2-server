@@ -24,6 +24,7 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
@@ -56,10 +57,11 @@ class ResourceServer implements ResourceServerInterface
      * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
+     * @param  array|string|Scope[]   $scopes
      * @return AccessToken|null
      * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
-    public function getAccessToken(ServerRequestInterface $request, array $scopes = [])
+    public function getAccessToken(ServerRequestInterface $request, $scopes = [])
     {
         if (!$token = $this->extractAccessToken($request)) {
             return null;
