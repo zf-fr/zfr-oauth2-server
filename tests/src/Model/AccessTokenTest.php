@@ -54,8 +54,8 @@ class AccessTokenTest extends \PHPUnit_Framework_TestCase
         } else {
             $this->assertInstanceOf(DateTimeInterface::class, $accessToken->getExpiresAt());
             $this->assertEquals(
-                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601),
-                $accessToken->getExpiresAt()->format(DateTime::ISO8601)
+                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ATOM),
+                $accessToken->getExpiresAt()->format(DateTime::ATOM)
             );
         }
     }

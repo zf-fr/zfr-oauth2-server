@@ -40,8 +40,6 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
 
-        $expiresAt = $ttl ? (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601) : null;
-
         $this->assertNotEmpty($refreshToken->getToken());
         $this->assertEquals(40, strlen($refreshToken->getToken()));
         $this->assertCount(count($scopes), $refreshToken->getScopes());
@@ -54,8 +52,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         } else {
             $this->assertInstanceOf(\DateTimeInterface::class, $refreshToken->getExpiresAt());
             $this->assertEquals(
-                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ISO8601),
-                $refreshToken->getExpiresAt()->format(\DateTime::ISO8601)
+                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ATOM),
+                $refreshToken->getExpiresAt()->format(\DateTime::ATOM)
             );
         }
     }
