@@ -193,7 +193,7 @@ class AuthorizationServer implements AuthorizationServerInterface
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
             }
 
-            $grant  = $this->getGrant($grant);
+            $grant  = $this->getGrant((string) $grant);
             $client = $this->getClient($request, $grant->allowPublicClients());
 
             $response = $grant->createTokenResponse($request, $client, $owner);
