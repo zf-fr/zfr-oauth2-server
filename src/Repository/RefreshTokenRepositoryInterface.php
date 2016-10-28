@@ -28,9 +28,5 @@ use ZfrOAuth2\Server\Model\RefreshToken;
  */
 interface RefreshTokenRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * @param RefreshToken $token
-     * @return RefreshToken
-     */
     public function save(RefreshToken $token): RefreshToken;
 }

@@ -79,15 +79,7 @@ final class ServerOptions
     private $grants = [];
 
     /**
-     * ServerOptions constructor.
-     *
-     * @param int             $authorizationCodeTtl
-     * @param int             $accessTokenTtl
-     * @param int             $refreshTokenTtl
-     * @param bool            $rotateRefreshTokens
-     * @param bool            $revokeRotatedRefreshTokens
      * @param callable|string $ownerCallable either a callable or the name of a container service
-     * @param array           $grants
      */
     private function __construct(
         int $authorizationCodeTtl,
@@ -109,9 +101,6 @@ final class ServerOptions
 
     /**
      * Set one or more configuration properties
-     *
-     * @param  array $options
-     * @return static
      */
     public static function fromArray(array $options = []): self
     {
@@ -128,8 +117,6 @@ final class ServerOptions
 
     /**
      * Get the authorization code TTL
-     *
-     * @return int
      */
     public function getAuthorizationCodeTtl(): int
     {
@@ -138,8 +125,6 @@ final class ServerOptions
 
     /**
      * Get the access token TTL
-     *
-     * @return int
      */
     public function getAccessTokenTtl(): int
     {
@@ -148,8 +133,6 @@ final class ServerOptions
 
     /**
      * Get the refresh token TTL
-     *
-     * @return int
      */
     public function getRefreshTokenTtl(): int
     {
@@ -158,8 +141,6 @@ final class ServerOptions
 
     /**
      * Get the rotate refresh token option while refreshing an access token
-     *
-     * @return boolean
      */
     public function getRotateRefreshTokens(): bool
     {
@@ -168,8 +149,6 @@ final class ServerOptions
 
     /**
      * Get the revoke rotated refresh token option while refreshing an access token
-     *
-     * @return bool
      */
     public function getRevokeRotatedRefreshTokens(): bool
     {
@@ -188,8 +167,6 @@ final class ServerOptions
 
     /**
      * Get the grants the authorization server must support
-     *
-     * @return array
      */
     public function getGrants(): array
     {

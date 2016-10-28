@@ -28,9 +28,5 @@ use ZfrOAuth2\Server\Model\AccessToken;
  */
 interface AccessTokenRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * @param AccessToken $token
-     * @return AccessToken
-     */
     public function save(AccessToken $token): AccessToken;
 }

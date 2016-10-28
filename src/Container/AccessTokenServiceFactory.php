@@ -33,10 +33,6 @@ use ZfrOAuth2\Server\Service\ScopeService;
  */
 class AccessTokenServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AccessTokenService
-     */
     public function __invoke(ContainerInterface $container): AccessTokenService
     {
         /** @var ServerOptions $serverOptions */

@@ -30,10 +30,6 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  */
 class ServerOptionsFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ServerOptions
-     */
     public function __invoke(ContainerInterface $container): ServerOptions
     {
         $config  = $container->get('config');

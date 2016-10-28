@@ -59,12 +59,10 @@ class ResourceServer implements ResourceServerInterface
      * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
-     * @param  ServerRequestInterface $request
-     * @param  array                  $scopes
      * @return AccessToken|null
      * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
-    public function getAccessToken(ServerRequestInterface $request, $scopes = [])
+    public function getAccessToken(ServerRequestInterface $request, array $scopes = [])
     {
         if (!$token = $this->extractAccessToken($request)) {
             return null;
@@ -82,7 +80,6 @@ class ResourceServer implements ResourceServerInterface
     /**
      * Extract the token either from Authorization header or query params
      *
-     * @param  ServerRequestInterface $request
      * @return string|null
      */
     private function extractAccessToken(ServerRequestInterface $request)

@@ -70,9 +70,6 @@ abstract class AbstractToken
     /**
      * Create a new AbstractToken
      *
-     * @param int                          $ttl
-     * @param TokenOwnerInterface|null     $owner
-     * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
      */
     protected static function createNew(
@@ -107,7 +104,6 @@ abstract class AbstractToken
     }
 
     /**
-     * @param array $data
      * @return static
      */
     public static function reconstitute(array $data)
@@ -125,8 +121,6 @@ abstract class AbstractToken
 
     /**
      * Get the token
-     *
-     * @return string
      */
     public function getToken(): string
     {
@@ -165,8 +159,6 @@ abstract class AbstractToken
 
     /**
      * Compute in how many seconds does the token expire (if expired, will return a negative value)
-     *
-     * @return int
      */
     public function getExpiresIn(): int
     {
@@ -175,8 +167,6 @@ abstract class AbstractToken
 
     /**
      * Is the token expired?
-     *
-     * @return bool
      */
     public function isExpired(): bool
     {
@@ -197,7 +187,6 @@ abstract class AbstractToken
      * Match the scopes of the token with the one provided in the parameter
      *
      * @param  array|string $scopes
-     * @return bool
      */
     public function matchScopes($scopes): bool
     {
@@ -211,7 +200,6 @@ abstract class AbstractToken
      * Check if the token is valid, according to the given scope(s) and expiration dates
      *
      * @param  array|string $scopes
-     * @return bool
      */
     public function isValid($scopes): bool
     {

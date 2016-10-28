@@ -35,17 +35,11 @@ class RevocationRequestMiddleware
      */
     private $authorizationServer;
 
-    /**
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function __construct(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

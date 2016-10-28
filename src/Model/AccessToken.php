@@ -32,11 +32,7 @@ class AccessToken extends AbstractToken
     /**
      * Create a new AccessToken
      *
-     * @param int                          $ttl
-     * @param TokenOwnerInterface|null     $owner
-     * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
-     * @return AccessToken
      */
     public static function createNewAccessToken(
         int $ttl,
@@ -47,9 +43,6 @@ class AccessToken extends AbstractToken
         return static::createNew($ttl, $owner, $client, $scopes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isExpired(): bool
     {
         return null !== $this->expiresAt && parent::isExpired();

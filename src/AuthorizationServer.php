@@ -72,10 +72,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     private $refreshTokenService;
 
     /**
-     * @param ClientService       $clientService
-     * @param GrantInterface[]    $grants
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
+     * @param GrantInterface[] $grants
      */
     public function __construct(
         ClientService $clientService,
@@ -103,7 +100,6 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * Check if the authorization server supports this grant
      *
-     * @param  string $grantType
      * @return bool
      */
     public function hasGrant(string $grantType): bool
@@ -114,11 +110,9 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * Get the grant by its name
      *
-     * @param  string $grantType
-     * @return GrantInterface
-     * @throws OAuth2Exception If grant type is not registered by this authorization server
+     * @throws OAuth2Exception (unsupported_grant_type) When grant type is not registered
      */
-    public function getGrant($grantType): GrantInterface
+    public function getGrant(string $grantType): GrantInterface
     {
         if ($this->hasGrant($grantType)) {
             return $this->grants[$grantType];
@@ -133,9 +127,6 @@ class AuthorizationServer implements AuthorizationServerInterface
 
     /**
      * Check if the authorization server supports this response type
-     *
-     * @param  string $responseType
-     * @return bool
      */
     public function hasResponseType(string $responseType): bool
     {
@@ -145,9 +136,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * Get the response type by its name
      *
-     * @param  string $responseType
-     * @return GrantInterface
-     * @throws OAuth2Exception
+     * @throws OAuth2Exception (unsupported_grant_type) When response type is not registered
      */
     public function getResponseType(string $responseType): GrantInterface
     {
@@ -163,10 +152,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @param  ServerRequestInterface   $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
+     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters
      */
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
@@ -192,10 +178,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @param  ServerRequestInterface   $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
+     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters
      */
     public function handleTokenRequest(
         ServerRequestInterface $request,
@@ -225,9 +208,9 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @param  ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "token" is present
+     * @throws OAuth2Exception (invalid_request) If no "token" is present
+     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported
+     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked
      */
     public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface
     {
@@ -292,12 +275,10 @@ class AuthorizationServer implements AuthorizationServerInterface
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
      *
-     * @param  ServerRequestInterface $request
-     * @param  bool                   $allowPublicClients
      * @return Client|null
-     * @throws OAuth2Exception
+     * @throws OAuth2Exception (invalid_client) When a client secret is missing or client authentication failed
      */
-    private function getClient(ServerRequestInterface $request, $allowPublicClients)
+    private function getClient(ServerRequestInterface $request, bool $allowPublicClients)
     {
         list($id, $secret) = $this->extractClientCredentials($request);
 
@@ -326,8 +307,6 @@ class AuthorizationServer implements AuthorizationServerInterface
      * Create a response from the exception, using the format of the spec
      *
      * @link   http://tools.ietf.org/html/rfc6749#section-5.2
-     * @param  OAuth2Exception $exception
-     * @return ResponseInterface
      */
     private function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
@@ -341,9 +320,6 @@ class AuthorizationServer implements AuthorizationServerInterface
 
     /**
      * Extract the client credentials from Authorization header or POST data
-     *
-     * @param  ServerRequestInterface $request
-     * @return array
      */
     private function extractClientCredentials(ServerRequestInterface $request): array
     {

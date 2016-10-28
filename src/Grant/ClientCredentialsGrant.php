@@ -59,13 +59,13 @@ class ClientCredentialsGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * @throws OAuth2Exception (invalid_request)
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
     }
 

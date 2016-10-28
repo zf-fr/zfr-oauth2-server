@@ -55,11 +55,6 @@ class RefreshTokenGrant extends AbstractGrant
      */
     private $serverOptions;
 
-    /**
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
-     * @param ServerOptions       $serverOptions
-     */
     public function __construct(
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService,
@@ -71,13 +66,13 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * @throws OAuth2Exception (invalid_request)
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
     }
 
@@ -99,7 +94,7 @@ class RefreshTokenGrant extends AbstractGrant
 
         // We can fetch the actual token, and validate it
         /** @var RefreshToken $refreshToken */
-        $refreshToken = $this->refreshTokenService->getToken($refreshToken);
+        $refreshToken = $this->refreshTokenService->getToken((string) $refreshToken);
 
         if (null === $refreshToken || $refreshToken->isExpired()) {
             throw OAuth2Exception::invalidGrant('Refresh token is expired');
@@ -132,9 +127,6 @@ class RefreshTokenGrant extends AbstractGrant
         return $this->prepareTokenResponse($accessToken, $refreshToken, true);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function allowPublicClients(): bool
     {
         return true;

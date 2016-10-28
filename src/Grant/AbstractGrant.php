@@ -32,17 +32,11 @@ use ZfrOAuth2\Server\Model\RefreshToken;
  */
 abstract class AbstractGrant implements GrantInterface
 {
-    /**
-     * {@inheritDoc}
-     */
     public function getType(): string
     {
         return static::GRANT_TYPE;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function getResponseType(): string
     {
         return static::GRANT_RESPONSE_TYPE;
@@ -50,17 +44,12 @@ abstract class AbstractGrant implements GrantInterface
 
     /**
      * Prepare the actual HttpResponse for the token
-     *
-     * @param  AccessToken       $accessToken
-     * @param  RefreshToken|null $refreshToken
-     * @param  bool              $useRefreshTokenScopes
-     * @return ResponseInterface
      */
     protected function prepareTokenResponse(
         AccessToken $accessToken,
         RefreshToken $refreshToken = null,
-        $useRefreshTokenScopes = false
-    ) {
+        bool $useRefreshTokenScopes = false
+    ): ResponseInterface {
         $owner  = $accessToken->getOwner();
         $scopes = $useRefreshTokenScopes ? $refreshToken->getScopes() : $accessToken->getScopes();
 

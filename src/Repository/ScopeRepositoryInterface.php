@@ -28,10 +28,6 @@ use ZfrOAuth2\Server\Model\Scope;
  */
 interface ScopeRepositoryInterface
 {
-    /**
-     * @param Scope $scope
-     * @return Scope
-     */
     public function save(Scope $scope): Scope;
 
     /**

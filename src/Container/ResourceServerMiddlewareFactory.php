@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  */
 class ResourceServerMiddlewareFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return ResourceServerMiddleware
-     */
     public function __invoke(ContainerInterface $container): ResourceServerMiddleware
     {
         /** @var ResourceServerInterface $resourceServer */

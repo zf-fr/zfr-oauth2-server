@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Service\ClientService;
  */
 class ClientServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return ClientService
-     */
     public function __invoke(ContainerInterface $container): ClientService
     {
         /** @var ClientRepositoryInterface $clientRepository */

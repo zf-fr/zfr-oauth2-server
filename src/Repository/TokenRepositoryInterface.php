@@ -29,7 +29,6 @@ use ZfrOAuth2\Server\Model\AbstractToken;
 interface TokenRepositoryInterface
 {
     /**
-     * @param string $token
      * @return AbstractToken|null
      */
     public function findByToken(string $token);
@@ -39,8 +38,5 @@ interface TokenRepositoryInterface
      */
     public function deleteToken(AbstractToken $token);
 
-    /**
-     * @return bool
-     */
     public function tokenExists(string $token): bool;
 }

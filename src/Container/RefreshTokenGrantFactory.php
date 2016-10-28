@@ -33,10 +33,6 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class RefreshTokenGrantFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return RefreshTokenGrant
-     */
     public function __invoke(ContainerInterface $container): RefreshTokenGrant
     {
         /** @var ServerOptions $serverOptions */

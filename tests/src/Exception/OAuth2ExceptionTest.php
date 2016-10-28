@@ -28,8 +28,6 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 class OAuth2ExceptionTest extends \PHPUnit_Framework_TestCase
 {
     /**
-     * @param $errorName
-     * @param $errorCode
      * @dataProvider dataproviderErrorsCode
      */
     public function testErrorsCode($errorName, $expectedErrorCode)

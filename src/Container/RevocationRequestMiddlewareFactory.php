@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
  */
 class RevocationRequestMiddlewareFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return RevocationRequestMiddleware
-     */
     public function __invoke(ContainerInterface $container): RevocationRequestMiddleware
     {
         /** @var AuthorizationServerInterface $authorizationServer */

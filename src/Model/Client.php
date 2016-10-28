@@ -69,11 +69,9 @@ class Client
     /**
      * Create a new Client
      *
-     * @param string               $name         Clients name
      * @param string|string[]|null $redirectUris Client allowed redirect direct url's
-     * @return Client
      */
-    public static function createNewClient(string $name, $redirectUris = null)
+    public static function createNewClient(string $name, $redirectUris = null): Client
     {
         if (isset($redirectUris) && is_string($redirectUris)) {
             $redirectUris = explode(' ', $redirectUris);
@@ -94,10 +92,6 @@ class Client
         return $client;
     }
 
-    /**
-     * @param array $data
-     * @return Client
-     */
     public static function reconstitute(array $data): Client
     {
         $client = new static();
@@ -111,9 +105,7 @@ class Client
     }
 
     /**
-     * Get the client id
-     *
-     * @return string
+     * Get client id
      */
     public function getId(): string
     {
@@ -123,8 +115,6 @@ class Client
 
     /**
      * Get the client name
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -133,8 +123,6 @@ class Client
 
     /**
      * Get the client secret
-     *
-     * @return string
      */
     public function getSecret(): string
     {
@@ -143,8 +131,6 @@ class Client
 
     /**
      * Get the redirect URIs
-     *
-     * @return array
      */
     public function getRedirectUris(): array
     {
@@ -153,9 +139,6 @@ class Client
 
     /**
      * Check if the given redirect URI is in the list
-     *
-     * @param  string $redirectUri
-     * @return bool
      */
     public function hasRedirectUri(string $redirectUri): bool
     {
@@ -164,8 +147,6 @@ class Client
 
     /**
      * Is this client a public client?
-     *
-     * @return bool
      */
     public function isPublic(): bool
     {
@@ -174,8 +155,6 @@ class Client
 
     /**
      * Authenticate the client
-     *
-     * @param  string $secret
      * @return bool True if properly authenticated, false otherwise
      */
     public function authenticate(string $secret): bool

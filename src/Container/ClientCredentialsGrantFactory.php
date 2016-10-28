@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ClientCredentialsGrantFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ClientCredentialsGrant
-     */
     public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
         /* @var AccessTokenService $accessTokenService */

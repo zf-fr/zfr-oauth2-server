@@ -76,11 +76,6 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      */
     private $callback;
 
-    /**
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
-     * @param callable            $callback
-     */
     public function __construct(
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService,
@@ -92,18 +87,17 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     }
 
     /**
-     * {@inheritDoc}
+     * @throws OAuth2Exception (invalid_request)
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
     }
 
     /**
-     * {@inheritDoc}
      * @throws OAuth2Exception
      */
     public function createTokenResponse(
@@ -144,17 +138,12 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
 
     /**
      * Set AuthorizationServer
-     *
-     * @param AuthorizationServerInterface $authorizationServer
      */
     public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function allowPublicClients(): bool
     {
         return true;

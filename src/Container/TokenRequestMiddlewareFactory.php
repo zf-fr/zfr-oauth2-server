@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
  */
 class TokenRequestMiddlewareFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return \ZfrOAuth2\Server\Middleware\TokenRequestMiddleware
-     */
     public function __invoke(ContainerInterface $container): TokenRequestMiddleware
     {
         /** @var AuthorizationServer $authorizationServer */

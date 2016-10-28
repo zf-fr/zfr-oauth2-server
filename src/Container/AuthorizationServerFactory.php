@@ -34,10 +34,6 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class AuthorizationServerFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationServer
-     */
     public function __invoke(ContainerInterface $container): AuthorizationServer
     {
         /* @var ClientService $clientService */

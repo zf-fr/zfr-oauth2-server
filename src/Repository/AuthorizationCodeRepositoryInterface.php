@@ -28,9 +28,5 @@ use ZfrOAuth2\Server\Model\AuthorizationCode;
  */
 interface AuthorizationCodeRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * @param AuthorizationCode $token
-     * @return AuthorizationCode
-     */
     public function save(AuthorizationCode $token): AuthorizationCode;
 }

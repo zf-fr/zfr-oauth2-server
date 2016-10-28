@@ -34,10 +34,6 @@ use ZfrOAuth2\Server\Service\ScopeService;
  */
 class RefreshTokenServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return RefreshTokenService
-     */
     public function __invoke(ContainerInterface $container): RefreshTokenService
     {
         /** @var ServerOptions $serverOptions */

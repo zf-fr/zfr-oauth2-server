@@ -58,12 +58,6 @@ class Scope
 
     /**
      * Create a new Scope
-     *
-     * @param int         $id
-     * @param string      $name
-     * @param string|null $description
-     * @param bool        $isDefault
-     * @return Scope
      */
     public static function createNewScope(
         int $id,
@@ -81,10 +75,6 @@ class Scope
         return $scope;
     }
 
-    /**
-     * @param array $data
-     * @return Scope
-     */
     public static function reconstitute(array $data): Scope
     {
         $scope = new static();
@@ -109,8 +99,6 @@ class Scope
 
     /**
      * Get the scope's name
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -119,8 +107,6 @@ class Scope
 
     /**
      * Get the scope's description
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -129,8 +115,6 @@ class Scope
 
     /**
      * Is the scope a default scope?
-     *
-     * @return bool
      */
     public function isDefault(): bool
     {

@@ -35,19 +35,11 @@ class AuthorizationRequestMiddleware
      */
     private $authorizationServer;
 
-    /**
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function __construct(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @TODO: Best way to we get the owner/identity TokenOwnerInterface? A request attribute? How to make this flexible?
-     */
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

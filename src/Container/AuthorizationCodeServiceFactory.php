@@ -33,10 +33,6 @@ use ZfrOAuth2\Server\Service\ScopeService;
  */
 class AuthorizationCodeServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationCodeService
-     */
     public function __invoke(ContainerInterface $container): AuthorizationCodeService
     {
         /** @var ServerOptions $serverOptions */

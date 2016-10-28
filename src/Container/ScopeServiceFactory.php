@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Service\ScopeService;
  */
 class ScopeServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return ScopeService
-     */
     public function __invoke(ContainerInterface $container): ScopeService
     {
         /** @var ScopeRepositoryInterface $clientRepository */

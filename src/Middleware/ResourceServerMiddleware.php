@@ -51,9 +51,6 @@ class ResourceServerMiddleware
         $this->resourceServer = $resourceServer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

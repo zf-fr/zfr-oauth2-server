@@ -69,11 +69,6 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
      */
     private $refreshTokenService;
 
-    /**
-     * @param AuthorizationCodeService $authorizationCodeService
-     * @param AccessTokenService       $accessTokenService
-     * @param RefreshTokenService      $refreshTokenService
-     */
     public function __construct(
         AuthorizationCodeService $authorizationCodeService,
         AccessTokenService $accessTokenService,
@@ -85,14 +80,13 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     }
 
     /**
-     * {@inheritDoc}
-     * @throws OAuth2Exception
+     * @throws OAuth2Exception (invalid_request) When grant type was not 'code'
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         $queryParams = $request->getQueryParams();
 
         // We must validate some parameters first

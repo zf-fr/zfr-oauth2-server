@@ -29,9 +29,6 @@ namespace ZfrOAuth2\Server;
  */
 class ModuleConfig
 {
-    /**
-     * @return array
-     */
     public function __invoke(): array
     {
         $config = [];

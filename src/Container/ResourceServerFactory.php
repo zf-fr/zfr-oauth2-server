@@ -31,10 +31,6 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ResourceServerFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return ResourceServer
-     */
     public function __invoke(ContainerInterface $container): ResourceServer
     {
         /** @var AccessTokenService $tokenService */
