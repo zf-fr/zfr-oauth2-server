@@ -43,9 +43,6 @@ class ResourceServer implements ResourceServerInterface
      */
     private $accessTokenService;
 
-    /**
-     * @param AccessTokenService $accessTokenService
-     */
     public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
