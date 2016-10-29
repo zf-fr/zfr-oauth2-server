@@ -22,7 +22,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
-use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -31,41 +30,20 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  */
 class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
 {
-    /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationServerInterface
-     */
-    private $authorizationServer;
-
-    /**
-     * @var AuthorizationRequestMiddleware
-     */
-    private $middleware;
-
-    public function setUp()
+    public function testWillHandleAuthorizationRequest()
     {
-        $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $this->middleware          = new AuthorizationRequestMiddleware($this->authorizationServer);
-    }
-
-    /**
-     * @markSkipped
-     */
-    public function testCanHandleAuthorizationRequest()
-    {
-        $this->markTestIncomplete(
-            'This functionality has not been fully implemented yet.'
-        );
+        $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
+        $middleware          = new AuthorizationRequestMiddleware($authorizationServer);
 
         $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $owner    = $this->createMock(TokenOwnerInterface::class);
 
-        $this->authorizationServer->expects($this->once())
+        $authorizationServer->expects($this->once())
             ->method('handleAuthorizationRequest')
-            ->with($request, $owner)
+            ->with($request)
             ->willReturn($this->createMock(ResponseInterface::class));
 
-        $middleware = $this->middleware;
-        $middleware ($request, $response);
+        $middleware($request, $response, function () {
+        });
     }
 }
