@@ -155,6 +155,7 @@ class Client
 
     /**
      * Authenticate the client
+     *
      * @return bool True if properly authenticated, false otherwise
      */
     public function authenticate(string $secret): bool

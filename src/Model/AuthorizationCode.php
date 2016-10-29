@@ -40,7 +40,12 @@ class AuthorizationCode extends AbstractToken
     /**
      * Create a new AuthorizationCode
      *
+     * @param int                          $ttl
+     * @param string                       $redirectUri
+     * @param TokenOwnerInterface          $owner
+     * @param Client                       $client
      * @param string|string[]|Scope[]|null $scopes
+     * @return AuthorizationCode
      */
     public static function createNewAuthorizationCode(
         int $ttl,

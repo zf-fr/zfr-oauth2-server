@@ -72,7 +72,10 @@ class AuthorizationServer implements AuthorizationServerInterface
     private $refreshTokenService;
 
     /**
-     * @param GrantInterface[] $grants
+     * @param ClientService       $clientService
+     * @param GrantInterface[]    $grants
+     * @param AccessTokenService  $accessTokenService
+     * @param RefreshTokenService $refreshTokenService
      */
     public function __construct(
         ClientService $clientService,
@@ -99,8 +102,6 @@ class AuthorizationServer implements AuthorizationServerInterface
 
     /**
      * Check if the authorization server supports this grant
-     *
-     * @return bool
      */
     public function hasGrant(string $grantType): bool
     {

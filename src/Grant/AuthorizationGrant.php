@@ -173,19 +173,11 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
-    /**
-     * Set AuthorizationServer
-     *
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function allowPublicClients(): bool
     {
         return true;
