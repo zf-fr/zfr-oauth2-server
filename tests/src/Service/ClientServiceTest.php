@@ -52,8 +52,7 @@ class ClientServiceTest extends \PHPUnit_Framework_TestCase
                 'name'         => 'name',
                 'secret'       => '',
                 'redirectUris' => [],
-            ]
-        );
+            ]);
 
         $this->clientRepository->expects($this->once())
                                ->method('findById')

@@ -63,7 +63,8 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->accessTokenService  = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
-        $callable    = function(){};
+        $callable    = function () {
+        };
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
     }
 
@@ -89,7 +90,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
 
-        $callable = function($username, $password) {
+        $callable = function ($username, $password) {
             $this->assertEquals('michael', $username);
             $this->assertEquals('azerty', $password);
 
@@ -120,7 +121,7 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $owner = $this->createMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
-        $callable = function($username, $password) use ($owner) {
+        $callable = function ($username, $password) use ($owner) {
             return $owner;
         };
 
@@ -190,11 +191,13 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         return $token;
     }
 
-    public function testMethodGetType() {
+    public function testMethodGetType()
+    {
         $this->assertSame('password', $this->grant->getType());
     }
 
-    public function testMethodGetResponseType() {
+    public function testMethodGetResponseType()
+    {
         $this->assertSame('', $this->grant->getResponseType());
     }
 

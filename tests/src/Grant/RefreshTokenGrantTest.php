@@ -63,8 +63,10 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
-        $grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
-            Client::createNewClient('id', 'http://www.example.com'));
+        $grant->createAuthorizationResponse(
+            $this->createMock(ServerRequestInterface::class),
+            Client::createNewClient('id', 'http://www.example.com')
+        );
     }
 
     public function testAssertInvalidIfNoRefreshTokenIsFound()
@@ -229,12 +231,14 @@ class RefreshTokenGrantTest extends \PHPUnit_Framework_TestCase
         return $token;
     }
 
-    public function testMethodGetType() {
+    public function testMethodGetType()
+    {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
         $this->assertSame('refresh_token', $grant->getType());
     }
 
-    public function testMethodGetResponseType() {
+    public function testMethodGetResponseType()
+    {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
         $this->assertSame('', $grant->getResponseType());
     }

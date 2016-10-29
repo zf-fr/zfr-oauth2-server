@@ -50,7 +50,8 @@ class RevocationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
     {
         $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
-        $next  = function() {};
+        $next  = function () {
+        };
 
         $this->authorizationServer->expects($this->once())
             ->method('handleRevocationRequest')

@@ -38,8 +38,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
 
         $this->assertEquals($name, $client->getName());
         $this->assertEmpty($client->getSecret());
-        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
-                $client->getId(), $matches));
+        $this->assertTrue(1 === preg_match(
+            '/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+            $client->getId(),
+            $matches
+        ));
 
         if (null !== $redirectUris) {
             if (is_string($redirectUris)) {
@@ -50,7 +53,6 @@ class ClientTest extends \PHPUnit_Framework_TestCase
             $this->assertTrue(is_array($client->getRedirectUris()));
             $this->assertEmpty($client->getRedirectUris());
         }
-
     }
 
     public function providerGenerateNewClient()
@@ -120,8 +122,11 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $client = Client::createNewClient('name', 'http://www.example.com');
 
         $this->assertEmpty($client->getSecret());
-        $this->assertTrue(1 === preg_match('/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
-                $client->getId(), $matches));
+        $this->assertTrue(1 === preg_match(
+            '/[a-f0-9]{8}-[a-f0-9]{4}-4[a-f0-9]{3}-[89aAbB][a-f0-9]{3}-[a-f0-9]{12}/',
+            $client->getId(),
+            $matches
+        ));
         $this->assertEquals('name', $client->getName());
         $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
     }
@@ -180,5 +185,4 @@ class ClientTest extends \PHPUnit_Framework_TestCase
         $this->assertTrue($client->authenticate('17ef7d94a9172d31c6336424651c861fad9c891e'));
         $this->assertFalse($client->authenticate($client->getSecret()));
     }
-
 }

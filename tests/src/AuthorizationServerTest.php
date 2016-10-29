@@ -46,7 +46,8 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $grant         = new PasswordGrant(
             $this->createMock(AccessTokenService::class),
             $this->createMock(RefreshTokenService::class),
-            function() {}
+            function () {
+            }
         );
 
         $accessTokenService  = $this->createMock(AccessTokenService::class);

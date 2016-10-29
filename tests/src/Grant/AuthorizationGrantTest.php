@@ -251,8 +251,11 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
             ->with(RefreshTokenGrant::GRANT_TYPE)
             ->will($this->returnValue($hasRefreshGrant));
 
-        $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService,
-            $this->refreshTokenService);
+        $this->grant = new AuthorizationGrant(
+            $this->authorizationCodeService,
+            $this->accessTokenService,
+            $this->refreshTokenService
+        );
         $this->grant->setAuthorizationServer($authorizationServer);
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
@@ -339,11 +342,13 @@ class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
         return $token;
     }
 
-    public function testMethodGetType() {
+    public function testMethodGetType()
+    {
         $this->assertSame('authorization_code', $this->grant->getType());
     }
 
-    public function testMethodGetResponseType() {
+    public function testMethodGetResponseType()
+    {
         $this->assertSame('code', $this->grant->getResponseType());
     }
 
