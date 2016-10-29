@@ -3,8 +3,8 @@
 [![Build Status](https://travis-ci.org/zf-fr/zfr-oauth2-server.png)](https://travis-ci.org/zf-fr/zfr-oauth2-server)
 [![Latest Stable Version](https://poser.pugx.org/zfr/zfr-oauth2-server/v/stable.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 [![Coverage Status](https://coveralls.io/repos/zf-fr/zfr-oauth2-server/badge.png)](https://coveralls.io/r/zf-fr/zfr-oauth2-server)
-[![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/badges/quality-score.png?s=be36235c9898cfc55044f58d9bba789d2d4d102e)](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/)
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
+[![Gitter](https://badges.gitter.im/Join%20Chat.svg)](https://gitter.im/prolic/zfr-oauth2-server)
 
 ZfrOAuth2Server is a PHP library that implements the OAuth 2 specification. It's main goal is to be a clean, PHP 7.0+
 library that aims to be used with any persistence layer of choice. It is compatible with
@@ -44,6 +44,11 @@ Installation is only officially supported using Composer:
 ```sh
 php composer.phar require zfr/zfr-oauth2-server:^1.0
 ```
+
+## Support
+
+- File issues at [https://github.com/zf-fr/zfr-oauth2-server/issues](https://github.com/zf-fr/zfr-oauth2-server/issues).
+- Say hello in our [gitter](https://gitter.im/prolic/zfr-oauth2-server) chat.
 
 ### Configuration
 

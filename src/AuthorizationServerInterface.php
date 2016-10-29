@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,46 +33,34 @@ interface AuthorizationServerInterface
 {
     /**
      * Check if the authorization server supports this grant
-     *
-     * @param  string $grant
-     * @return bool
      */
     public function hasGrant(string $grant): bool;
 
     /**
      * Check if the authorization server supports this response type
-     *
-     * @param  string $responseType
-     * @return bool
      */
     public function hasResponseType(string $responseType): bool;
 
     /**
-     * @param  ServerRequestInterface   $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "response_type" could be found in the GET parameters
+     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters
      */
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface;
+    ): ResponseInterface;
 
     /**
-     * @param  ServerRequestInterface   $request
-     * @param  TokenOwnerInterface|null $owner
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "grant_type" could be found in the POST parameters
+     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters
      */
     public function handleTokenRequest(
         ServerRequestInterface $request,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface;
+    ): ResponseInterface;
 
     /**
-     * @param  ServerRequestInterface $request
-     * @return ResponseInterface
-     * @throws OAuth2Exception If no "token" is present
+     * @throws OAuth2Exception (invalid_request) If no "token" is present
+     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported
+     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked
      */
     public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface;
 }

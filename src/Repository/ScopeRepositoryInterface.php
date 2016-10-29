@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,10 +28,6 @@ use ZfrOAuth2\Server\Model\Scope;
  */
 interface ScopeRepositoryInterface
 {
-    /**
-     * @param Scope $scope
-     * @return Scope
-     */
     public function save(Scope $scope): Scope;
 
     /**

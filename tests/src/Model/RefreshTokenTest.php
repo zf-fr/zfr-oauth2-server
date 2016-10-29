@@ -18,18 +18,17 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
-use DateInterval;
 use DateTime;
+use DateTimeImmutable;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
-use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- * @covers \ZfrOAuth2\Server\Model\AbstractToken
- * @covers \ZfrOAuth2\Server\Model\RefreshToken
+ * @covers  \ZfrOAuth2\Server\Model\AbstractToken
+ * @covers  \ZfrOAuth2\Server\Model\RefreshToken
  */
 class RefreshTokenTest extends \PHPUnit_Framework_TestCase
 {
@@ -41,14 +40,22 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
 
-        $expiresAt = (new \DateTimeImmutable())->modify("+$ttl seconds");
+        $this->assertNotEmpty($refreshToken->getToken());
+        $this->assertEquals(40, strlen($refreshToken->getToken()));
+        $this->assertCount(count($scopes), $refreshToken->getScopes());
+        $this->assertSame($client, $refreshToken->getClient());
+        $this->assertSame($owner, $refreshToken->getOwner());
 
-        static::assertNotEmpty($refreshToken->getToken());
-        static::assertEquals(40, strlen($refreshToken->getToken()));
-        static::assertCount(count($scopes), $refreshToken->getScopes());
-        static::assertSame($client, $refreshToken->getClient());
-        static::assertEquals($expiresAt, $refreshToken->getExpiresAt());
-        static::assertSame($owner, $refreshToken->getOwner());
+        // with a ttl = 0, getExpiresAt must return null
+        if ($ttl === 0) {
+            $this->assertNull($refreshToken->getExpiresAt());
+        } else {
+            $this->assertInstanceOf(\DateTimeInterface::class, $refreshToken->getExpiresAt());
+            $this->assertEquals(
+                (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ATOM),
+                $refreshToken->getExpiresAt()->format(\DateTime::ATOM)
+            );
+        }
     }
 
     public function providerGenerateNewRefreshToken()
@@ -66,7 +73,8 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
                 $this->createMock(Client::class),
                 'scope1'
             ],
-            [3600, null, null, null]
+            [3600, null, null, null],
+            [0, null, null, null]
         ];
     }
 
@@ -79,19 +87,19 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
         $refreshToken = RefreshToken::reconstitute($data);
 
 
-        static::assertEquals($data['token'], $refreshToken->getToken());
-        static::assertSame($data['owner'], $refreshToken->getOwner());
-        static::assertSame($data['client'], $refreshToken->getClient());
+        $this->assertEquals($data['token'], $refreshToken->getToken());
+        $this->assertSame($data['owner'], $refreshToken->getOwner());
+        $this->assertSame($data['client'], $refreshToken->getClient());
 
-        if ($data['expiresAt'] instanceof \DateTimeImmutable) {
-            /** @var \DateTimeImmutable $expiresAt */
+        if ($data['expiresAt'] instanceof DateTimeImmutable) {
+            /** @var DateTimeImmutable $expiresAt */
             $expiresAt = $data['expiresAt'];
-            static::assertSame($expiresAt->getTimeStamp(), $refreshToken->getExpiresAt()->getTimestamp());
+            $this->assertSame($expiresAt->getTimeStamp(), $refreshToken->getExpiresAt()->getTimestamp());
         } else {
-            static::assertNull($refreshToken->getExpiresAt());
+            $this->assertNull($refreshToken->getExpiresAt());
         }
 
-        static::assertSame($data['scopes'], $refreshToken->getScopes());
+        $this->assertSame($data['scopes'], $refreshToken->getScopes());
     }
 
     public function providerReconstitute()
@@ -102,18 +110,18 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
                     'token'     => 'token',
                     'owner'     => $this->createMock(TokenOwnerInterface::class),
                     'client'    => $this->createMock(Client::class),
-                    'expiresAt' => new \DateTimeImmutable(),
+                    'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
                 ]
             ],
             [ // test set - null values
-                [
-                    'token'     => 'token',
-                    'owner'     => null,
-                    'client'    => null,
-                    'expiresAt' => null,
-                    'scopes'    => [],
-                ]
+              [
+                  'token'     => 'token',
+                  'owner'     => null,
+                  'client'    => null,
+                  'expiresAt' => null,
+                  'scopes'    => [],
+              ]
             ],
         ];
     }
@@ -122,32 +130,32 @@ class RefreshTokenTest extends \PHPUnit_Framework_TestCase
     {
         $refreshToken = RefreshToken::createNewRefreshToken(60);
 
-        static::assertFalse($refreshToken->isExpired());
-        static::assertEquals(60, $refreshToken->getExpiresIn());
+        $this->assertFalse($refreshToken->isExpired());
+        $this->assertEquals(60, $refreshToken->getExpiresIn());
     }
 
     public function testCanCheckIfATokenIsExpired()
     {
         $refreshToken = RefreshToken::createNewRefreshToken(-60);
 
-        static::assertTrue($refreshToken->isExpired());
+        $this->assertTrue($refreshToken->isExpired());
     }
 
     public function testSupportLongLiveToken()
     {
         $refreshToken = RefreshToken::createNewRefreshToken(60);
-        static::assertFalse($refreshToken->isExpired());
+        $this->assertFalse($refreshToken->isExpired());
     }
 
     public function testIsValid()
     {
         $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
-        static::assertTrue($accessToken->isValid('read'));
+        $this->assertTrue($accessToken->isValid('read'));
 
         $accessToken = RefreshToken::createNewRefreshToken(-60, null, null, 'read write');
-        static::assertFalse($accessToken->isValid('read'));
+        $this->assertFalse($accessToken->isValid('read'));
 
         $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
-        static::assertFalse($accessToken->isValid('delete'));
+        $this->assertFalse($accessToken->isValid('delete'));
     }
 }

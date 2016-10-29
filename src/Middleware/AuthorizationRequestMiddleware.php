@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,19 +35,11 @@ class AuthorizationRequestMiddleware
      */
     private $authorizationServer;
 
-    /**
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function __construct(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @TODO: Best way to we get the owner/identity TokenOwnerInterface? A request attribute? How to make this flexible?
-     */
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,11 +32,7 @@ class AccessToken extends AbstractToken
     /**
      * Create a new AccessToken
      *
-     * @param int                          $ttl
-     * @param TokenOwnerInterface|null     $owner
-     * @param Client|null                  $client
      * @param string|string[]|Scope[]|null $scopes
-     * @return AccessToken
      */
     public static function createNewAccessToken(
         int $ttl,
@@ -44,9 +43,6 @@ class AccessToken extends AbstractToken
         return static::createNew($ttl, $owner, $client, $scopes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isExpired(): bool
     {
         return null !== $this->expiresAt && parent::isExpired();

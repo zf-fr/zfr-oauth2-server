@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -30,10 +33,6 @@ use ZfrOAuth2\Server\Service\ScopeService;
  */
 class AuthorizationCodeServiceFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return AuthorizationCodeService
-     */
     public function __invoke(ContainerInterface $container): AuthorizationCodeService
     {
         /** @var ServerOptions $serverOptions */

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -45,24 +48,17 @@ interface GrantInterface
     /**
      * Create an authorization code
      *
-     * @param  ServerRequestInterface   $request
-     * @param  Client                   $client
-     * @param  TokenOwnerInterface|null $owner
-     * @return ResponseInterface
      * @throws OAuth2Exception
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    );
+    ): ResponseInterface;
 
     /**
      * Create a token response according (this is the response to the "token endpoint")
      *
-     * @param  ServerRequestInterface   $request
-     * @param  Client|null              $client
-     * @param  TokenOwnerInterface|null $owner
      * @return ResponseInterface
      * @throws OAuth2Exception
      */
@@ -70,26 +66,20 @@ interface GrantInterface
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    );
+    ): ResponseInterface;
 
     /**
      * Get the grant type
-     *
-     * @return string
      */
     public function getType(): string;
 
     /**
      * Get the grant response type
-     *
-     * @return string
      */
     public function getResponseType(): string;
 
     /**
      * Does this authorization grant allow public clients?
-     *
-     * @return bool
      */
     public function allowPublicClients(): bool;
 }

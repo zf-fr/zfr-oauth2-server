@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,10 +31,6 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ClientCredentialsGrantFactory
 {
-    /**
-     * @param ContainerInterface $container
-     * @return ClientCredentialsGrant
-     */
     public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
         /* @var AccessTokenService $accessTokenService */

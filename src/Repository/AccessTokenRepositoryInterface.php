@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,9 +28,5 @@ use ZfrOAuth2\Server\Model\AccessToken;
  */
 interface AccessTokenRepositoryInterface extends TokenRepositoryInterface
 {
-    /**
-     * @param AccessToken $token
-     * @return AccessToken
-     */
     public function save(AccessToken $token): AccessToken;
 }

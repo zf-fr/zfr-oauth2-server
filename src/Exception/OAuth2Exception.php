@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,112 +37,98 @@ class OAuth2Exception extends Exception implements ExceptionInterface
 {
     /**
      * Override the constructor to allow $code as a string
-     *
-     * @param string $message
-     * @param string $code
      */
-    public function __construct($message, $code)
+    public function __construct(string $message, string $code)
     {
         $this->message = (string) $message;
         $this->code    = (string) $code;
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function accessDenied($description)
+    public static function accessDenied(string $description): OAuth2Exception
     {
         return new self($description, 'access_denied');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function invalidRequest($description)
+    public static function invalidRequest(string $description): OAuth2Exception
     {
         return new self($description, 'invalid_request');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function invalidClient($description)
+    public static function invalidClient(string $description): OAuth2Exception
     {
         return new self($description, 'invalid_client');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function invalidGrant($description)
+    public static function invalidGrant(string $description): OAuth2Exception
     {
         return new self($description, 'invalid_grant');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function invalidScope($description)
+    public static function invalidScope(string $description): OAuth2Exception
     {
         return new self($description, 'invalid_scope');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function serverError($description)
+    public static function serverError(string $description): OAuth2Exception
     {
         return new self($description, 'server_error');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function temporarilyUnavailable($description)
+    public static function temporarilyUnavailable(string $description): OAuth2Exception
     {
         return new self($description, 'temporarily_unavailable');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function unauthorizedClient($description)
+    public static function unauthorizedClient(string $description): OAuth2Exception
     {
         return new self($description, 'unauthorized_client');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function unsupportedGrantType($description)
+    public static function unsupportedGrantType(string $description): OAuth2Exception
     {
         return new self($description, 'unsupported_grant_type');
     }
 
     /**
-     * @param  string $description
-     * @return OAuth2Exception
+     * @todo Explain when this excpetion is applicable
      */
-    public static function unsupportedResponseType($description)
+    public static function unsupportedResponseType(string $description): OAuth2Exception
     {
         return new self($description, 'unsupported_response_type');
     }
 
     /**
      * @link   https://tools.ietf.org/html/rfc7009#section-2.2.1
-     * @param  string $description
      * @return OAuth2Exception
      */
-    public static function unsupportedTokenType($description)
+    public static function unsupportedTokenType(string $description): OAuth2Exception
     {
         return new self($description, 'unsupported_token_type');
     }

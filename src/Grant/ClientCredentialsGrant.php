@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -56,13 +59,13 @@ class ClientCredentialsGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * @throws OAuth2Exception (invalid_request)
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
     }
 
@@ -73,7 +76,7 @@ class ClientCredentialsGrant extends AbstractGrant
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Everything is okey, we can start tokens generation!

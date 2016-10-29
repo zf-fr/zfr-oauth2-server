@@ -26,7 +26,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ServerOptionsFactory
+ * @covers  \ZfrOAuth2\Server\Container\ServerOptionsFactory
  */
 class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -34,7 +34,7 @@ class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with('config')
             ->willReturn(['zfr_oauth2_server' => []]);
@@ -42,6 +42,6 @@ class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ServerOptionsFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(ServerOptions::class, $service);
+        $this->assertInstanceOf(ServerOptions::class, $service);
     }
 }

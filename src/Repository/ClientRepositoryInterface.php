@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,21 +28,12 @@ use ZfrOAuth2\Server\Model\Client;
  */
 interface ClientRepositoryInterface
 {
-    /**
-     * @param Client $client
-     * @return Client
-     */
     public function save(Client $client): Client;
 
     /**
-     * @param  string $id
      * @return Client|null
      */
     public function findById(string $id);
 
-    /**
-     * @param string $id
-     * @return bool
-     */
     public function idExists(string $id): bool;
 }

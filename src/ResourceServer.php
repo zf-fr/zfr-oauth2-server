@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,6 +24,7 @@ namespace ZfrOAuth2\Server;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
@@ -40,9 +44,6 @@ class ResourceServer implements ResourceServerInterface
      */
     private $accessTokenService;
 
-    /**
-     * @param AccessTokenService $accessTokenService
-     */
     public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
@@ -56,10 +57,9 @@ class ResourceServer implements ResourceServerInterface
      * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
-     * @param  ServerRequestInterface $request
-     * @param  array                  $scopes
+     * @param  array|string|Scope[]   $scopes
      * @return AccessToken|null
-     * @throws Exception\InvalidAccessTokenException If given access token is invalid or expired
+     * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = [])
     {
@@ -79,7 +79,6 @@ class ResourceServer implements ResourceServerInterface
     /**
      * Extract the token either from Authorization header or query params
      *
-     * @param  ServerRequestInterface $request
      * @return string|null
      */
     private function extractAccessToken(ServerRequestInterface $request)

@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -32,20 +35,11 @@ class TokenRequestMiddleware
      */
     private $authorizationServer;
 
-    /**
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function __construct(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     *
-     * @TODO we should integrate with an authentication service to pass the logged user, if any. Currently, it will
-     * work out of the box for password grant
-     */
     public function __invoke(
         ServerRequestInterface $request,
         ResponseInterface $response,

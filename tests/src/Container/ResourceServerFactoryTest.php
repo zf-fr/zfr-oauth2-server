@@ -20,13 +20,14 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ResourceServerFactory;
+use ZfrOAuth2\Server\ResourceServerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ResourceServerFactory
+ * @covers  \ZfrOAuth2\Server\Container\ResourceServerFactory
  */
 class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -35,7 +36,7 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $container    = $this->createMock(ContainerInterface::class);
         $tokenService = $this->createMock(AccessTokenService::class);
 
-        $container->expects(static::once())
+        $container->expects($this->once())
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($tokenService);
@@ -43,6 +44,6 @@ class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ResourceServerFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf('ZfrOAuth2\Server\ResourceServer', $service);
+        $this->assertInstanceOf(ResourceServerInterface::class, $service);
     }
 }

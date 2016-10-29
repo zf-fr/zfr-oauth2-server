@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -73,11 +76,6 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      */
     private $callback;
 
-    /**
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
-     * @param callable            $callback
-     */
     public function __construct(
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService,
@@ -89,25 +87,24 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
     }
 
     /**
-     * {@inheritDoc}
+     * @throws OAuth2Exception (invalid_request)
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
         TokenOwnerInterface $owner = null
-    ) {
+    ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
     }
 
     /**
-     * {@inheritDoc}
      * @throws OAuth2Exception
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
         Client $client = null,
         TokenOwnerInterface $owner = null
-    ):ResponseInterface {
+    ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Validate the user using its username and password
@@ -139,19 +136,11 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
-    /**
-     * Set AuthorizationServer
-     *
-     * @param AuthorizationServerInterface $authorizationServer
-     */
     public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
     {
         $this->authorizationServer = $authorizationServer;
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function allowPublicClients(): bool
     {
         return true;

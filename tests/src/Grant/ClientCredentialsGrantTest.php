@@ -52,18 +52,20 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class),
-            Client::createNewClient('id', 'name'));
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createAuthorizationResponse(
+            $this->createMock(ServerRequestInterface::class),
+            Client::createNewClient('id', 'http://www.example.com')
+        );
     }
 
     public function testCanCreateTokenResponse()
     {
         $request = $this->createMock(ServerRequestInterface::class);
 
-        $client = Client::createNewClient('id', 'name', 'secret', ['http://www.example.com']);
+        $client = Client::createNewClient('name', 'http://www.example.com');
         $owner  = $this->createMock(TokenOwnerInterface::class);
-        $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
+        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $token = AccessToken::reconstitute([
             'token'     => 'azerty',
@@ -73,15 +75,30 @@ class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
             'scopes'    => []
         ]);
 
-        $this->tokenService->expects(static::once())->method('createToken')->will(static::returnValue($token));
+        $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
         $body = json_decode($response->getBody(), true);
 
-        static::assertEquals('azerty', $body['access_token']);
-        static::assertEquals('Bearer', $body['token_type']);
-        static::assertEquals(3600, $body['expires_in']);
-        static::assertEquals(1, $body['owner_id']);
+        $this->assertEquals('azerty', $body['access_token']);
+        $this->assertEquals('Bearer', $body['token_type']);
+        $this->assertEquals(3600, $body['expires_in']);
+        $this->assertEquals(1, $body['owner_id']);
+    }
+
+    public function testMethodGetType()
+    {
+        $this->assertSame('client_credentials', $this->grant->getType());
+    }
+
+    public function testMethodGetResponseType()
+    {
+        $this->assertSame('', $this->grant->getResponseType());
+    }
+
+    public function testMethodAllowPublicClients()
+    {
+        $this->assertFalse($this->grant->allowPublicClients());
     }
 }

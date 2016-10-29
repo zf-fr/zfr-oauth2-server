@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,7 +22,7 @@
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
 
 /**
@@ -28,14 +31,10 @@ use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
  */
 class AuthorizationRequestMiddlewareFactory
 {
-    /**
-     * @param  ContainerInterface $container
-     * @return \ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware
-     */
     public function __invoke(ContainerInterface $container): AuthorizationRequestMiddleware
     {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+        /** @var AuthorizationServerInterface $authorizationServer */
+        $authorizationServer = $container->get(AuthorizationServerInterface::class);
 
         return new AuthorizationRequestMiddleware($authorizationServer);
     }

@@ -28,7 +28,7 @@ use ZfrOAuth2\Server\Service\AbstractTokenService;
  * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  *
- * @covers  ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory
+ * @covers  \ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory
  */
 class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
 {
@@ -36,7 +36,7 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects(static::at(0))
+        $container->expects($this->at(0))
             ->method('get')
             ->with(AccessTokenService::class)
             ->willReturn($this->createMock(AccessTokenService::class));
@@ -44,6 +44,6 @@ class ClientCredentialsGrantFactoryTest extends \PHPUnit_Framework_TestCase
         $factory = new ClientCredentialsGrantFactory();
         $service = $factory($container);
 
-        static::assertInstanceOf(ClientCredentialsGrant::class, $service);
+        $this->assertInstanceOf(ClientCredentialsGrant::class, $service);
     }
 }

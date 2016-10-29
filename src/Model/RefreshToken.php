@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,11 +32,7 @@ class RefreshToken extends AbstractToken
     /**
      * Create a new RefreshToken
      *
-     * @param int                      $ttl
-     * @param TokenOwnerInterface|null $owner
-     * @param Client|null              $client
-     * @param null                     $scopes
-     * @return RefreshToken
+     * @param string|string[]|Scope[]|null $scopes
      */
     public static function createNewRefreshToken(
         int $ttl,
@@ -44,9 +43,6 @@ class RefreshToken extends AbstractToken
         return static::createNew($ttl, $owner, $client, $scopes);
     }
 
-    /**
-     * {@inheritDoc}
-     */
     public function isExpired(): bool
     {
         return null !== $this->expiresAt && parent::isExpired();

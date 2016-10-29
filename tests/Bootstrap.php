@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -16,7 +19,7 @@
  * and is licensed under the MIT license.
  */
 
-ini_set('error_reporting', E_ALL);
+ini_set('error_reporting', (string) E_ALL);
 
 $files = [__DIR__ . '/../vendor/autoload.php', __DIR__ . '/../../../autoload.php'];
 

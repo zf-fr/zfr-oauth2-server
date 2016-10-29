@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -38,10 +41,10 @@ class AuthorizationCode extends AbstractToken
      * Create a new AuthorizationCode
      *
      * @param int                          $ttl
-     * @param TokenOwnerInterface|null     $owner
-     * @param Client|null                  $client
-     * @param string|string[]|Scope[]|null $scopes
      * @param string                       $redirectUri
+     * @param TokenOwnerInterface          $owner
+     * @param Client                       $client
+     * @param string|string[]|Scope[]|null $scopes
      * @return AuthorizationCode
      */
     public static function createNewAuthorizationCode(
@@ -58,11 +61,7 @@ class AuthorizationCode extends AbstractToken
         return $token;
     }
 
-    /**
-     * @param array $data
-     * @return AbstractToken
-     */
-    public static function reconstitute(array $data)
+    public static function reconstitute(array $data): self
     {
         $token = parent::reconstitute($data);
 
@@ -71,9 +70,6 @@ class AuthorizationCode extends AbstractToken
         return $token;
     }
 
-    /**
-     * @return string
-     */
     public function getRedirectUri(): string
     {
         return $this->redirectUri;

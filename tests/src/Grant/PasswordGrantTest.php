@@ -63,42 +63,43 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         $this->accessTokenService  = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
-        $callable    = function(){};
+        $callable    = function () {
+        };
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
     }
 
     public function testAssertDoesNotImplementAuthorization()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'name'));
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
     {
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn([]);
+        $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
-        $this->setExpectedException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->expectException(OAuth2Exception::class, null, 'invalid_request');
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function testAssertInvalidIfWrongCredentials()
     {
-        $this->setExpectedException(OAuth2Exception::class, null, 'access_denied');
+        $this->expectException(OAuth2Exception::class, null, 'access_denied');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
 
-        $callable = function($username, $password) {
-            static::assertEquals('michael', $username);
-            static::assertEquals('azerty', $password);
+        $callable = function ($username, $password) {
+            $this->assertEquals('michael', $username);
+            $this->assertEquals('azerty', $password);
 
             return false;
         };
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
 
-        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function hasRefreshGrant()
@@ -115,44 +116,44 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects(static::once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
 
         $owner = $this->createMock(TokenOwnerInterface::class);
-        $owner->expects(static::once())->method('getTokenOwnerId')->will(static::returnValue(1));
+        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
-        $callable = function($username, $password) use ($owner) {
+        $callable = function ($username, $password) use ($owner) {
             return $owner;
         };
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects(static::once())->method('createToken')->will(static::returnValue($accessToken));
+        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects(static::once())->method('createToken')->will(static::returnValue($refreshToken));
+            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
         }
 
         $authorizationServer = $this->createMock(AuthorizationServer::class);
-        $authorizationServer->expects(static::once())
+        $authorizationServer->expects($this->once())
                             ->method('hasGrant')
                             ->with(RefreshTokenGrant::GRANT_TYPE)
-                            ->will(static::returnValue($hasRefreshGrant));
+                            ->will($this->returnValue($hasRefreshGrant));
 
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'name'));
+        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
 
         $body = json_decode($response->getBody(), true);
 
-        static::assertEquals('azerty_access', $body['access_token']);
-        static::assertEquals('Bearer', $body['token_type']);
-        static::assertEquals(3600, $body['expires_in']);
-        static::assertEquals('read', $body['scope']);
-        static::assertEquals(1, $body['owner_id']);
+        $this->assertEquals('azerty_access', $body['access_token']);
+        $this->assertEquals('Bearer', $body['token_type']);
+        $this->assertEquals(3600, $body['expires_in']);
+        $this->assertEquals('read', $body['scope']);
+        $this->assertEquals(1, $body['owner_id']);
 
         if ($hasRefreshGrant) {
-            static::assertEquals('azerty_refresh', $body['refresh_token']);
+            $this->assertEquals('azerty_refresh', $body['refresh_token']);
         }
     }
 
@@ -188,5 +189,20 @@ class PasswordGrantTest extends \PHPUnit_Framework_TestCase
         ]);
 
         return $token;
+    }
+
+    public function testMethodGetType()
+    {
+        $this->assertSame('password', $this->grant->getType());
+    }
+
+    public function testMethodGetResponseType()
+    {
+        $this->assertSame('', $this->grant->getResponseType());
+    }
+
+    public function testMethodAllowPublicClients()
+    {
+        $this->assertTrue($this->grant->allowPublicClients());
     }
 }

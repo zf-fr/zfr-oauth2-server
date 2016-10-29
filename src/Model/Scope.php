@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -55,12 +58,6 @@ class Scope
 
     /**
      * Create a new Scope
-     *
-     * @param int         $id
-     * @param string      $name
-     * @param string|null $description
-     * @param bool        $isDefault
-     * @return Scope
      */
     public static function createNewScope(
         int $id,
@@ -78,11 +75,7 @@ class Scope
         return $scope;
     }
 
-    /**
-     * @param array $data
-     * @return
-     */
-    public static function reconstitute(array $data)
+    public static function reconstitute(array $data): Scope
     {
         $scope = new static();
 
@@ -106,8 +99,6 @@ class Scope
 
     /**
      * Get the scope's name
-     *
-     * @return string
      */
     public function getName(): string
     {
@@ -116,8 +107,6 @@ class Scope
 
     /**
      * Get the scope's description
-     *
-     * @return string
      */
     public function getDescription(): string
     {
@@ -126,8 +115,6 @@ class Scope
 
     /**
      * Is the scope a default scope?
-     *
-     * @return bool
      */
     public function isDefault(): bool
     {

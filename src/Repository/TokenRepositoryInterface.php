@@ -1,4 +1,7 @@
 <?php
+
+declare(strict_types = 1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,7 +29,6 @@ use ZfrOAuth2\Server\Model\AbstractToken;
 interface TokenRepositoryInterface
 {
     /**
-     * @param string $token
      * @return AbstractToken|null
      */
     public function findByToken(string $token);
@@ -36,8 +38,5 @@ interface TokenRepositoryInterface
      */
     public function deleteToken(AbstractToken $token);
 
-    /**
-     * @return bool
-     */
     public function tokenExists(string $token): bool;
 }
