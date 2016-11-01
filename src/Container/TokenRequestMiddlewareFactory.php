@@ -22,7 +22,7 @@ declare(strict_types = 1);
 namespace ZfrOAuth2\Server\Container;
 
 use Interop\Container\ContainerInterface;
-use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 
 /**
@@ -33,8 +33,8 @@ class TokenRequestMiddlewareFactory
 {
     public function __invoke(ContainerInterface $container): TokenRequestMiddleware
     {
-        /** @var AuthorizationServer $authorizationServer */
-        $authorizationServer = $container->get(AuthorizationServer::class);
+        /** @var AuthorizationServerInterface $authorizationServer */
+        $authorizationServer = $container->get(AuthorizationServerInterface::class);
 
         return new TokenRequestMiddleware($authorizationServer);
     }
