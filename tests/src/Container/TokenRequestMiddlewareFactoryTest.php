@@ -20,6 +20,7 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
 use ZfrOAuth2\Server\Container\TokenRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
@@ -40,8 +41,8 @@ class TokenRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
 
         $container->expects($this->at(0))
             ->method('get')
-            ->with(AuthorizationServer::class)
-            ->willReturn($this->createMock(AuthorizationServer::class));
+            ->with(AuthorizationServerInterface::class)
+            ->willReturn($this->createMock(AuthorizationServerInterface::class));
 
         $factory = new TokenRequestMiddlewareFactory();
         $service = $factory($container);
