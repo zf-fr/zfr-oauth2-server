@@ -21,13 +21,14 @@ namespace ZfrOAuth2Test\Server;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
-use ZfrOAuth2\Server\Model\AccessToken;
-use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Grant\GrantInterface;
 use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Model\AccessToken;
+use ZfrOAuth2\Server\Model\Client;
+use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ClientService;
@@ -97,6 +98,39 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
+
+        $response = $authorizationServer->handleAuthorizationRequest($request);
+        $body     = json_decode($response->getBody(), true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('error_description', $body);
+    }
+
+    /**
+     * Case for grant types that allow for public clients (such as implicit or authorization code), but don't provide
+     * a client id
+     */
+    public function testThrowExceptionIfNoClientIdAtHandleAuthorisationRequests()
+    {
+        $authorizationGrant = $this->createMock(AuthorizationGrant::class);
+
+        $authorizationGrant->expects($this->any())->method('getType')->willReturn(AuthorizationGrant::GRANT_TYPE);
+        $authorizationGrant->expects($this->any())->method('getResponseType')->willReturn(AuthorizationGrant::GRANT_RESPONSE_TYPE);
+        $authorizationGrant->expects($this->any())->method('allowPublicClients')->willReturn(true);
+
+        $request = $this->createMock(ServerRequestInterface::class);
+
+        // we will fake the AuthorizationGrant type
+        $request->expects($this->once())->method('getQueryParams')->with()->willReturn(['response_type' => 'code']);
+
+        // use POST vars
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['client_secret' => 'clientsecret']);
+        $clientService       = $this->createMock(ClientService::class);
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$authorizationGrant], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
         $body     = json_decode($response->getBody(), true);
