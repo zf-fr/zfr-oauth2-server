@@ -293,4 +293,81 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertInstanceOf(ResponseInterface::class, $response);
         $this->assertEquals(503, $response->getStatusCode());
     }
+
+    /**
+     * Tests two happy paths for the authorization flow
+     *
+     * @dataProvider dpHandleAuthorizationRequest
+     */
+    public function testHandleAuthorizationRequest(string $credentialsmethod)
+    {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getQueryParams')->with()->willReturn(['response_type' => 'code']);
+
+        // use ClientCredential from Authorization header
+        if ('bearer' === $credentialsmethod) {
+            $request->expects($this->once())
+                ->method('hasHeader')
+                ->with('Authorization')
+                ->willReturn(true);
+
+            $request->expects($this->once())
+                ->method('getHeaderLine')
+                ->with('Authorization')
+                ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
+        }
+
+        // use ClientCredential from POST vars
+        if ('post' === $credentialsmethod) {
+            $request->expects($this->once())
+                ->method('getParsedBody')
+                ->willReturn([
+                    'client_id'     => 'clientid',
+                    'client_secret' => 'clientsecret',
+                ]);
+        }
+
+        $authorizationGrant = $this->createMock(AuthorizationGrant::class);
+
+        $authorizationGrant->expects($this->any())->method('getType')->willReturn(AuthorizationGrant::GRANT_TYPE);
+        $authorizationGrant->expects($this->any())->method('getResponseType')->willReturn(AuthorizationGrant::GRANT_RESPONSE_TYPE);
+        $authorizationGrant->expects($this->any())->method('allowPublicClients')->willReturn(true);
+
+        $client = Client::reconstitute([
+            'id'           => 'clientid',
+            'name'         => 'clientname',
+            'secret'       => 'clientsecret',
+            'redirectUris' => ['http://example.com']
+        ]);
+
+        $clientService = $this->createMock(ClientService::class);
+        $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$authorizationGrant], $accessTokenService,
+            $refreshTokenService);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->once())
+            ->method('withHeader')
+            ->with('Content-Type', 'application/json')
+            ->willReturn($response);
+
+        $authorizationGrant->expects($this->once())
+            ->method('createAuthorizationResponse')
+            ->with($request, $client, null)
+            ->willReturn($response);
+
+        $authorizationServer->handleAuthorizationRequest($request, null);
+    }
+
+    public function dpHandleAuthorizationRequest()
+    {
+        return [
+            ['bearer'], // use bearer for client credentials
+            ['post'], // use POST vars for client credentials
+        ];
+    }
 }
