@@ -370,4 +370,52 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
             ['post'], // use POST vars for client credentials
         ];
     }
+
+    /**
+     * Happy path throught handleTokenRequest
+     */
+    public function testHandleTokenRequest()
+    {
+        $grant = $this->createMock(ClientCredentialsGrant::class);
+
+        $grant->expects($this->any())->method('getType')->willReturn(ClientCredentialsGrant::GRANT_TYPE);
+        $grant->expects($this->any())->method('getResponseType')->willReturn(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
+        $grant->expects($this->once())->method('allowPublicClients')->willReturn(false);
+
+        $response = $this->createMock(ResponseInterface::class);
+        $response->expects($this->at(0))->method('withHeader')->with('Content-Type', 'application/json')->willReturn($response);
+        $response->expects($this->at(1))->method('withHeader')->with('Cache-Control', 'no-store')->willReturn($response);
+        $response->expects($this->at(2))->method('withHeader')->with('Pragma', 'no-cache')->willReturn($response);
+
+
+        $grant->expects($this->once())->method('createTokenResponse')->willReturn($response);
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->exactly(1))->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
+        $request->expects($this->once())
+            ->method('hasHeader')
+            ->with('Authorization')
+            ->willReturn(true);
+
+        $request->expects($this->once())
+            ->method('getHeaderLine')
+            ->with('Authorization')
+            ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
+
+        $client = Client::reconstitute([
+            'id'           => 'clientid',
+            'name'         => 'clientname',
+            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'redirectUris' => ['http://example.com']
+        ]);
+        $clientService = $this->createMock(ClientService::class);
+        $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+
+        $authorizationServer->handleTokenRequest($request);
+    }
 }
