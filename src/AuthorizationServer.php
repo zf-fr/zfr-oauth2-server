@@ -154,6 +154,7 @@ class AuthorizationServer implements AuthorizationServerInterface
 
     /**
      * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters
+     * @throws OAuth2Exception (invalid_clientt) If no client could be authenticated
      */
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
@@ -169,6 +170,10 @@ class AuthorizationServer implements AuthorizationServerInterface
 
             $responseType = $this->getResponseType((string) $responseType);
             $client       = $this->getClient($request, $responseType->allowPublicClients());
+
+            if (null === $client) {
+                throw OAuth2Exception::invalidClient('No client could be authenticated');
+            }
 
             $response = $responseType->createAuthorizationResponse($request, $client, $owner);
         } catch (OAuth2Exception $exception) {
