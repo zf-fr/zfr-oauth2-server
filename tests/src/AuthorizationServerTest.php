@@ -182,6 +182,49 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertArrayHasKey('error_description', $body);
     }
 
+    public function testThrowExceptionForIncorrectSecret()
+    {
+        $grant = $this->createMock(ClientCredentialsGrant::class);
+
+        $grant->expects($this->any())->method('getType')->willReturn(ClientCredentialsGrant::GRANT_TYPE);
+        $grant->expects($this->any())->method('getResponseType')->willReturn(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
+        $grant->expects($this->once())->method('allowPublicClients')->willReturn(false);
+
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->exactly(1))->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
+        $request->expects($this->once())
+            ->method('hasHeader')
+            ->with('Authorization')
+            ->willReturn(true);
+
+        $request->expects($this->once())
+            ->method('getHeaderLine')
+            ->with('Authorization')
+            ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
+
+        $client = Client::reconstitute([
+            'id'           => 'clientid',
+            'name'         => 'clientname',
+            'secret'       => '$2y$10$ixK8D7rBvEPkX0.d3e93h.lb3wufbavWmIyX0zK1FhP3fGp.rIK1u', // hash of 'incorrectclientsecret'
+            'redirectUris' => ['http://example.com']
+        ]);
+
+        $clientService = $this->createMock(ClientService::class);
+        $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+        $response = $authorizationServer->handleTokenRequest($request);
+
+        $body     = json_decode($response->getBody(), true);
+
+        $this->assertEquals(400, $response->getStatusCode());
+        $this->assertArrayHasKey('error', $body);
+        $this->assertArrayHasKey('error_description', $body);
+    }
+
     public function revocationProvider()
     {
         return [
