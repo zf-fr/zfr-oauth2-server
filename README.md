@@ -6,6 +6,10 @@
 [![Scrutinizer Quality Score](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/badges/quality-score.png?s=be36235c9898cfc55044f58d9bba789d2d4d102e)](https://scrutinizer-ci.com/g/zf-fr/zfr-oauth2-server/)
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 
+**NOTICE:** *Development on the legacy-0.7 branch has been stopped at this time. It is here for historical reasons. 
+If you find a bug or an incompatibility with an existing project a PR's are welcomed though. Please have a look at
+the master branch which is a complete rewrite.*
+
 ZfrOAuth2Server is a PHP library that implement the OAuth 2 specification. It's main goal is to be a clean, PHP 5.5+
 library that aims to be used with Doctrine 2 only.
 
