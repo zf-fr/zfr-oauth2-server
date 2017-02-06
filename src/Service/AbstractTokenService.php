@@ -86,9 +86,6 @@ abstract class AbstractTokenService
 
     /**
      * Remove the abstract token from the underlying storage
-     *
-     * @param  AbstractToken $token
-     * @return void
      */
     public function deleteToken(AbstractToken $token)
     {
@@ -99,8 +96,8 @@ abstract class AbstractTokenService
      * Validate the token scopes against the registered scope
      *
      * @param  array $scopes
-     * @return void
-     * @throws OAuth2Exception
+     *
+     * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered
      */
     protected function validateTokenScopes(array $scopes)
     {
