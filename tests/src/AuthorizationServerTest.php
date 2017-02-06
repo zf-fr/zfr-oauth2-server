@@ -337,6 +337,109 @@ class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(503, $response->getStatusCode());
     }
 
+    public function testRevocationRequestWithoutTokenThrowsException() {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token_type_hint' => 'access_token']);
+
+        $clientService       = $this->createMock(ClientService::class);
+        $grant               = $this->createMock(GrantInterface::class);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+
+        $this->expectException(OAuth2Exception::class);
+        $this->expectExceptionMessage('Cannot revoke a token as the "token" and/or "token_type_hint" parameters are missing');
+
+        $authorizationServer->handleRevocationRequest($request);
+    }
+
+    public function testRevocationRequestWithoutTokenHintTypeThrowsException() {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123']);
+
+        $clientService       = $this->createMock(ClientService::class);
+        $grant               = $this->createMock(GrantInterface::class);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+
+        $this->expectException(OAuth2Exception::class);
+        $this->expectExceptionMessage('Cannot revoke a token as the "token" and/or "token_type_hint" parameters are missing');
+
+        $authorizationServer->handleRevocationRequest($request);
+    }
+
+    public function testRevocationRequestWithInvalidTokenTypeHintThrowsException() {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'invalid_token_hint']);
+
+        $clientService       = $this->createMock(ClientService::class);
+        $grant               = $this->createMock(GrantInterface::class);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+
+        $this->expectException(OAuth2Exception::class);
+        $this->expectExceptionMessage('Authorization server does not support revocation of token of type "invalid_token_hint"');
+
+        $authorizationServer->handleRevocationRequest($request);
+    }
+
+    public function testRevocationRequestWithInvalidOtherNonPublicClientThrowsException() {
+        $request = $this->createMock(ServerRequestInterface::class);
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'access_token']);
+
+        $clientService       = $this->createMock(ClientService::class);
+        $grant               = $this->createMock(GrantInterface::class);
+
+        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $refreshTokenService = $this->createMock(RefreshTokenService::class);
+
+        $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
+
+        $client = Client::reconstitute([
+            'id'           => 'clientid',
+            'name'         => 'clientname',
+            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'redirectUris' => []
+        ]);
+
+        $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
+
+        $request->expects($this->once())
+            ->method('hasHeader')
+            ->with('Authorization')
+            ->willReturn(true);
+
+        $request->expects($this->once())
+            ->method('getHeaderLine')
+            ->with('Authorization')
+            ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
+
+        // client has been changed since issuing
+        $client = Client::reconstitute([
+            'id'           => 'clientid',
+            'name'         => 'clientname',
+            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'redirectUris' => ['http://example.com']
+        ]);
+
+        $token = AccessToken::reconstitute(['token'=>'123', 'owner'=>null, 'client'=>$client, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+
+        $accessTokenService->expects($this->once())->method('getToken')->with('123')->will($this->returnValue($token));
+
+        $this->expectException(OAuth2Exception::class);
+        $this->expectExceptionMessage('Token was issued for another client and cannot be revoked');
+
+        $authorizationServer->handleRevocationRequest($request);
+    }
+
     /**
      * Tests two happy paths for the authorization flow
      *
