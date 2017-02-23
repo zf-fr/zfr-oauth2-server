@@ -40,6 +40,7 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEmpty($options->getGrants());
         $this->assertFalse($options->getRotateRefreshTokens());
         $this->assertTrue($options->getRevokeRotatedRefreshTokens());
+        $this->assertEquals('owner', $options->getOwnerRequestAttribute());
     }
 
     public function testGetters()
@@ -54,7 +55,8 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
             'rotate_refresh_tokens'         => true,
             'revoke_rotated_refresh_tokens' => false,
             'owner_callable'                => $callable,
-            'grants'                        => [ClientCredentialsGrant::class]
+            'grants'                        => [ClientCredentialsGrant::class],
+            'owner_request_attribute'       => 'something'
         ]);
 
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());
@@ -64,5 +66,6 @@ class ServerOptionsTest extends \PHPUnit_Framework_TestCase
         $this->assertEquals(false, $options->getRevokeRotatedRefreshTokens());
         $this->assertSame($callable, $options->getOwnerCallable());
         $this->assertEquals([ClientCredentialsGrant::class], $options->getGrants());
+        $this->assertEquals('something', $options->getOwnerRequestAttribute());
     }
 }
