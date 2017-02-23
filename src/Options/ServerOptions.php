@@ -79,6 +79,14 @@ final class ServerOptions
     private $grants = [];
 
     /**
+     * Attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface
+     * to be present on
+     *
+     * @var string
+     */
+    private $ownerRequestAttribute;
+
+    /**
      * @param callable|string $ownerCallable either a callable or the name of a container service
      */
     private function __construct(
@@ -88,7 +96,8 @@ final class ServerOptions
         bool $rotateRefreshTokens,
         bool $revokeRotatedRefreshTokens,
         $ownerCallable,
-        array $grants
+        array $grants,
+        string $ownerRequestAttribute
     ) {
         $this->authorizationCodeTtl       = $authorizationCodeTtl;
         $this->accessTokenTtl             = $accessTokenTtl;
@@ -97,6 +106,7 @@ final class ServerOptions
         $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
         $this->ownerCallable              = $ownerCallable;
         $this->grants                     = $grants;
+        $this->ownerRequestAttribute      = $ownerRequestAttribute;
     }
 
     /**
@@ -111,7 +121,8 @@ final class ServerOptions
             $options['rotate_refresh_tokens'] ?? false,
             $options['revoke_rotated_refresh_tokens'] ?? true,
             $options['owner_callable'] ?? null,
-            $options['grants'] ?? []
+            $options['grants'] ?? [],
+            $options['owner_request_attribute'] ?? 'owner'
         );
     }
 
@@ -171,5 +182,14 @@ final class ServerOptions
     public function getGrants(): array
     {
         return $this->grants;
+    }
+
+    /**
+     * Gets attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface
+     * to be present on
+     */
+    public function getOwnerRequestAttribute(): string
+    {
+        return $this->ownerRequestAttribute;
     }
 }

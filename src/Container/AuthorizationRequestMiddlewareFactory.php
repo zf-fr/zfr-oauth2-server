@@ -24,6 +24,7 @@ namespace ZfrOAuth2\Server\Container;
 use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -35,7 +36,9 @@ class AuthorizationRequestMiddlewareFactory
     {
         /** @var AuthorizationServerInterface $authorizationServer */
         $authorizationServer = $container->get(AuthorizationServerInterface::class);
+        /** @var ServerOptions $serverOptions */
+        $serverOptions       = $container->get(ServerOptions::class);
 
-        return new AuthorizationRequestMiddleware($authorizationServer);
+        return new AuthorizationRequestMiddleware($authorizationServer, $serverOptions);
     }
 }
