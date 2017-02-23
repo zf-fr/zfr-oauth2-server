@@ -22,6 +22,7 @@ use Interop\Container\ContainerInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Bas Kamer <baskamer@gmail.com>
@@ -38,6 +39,10 @@ class AuthorizationRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestC
             ->method('get')
             ->with(AuthorizationServerInterface::class)
             ->willReturn($this->createMock(AuthorizationServerInterface::class));
+        $container->expects($this->at(1))
+            ->method('get')
+            ->with(ServerOptions::class)
+            ->willReturn(ServerOptions::fromArray());
 
         $factory = new AuthorizationRequestMiddlewareFactory();
         $service = $factory($container);

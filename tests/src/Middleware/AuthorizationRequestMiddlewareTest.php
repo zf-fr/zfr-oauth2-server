@@ -22,6 +22,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -33,7 +34,8 @@ class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
     public function testWillHandleAuthorizationRequest()
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $middleware          = new AuthorizationRequestMiddleware($authorizationServer);
+        $serverOptions       = ServerOptions::fromArray();
+        $middleware          = new AuthorizationRequestMiddleware($authorizationServer, $serverOptions);
 
         $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);
