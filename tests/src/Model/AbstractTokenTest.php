@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -34,7 +36,7 @@ class AbstractTokenTest extends TestCase
     {
         $this->owner     = $this->createMock(TokenOwnerInterface::class);
         $this->client    = $this->createMock(Client::class);
-        $this->expiresAt = (new \DateTime())->modify("+60 seconds");
+        $this->expiresAt = (new \DateTime())->modify('+60 seconds');
         $this->scopes    = ['somescope', 'otherscope'];
 
         $this->token = SomeToken::reconstitute([
@@ -100,7 +102,7 @@ class AbstractTokenTest extends TestCase
     public function testMethodIsValidWithExpired()
     {
         // expired
-        $this->expiresAt = (new \DateTime())->modify("-60 seconds");
+        $this->expiresAt = (new \DateTime())->modify('-60 seconds');
 
         $this->token = SomeToken::reconstitute([
             'token'     => 'a token',

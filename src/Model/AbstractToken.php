@@ -211,7 +211,7 @@ abstract class AbstractToken
             return false;
         }
 
-        if (!empty($scopes) && !$this->matchScopes($scopes)) {
+        if (! empty($scopes) && ! $this->matchScopes($scopes)) {
             return false;
         }
 

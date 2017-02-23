@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -119,25 +121,25 @@ class RefreshTokenServiceTest extends TestCase
             [
                 'registered_scopes' => ['read', 'write'],
                 'token_scope'       => [],
-                'throw_exception'   => false
+                'throw_exception'   => false,
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
                 'token_scope'       => ['read'],
-                'throw_exception'   => false
+                'throw_exception'   => false,
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
                 'token_scope'       => ['read', 'write'],
-                'throw_exception'   => false
+                'throw_exception'   => false,
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
                 'token_scope'       => ['read', 'write', 'delete'],
-                'throw_exception'   => true
+                'throw_exception'   => true,
             ],
         ];
     }
@@ -160,7 +162,7 @@ class RefreshTokenServiceTest extends TestCase
                 ->will($this->returnValue(['read']));
         }
 
-        if (!$throwException) {
+        if (! $throwException) {
             $this->tokenRepository->expects($this->once())
                 ->method('tokenExists')
                 ->willReturn(false);

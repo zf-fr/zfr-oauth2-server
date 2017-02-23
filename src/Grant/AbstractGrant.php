@@ -58,7 +58,7 @@ abstract class AbstractGrant implements GrantInterface
             'token_type'   => 'Bearer',
             'expires_in'   => $accessToken->getExpiresIn(),
             'scope'        => implode(' ', $scopes),
-            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null
+            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null,
         ];
 
         if (null !== $refreshToken) {

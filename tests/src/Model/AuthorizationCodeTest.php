@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -21,7 +23,6 @@ namespace ZfrOAuth2Test\Server\Model;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
-use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -51,7 +52,7 @@ class AuthorizationCodeTest extends TestCase
         return [
             [''],
             ['http://www.example.com'],
-            [null]
+            [null],
         ];
     }
 
@@ -71,23 +72,23 @@ class AuthorizationCodeTest extends TestCase
         return [
             [
                 [
-                    'token'     => 'token',
-                    'owner'     => null,
-                    'client'    => null,
-                    'expiresAt' => null,
-                    'scopes'    => [],
+                    'token'       => 'token',
+                    'owner'       => null,
+                    'client'      => null,
+                    'expiresAt'   => null,
+                    'scopes'      => [],
                     'redirectUri' => 'http://www.example.com',
-                ]
+                ],
             ],
             [
                 [
-                    'token'     => 'token',
-                    'owner'     => null,
-                    'client'    => null,
-                    'expiresAt' => null,
-                    'scopes'    => [],
+                    'token'       => 'token',
+                    'owner'       => null,
+                    'client'      => null,
+                    'expiresAt'   => null,
+                    'scopes'      => [],
                     'redirectUri' => '',
-                ]
+                ],
             ],
         ];
     }

@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -102,7 +104,7 @@ class AuthorizationGrantTest extends TestCase
             'response_type' => 'code',
             'scope'         => '',
             'state'         => 'xyz',
-            'redirect_uri'  => 'http://www.custom-example.com'
+            'redirect_uri'  => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -116,7 +118,7 @@ class AuthorizationGrantTest extends TestCase
                 'id'           => 'id',
                 'name'         => 'name',
                 'secret'       => '',
-                'redirectUris' => ['http://www.example.com','http://www.custom-example.com']
+                'redirectUris' => ['http://www.example.com', 'http://www.custom-example.com'],
             ]
         );
 
@@ -134,7 +136,7 @@ class AuthorizationGrantTest extends TestCase
             'response_type' => 'code',
             'scope'         => '',
             'state'         => 'xyz',
-            'redirect_uri'  => 'http://www.custom-example.com'
+            'redirect_uri'  => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -206,7 +208,7 @@ class AuthorizationGrantTest extends TestCase
     {
         return [
             [true],
-            [false]
+            [false],
         ];
     }
 
@@ -217,7 +219,7 @@ class AuthorizationGrantTest extends TestCase
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code'      => '123',
-                                                                               'client_id' => 'client_123'
+                                                                               'client_id' => 'client_123',
         ]);
 
         $client = Client::reconstitute(
@@ -225,7 +227,7 @@ class AuthorizationGrantTest extends TestCase
                 'id'           => 'client_123',
                 'name'         => 'name',
                 'secret'       => '',
-                'redirectUris' => []
+                'redirectUris' => [],
             ]
         );
         $token = $this->getValidAuthorizationCode(null, null, $client);
@@ -261,7 +263,7 @@ class AuthorizationGrantTest extends TestCase
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
@@ -285,11 +287,12 @@ class AuthorizationGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;
     }
+
     /**
      * @return AccessToken
      */
@@ -301,7 +304,7 @@ class AuthorizationGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;
@@ -313,13 +316,13 @@ class AuthorizationGrantTest extends TestCase
     private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
     {
         $invalidDate = (new \DateTimeImmutable())->sub(new DateInterval('PT1H'));
-        $token     = AuthorizationCode::reconstitute([
-            'token'     => 'azerty_auth',
-            'owner'     => $owner,
-            'client'    => $client,
-            'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $invalidDate,
-            'redirectUri' => $redirectUri ?? ''
+        $token       = AuthorizationCode::reconstitute([
+            'token'       => 'azerty_auth',
+            'owner'       => $owner,
+            'client'      => $client,
+            'scopes'      => $scopes ?? ['read'],
+            'expiresAt'   => $invalidDate,
+            'redirectUri' => $redirectUri ?? '',
         ]);
 
         return $token;
@@ -332,12 +335,12 @@ class AuthorizationGrantTest extends TestCase
     {
         $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
         $token     = AuthorizationCode::reconstitute([
-            'token'     => 'azerty_auth',
-            'owner'     => $owner,
-            'client'    => $client,
-            'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate,
-            'redirectUri' => $redirectUri ?? ''
+            'token'       => 'azerty_auth',
+            'owner'       => $owner,
+            'client'      => $client,
+            'scopes'      => $scopes ?? ['read'],
+            'expiresAt'   => $validDate,
+            'redirectUri' => $redirectUri ?? '',
         ]);
 
         return $token;

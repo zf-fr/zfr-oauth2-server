@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,8 +22,8 @@ namespace ZfrOAuth2Test\Server;
 
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
-use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
+use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\ResourceServer;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
@@ -115,7 +117,7 @@ class ResourceServerTest extends TestCase
                 'expired_token' => true,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'match'         => false
+                'match'         => false,
             ],
 
             // Should return false because we are asking more permissions than the token scope
@@ -123,7 +125,7 @@ class ResourceServerTest extends TestCase
                 'expired_token' => false,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'match'         => false
+                'match'         => false,
             ],
 
             // Should return true
@@ -131,7 +133,7 @@ class ResourceServerTest extends TestCase
                 'expired_token' => false,
                 'token_scope'   => 'read',
                 'desired_scope' => 'read',
-                'match'         => true
+                'match'         => true,
             ],
         ];
     }
@@ -156,7 +158,7 @@ class ResourceServerTest extends TestCase
                            ->with('token')
                            ->will($this->returnValue($accessToken));
 
-        if (!$match || $expiredToken) {
+        if (! $match || $expiredToken) {
             $this->expectException(InvalidAccessTokenException::class);
         }
 

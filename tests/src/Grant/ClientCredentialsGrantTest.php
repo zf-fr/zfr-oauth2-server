@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -73,14 +75,14 @@ class ClientCredentialsGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'expiresAt' => (new \DateTimeImmutable())->add(new DateInterval('PT1H')),
-            'scopes'    => []
+            'scopes'    => [],
         ]);
 
         $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));
 
         $response = $this->grant->createTokenResponse($request, $client, $owner);
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals('azerty', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);

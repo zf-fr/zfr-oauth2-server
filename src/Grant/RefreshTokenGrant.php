@@ -77,7 +77,7 @@ class RefreshTokenGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
@@ -86,7 +86,7 @@ class RefreshTokenGrant extends AbstractGrant
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
-        $refreshToken = $postParams['refresh_token'] ??  null;
+        $refreshToken = $postParams['refresh_token'] ?? null;
 
         if (null === $refreshToken) {
             throw OAuth2Exception::invalidRequest('Refresh token is missing');
@@ -105,7 +105,7 @@ class RefreshTokenGrant extends AbstractGrant
         // scope, but not more
         $scopes = $postParams['scope'] ?? $refreshToken->getScopes();
 
-        if (!$refreshToken->matchScopes($scopes)) {
+        if (! $refreshToken->matchScopes($scopes)) {
             throw OAuth2Exception::invalidScope(
                 'The scope of the new access token exceeds the scope(s) of the refresh token'
             );
