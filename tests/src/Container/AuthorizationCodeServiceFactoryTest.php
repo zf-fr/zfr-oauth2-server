@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
@@ -30,7 +31,7 @@ use ZfrOAuth2\Server\Service\ScopeService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Container\AuthorizationCodeServiceFactory
  */
-class AuthorizationCodeServiceFactoryTest extends \PHPUnit_Framework_TestCase
+class AuthorizationCodeServiceFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

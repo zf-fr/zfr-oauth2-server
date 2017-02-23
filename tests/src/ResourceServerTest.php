@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
@@ -29,7 +30,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\ResourceServer
  */
-class ResourceServerTest extends \PHPUnit_Framework_TestCase
+class ResourceServerTest extends TestCase
 {
     /**
      * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject

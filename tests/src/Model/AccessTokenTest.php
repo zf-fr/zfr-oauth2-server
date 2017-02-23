@@ -21,6 +21,7 @@ namespace ZfrOAuth2Test\Server\Model;
 use DateTime;
 use DateTimeImmutable;
 use DateTimeInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\Scope;
@@ -32,7 +33,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\AccessToken
  */
-class AccessTokenTest extends \PHPUnit_Framework_TestCase
+class AccessTokenTest extends TestCase
 {
     /**
      * @dataProvider providerGenerateNewAccessToken

@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Exception;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 
 /**
@@ -25,7 +26,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Exception\OAuth2Exception
  */
-class OAuth2ExceptionTest extends \PHPUnit_Framework_TestCase
+class OAuth2ExceptionTest extends TestCase
 {
     /**
      * @dataProvider dataproviderErrorsCode

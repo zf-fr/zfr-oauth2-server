@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
@@ -27,7 +28,7 @@ use ZfrOAuth2\Server\Service\ScopeService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\ScopeService
  */
-class ScopeServiceTest extends \PHPUnit_Framework_TestCase
+class ScopeServiceTest extends TestCase
 {
     /**
      * @var ScopeRepositoryInterface

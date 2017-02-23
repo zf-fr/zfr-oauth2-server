@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\RevocationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Container\RevocationRequestMiddlewareFactory
  */
-class RevocationRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
+class RevocationRequestMiddlewareFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

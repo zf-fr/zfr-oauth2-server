@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -38,7 +39,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Grant\AuthorizationGrant
  */
-class AuthorizationGrantTest extends \PHPUnit_Framework_TestCase
+class AuthorizationGrantTest extends TestCase
 {
     /**
      * @var AuthorizationCodeService|\PHPUnit_Framework_MockObject_MockObject

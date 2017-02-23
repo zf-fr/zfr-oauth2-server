@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
@@ -32,7 +33,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Grant\ClientCredentialsGrant
  */
-class ClientCredentialsGrantTest extends \PHPUnit_Framework_TestCase
+class ClientCredentialsGrantTest extends TestCase
 {
     /**
      * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject

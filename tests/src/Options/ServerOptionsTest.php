@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Options;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
 
@@ -27,7 +28,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  *
  * @covers  \ZfrOAuth2\Server\Options\ServerOptions
  */
-class ServerOptionsTest extends \PHPUnit_Framework_TestCase
+class ServerOptionsTest extends TestCase
 {
     public function testDefaults()
     {

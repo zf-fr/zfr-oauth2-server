@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\ModuleConfig;
 
 /**
@@ -25,7 +26,7 @@ use ZfrOAuth2\Server\ModuleConfig;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\ModuleConfig
  */
-class ModuleConfigTest extends \PHPUnit_Framework_TestCase
+class ModuleConfigTest extends TestCase
 {
     public function testCanBeInvoked()
     {

@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware
  */
-class AuthorizationRequestMiddlewareTest extends \PHPUnit_Framework_TestCase
+class AuthorizationRequestMiddlewareTest extends TestCase
 {
     public function testWillHandleAuthorizationRequest()
     {
