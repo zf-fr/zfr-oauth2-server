@@ -21,7 +21,7 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server\Container;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;

@@ -18,7 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Container;
 
-use Interop\Container\ContainerInterface;
+use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\ClientCredentialsGrantFactory;
 use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
