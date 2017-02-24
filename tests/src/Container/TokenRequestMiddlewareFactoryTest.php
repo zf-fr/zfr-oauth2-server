@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\ScopeServiceFactory;
@@ -33,7 +34,7 @@ use ZfrOAuth2\Server\Service\ScopeService;
  *
  * @covers  \ZfrOAuth2\Server\Container\TokenRequestMiddlewareFactory
  */
-class TokenRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
+class TokenRequestMiddlewareFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

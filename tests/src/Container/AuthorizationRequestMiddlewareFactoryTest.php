@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Container\AuthorizationRequestMiddlewareFactory
  */
-class AuthorizationRequestMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
+class AuthorizationRequestMiddlewareFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

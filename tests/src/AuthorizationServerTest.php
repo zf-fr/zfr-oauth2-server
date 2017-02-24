@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -39,7 +40,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\AuthorizationServer
  */
-class AuthorizationServerTest extends \PHPUnit_Framework_TestCase
+class AuthorizationServerTest extends TestCase
 {
     public function testCanCheckAndGetForGrants()
     {

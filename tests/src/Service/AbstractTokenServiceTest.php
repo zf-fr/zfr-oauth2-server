@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
@@ -33,7 +34,7 @@ use ZfrOAuth2Test\Server\Asset\SomeToken;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\AbstractTokenService
  */
-class AbstractTokenServiceTest extends \PHPUnit_Framework_TestCase
+class AbstractTokenServiceTest extends TestCase
 {
     /**
      * @var AccessTokenRepositoryInterface

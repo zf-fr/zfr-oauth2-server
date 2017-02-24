@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Scope;
 
 /**
@@ -25,7 +26,7 @@ use ZfrOAuth2\Server\Model\Scope;
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Model\Scope
  */
-class ScopeTest extends \PHPUnit_Framework_TestCase
+class ScopeTest extends TestCase
 {
     /**
      * @dataProvider providerGenerateNewScope

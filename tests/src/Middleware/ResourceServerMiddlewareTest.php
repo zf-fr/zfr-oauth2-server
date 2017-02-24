@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
@@ -31,7 +32,7 @@ use ZfrOAuth2\Server\ResourceServer;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Middleware\ResourceServerMiddleware
  */
-class ResourceServerMiddlewareTest extends \PHPUnit_Framework_TestCase
+class ResourceServerMiddlewareTest extends TestCase
 {
     public function testWillGetAccessTokenWithAccessTokenAsResult()
     {

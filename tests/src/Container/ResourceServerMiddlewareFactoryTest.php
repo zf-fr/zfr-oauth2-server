@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\ResourceServerInterface;
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory
  */
-class ResourceServerMiddlewareFactoryTest extends \PHPUnit_Framework_TestCase
+class ResourceServerMiddlewareFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

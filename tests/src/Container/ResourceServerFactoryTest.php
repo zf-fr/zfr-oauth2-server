@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\ResourceServerFactory;
 use ZfrOAuth2\Server\ResourceServerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
@@ -29,7 +30,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  *
  * @covers  \ZfrOAuth2\Server\Container\ResourceServerFactory
  */
-class ResourceServerFactoryTest extends \PHPUnit_Framework_TestCase
+class ResourceServerFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

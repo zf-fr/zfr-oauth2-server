@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
@@ -33,7 +34,7 @@ use ZfrOAuth2\Server\Service\ScopeService;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\AuthorizationCodeService
  */
-class AuthorizationCodeServiceTest extends \PHPUnit_Framework_TestCase
+class AuthorizationCodeServiceTest extends TestCase
 {
     /**
      * @var AuthorizationCodeRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject

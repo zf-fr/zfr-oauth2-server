@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\RefreshTokenGrantFactory;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
@@ -31,7 +32,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  *
  * @covers  \ZfrOAuth2\Server\Container\RefreshTokenGrantFactory
  */
-class RefreshTokenGrantFactoryTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenGrantFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

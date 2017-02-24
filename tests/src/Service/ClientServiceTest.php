@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 use ZfrOAuth2\Server\Service\ClientService;
@@ -27,7 +28,7 @@ use ZfrOAuth2\Server\Service\ClientService;
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Service\ClientService
  */
-class ClientServiceTest extends \PHPUnit_Framework_TestCase
+class ClientServiceTest extends TestCase
 {
     /**
      * @var ClientRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject

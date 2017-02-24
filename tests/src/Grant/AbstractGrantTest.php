@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Grant;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use ZfrOAuth2\Server\Grant\AbstractGrant;
 use ZfrOAuth2\Server\Model\AccessToken;
@@ -29,7 +30,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Grant\AbstractGrant
  */
-class AbstractGrantTest extends \PHPUnit_Framework_TestCase
+class AbstractGrantTest extends TestCase
 {
     public function testMethodGetType()
     {

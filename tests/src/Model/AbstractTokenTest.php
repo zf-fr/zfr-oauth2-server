@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2Test\Server\Asset\SomeToken;
@@ -27,7 +28,7 @@ use ZfrOAuth2Test\Server\Asset\SomeToken;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  */
-class AbstractTokenTest extends \PHPUnit_Framework_TestCase
+class AbstractTokenTest extends TestCase
 {
     public function setUp()
     {

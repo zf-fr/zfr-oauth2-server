@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\AuthorizationCode
  */
-class AuthorizationCodeTest extends \PHPUnit_Framework_TestCase
+class AuthorizationCodeTest extends TestCase
 {
     /**
      * @dataProvider providerGenerateNewAuthorizationCode

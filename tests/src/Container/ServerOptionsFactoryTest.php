@@ -19,6 +19,7 @@
 namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Container\ServerOptionsFactory;
 use ZfrOAuth2\Server\Options\ServerOptions;
 
@@ -28,7 +29,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  *
  * @covers  \ZfrOAuth2\Server\Container\ServerOptionsFactory
  */
-class ServerOptionsFactoryTest extends \PHPUnit_Framework_TestCase
+class ServerOptionsFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {

@@ -20,6 +20,7 @@ namespace ZfrOAuth2Test\Server\Model;
 
 use DateTime;
 use DateTimeImmutable;
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
@@ -30,7 +31,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\RefreshToken
  */
-class RefreshTokenTest extends \PHPUnit_Framework_TestCase
+class RefreshTokenTest extends TestCase
 {
     /**
      * @dataProvider providerGenerateNewRefreshToken

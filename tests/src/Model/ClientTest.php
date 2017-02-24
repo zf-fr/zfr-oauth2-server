@@ -18,6 +18,7 @@
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 
 /**
@@ -25,7 +26,7 @@ use ZfrOAuth2\Server\Model\Client;
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\Client
  */
-class ClientTest extends \PHPUnit_Framework_TestCase
+class ClientTest extends TestCase
 {
 
     /**
