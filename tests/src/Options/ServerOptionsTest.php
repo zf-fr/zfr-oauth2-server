@@ -59,7 +59,7 @@ class ServerOptionsTest extends TestCase
             'revoke_rotated_refresh_tokens' => false,
             'owner_callable'                => $callable,
             'grants'                        => [ClientCredentialsGrant::class],
-            'owner_request_attribute'       => 'something'
+            'owner_request_attribute'       => 'something',
         ]);
 
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());

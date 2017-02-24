@@ -44,7 +44,7 @@ class AuthorizationRequestMiddleware
     public function __construct(AuthorizationServerInterface $authorizationServer, ServerOptions $serverOptions)
     {
         $this->authorizationServer = $authorizationServer;
-        $this->serverOptions = $serverOptions;
+        $this->serverOptions       = $serverOptions;
     }
 
     public function __invoke(
