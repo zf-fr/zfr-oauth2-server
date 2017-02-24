@@ -3,6 +3,7 @@ language: php
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/.php-cs-fixer
 
 matrix:
   fast_finish: true
