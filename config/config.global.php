@@ -45,5 +45,11 @@ return [
          * password grant
          */
         'owner_callable'         => null,
+
+        /**
+         * Attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface
+         * to be present on
+         */
+        'owner_request_attribute' => 'owner',
     ],
 ];
