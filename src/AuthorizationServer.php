@@ -252,7 +252,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         }
 
         // Now, we must validate the client if the token was generated against a non-public client
-        if (null !== $token->getClient() && !$token->getClient()->isPublic()) {
+        if (null !== $token->getClient() && ! $token->getClient()->isPublic()) {
             $requestClient = $this->getClient($request, false);
 
             if ($requestClient !== $token->getClient()) {
@@ -290,19 +290,19 @@ class AuthorizationServer implements AuthorizationServerInterface
 
         // If the grant type we are issuing does not allow public clients, and that the secret is
         // missing, then we have an error...
-        if (!$allowPublicClients && !$secret) {
+        if (! $allowPublicClients && ! $secret) {
             throw OAuth2Exception::invalidClient('Client secret is missing');
         }
 
         // If we allow public clients and no client id was set, we can return null
-        if ($allowPublicClients && !$id) {
+        if ($allowPublicClients && ! $id) {
             return null;
         }
 
         $client = $this->clientService->getClient($id);
 
         // We delegate all the checks to the client service
-        if (null === $client || (!$allowPublicClients && !$client->authenticate($secret))) {
+        if (null === $client || (! $allowPublicClients && ! $client->authenticate($secret))) {
             throw OAuth2Exception::invalidClient('Client authentication failed');
         }
 
@@ -318,7 +318,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     {
         $payload = [
             'error'             => $exception->getCode(),
-            'error_description' => $exception->getMessage()
+            'error_description' => $exception->getMessage(),
         ];
 
         return new Response\JsonResponse($payload, 400);

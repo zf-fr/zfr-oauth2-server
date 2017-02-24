@@ -70,7 +70,7 @@ class ClientCredentialsGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
@@ -89,7 +89,7 @@ class ClientCredentialsGrant extends AbstractGrant
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      */
     public function allowPublicClients(): bool
     {

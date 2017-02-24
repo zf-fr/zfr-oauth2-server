@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,13 +22,9 @@ namespace ZfrOAuth2Test\Server\Container;
 
 use Interop\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
-use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
-use ZfrOAuth2\Server\Container\ScopeServiceFactory;
 use ZfrOAuth2\Server\Container\TokenRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
-use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
-use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
  * @author  Bas Kamer <baskamer@gmail.com>

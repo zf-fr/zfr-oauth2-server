@@ -32,7 +32,6 @@ use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
  */
 class ClientService
 {
-
     /**
      * @var ClientRepositoryInterface
      */

@@ -112,7 +112,6 @@ class Client
         return $this->id;
     }
 
-
     /**
      * Get the client name
      */

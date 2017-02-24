@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -109,7 +111,7 @@ class RefreshTokenGrantTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([
             'refresh_token' => '123',
-            'scope'         => 'read write'
+            'scope'         => 'read write',
         ]);
 
         $refreshToken = $this->getValidRefreshToken(null, ['read']);
@@ -128,7 +130,7 @@ class RefreshTokenGrantTest extends TestCase
             [true, false],
             [false, true],
             [true, true],
-            [false, false]
+            [false, false],
         ];
     }
 
@@ -138,14 +140,14 @@ class RefreshTokenGrantTest extends TestCase
     public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray([
-            'rotate_refresh_tokens' => $rotateRefreshToken,
-            'revoke_rotated_refresh_tokens' => $revokeRotatedRefreshToken
+            'rotate_refresh_tokens'         => $rotateRefreshToken,
+            'revoke_rotated_refresh_tokens' => $revokeRotatedRefreshToken,
         ]));
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([
             'refresh_token' => '123',
-            'scope'         => 'read'
+            'scope'         => 'read',
         ]);
 
         $owner = $this->createMock(TokenOwnerInterface::class);
@@ -171,7 +173,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $response = $grant->createTokenResponse($request, Client::createNewClient('name', []));
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
@@ -192,7 +194,7 @@ class RefreshTokenGrantTest extends TestCase
             'owner'     => null,
             'client'    => null,
             'scopes'    => [],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;
@@ -209,7 +211,7 @@ class RefreshTokenGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;
@@ -226,7 +228,7 @@ class RefreshTokenGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;

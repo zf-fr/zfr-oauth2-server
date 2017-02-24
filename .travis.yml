@@ -3,6 +3,7 @@ language: php
 cache:
   directories:
     - $HOME/.composer/cache
+    - $HOME/.php-cs-fixer
 
 matrix:
   fast_finish: true
@@ -19,7 +20,7 @@ before_script:
 
 script:
   - ./vendor/bin/phpunit --coverage-clover ./build/logs/clover.xml
-  - ./vendor/bin/phpcs --standard=PSR2 ./src/
+  - ./vendor/bin/php-cs-fixer fix -v --diff --dry-run
 
 after_script:
   - php ./vendor/bin/coveralls -v

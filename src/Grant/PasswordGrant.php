@@ -112,14 +112,14 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         $password = $postParams['password'] ?? null;
         $scope    = $postParams['scope'] ?? null;
 
-        if (null === $username || null == $password) {
+        if (null === $username || null === $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
         }
 
         $callback = $this->callback;
         $owner    = $callback($username, $password);
 
-        if (!$owner instanceof TokenOwnerInterface) {
+        if (! $owner instanceof TokenOwnerInterface) {
             throw OAuth2Exception::accessDenied('Either username or password are incorrect');
         }
 

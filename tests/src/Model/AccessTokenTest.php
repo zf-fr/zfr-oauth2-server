@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -68,16 +70,16 @@ class AccessTokenTest extends TestCase
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                ['read', 'write']
+                ['read', 'write'],
             ],
             [
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                Scope::createNewScope(1, 'read')
+                Scope::createNewScope(1, 'read'),
             ],
             [3600, null, null, null],
-            [0, null, null, null]
+            [0, null, null, null],
         ];
     }
 
@@ -88,7 +90,6 @@ class AccessTokenTest extends TestCase
     {
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::reconstitute($data);
-
 
         $this->assertEquals($data['token'], $accessToken->getToken());
         $this->assertSame($data['owner'], $accessToken->getOwner());
@@ -115,7 +116,7 @@ class AccessTokenTest extends TestCase
                     'client'    => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
-                ]
+                ],
             ],
             [ // test set - null values
               [
@@ -124,7 +125,7 @@ class AccessTokenTest extends TestCase
                   'client'    => null,
                   'expiresAt' => null,
                   'scopes'    => [],
-              ]
+              ],
             ],
         ];
     }

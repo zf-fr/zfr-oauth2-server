@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -66,16 +68,16 @@ class RefreshTokenTest extends TestCase
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                ['scope1', 'scope2']
+                ['scope1', 'scope2'],
             ],
             [
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                'scope1'
+                'scope1',
             ],
             [3600, null, null, null],
-            [0, null, null, null]
+            [0, null, null, null],
         ];
     }
 
@@ -86,7 +88,6 @@ class RefreshTokenTest extends TestCase
     {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::reconstitute($data);
-
 
         $this->assertEquals($data['token'], $refreshToken->getToken());
         $this->assertSame($data['owner'], $refreshToken->getOwner());
@@ -113,7 +114,7 @@ class RefreshTokenTest extends TestCase
                     'client'    => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
                     'scopes'    => ['scope1', 'scope2'],
-                ]
+                ],
             ],
             [ // test set - null values
               [
@@ -122,7 +123,7 @@ class RefreshTokenTest extends TestCase
                   'client'    => null,
                   'expiresAt' => null,
                   'scopes'    => [],
-              ]
+              ],
             ],
         ];
     }

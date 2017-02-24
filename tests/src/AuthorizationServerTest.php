@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -101,7 +103,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode($response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -134,7 +136,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$authorizationGrant], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode($response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -154,7 +156,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode($response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -176,7 +178,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode($response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -207,7 +209,7 @@ class AuthorizationServerTest extends TestCase
             'id'           => 'clientid',
             'name'         => 'clientname',
             'secret'       => '$2y$10$ixK8D7rBvEPkX0.d3e93h.lb3wufbavWmIyX0zK1FhP3fGp.rIK1u', // hash of 'incorrectclientsecret'
-            'redirectUris' => ['http://example.com']
+            'redirectUris' => ['http://example.com'],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
@@ -217,9 +219,9 @@ class AuthorizationServerTest extends TestCase
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-        $response = $authorizationServer->handleTokenRequest($request);
+        $response            = $authorizationServer->handleTokenRequest($request);
 
-        $body     = json_decode($response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -230,7 +232,7 @@ class AuthorizationServerTest extends TestCase
     {
         return [
             ['access_token'],
-            ['refresh_token']
+            ['refresh_token'],
         ];
     }
 
@@ -338,7 +340,8 @@ class AuthorizationServerTest extends TestCase
         $this->assertEquals(503, $response->getStatusCode());
     }
 
-    public function testRevocationRequestWithoutTokenThrowsException() {
+    public function testRevocationRequestWithoutTokenThrowsException()
+    {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token_type_hint' => 'access_token']);
 
@@ -356,7 +359,8 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithoutTokenHintTypeThrowsException() {
+    public function testRevocationRequestWithoutTokenHintTypeThrowsException()
+    {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123']);
 
@@ -374,7 +378,8 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithInvalidTokenTypeHintThrowsException() {
+    public function testRevocationRequestWithInvalidTokenTypeHintThrowsException()
+    {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'invalid_token_hint']);
 
@@ -392,7 +397,8 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithInvalidOtherNonPublicClientThrowsException() {
+    public function testRevocationRequestWithInvalidOtherNonPublicClientThrowsException()
+    {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'access_token']);
 
@@ -408,7 +414,7 @@ class AuthorizationServerTest extends TestCase
             'id'           => 'clientid',
             'name'         => 'clientname',
             'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
-            'redirectUris' => []
+            'redirectUris' => [],
         ]);
 
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
@@ -428,7 +434,7 @@ class AuthorizationServerTest extends TestCase
             'id'           => 'clientid',
             'name'         => 'clientname',
             'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
-            'redirectUris' => ['http://example.com']
+            'redirectUris' => ['http://example.com'],
         ]);
 
         $token = AccessToken::reconstitute(['token'=>'123', 'owner'=>null, 'client'=>$client, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
@@ -484,7 +490,7 @@ class AuthorizationServerTest extends TestCase
             'id'           => 'clientid',
             'name'         => 'clientname',
             'secret'       => 'clientsecret',
-            'redirectUris' => ['http://example.com']
+            'redirectUris' => ['http://example.com'],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
@@ -534,7 +540,6 @@ class AuthorizationServerTest extends TestCase
         $response->expects($this->at(1))->method('withHeader')->with('Cache-Control', 'no-store')->willReturn($response);
         $response->expects($this->at(2))->method('withHeader')->with('Pragma', 'no-cache')->willReturn($response);
 
-
         $grant->expects($this->once())->method('createTokenResponse')->willReturn($response);
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -553,7 +558,7 @@ class AuthorizationServerTest extends TestCase
             'id'           => 'clientid',
             'name'         => 'clientname',
             'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
-            'redirectUris' => ['http://example.com']
+            'redirectUris' => ['http://example.com'],
         ]);
         $clientService = $this->createMock(ClientService::class);
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);

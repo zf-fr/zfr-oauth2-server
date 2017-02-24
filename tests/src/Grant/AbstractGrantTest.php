@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -50,7 +52,7 @@ class AbstractGrantTest extends TestCase
     public function testMethodPrepareTokenResponse($refreshToken, $useRefreshTokenScopes, $getOwner)
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
-        $accessToken = $this->createMock(AccessToken::class);
+        $accessToken   = $this->createMock(AccessToken::class);
 
         $accessToken->expects($this->once())->method('getOwner')->willReturn($getOwner);
         $accessToken->expects($this->once())->method('getExpiresIn');
@@ -103,7 +105,7 @@ class AbstractGrantTest extends TestCase
             [
                 $this->createMock(RefreshToken::class),
                 false,
-                null
+                null,
             ],
             [
                 null,

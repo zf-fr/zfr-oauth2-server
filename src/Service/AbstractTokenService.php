@@ -77,7 +77,7 @@ abstract class AbstractTokenService
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure
         // that the token matches case
-        if (!$tokenFromDb || !hash_equals($tokenFromDb->getToken(), $token)) {
+        if (! $tokenFromDb || ! hash_equals($tokenFromDb->getToken(), $token)) {
             return null;
         }
 

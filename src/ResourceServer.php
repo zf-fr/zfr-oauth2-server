@@ -63,13 +63,13 @@ class ResourceServer implements ResourceServerInterface
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = [])
     {
-        if (!$token = $this->extractAccessToken($request)) {
+        if (! $token = $this->extractAccessToken($request)) {
             return null;
         }
 
         $token = $this->accessTokenService->getToken($token);
 
-        if ($token === null || !$token->isValid($scopes)) {
+        if ($token === null || ! $token->isValid($scopes)) {
             throw new InvalidAccessTokenException('Access token has expired or has been deleted');
         }
 

@@ -105,7 +105,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         // If the redirect URI cannot be found in the list, we throw an error as we don't want the user
         // to be redirected to an unauthorized URL
-        if (!$client->hasRedirectUri($redirectUri)) {
+        if (! $client->hasRedirectUri($redirectUri)) {
             throw OAuth2Exception::invalidRequest('Redirect URI does not match the registered one');
         }
 
@@ -117,14 +117,14 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),
-            'state' => $state
+            'state' => $state,
         ]));
 
         return new Response\RedirectResponse($redirectUri . '?' . $uri);
     }
 
     /**
-     * {@inheritDoc}
+     * {@inheritdoc}
      * @throws OAuth2Exception
      */
     public function createTokenResponse(

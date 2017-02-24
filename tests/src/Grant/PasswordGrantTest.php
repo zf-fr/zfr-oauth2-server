@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,13 +24,13 @@ use DateInterval;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
+use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Grant\PasswordGrant;
+use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
-use ZfrOAuth2\Server\Exception\OAuth2Exception;
-use ZfrOAuth2\Server\Grant\PasswordGrant;
-use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
@@ -107,7 +109,7 @@ class PasswordGrantTest extends TestCase
     {
         return [
             [true],
-            [false]
+            [false],
         ];
     }
 
@@ -145,7 +147,7 @@ class PasswordGrantTest extends TestCase
 
         $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
 
-        $body = json_decode($response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
@@ -169,7 +171,7 @@ class PasswordGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;
@@ -186,7 +188,7 @@ class PasswordGrantTest extends TestCase
             'owner'     => $owner,
             'client'    => null,
             'scopes'    => $scopes ?? ['read'],
-            'expiresAt' => $validDate
+            'expiresAt' => $validDate,
         ]);
 
         return $token;

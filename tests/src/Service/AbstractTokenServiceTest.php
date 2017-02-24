@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -58,7 +60,7 @@ class AbstractTokenServiceTest extends TestCase
         $this->abstractTokenService = $this->getMockForAbstractClass(AbstractTokenService::class, [
             $this->tokenRepository,
             $this->scopeService,
-            ServerOptions::fromArray()
+            ServerOptions::fromArray(),
         ]);
     }
 
@@ -162,12 +164,12 @@ class AbstractTokenServiceTest extends TestCase
             [
                 ['scope_1', 'scope_2', 'scope_3'],
                 [],
-                false
+                false,
             ],
             [
                 ['scope_2'],
                 ['scope_1', 'scope_2', 'scope_3'],
-                true
+                true,
             ],
         ];
     }

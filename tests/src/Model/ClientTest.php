@@ -1,4 +1,6 @@
 <?php
+
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +30,6 @@ use ZfrOAuth2\Server\Model\Client;
  */
 class ClientTest extends TestCase
 {
-
     /**
      * @dataProvider providerGenerateNewClient
      */
@@ -47,7 +48,7 @@ class ClientTest extends TestCase
 
         if (null !== $redirectUris) {
             if (is_string($redirectUris)) {
-                $redirectUris = explode(" ", $redirectUris);
+                $redirectUris = explode(' ', $redirectUris);
             }
             $this->assertCount(count($redirectUris), $client->getRedirectUris());
         } else {
@@ -72,7 +73,6 @@ class ClientTest extends TestCase
         /** @var Client $client */
         $client = Client::reconstitute($data);
 
-
         $this->assertEquals($data['id'], $client->getId());
 
         if (isset($data['name'])) {
@@ -89,7 +89,7 @@ class ClientTest extends TestCase
 
         if (isset($data['redirectUris'])) {
             if (is_string($data['redirectUris'])) {
-                $data['redirectUris'] = explode(" ", $data['redirectUris']);
+                $data['redirectUris'] = explode(' ', $data['redirectUris']);
             }
             $this->assertCount(count($data['redirectUris']), $client->getRedirectUris());
         } else {
@@ -106,13 +106,13 @@ class ClientTest extends TestCase
                     'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
                     'name'         => 'name',
                     'secret'       => 'secret',
-                    'redirectUris' => ['http://www.example.com']
+                    'redirectUris' => ['http://www.example.com'],
                 ],
                 [
                     'id'           => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
                     'name'         => 'name',
                     'secret'       => '',
-                    'redirectUris' => []
+                    'redirectUris' => [],
                 ],
             ],
         ];
@@ -178,7 +178,7 @@ class ClientTest extends TestCase
                 'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
                 'name'         => 'name',
                 'secret'       => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
-                'redirectUris' => []
+                'redirectUris' => [],
             ]
         );
 
