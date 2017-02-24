@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Container;
 
-use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\ResourceServerInterface;
