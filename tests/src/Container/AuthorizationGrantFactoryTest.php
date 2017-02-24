@@ -20,8 +20,8 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Container;
 
-use Psr\Container\ContainerInterface;
 use PHPUnit\Framework\TestCase;
+use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\AuthorizationGrantFactory;
 use ZfrOAuth2\Server\Grant\AuthorizationGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
