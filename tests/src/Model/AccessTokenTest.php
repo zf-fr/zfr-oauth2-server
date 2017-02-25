@@ -76,7 +76,7 @@ class AccessTokenTest extends TestCase
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                Scope::createNewScope(1, 'read'),
+                [Scope::createNewScope(1, 'read')],
             ],
             [3600, null, null, null],
             [0, null, null, null],
@@ -153,13 +153,13 @@ class AccessTokenTest extends TestCase
 
     public function testIsValid()
     {
-        $accessToken = AccessToken::createNewAccessToken(60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(60, null, null, ['read', 'write']);
         $this->assertTrue($accessToken->isValid('read'));
 
-        $accessToken = AccessToken::createNewAccessToken(-60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(-60, null, null, ['read', 'write']);
         $this->assertFalse($accessToken->isValid('read'));
 
-        $accessToken = AccessToken::createNewAccessToken(60, null, null, 'read write');
+        $accessToken = AccessToken::createNewAccessToken(60, null, null, ['read', 'write']);
         $this->assertFalse($accessToken->isValid('delete'));
     }
 }

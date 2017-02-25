@@ -143,7 +143,8 @@ class ResourceServerTest extends TestCase
      */
     public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
     {
-        $request = $this->createMock(ServerRequestInterface::class);
+        $tokenScope = explode(' ', $tokenScope);
+        $request    = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 

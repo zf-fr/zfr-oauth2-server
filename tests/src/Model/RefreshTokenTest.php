@@ -74,7 +74,7 @@ class RefreshTokenTest extends TestCase
                 3600,
                 $this->createMock(TokenOwnerInterface::class),
                 $this->createMock(Client::class),
-                'scope1',
+                ['scope1'],
             ],
             [3600, null, null, null],
             [0, null, null, null],
@@ -151,13 +151,13 @@ class RefreshTokenTest extends TestCase
 
     public function testIsValid()
     {
-        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, ['read', 'write']);
         $this->assertTrue($accessToken->isValid('read'));
 
-        $accessToken = RefreshToken::createNewRefreshToken(-60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(-60, null, null, ['read', 'write']);
         $this->assertFalse($accessToken->isValid('read'));
 
-        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, 'read write');
+        $accessToken = RefreshToken::createNewRefreshToken(60, null, null, ['read', 'write']);
         $this->assertFalse($accessToken->isValid('delete'));
     }
 }
