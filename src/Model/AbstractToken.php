@@ -95,7 +95,7 @@ abstract class AbstractToken
         $token->owner     = $owner;
         $token->client    = $client;
         $token->scopes    = $scopes ?? [];
-        $token->expiresAt = $ttl ? (new DateTime('now', new DateTimeZone(date_default_timezone_get())))->modify("+$ttl seconds") : null;
+        $token->expiresAt = $ttl ? (new DateTime('now', new DateTimeZone('UTC')))->modify("+$ttl seconds") : null;
 
         return $token;
     }
@@ -159,7 +159,7 @@ abstract class AbstractToken
      */
     public function getExpiresIn(): int
     {
-        return $this->expiresAt->getTimestamp() - (new DateTime('now', new DateTimeZone(date_default_timezone_get())))->getTimestamp();
+        return $this->expiresAt->getTimestamp() - (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
     }
 
     /**
@@ -167,7 +167,7 @@ abstract class AbstractToken
      */
     public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTime('now', new DateTimeZone(date_default_timezone_get()));
+        return $this->expiresAt < new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**
