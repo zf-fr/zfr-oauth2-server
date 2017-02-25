@@ -44,13 +44,13 @@ class RefreshTokenService extends AbstractTokenService
     /**
      * Create a new token (and generate the token)
      *
-     * @param TokenOwnerInterface     $owner
-     * @param Client                  $client
-     * @param string|string[]|Scope[] $scopes
+     * @param TokenOwnerInterface $owner
+     * @param Client              $client
+     * @param string[]|Scope[]    $scopes
      * @return RefreshToken
      * @throws OAuth2Exception
      */
-    public function createToken($owner, $client, $scopes): RefreshToken
+    public function createToken($owner, $client, array $scopes = []): RefreshToken
     {
         if (empty($scopes)) {
             $scopes = $this->scopeService->getDefaultScopes();

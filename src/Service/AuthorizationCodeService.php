@@ -44,14 +44,14 @@ class AuthorizationCodeService extends AbstractTokenService
     /**
      * Create a new token (and generate the token)
      *
-     * @param string                  $redirectUri
-     * @param TokenOwnerInterface     $owner
-     * @param Client                  $client
-     * @param string|string[]|Scope[] $scopes
+     * @param string              $redirectUri
+     * @param TokenOwnerInterface $owner
+     * @param Client              $client
+     * @param string[]|Scope[]    $scopes
      * @return AuthorizationCode
      * @throws OAuth2Exception
      */
-    public function createToken($redirectUri, $owner, $client, $scopes): AuthorizationCode
+    public function createToken($redirectUri, $owner, $client, array $scopes = []): AuthorizationCode
     {
         if (empty($scopes)) {
             $scopes = $this->scopeService->getDefaultScopes();
