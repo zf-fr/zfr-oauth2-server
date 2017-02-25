@@ -70,30 +70,22 @@ abstract class AbstractToken
     /**
      * Create a new AbstractToken
      *
-     * @param int                          $ttl
-     * @param TokenOwnerInterface          $owner
-     * @param Client                       $client
-     * @param string|string[]|Scope[]|null $scopes
+     * @param int                   $ttl
+     * @param TokenOwnerInterface   $owner
+     * @param Client                $client
+     * @param string[]|Scope[]|null $scopes
      * @return AbstractToken
      */
     protected static function createNew(
         int $ttl,
         TokenOwnerInterface $owner = null,
         Client $client = null,
-        $scopes = null
+        array $scopes = null
     ): self {
-        if (isset($scopes) && $scopes instanceof Scope) {
-            $scopes = $scopes->getName();
-        }
-
-        if (is_string($scopes)) {
-            $scopes = explode(' ', $scopes);
-        }
-
         if (is_array($scopes)) {
-            foreach ($scopes as &$scope) {
-                $scope = $scope instanceof Scope ? $scope->getName() : (string) $scope;
-            }
+            $scopes = array_map(function ($scope) {
+                return (string) $scope;
+            }, $scopes);
         }
 
         $token = new static();

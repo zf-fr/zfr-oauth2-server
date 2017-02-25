@@ -110,10 +110,11 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         // Scope and state allow to perform additional validation
-        $scope = $queryParams['scope'] ?? null;
-        $state = $queryParams['state'] ?? null;
+        $scope  = $queryParams['scope'] ?? null;
+        $state  = $queryParams['state'] ?? null;
+        $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
-        $authorizationCode = $this->authorizationCodeService->createToken($redirectUri, $owner, $client, $scope);
+        $authorizationCode = $this->authorizationCodeService->createToken($redirectUri, $owner, $client, $scopes);
 
         $uri = http_build_query(array_filter([
             'code'  => $authorizationCode->getToken(),

@@ -111,6 +111,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         $username = $postParams['username'] ?? null;
         $password = $postParams['password'] ?? null;
         $scope    = $postParams['scope'] ?? null;
+        $scopes   = is_string($scope) ? explode(' ', $scope) : [];
 
         if (null === $username || null === $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
@@ -124,13 +125,13 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         }
 
         // Everything is okay, we can start tokens generation!
-        $accessToken = $this->accessTokenService->createToken($owner, $client, $scope);
+        $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 
         // Before generating a refresh token, we must make sure the authorization server supports this grant
         $refreshToken = null;
 
         if ($this->authorizationServer->hasGrant(RefreshTokenGrant::GRANT_TYPE)) {
-            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scope);
+            $refreshToken = $this->refreshTokenService->createToken($owner, $client, $scopes);
         }
 
         return $this->prepareTokenResponse($accessToken, $refreshToken);
