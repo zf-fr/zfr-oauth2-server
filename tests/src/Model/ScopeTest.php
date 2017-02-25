@@ -74,4 +74,11 @@ class ScopeTest extends TestCase
             ],
         ];
     }
+
+    public function testToString()
+    {
+        $scope = Scope::createNewScope(1, 'name', 'description');
+
+        $this->assertEquals('name', (string) $scope);
+    }
 }
