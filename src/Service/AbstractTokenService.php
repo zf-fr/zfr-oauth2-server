@@ -93,6 +93,11 @@ abstract class AbstractTokenService
         $this->tokenRepository->deleteToken($token);
     }
 
+    public function purgeExpiredTokens()
+    {
+        $this->tokenRepository->purgeExpiredTokens();
+    }
+
     /**
      * Validate the token scopes against the registered scope
      *

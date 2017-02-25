@@ -135,6 +135,14 @@ class AbstractTokenServiceTest extends TestCase
         $this->abstractTokenService->deleteToken($token);
     }
 
+    public function testPurgeExpiredTokens()
+    {
+        $this->tokenRepository->expects($this->once())
+            ->method('purgeExpiredTokens');
+
+        $this->abstractTokenService->purgeExpiredTokens();
+    }
+
     /**
      * @dataProvider dpCanValidateScopes
      */
