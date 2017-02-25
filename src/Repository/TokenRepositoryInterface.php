@@ -38,7 +38,7 @@ interface TokenRepositoryInterface
      */
     public function deleteToken(AbstractToken $token);
 
-    public function purgeExpiredTokens(): void;
+    public function purgeExpiredTokens();
 
     public function tokenExists(string $token): bool;
 }

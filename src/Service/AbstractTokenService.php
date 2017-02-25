@@ -93,7 +93,7 @@ abstract class AbstractTokenService
         $this->tokenRepository->deleteToken($token);
     }
 
-    public function purgeExpiredTokens(): void
+    public function purgeExpiredTokens()
     {
         $this->tokenRepository->purgeExpiredTokens();
     }
