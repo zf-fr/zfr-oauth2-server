@@ -23,6 +23,7 @@ namespace ZfrOAuth2\Server\Service;
 
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AbstractToken;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
@@ -95,17 +96,21 @@ abstract class AbstractTokenService
     /**
      * Validate the token scopes against the registered scope
      *
-     * @param  array $scopes
+     * @param string[]|Scope[] $scopes
      *
      * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered
      */
     protected function validateTokenScopes(array $scopes)
     {
+        $scopes = array_map(function ($scope) {
+            return (string) $scope;
+        }, $scopes);
+
         $registeredScopes = $this->scopeService->getAll();
 
-        foreach ($registeredScopes as &$registeredScope) {
-            $registeredScope = is_string($registeredScope) ? $registeredScope : $registeredScope->getName();
-        }
+        $registeredScopes = array_map(function ($scope) {
+            return (string) $scope;
+        }, $registeredScopes);
 
         $diff = array_diff($scopes, $registeredScopes);
 

@@ -120,4 +120,9 @@ class Scope
     {
         return $this->isDefault;
     }
+
+    public function __toString(): string
+    {
+        return $this->name;
+    }
 }

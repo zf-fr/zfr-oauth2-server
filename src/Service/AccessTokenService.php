@@ -44,13 +44,13 @@ class AccessTokenService extends AbstractTokenService
     /**
      * Create a new token (and generate the token)
      *
-     * @param TokenOwnerInterface     $owner
-     * @param Client                  $client
-     * @param string|string[]|Scope[] $scopes
+     * @param TokenOwnerInterface $owner
+     * @param Client              $client
+     * @param string[]|Scope[]    $scopes
      * @return AccessToken
      * @throws OAuth2Exception
      */
-    public function createToken($owner, $client, $scopes): AccessToken
+    public function createToken($owner, $client, array $scopes = []): AccessToken
     {
         if (empty($scopes)) {
             $scopes = $this->scopeService->getDefaultScopes();
