@@ -23,6 +23,7 @@ namespace ZfrOAuth2\Server\Model;
 
 use DateTime;
 use DateTimeInterface;
+use DateTimeZone;
 
 /**
  * Provide basic functionality for both access tokens, refresh tokens and authorization codes
@@ -94,7 +95,7 @@ abstract class AbstractToken
         $token->owner     = $owner;
         $token->client    = $client;
         $token->scopes    = $scopes ?? [];
-        $token->expiresAt = $ttl ? (new DateTime())->modify("+$ttl seconds") : null;
+        $token->expiresAt = $ttl ? (new DateTime('now', new DateTimeZone('UTC')))->modify("+$ttl seconds") : null;
 
         return $token;
     }
@@ -158,7 +159,7 @@ abstract class AbstractToken
      */
     public function getExpiresIn(): int
     {
-        return $this->expiresAt->getTimestamp() - (new DateTime('now'))->getTimestamp();
+        return $this->expiresAt->getTimestamp() - (new DateTime('now', new DateTimeZone('UTC')))->getTimestamp();
     }
 
     /**
@@ -166,7 +167,7 @@ abstract class AbstractToken
      */
     public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTime('now');
+        return $this->expiresAt < new DateTime('now', new DateTimeZone('UTC'));
     }
 
     /**
