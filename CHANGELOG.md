@@ -1,25 +1,26 @@
 # Changelog
 
-## v0.8.0
+## v0.8.0-beta1
 
-* ZfrOAuth2Server now integrates with [Zend\Stratigility](https://github.com/zendframework/zend-stratigility), and provide simple
-middlewares to cover authorization and authentication. This is entirely optional.
+BC! Pre release of a completely rewritten library. It focusses on core OAuth2 functionality and has been decoupled from persistence. If you still need the previous implementation - which is considered EOL - see the [legacy-0.7](https://github.com/zf-fr/zfr-oauth2-server/tree/legacy-0.7) branch
 
-This is achieved through two middlewares that implement `Zend\Stratigility\MiddlewareInterface`:
-
-    - `ZfrOAuth2\Server\AuthorizationServerMiddleware`: when piped, it will add three endpoints (`/authorize`, `/token`, `/revoke`) that
-    handle the creation of token, revocation...
-    - `ZfrOAuth2\Server\ResourceServerMiddleware`: if you are using `Zend\Expressive`, that's a middleware that you could attach as
-    a `pre_routing` middleware. What it does is inspecting the request, and extracting the token, and set it as the `oauth_token` attribute
-
-* [BC] `deleteExpiredTokens` has been removed from the TokenService. The reason is that it relied on `Selectable` Doctrine's interface, and
-couldn't take advantage of batch optimization deletions in database. You should instead use a more reliable and efficient way to delete
-expired tokens (either through a CRON task, or database scheduling manager).
-
-* [BC] The `isTokenValid` method has been removed from the ResourceServer. Use the `isValid` method from the token instead.
-
-* Tokens now have a `isValid` method to check if a given token (either authorization, access or refresh) is valid against
-some scopes.
+* PHP7+ only
+* 100% test coverage
+* Uses [Zend\Diactoros](https://github.com/zendframework/zend-diactoros) to generate  [PSR-7 (Http Message)](https://github.com/php-fig/http-message) implementation.
+* Uses [PSR-11 (Container)](https://github.com/php-fig/container) for dependency injection containers.
+* Eventing has been removed
+* Persistence has been decoupled, see our doctrine integration [ZfrOAuth2ServerDoctrine](https://github.com/zf-fr/zfr-oauth2-server-doctrine)
+* Provides 5 Services
+	* ZfrOAuth2\Server\Service\AccessTokenService
+	* ZfrOAuth2\Server\Service\AuthorizationCodeService
+	* ZfrOAuth2\Server\Service\ClientService
+	* ZfrOAuth2\Server\Service\RefreshTokenService
+	* ZfrOAuth2\Server\Service\ScopeService
+* Provides 4 PSR7 Middleware's which are really nice but optional
+	* ZfrOAuth2\Server\AuthorizationServerMiddleware
+	* ZfrOAuth2\Server\ResourceServerMiddleware
+	* ZfrOAuth2\Server\RevocationRequestMiddleware
+	* ZfrOAuth2\Server\TokenRequestMiddleware
 
 ## v0.7.1
 

@@ -34,15 +34,19 @@ Here are other OAuth2 library you can use:
 
 ## Versioning note
 
-Please note that until I reach 1.0, I **WILL NOT** follow semantic version. This means that BC can occur between
-0.1.x and 0.2.x releases. If you are using this in production, please set your dependency using 0.1.*, for instance.
+Please note that until we reach 1.0, we **WILL NOT** follow semantic version. This means that BC can occur between
+0.1.x and 0.2.x releases.
+
+The current pre release of a completely rewritten version, is it not copatible with the previous implementation - which is considered EOL - see the [legacy-0.7](https://github.com/zf-fr/zfr-oauth2-server/tree/legacy-0.7) branch. 
+
+See the [CHANGELOG](CHANGELOG.md)
 
 ## Installation
 
-Installation is only officially supported using Composer:
+use Composer to install:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:^1.0
+php composer.phar require zfr/zfr-oauth2-server:^0.8-beta
 ```
 
 ## Support
@@ -50,7 +54,7 @@ php composer.phar require zfr/zfr-oauth2-server:^1.0
 - File issues at [https://github.com/zf-fr/zfr-oauth2-server/issues](https://github.com/zf-fr/zfr-oauth2-server/issues).
 - Say hello in our [gitter](https://gitter.im/prolic/zfr-oauth2-server) chat.
 
-### Configuration
+## Configuration
 
 Several Apache modules will strip HTTP authorization headers such as `Authorization` to try to enhance security by preventing scripts from seeing sensitive information unless the developer explicitly enables this.
 
@@ -62,22 +66,11 @@ CGIPassAuth on
 since: [Apache 2.4.13](https://httpd.apache.org/docs/trunk/mod/core.html#cgipassauth)
 
 
-
-## Framework integration
-
-Because of its strict dependency injection architecture, ZfrOAuth2Server is hardly usable alone, as it requires
-quite a lot of configuration. However, I've made a Zend Framework 2 module that abstract the whole configuration,
-and make it very easy to use:
-
-* [Zend Framework 2 module](https://github.com/zf-fr/zfr-oauth2-server-module)
-
-If anyone want to help with a Symfony 2 bundle, I'd be glad to help.
-
 ## Documentation
 
 ZfrOAuth2Server is based on the [RFC 6749](http://tools.ietf.org/html/rfc6749) documentation.
 
-### Why using OAuth2?
+### Why use OAuth2?
 
 OAuth2 is an authentication/authorization system that allows that can be used to:
 
@@ -86,7 +79,7 @@ OAuth2 is an authentication/authorization system that allows that can be used to
 * Securing your application through the use of scopes
 
 OAuth2 is a dense, extensible specification that can be used for a wide number of use-cases. As of today,
-ZfrOAuth2Server implements three of the four official grants: AuthorizationGrant, ClientCredentialsGrant, PasswordGrant.
+ZfrOAuth2Server implements three of the four official grants: AuthorizationGrant, ClientCredentialsGrant, PasswordGrant. Additionally a RefreshTokenGrant is provided to obtain new access tokens. ImplicitGrant and JWTTokens are forthcoming (help wanted).
 
 ### How OAuth2 works?
 
@@ -148,6 +141,64 @@ $user = new User(); // must implement TokenOwnerInterface
 $response = $authorizationServer->handleRequest($request, $user);
 ```
 
+The AuthorizationServerMiddleware is able to do this for you and retrieve a user instance from a (configurable) request attribute. It is up to you to provide middleware which runs with a higher priority to add a TokenOwnerInterface instance to the request attribute. 
+
+Example of such a implementation which uses ZendAuthentication and a TemplateRenderer from ZendExpressive.
+
+```
+final class OAuth2AuthorizationFlow
+{
+    /**
+     * @var AuthenticationService
+     */
+    private $authenticationService;
+
+    /**
+     * @var ClientService
+     */
+    private $clientService;
+
+    /**
+     * @var TemplateRendererInterface
+     */
+    private $template;
+
+    public function __construct(
+        AuthenticationService $authenticationService,
+        ClientService $clientService,
+        TemplateRendererInterface $template
+    ) {
+        $this->authenticationService = $authenticationService;
+        $this->clientService         = $clientService;
+        $this->template              = $template;
+    }
+
+    public function __invoke(ServerRequestInterface $request, ResponseInterface $response, callable $out = null)
+    {
+        if ($this->authenticationService->hasIdentity()) {
+            $request = $request->withAttribute('owner', $this->authenticationService->getIdentity());
+        }
+
+        if ($request->getMethod() === 'POST') {
+            $post     = $request->getParsedBody();
+            $approved = filter_var($post['approved'], FILTER_VALIDATE_BOOLEAN);
+
+            if ($approved) {
+                return $out($request, $response);
+            }
+        }
+
+        $data  = [];
+        $query = $request->getUri()->getQuery();
+        parse_str($query, $data['query']);
+
+        $data['client'] = $this->clientService->getClient($data['query']['client_id']);
+
+        return new HtmlResponse($this->template->render('app::oauth2/authorize-request', $data));
+    }
+}
+```
+
 #### Revoking a token 
 
 ZfrOAuth2Server supports revoking access and refresh tokens using the [RFC 7009 specification](https://tools.ietf.org/html/rfc7009).
@@ -179,104 +230,26 @@ if (!$token = $resourceServer->getAccessToken($request, ['write']) {
 }
 ```
 
+The ResourceServerMiddleware is able to do this for you, simply have it run before any other middleware.
+
+Example zend expressive route configuration.
+
+```
+[
+            'name'            => 'command::commerce::create-store',
+            'path'            => '/commerce/create-store',
+            'middleware'      => [
+                ResourceServerMiddleware::class,
+                MyActionMiddleware::class,
+            ],
+            'allowed_methods' => ['OPTIONS', 'POST'],
+        ],
+```         
+
 ### Persistence layer
 
-As of version 1.0 ZfrOAuth2Server has been rewritten to be persistence layer agnostic. Meaning it can by used with any prefered persistence layer.
+As of version 0.8-beta1 ZfrOAuth2Server has been rewritten to be persistence layer agnostic. Meaning it can by used with any prefered persistence layer.
 
 Currently these packages provide a persistence layer;
 
 - [ZfrOAuth2ServerDoctrine](https://github.com/zf-fr/zfr-oauth2-server-doctrine) for Doctrine 2
-
-
-### Event manager
-
-There are a lot of use cases where you would like to execute specific code when a token is created (or when it
-could not be created). Such use cases include: log login, modify generic OAuth2 response to include additional fields...
-
-To that extent, ZfrOAuth2 trigger various events in the `AuthorizationServer`. Four events are triggered:
-
-* `ZfrOAuth2\Server\Event\AuthorizationCodeEvent::EVENT_CODE_CREATED`: event that is triggered when the auth code has
-been properly created and persisted.
-* `ZfrOAuth2\Server\Event\AuthorizationCodeEvent::EVENT_CODE_FAILED`: event that is triggered when an error has occurred (
-wrong credentials, missing grant...).
-* `ZfrOAuth2\Server\Event\TokenEvent::EVENT_TOKEN_CREATED`: event that is triggered when the access token has
-been properly created and persisted.
-* `ZfrOAuth2\Server\Event\TokenEvent::EVENT_TOKEN_FAILED`: event that is triggered when an error has occurred (
-wrong credentials, missing grant...).
-
-In both cases, the `TokenEvent` or `AuthorizationCodeEvent` event lets you access to the request, the response body
-and the access token/authorization code (if available).
-
-Here is an example:
-
-#### Zend Framework 2 users
-
-Zend Framework 2 users can take advantage of the shared event manager, and attach listeners in their Module.php
-class as shown below:
-
-```php
-use ZfrOAuth2\Server\Event\TokenEvent;
-
-class Module
-{
-    public function onBootstrap(EventInterface $event)
-    {
-        /* @var \Zend\Mvc\Application $application */
-        $application   = $event->getTarget();
-        $eventManager  = $application->getEventManager();
-        $sharedManager = $eventManager->getSharedManager();
-
-        $sharedManager->attach(
-            'ZfrOAuth2\Server\AuthorizationServer',
-            TokenEvent::EVENT_TOKEN_CREATED,
-            [$this, 'tokenCreated']
-        );
-
-        $sharedManager->attach(
-            'ZfrOAuth2\Server\AuthorizationServer',
-            TokenEvent::EVENT_TOKEN_FAILED,
-            [$this, 'tokenFailed']
-        );
-    }
-
-    public function tokenCreated(TokenEvent $event)
-    {
-        // Get the response
-        $response = $event->getResponse();
-        // ...
-
-        // Response is a PSR-7 compliant response, so you modify it
-        $response = $response->withHeader(...);
-
-        // Do not forget to set back the response, as PSR-7 are immutable
-        $event->setResponse($response);
-    }
-
-    public function tokenFailed(TokenEvent $event)
-    {
-        // We can inspect the response to know what happen and log the failure
-        $body = $event->getResponse()->getBody();
-    }
-}
-```
-
-#### Other users
-
-For other users, you can manually retrieve the event manager from the authorization server, and attach
-your listener there:
-
-```php
-use ZfrOAuth2\Server\Event\TokenEvent;
-
-$eventManager = $authorizationServer->getEventManager();
-$eventManager->attach(TokenEvent::EVENT_TOKEN_CREATED, function(TokenEvent $event) {
-    // Do things
-}
-```
-
-You are responsible to wire everything in your application.
-
-#### Second level cache
-
-Scope and tokens are marked cacheable to take advantage of Doctrine 2.5 ORM second level cache. However, you
-need to configure the regions yourself.
