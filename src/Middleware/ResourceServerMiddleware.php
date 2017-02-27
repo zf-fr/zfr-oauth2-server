@@ -61,7 +61,7 @@ class ResourceServerMiddleware
         } catch (InvalidAccessTokenException $exception) {
             // If we're here, this means that there was an access token, but it's either expired or invalid. If
             // that's the case we must immediately return
-            return new JsonResponse(['error' => $exception->getMessage()], 401);
+            return new JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()], 401);
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step

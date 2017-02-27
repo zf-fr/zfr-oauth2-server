@@ -25,8 +25,22 @@ use InvalidArgumentException;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
+ * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  */
 class InvalidAccessTokenException extends InvalidArgumentException implements ExceptionInterface
 {
+    /**
+     * Override the constructor to allow $code as a string
+     */
+    public function __construct(string $message, string $code)
+    {
+        $this->message = (string) $message;
+        $this->code    = (string) $code;
+    }
+
+    public static function invalidToken(string $description): InvalidAccessTokenException
+    {
+        return new self($description, 'invalid_token');
+    }
 }
