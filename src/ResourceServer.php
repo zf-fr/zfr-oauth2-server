@@ -70,7 +70,7 @@ class ResourceServer implements ResourceServerInterface
         $token = $this->accessTokenService->getToken($token);
 
         if ($token === null || ! $token->isValid($scopes)) {
-            throw new InvalidAccessTokenException('Access token has expired or has been deleted');
+            throw InvalidAccessTokenException::invalidToken('Access token has expired or has been deleted');
         }
 
         return $token;

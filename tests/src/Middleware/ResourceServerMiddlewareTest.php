@@ -92,14 +92,13 @@ class ResourceServerMiddlewareTest extends TestCase
     {
         $resourceServer = $this->createMock(ResourceServer::class);
         $middleware     = new ResourceServerMiddleware($resourceServer);
-        $accessToken    = null;
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
 
         $resourceServer->expects($this->once())
             ->method('getAccessToken')
             ->with($request)
-            ->willThrowException(new InvalidAccessTokenException('error message'));
+            ->willThrowException(InvalidAccessTokenException::invalidToken('error message'));
 
         $result = $middleware($request, $response, function ($request, $response) {
             return $response;
@@ -108,6 +107,6 @@ class ResourceServerMiddlewareTest extends TestCase
         $this->assertInstanceOf(JsonResponse::class, $result);
 
         $this->assertSame(401, $result->getStatusCode());
-        $this->assertSame('{"error":"error message"}', (string) $result->getBody());
+        $this->assertSame('{"error":"invalid_token","error_description":"error message"}', (string) $result->getBody());
     }
 }

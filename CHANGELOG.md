@@ -1,5 +1,9 @@
 # Changelog
 
+## dev-master
+
+* When an token can't be found the returned error response by the resource server middleware is now in a similar format to other errors. This might BC if your client depends on the error key in the message.
+
 ## v0.8.0-beta1
 
 BC! Pre release of a completely rewritten library. It focusses on core OAuth2 functionality and has been decoupled from persistence. If you still need the previous implementation - which is considered EOL - see the [legacy-0.7](https://github.com/zf-fr/zfr-oauth2-server/tree/legacy-0.7) branch

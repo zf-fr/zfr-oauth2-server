@@ -1,7 +1,6 @@
 <?php
 
-declare(strict_types = 1);
-
+declare(strict_types=1);
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -19,28 +18,34 @@ declare(strict_types = 1);
  * and is licensed under the MIT license.
  */
 
-namespace ZfrOAuth2\Server\Exception;
+namespace ZfrOAuth2Test\Server\Exception;
 
-use InvalidArgumentException;
+use PHPUnit\Framework\TestCase;
+use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
+ * @covers  \ZfrOAuth2\Server\Exception\InvalidAccessTokenException
  */
-class InvalidAccessTokenException extends InvalidArgumentException implements ExceptionInterface
+class InvalidAccessTokenExceptionTest extends TestCase
 {
     /**
-     * Override the constructor to allow $code as a string
+     * @dataProvider dataproviderErrorsCode
      */
-    public function __construct(string $message, string $code)
+    public function testErrorsCode($errorName, $expectedErrorCode)
     {
-        $this->message = (string) $message;
-        $this->code    = (string) $code;
+        $exception = InvalidAccessTokenException::$errorName('description');
+
+        $this->assertInstanceOf(InvalidAccessTokenException::class, $exception);
+        $this->assertSame('description', $exception->getMessage());
+        $this->assertSame($expectedErrorCode, $exception->getCode());
     }
 
-    public static function invalidToken(string $description): InvalidAccessTokenException
+    public function dataproviderErrorsCode()
     {
-        return new self($description, 'invalid_token');
+        return [
+            ['invalidToken', 'invalid_token'],
+        ];
     }
 }
