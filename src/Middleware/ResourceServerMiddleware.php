@@ -25,6 +25,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
@@ -44,11 +45,17 @@ class ResourceServerMiddleware
     private $resourceServer;
 
     /**
+     * @var ServerOptions
+     */
+    private $serverOptions;
+
+    /**
      * @param ResourceServerInterface $resourceServer
      */
-    public function __construct(ResourceServerInterface $resourceServer)
+    public function __construct(ResourceServerInterface $resourceServer, ServerOptions $serverOptions)
     {
-        $this->resourceServer = $resourceServer;
+        $this->resourceServer      = $resourceServer;
+        $this->serverOptions       = $serverOptions;
     }
 
     public function __invoke(
@@ -65,6 +72,6 @@ class ResourceServerMiddleware
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
-        return $next($request->withAttribute('oauth_token', $token), $response);
+        return $next($request->withAttribute($this->serverOptions->getTokenRequestAttribute(), $token), $response);
     }
 }
