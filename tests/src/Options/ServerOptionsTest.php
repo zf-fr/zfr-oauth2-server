@@ -44,6 +44,7 @@ class ServerOptionsTest extends TestCase
         $this->assertFalse($options->getRotateRefreshTokens());
         $this->assertTrue($options->getRevokeRotatedRefreshTokens());
         $this->assertEquals('owner', $options->getOwnerRequestAttribute());
+        $this->assertEquals('oauth_token', $options->getTokenRequestAttribute());
     }
 
     public function testGetters()
@@ -60,6 +61,7 @@ class ServerOptionsTest extends TestCase
             'owner_callable'                => $callable,
             'grants'                        => [ClientCredentialsGrant::class],
             'owner_request_attribute'       => 'something',
+            'token_request_attribute'       => 'else',
         ]);
 
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());
@@ -70,5 +72,6 @@ class ServerOptionsTest extends TestCase
         $this->assertSame($callable, $options->getOwnerCallable());
         $this->assertEquals([ClientCredentialsGrant::class], $options->getGrants());
         $this->assertEquals('something', $options->getOwnerRequestAttribute());
+        $this->assertEquals('else', $options->getTokenRequestAttribute());
     }
 }
