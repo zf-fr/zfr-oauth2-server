@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -37,6 +38,8 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ClientCredentialsGrantTest extends TestCase
 {
+    use PHPMock;
+
     /**
      * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -64,6 +67,9 @@ class ClientCredentialsGrantTest extends TestCase
 
     public function testCanCreateTokenResponse()
     {
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time->expects($this->any())->willReturn(10000);
+
         $request = $this->createMock(ServerRequestInterface::class);
 
         $client = Client::createNewClient('name', 'http://www.example.com');
@@ -74,7 +80,7 @@ class ClientCredentialsGrantTest extends TestCase
             'token'     => 'azerty',
             'owner'     => $owner,
             'client'    => null,
-            'expiresAt' => (new \DateTimeImmutable())->add(new DateInterval('PT1H')),
+            'expiresAt' => (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H')),
             'scopes'    => [],
         ]);
 

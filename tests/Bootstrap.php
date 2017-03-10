@@ -37,4 +37,6 @@ if (! isset($loader)) {
 
 $loader->add('ZfrOAuth2Test\\', __DIR__);
 
+\phpmock\phpunit\PHPMock::defineFunctionMock('ZfrOAuth2\Server\Model', 'time');
+
 unset($files, $file, $loader);

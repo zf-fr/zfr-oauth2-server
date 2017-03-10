@@ -21,6 +21,8 @@ declare(strict_types=1);
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use DateTimeImmutable;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -41,6 +43,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class PasswordGrantTest extends TestCase
 {
+    use PHPMock;
+
     /**
      * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -118,6 +122,9 @@ class PasswordGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time->expects($this->any())->willReturn(10000);
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
 
@@ -165,7 +172,7 @@ class PasswordGrantTest extends TestCase
      */
     private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('P1D'));
+        $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
         $token     = RefreshToken::reconstitute([
             'token'     => 'azerty_refresh',
             'owner'     => $owner,
@@ -182,7 +189,7 @@ class PasswordGrantTest extends TestCase
      */
     private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token     = AccessToken::reconstitute([
             'token'     => 'azerty_access',
             'owner'     => $owner,

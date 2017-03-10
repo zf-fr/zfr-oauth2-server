@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -43,6 +44,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class AuthorizationGrantTest extends TestCase
 {
+    use PHPMock;
+
     /**
      * @var AuthorizationCodeService|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -217,6 +220,9 @@ class AuthorizationGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time->expects($this->any())->willReturn(10000);
+
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code'      => '123',
                                                                                'client_id' => 'client_123',
@@ -281,7 +287,7 @@ class AuthorizationGrantTest extends TestCase
      */
     private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('P1D'));
+        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
         $token     = RefreshToken::reconstitute([
             'token'     => 'azerty_refresh',
             'owner'     => $owner,
@@ -298,7 +304,7 @@ class AuthorizationGrantTest extends TestCase
      */
     private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token     = AccessToken::reconstitute([
             'token'     => 'azerty_access',
             'owner'     => $owner,
@@ -315,7 +321,7 @@ class AuthorizationGrantTest extends TestCase
      */
     private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
     {
-        $invalidDate = (new \DateTimeImmutable())->sub(new DateInterval('PT1H'));
+        $invalidDate = (new \DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
         $token       = AuthorizationCode::reconstitute([
             'token'       => 'azerty_auth',
             'owner'       => $owner,
@@ -333,7 +339,7 @@ class AuthorizationGrantTest extends TestCase
      */
     private function getValidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token     = AuthorizationCode::reconstitute([
             'token'       => 'azerty_auth',
             'owner'       => $owner,

@@ -21,6 +21,7 @@ declare(strict_types=1);
 namespace ZfrOAuth2Test\Server\Grant;
 
 use DateInterval;
+use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -40,6 +41,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class RefreshTokenGrantTest extends TestCase
 {
+    use PHPMock;
+
     /**
      * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
      */
@@ -104,6 +107,9 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
     {
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time->expects($this->any())->willReturn(10000);
+
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
 
         $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
@@ -139,6 +145,9 @@ class RefreshTokenGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time->expects($this->any())->willReturn(10000);
+
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray([
             'rotate_refresh_tokens'         => $rotateRefreshToken,
             'revoke_rotated_refresh_tokens' => $revokeRotatedRefreshToken,
@@ -188,7 +197,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     private function getExpiredRefreshToken()
     {
-        $validDate = (new \DateTimeImmutable())->sub(new DateInterval('P1D'));
+        $validDate = (new \DateTimeImmutable('@10000'))->sub(new DateInterval('P1D'));
         $token     = RefreshToken::reconstitute([
             'token'     => 'azerty_refresh',
             'owner'     => null,
@@ -205,7 +214,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('P1D'));
+        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
         $token     = RefreshToken::reconstitute([
             'token'     => 'azerty_refresh',
             'owner'     => $owner,
@@ -222,7 +231,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
-        $validDate = (new \DateTimeImmutable())->add(new DateInterval('PT1H'));
+        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token     = AccessToken::reconstitute([
             'token'     => 'azerty_access',
             'owner'     => $owner,
