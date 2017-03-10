@@ -67,7 +67,7 @@ class ClientCredentialsGrantTest extends TestCase
 
     public function testCanCreateTokenResponse()
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', "time");
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
 
         $request = $this->createMock(ServerRequestInterface::class);

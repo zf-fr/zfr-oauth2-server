@@ -41,7 +41,6 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class RefreshTokenGrantTest extends TestCase
 {
-
     use PHPMock;
 
     /**
@@ -108,7 +107,7 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testAssertExceptionIfAskedScopeIsSuperiorToRefreshToken()
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', "time");
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
 
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
@@ -146,7 +145,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse($rotateRefreshToken, $revokeRotatedRefreshToken)
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', "time");
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
 
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray([

@@ -24,7 +24,6 @@ use DateInterval;
 use DateTimeImmutable;
 use phpmock\phpunit\PHPMock;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\TestResult;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
@@ -123,7 +122,7 @@ class PasswordGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse($hasRefreshGrant)
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', "time");
+        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
 
         $request = $this->createMock(ServerRequestInterface::class);
