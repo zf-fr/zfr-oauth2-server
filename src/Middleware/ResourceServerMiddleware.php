@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -25,7 +25,6 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
-use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
@@ -45,17 +44,17 @@ class ResourceServerMiddleware
     private $resourceServer;
 
     /**
-     * @var ServerOptions
+     * @var string
      */
-    private $serverOptions;
+    private $tokenRequestAttribute;
 
     /**
      * @param ResourceServerInterface $resourceServer
      */
-    public function __construct(ResourceServerInterface $resourceServer, ServerOptions $serverOptions)
+    public function __construct(ResourceServerInterface $resourceServer, string $tokenRequestAttribute = 'oauth_token')
     {
-        $this->resourceServer      = $resourceServer;
-        $this->serverOptions       = $serverOptions;
+        $this->resourceServer        = $resourceServer;
+        $this->tokenRequestAttribute = $tokenRequestAttribute;
     }
 
     public function __invoke(
@@ -68,10 +67,11 @@ class ResourceServerMiddleware
         } catch (InvalidAccessTokenException $exception) {
             // If we're here, this means that there was an access token, but it's either expired or invalid. If
             // that's the case we must immediately return
-            return new JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()], 401);
+            return new JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()],
+                401);
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
-        return $next($request->withAttribute($this->serverOptions->getTokenRequestAttribute(), $token), $response);
+        return $next($request->withAttribute($this->tokenRequestAttribute, $token), $response);
     }
 }

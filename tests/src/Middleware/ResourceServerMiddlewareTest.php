@@ -27,7 +27,6 @@ use Zend\Diactoros\Response\JsonResponse;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
 use ZfrOAuth2\Server\Model\AccessToken;
-use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServer;
 
 /**
@@ -40,7 +39,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithAccessTokenAsResult()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer, ServerOptions::fromArray());
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $accessToken    = $this->createMock(AccessToken::class);
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
@@ -66,7 +65,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithNullAsResult()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer, ServerOptions::fromArray());
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $accessToken    = null;
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
@@ -92,7 +91,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillCallGetAccessTokenWithException()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer, ServerOptions::fromArray());
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
 
