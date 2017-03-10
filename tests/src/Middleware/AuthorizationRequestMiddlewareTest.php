@@ -38,7 +38,7 @@ class AuthorizationRequestMiddlewareTest extends TestCase
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $serverOptions       = ServerOptions::fromArray();
-        $middleware          = new AuthorizationRequestMiddleware($authorizationServer, $serverOptions);
+        $middleware          = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
 
         $request  = $this->createMock(RequestInterface::class);
         $response = $this->createMock(ResponseInterface::class);

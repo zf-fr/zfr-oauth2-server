@@ -39,6 +39,6 @@ class AuthorizationRequestMiddlewareFactory
         /** @var ServerOptions $serverOptions */
         $serverOptions       = $container->get(ServerOptions::class);
 
-        return new AuthorizationRequestMiddleware($authorizationServer, $serverOptions);
+        return new AuthorizationRequestMiddleware($authorizationServer, $serverOptions->getOwnerRequestAttribute());
     }
 }
