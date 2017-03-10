@@ -23,6 +23,7 @@ namespace ZfrOAuth2\Server\Container;
 
 use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
@@ -35,7 +36,9 @@ class ResourceServerMiddlewareFactory
     {
         /** @var ResourceServerInterface $resourceServer */
         $resourceServer = $container->get(ResourceServerInterface::class);
+        /** @var ServerOptions $serverOptions */
+        $serverOptions  = $container->get(ServerOptions::class);
 
-        return new ResourceServerMiddleware($resourceServer);
+        return new ResourceServerMiddleware($resourceServer, $serverOptions->getTokenRequestAttribute());
     }
 }

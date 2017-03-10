@@ -24,6 +24,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Container\ResourceServerMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
+use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\ResourceServerInterface;
 
 /**
@@ -41,6 +42,11 @@ class ResourceServerMiddlewareFactoryTest extends TestCase
             ->method('get')
             ->with(ResourceServerInterface::class)
             ->willReturn($this->createMock(ResourceServerInterface::class));
+
+        $container->expects($this->at(1))
+            ->method('get')
+            ->with(ServerOptions::class)
+            ->willReturn(ServerOptions::fromArray());
 
         $factory = new ResourceServerMiddlewareFactory();
         $service = $factory($container);

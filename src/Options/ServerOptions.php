@@ -87,6 +87,13 @@ final class ServerOptions
     private $ownerRequestAttribute;
 
     /**
+     * Attribute that the ResourceServerMiddleware uses to access the token
+     *
+     * @var string
+     */
+    private $tokenRequestAttribute;
+
+    /**
      * @param callable|string $ownerCallable either a callable or the name of a container service
      */
     private function __construct(
@@ -97,7 +104,8 @@ final class ServerOptions
         bool $revokeRotatedRefreshTokens,
         $ownerCallable,
         array $grants,
-        string $ownerRequestAttribute
+        string $ownerRequestAttribute,
+        string $tokenRequestAttribute
     ) {
         $this->authorizationCodeTtl       = $authorizationCodeTtl;
         $this->accessTokenTtl             = $accessTokenTtl;
@@ -107,6 +115,7 @@ final class ServerOptions
         $this->ownerCallable              = $ownerCallable;
         $this->grants                     = $grants;
         $this->ownerRequestAttribute      = $ownerRequestAttribute;
+        $this->tokenRequestAttribute      = $tokenRequestAttribute;
     }
 
     /**
@@ -122,7 +131,8 @@ final class ServerOptions
             $options['revoke_rotated_refresh_tokens'] ?? true,
             $options['owner_callable'] ?? null,
             $options['grants'] ?? [],
-            $options['owner_request_attribute'] ?? 'owner'
+            $options['owner_request_attribute'] ?? 'owner',
+            $options['token_request_attribute'] ?? 'oauth_token'
         );
     }
 
@@ -191,5 +201,13 @@ final class ServerOptions
     public function getOwnerRequestAttribute(): string
     {
         return $this->ownerRequestAttribute;
+    }
+
+    /**
+     * Attribute that the ResourceServerMiddleware uses to access the token
+     */
+    public function getTokenRequestAttribute(): string
+    {
+        return $this->tokenRequestAttribute;
     }
 }

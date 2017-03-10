@@ -39,7 +39,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithAccessTokenAsResult()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $accessToken    = $this->createMock(AccessToken::class);
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
@@ -65,7 +65,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithNullAsResult()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $accessToken    = null;
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
@@ -91,7 +91,7 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillCallGetAccessTokenWithException()
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware     = new ResourceServerMiddleware($resourceServer);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
 
