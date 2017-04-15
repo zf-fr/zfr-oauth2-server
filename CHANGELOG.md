@@ -2,7 +2,9 @@
 
 ## dev-master
 
-* Implement PSR15
+## v0.8.0-beta3
+
+* Implements [PSR-15](https://github.com/php-fig/fig-standards/tree/master/proposed/http-middleware)
 
 ## v0.8.0-beta2
 
