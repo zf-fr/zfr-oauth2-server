@@ -55,7 +55,6 @@ class RevocationRequestMiddlewareTest extends TestCase
         $request  = $this->createMock(RequestInterface::class);
         $delegate = $this->createMock(DelegateInterface::class);
 
-
         $this->authorizationServer->expects($this->once())
             ->method('handleRevocationRequest')
             ->with($request)
