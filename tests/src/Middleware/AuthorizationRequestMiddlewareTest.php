@@ -20,12 +20,12 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
-use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
@@ -37,18 +37,16 @@ class AuthorizationRequestMiddlewareTest extends TestCase
     public function testWillHandleAuthorizationRequest()
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $serverOptions       = ServerOptions::fromArray();
         $middleware          = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
 
         $request  = $this->createMock(RequestInterface::class);
-        $response = $this->createMock(ResponseInterface::class);
+        $delegate = $this->createMock(DelegateInterface::class);
 
         $authorizationServer->expects($this->once())
             ->method('handleAuthorizationRequest')
             ->with($request)
             ->willReturn($this->createMock(ResponseInterface::class));
 
-        $middleware($request, $response, function () {
-        });
+        $middleware->process($request, $delegate);
     }
 }
