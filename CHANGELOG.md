@@ -2,6 +2,8 @@
 
 ## dev-master
 
+* Implement PSR15
+
 ## v0.8.0-beta2
 
 * When an token can't be found the returned error response by the resource server middleware is now in a similar format to other errors. This might BC if your client depends on the error key in the message.
