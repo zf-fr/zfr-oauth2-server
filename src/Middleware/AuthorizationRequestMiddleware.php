@@ -21,6 +21,8 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
@@ -28,7 +30,7 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
 /**
  * Authorization request middleware endpoint of the authorization server
  */
-class AuthorizationRequestMiddleware
+class AuthorizationRequestMiddleware implements MiddlewareInterface
 {
     /**
      * @var AuthorizationServerInterface
@@ -48,11 +50,8 @@ class AuthorizationRequestMiddleware
         $this->ownerRequestAttribute = $ownerRequestAttribute;
     }
 
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    {
         $owner = $request->getAttribute($this->ownerRequestAttribute);
 
         return $this->authorizationServer->handleAuthorizationRequest($request, $owner);
