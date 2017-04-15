@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,6 +21,8 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
@@ -28,7 +30,7 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
 /**
  * Token request request middleware endpoint of the authorization server
  */
-class TokenRequestMiddleware
+class TokenRequestMiddleware implements MiddlewareInterface
 {
     /**
      * @var AuthorizationServerInterface
@@ -40,11 +42,8 @@ class TokenRequestMiddleware
         $this->authorizationServer = $authorizationServer;
     }
 
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    {
         return $this->authorizationServer->handleTokenRequest($request);
     }
 }

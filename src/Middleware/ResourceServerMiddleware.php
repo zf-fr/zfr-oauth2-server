@@ -21,6 +21,8 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2\Server\Middleware;
 
+use Interop\Http\ServerMiddleware\DelegateInterface;
+use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Zend\Diactoros\Response\JsonResponse;
@@ -36,7 +38,7 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  * If the token is valid, it will store it as part of the request under the attribute "oauth_token", so that it can
  * be used later one by a permission system, for instance
  */
-class ResourceServerMiddleware
+class ResourceServerMiddleware implements MiddlewareInterface
 {
     /**
      * @var ResourceServerInterface
@@ -57,11 +59,8 @@ class ResourceServerMiddleware
         $this->tokenRequestAttribute = $tokenRequestAttribute;
     }
 
-    public function __invoke(
-        ServerRequestInterface $request,
-        ResponseInterface $response,
-        callable $next
-    ): ResponseInterface {
+    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    {
         try {
             $token = $this->resourceServer->getAccessToken($request);
         } catch (InvalidAccessTokenException $exception) {
@@ -72,6 +71,6 @@ class ResourceServerMiddleware
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
-        return $next($request->withAttribute($this->tokenRequestAttribute, $token), $response);
+        return $delegate->process($request->withAttribute($this->tokenRequestAttribute, $token));
     }
 }
