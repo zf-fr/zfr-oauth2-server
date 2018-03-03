@@ -20,10 +20,10 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\Middleware\ResourceServerMiddleware;
@@ -44,10 +44,10 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken    = $this->createMock(AccessToken::class);
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
-        $delegate       = $this->createMock(DelegateInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
-        $delegate->expects($this->once())
-            ->method('process')
+        $handler->expects($this->once())
+            ->method('handle')
             ->with($request)
             ->willReturn($response);
 
@@ -64,7 +64,7 @@ class ResourceServerMiddlewareTest extends TestCase
             )
             ->willReturn($request);
 
-        $middleware->process($request, $delegate);
+        $middleware->process($request, $handler);
     }
 
     public function testWillGetAccessTokenWithNullAsResult()
@@ -74,10 +74,10 @@ class ResourceServerMiddlewareTest extends TestCase
         $accessToken    = null;
         $request        = $this->createMock(RequestInterface::class);
         $response       = $this->createMock(ResponseInterface::class);
-        $delegate       = $this->createMock(DelegateInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
-        $delegate->expects($this->once())
-            ->method('process')
+        $handler->expects($this->once())
+            ->method('handle')
             ->with($request)
             ->willReturn($response);
 
@@ -94,7 +94,7 @@ class ResourceServerMiddlewareTest extends TestCase
             )
             ->willReturn($request);
 
-        $result = $middleware->process($request, $delegate);
+        $result = $middleware->process($request, $handler);
     }
 
     public function testWillCallGetAccessTokenWithException()
@@ -102,14 +102,14 @@ class ResourceServerMiddlewareTest extends TestCase
         $resourceServer = $this->createMock(ResourceServer::class);
         $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
         $request        = $this->createMock(RequestInterface::class);
-        $delegate       = $this->createMock(DelegateInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
         $resourceServer->expects($this->once())
             ->method('getAccessToken')
             ->with($request)
             ->willThrowException(InvalidAccessTokenException::invalidToken('error message'));
 
-        $result = $middleware->process($request, $delegate);
+        $result = $middleware->process($request, $handler);
 
         $this->assertInstanceOf(JsonResponse::class, $result);
 
