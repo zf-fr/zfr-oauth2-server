@@ -21,10 +21,10 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2\Server\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
-use Interop\Http\ServerMiddleware\MiddlewareInterface;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use Zend\Diactoros\Response\JsonResponse;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
 use ZfrOAuth2\Server\ResourceServerInterface;
@@ -59,7 +59,7 @@ class ResourceServerMiddleware implements MiddlewareInterface
         $this->tokenRequestAttribute = $tokenRequestAttribute;
     }
 
-    public function process(ServerRequestInterface $request, DelegateInterface $delegate): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         try {
             $token = $this->resourceServer->getAccessToken($request);
@@ -71,6 +71,6 @@ class ResourceServerMiddleware implements MiddlewareInterface
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step
-        return $delegate->process($request->withAttribute($this->tokenRequestAttribute, $token));
+        return $handler->handle($request->withAttribute($this->tokenRequestAttribute, $token));
     }
 }
