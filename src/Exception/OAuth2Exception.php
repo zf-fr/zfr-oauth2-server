@@ -40,7 +40,7 @@ class OAuth2Exception extends Exception implements ExceptionInterface
      */
     public function __construct(string $message, string $code)
     {
-        $this->message = (string) $message;
+        parent::__construct($message);
         $this->code = (string) $code;
     }
 
