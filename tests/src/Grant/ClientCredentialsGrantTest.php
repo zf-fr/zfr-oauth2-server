@@ -53,7 +53,7 @@ class ClientCredentialsGrantTest extends TestCase
     public function setUp()
     {
         $this->tokenService = $this->createMock(AccessTokenService::class);
-        $this->grant        = new ClientCredentialsGrant($this->tokenService);
+        $this->grant = new ClientCredentialsGrant($this->tokenService);
     }
 
     public function testAssertDoesNotImplementAuthorization()
@@ -73,15 +73,15 @@ class ClientCredentialsGrantTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
 
         $client = Client::createNewClient('name', 'http://www.example.com');
-        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $token = AccessToken::reconstitute([
-            'token'     => 'azerty',
-            'owner'     => $owner,
-            'client'    => null,
+            'token' => 'azerty',
+            'owner' => $owner,
+            'client' => null,
             'expiresAt' => (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H')),
-            'scopes'    => [],
+            'scopes' => [],
         ]);
 
         $this->tokenService->expects($this->once())->method('createToken')->will($this->returnValue($token));

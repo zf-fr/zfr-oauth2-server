@@ -37,10 +37,10 @@ class AuthorizationRequestMiddlewareTest extends TestCase
     public function testWillHandleAuthorizationRequest()
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $middleware          = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
+        $middleware = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
 
-        $request  = $this->createMock(RequestInterface::class);
-        $handler  = $this->createMock(RequestHandlerInterface::class);
+        $request = $this->createMock(RequestInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
         $authorizationServer->expects($this->once())
             ->method('handleAuthorizationRequest')

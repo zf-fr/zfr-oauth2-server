@@ -40,7 +40,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
-    const GRANT_TYPE          = 'authorization_code';
+    const GRANT_TYPE = 'authorization_code';
     const GRANT_RESPONSE_TYPE = 'code';
 
     /**
@@ -75,8 +75,8 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         RefreshTokenService $refreshTokenService
     ) {
         $this->authorizationCodeService = $authorizationCodeService;
-        $this->accessTokenService       = $accessTokenService;
-        $this->refreshTokenService      = $refreshTokenService;
+        $this->accessTokenService = $accessTokenService;
+        $this->refreshTokenService = $refreshTokenService;
     }
 
     /**
@@ -110,14 +110,14 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         // Scope and state allow to perform additional validation
-        $scope  = $queryParams['scope'] ?? null;
-        $state  = $queryParams['state'] ?? null;
+        $scope = $queryParams['scope'] ?? null;
+        $state = $queryParams['state'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
         $authorizationCode = $this->authorizationCodeService->createToken($redirectUri, $owner, $client, $scopes);
 
         $uri = http_build_query(array_filter([
-            'code'  => $authorizationCode->getToken(),
+            'code' => $authorizationCode->getToken(),
             'state' => $state,
         ]));
 

@@ -67,10 +67,10 @@ class Scope
     ): Scope {
         $scope = new static();
 
-        $scope->id          = $id;
-        $scope->name        = $name;
+        $scope->id = $id;
+        $scope->name = $name;
         $scope->description = $description;
-        $scope->isDefault   = $isDefault;
+        $scope->isDefault = $isDefault;
 
         return $scope;
     }
@@ -79,10 +79,10 @@ class Scope
     {
         $scope = new static();
 
-        $scope->id          = $data['id'];
-        $scope->name        = $data['name'];
+        $scope->id = $data['id'];
+        $scope->name = $data['name'];
         $scope->description = $data['description'];
-        $scope->isDefault   = $data['isDefault'];
+        $scope->isDefault = $data['isDefault'];
 
         return $scope;
     }

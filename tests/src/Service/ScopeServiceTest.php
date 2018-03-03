@@ -40,7 +40,7 @@ class ScopeServiceTest extends TestCase
     public function setUp()
     {
         $this->scopeRepository = $this->createMock(ScopeRepositoryInterface::class);
-        $this->tokenService    = new ScopeService($this->scopeRepository);
+        $this->tokenService = new ScopeService($this->scopeRepository);
     }
 
     public function testCanCreateScope()

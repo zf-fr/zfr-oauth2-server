@@ -24,13 +24,13 @@ return [
          * Various tokens TTL
          */
         'authorization_code_ttl' => 120,
-        'access_token_ttl'       => 3600,
-        'refresh_token_ttl'      => 86400,
+        'access_token_ttl' => 3600,
+        'refresh_token_ttl' => 86400,
 
         /**
          * Rotate the refresh token option while refreshing an access token
          */
-        'rotate_refresh_tokens'  => false,
+        'rotate_refresh_tokens' => false,
 
         /**
          * Revoke the rotated refresh token while refreshing an access token
@@ -40,13 +40,13 @@ return [
         /**
          * Registered grants for this server
          */
-        'grants'                 => [],
+        'grants' => [],
 
         /**
          * A callable used to validate the username and password when using the
          * password grant
          */
-        'owner_callable'         => null,
+        'owner_callable' => null,
 
         /**
          * Attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface

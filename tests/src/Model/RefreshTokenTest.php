@@ -109,20 +109,20 @@ class RefreshTokenTest extends TestCase
         return [
             [
                 [
-                    'token'     => 'token',
-                    'owner'     => $this->createMock(TokenOwnerInterface::class),
-                    'client'    => $this->createMock(Client::class),
+                    'token' => 'token',
+                    'owner' => $this->createMock(TokenOwnerInterface::class),
+                    'client' => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
-                    'scopes'    => ['scope1', 'scope2'],
+                    'scopes' => ['scope1', 'scope2'],
                 ],
             ],
             [ // test set - null values
               [
-                  'token'     => 'token',
-                  'owner'     => null,
-                  'client'    => null,
+                  'token' => 'token',
+                  'owner' => null,
+                  'client' => null,
                   'expiresAt' => null,
-                  'scopes'    => [],
+                  'scopes' => [],
               ],
             ],
         ];

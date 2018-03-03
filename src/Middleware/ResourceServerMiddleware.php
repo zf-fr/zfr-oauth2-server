@@ -55,7 +55,7 @@ class ResourceServerMiddleware implements MiddlewareInterface
      */
     public function __construct(ResourceServerInterface $resourceServer, string $tokenRequestAttribute = 'oauth_token')
     {
-        $this->resourceServer        = $resourceServer;
+        $this->resourceServer = $resourceServer;
         $this->tokenRequestAttribute = $tokenRequestAttribute;
     }
 

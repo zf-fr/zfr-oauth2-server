@@ -47,14 +47,14 @@ class AuthorizationServerTest extends TestCase
     public function testCanCheckAndGetForGrants()
     {
         $clientService = $this->createMock(ClientService::class);
-        $grant         = new PasswordGrant(
+        $grant = new PasswordGrant(
             $this->createMock(AccessTokenService::class),
             $this->createMock(RefreshTokenService::class),
             function () {
             }
         );
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -71,13 +71,13 @@ class AuthorizationServerTest extends TestCase
     public function testCanCheckAndGetForResponseType()
     {
         $clientService = $this->createMock(ClientService::class);
-        $grant         = new AuthorizationGrant(
+        $grant = new AuthorizationGrant(
             $this->createMock(AuthorizationCodeService::class),
             $this->createMock(AccessTokenService::class),
             $this->createMock(RefreshTokenService::class)
         );
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -96,14 +96,14 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getQueryParams')->willReturn([]);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $clientService = $this->createMock(ClientService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -129,14 +129,14 @@ class AuthorizationServerTest extends TestCase
 
         // use POST vars
         $request->expects($this->once())->method('getParsedBody')->willReturn(['client_secret' => 'clientsecret']);
-        $clientService       = $this->createMock(ClientService::class);
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $clientService = $this->createMock(ClientService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$authorizationGrant], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -148,15 +148,15 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
 
-        $clientService       = $this->createMock(ClientService::class);
+        $clientService = $this->createMock(ClientService::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -170,15 +170,15 @@ class AuthorizationServerTest extends TestCase
 
         $grant = new ClientCredentialsGrant($this->createMock(AccessTokenService::class));
 
-        $clientService       = $this->createMock(ClientService::class);
+        $clientService = $this->createMock(ClientService::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -206,22 +206,22 @@ class AuthorizationServerTest extends TestCase
             ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
 
         $client = Client::reconstitute([
-            'id'           => 'clientid',
-            'name'         => 'clientname',
-            'secret'       => '$2y$10$ixK8D7rBvEPkX0.d3e93h.lb3wufbavWmIyX0zK1FhP3fGp.rIK1u', // hash of 'incorrectclientsecret'
+            'id' => 'clientid',
+            'name' => 'clientname',
+            'secret' => '$2y$10$ixK8D7rBvEPkX0.d3e93h.lb3wufbavWmIyX0zK1FhP3fGp.rIK1u', // hash of 'incorrectclientsecret'
             'redirectUris' => ['http://example.com'],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
-        $response            = $authorizationServer->handleTokenRequest($request);
+        $response = $authorizationServer->handleTokenRequest($request);
 
-        $body     = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -244,10 +244,10 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -274,21 +274,21 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         if ($tokenType === 'access_token') {
-            $token = AccessToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+            $token = AccessToken::reconstitute(['token' => 'abc', 'owner' => null, 'client' => null, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
 
             $accessTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $accessTokenService->expects($this->once())->method('deleteToken')->with($token);
         } elseif ($tokenType === 'refresh_token') {
-            $token = RefreshToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+            $token = RefreshToken::reconstitute(['token' => 'abc', 'owner' => null, 'client' => null, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
 
             $refreshTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $refreshTokenService->expects($this->once())->method('deleteToken')->with($token);
@@ -308,16 +308,16 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         if ($tokenType === 'access_token') {
-            $token = AccessToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+            $token = AccessToken::reconstitute(['token' => 'abc', 'owner' => null, 'client' => null, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
 
             $accessTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $accessTokenService->expects($this->once())
@@ -325,7 +325,7 @@ class AuthorizationServerTest extends TestCase
                                ->with($token)
                                ->will($this->throwException(new \RuntimeException()));
         } elseif ($tokenType === 'refresh_token') {
-            $token = RefreshToken::reconstitute(['token'=>'abc', 'owner'=>null, 'client'=>null, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+            $token = RefreshToken::reconstitute(['token' => 'abc', 'owner' => null, 'client' => null, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
 
             $refreshTokenService->expects($this->once())->method('getToken')->with('abc')->will($this->returnValue($token));
             $refreshTokenService->expects($this->once())
@@ -345,10 +345,10 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token_type_hint' => 'access_token']);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -364,10 +364,10 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123']);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -383,10 +383,10 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'invalid_token_hint']);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
@@ -402,18 +402,18 @@ class AuthorizationServerTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'access_token']);
 
-        $clientService       = $this->createMock(ClientService::class);
-        $grant               = $this->createMock(GrantInterface::class);
+        $clientService = $this->createMock(ClientService::class);
+        $grant = $this->createMock(GrantInterface::class);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);
 
         $client = Client::reconstitute([
-            'id'           => 'clientid',
-            'name'         => 'clientname',
-            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'id' => 'clientid',
+            'name' => 'clientname',
+            'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => [],
         ]);
 
@@ -431,13 +431,13 @@ class AuthorizationServerTest extends TestCase
 
         // client has been changed since issuing
         $client = Client::reconstitute([
-            'id'           => 'clientid',
-            'name'         => 'clientname',
-            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'id' => 'clientid',
+            'name' => 'clientname',
+            'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => ['http://example.com'],
         ]);
 
-        $token = AccessToken::reconstitute(['token'=>'123', 'owner'=>null, 'client'=>$client, 'scopes'=>[], 'expiresAt'=>new \DateTimeImmutable()]);
+        $token = AccessToken::reconstitute(['token' => '123', 'owner' => null, 'client' => $client, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
 
         $accessTokenService->expects($this->once())->method('getToken')->with('123')->will($this->returnValue($token));
 
@@ -475,7 +475,7 @@ class AuthorizationServerTest extends TestCase
             $request->expects($this->once())
                 ->method('getParsedBody')
                 ->willReturn([
-                    'client_id'     => 'clientid',
+                    'client_id' => 'clientid',
                     'client_secret' => 'clientsecret',
                 ]);
         }
@@ -487,16 +487,16 @@ class AuthorizationServerTest extends TestCase
         $authorizationGrant->expects($this->any())->method('allowPublicClients')->willReturn(true);
 
         $client = Client::reconstitute([
-            'id'           => 'clientid',
-            'name'         => 'clientname',
-            'secret'       => 'clientsecret',
+            'id' => 'clientid',
+            'name' => 'clientname',
+            'secret' => 'clientsecret',
             'redirectUris' => ['http://example.com'],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$authorizationGrant], $accessTokenService,
@@ -555,15 +555,15 @@ class AuthorizationServerTest extends TestCase
             ->willReturn('Authorization Y2xpZW50aWQ6Y2xpZW50c2VjcmV0');
 
         $client = Client::reconstitute([
-            'id'           => 'clientid',
-            'name'         => 'clientname',
-            'secret'       => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
+            'id' => 'clientid',
+            'name' => 'clientname',
+            'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => ['http://example.com'],
         ]);
         $clientService = $this->createMock(ClientService::class);
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
 
-        $accessTokenService  = $this->createMock(AccessTokenService::class);
+        $accessTokenService = $this->createMock(AccessTokenService::class);
         $refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $authorizationServer = new AuthorizationServer($clientService, [$grant], $accessTokenService, $refreshTokenService);

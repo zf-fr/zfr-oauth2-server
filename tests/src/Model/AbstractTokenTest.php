@@ -34,17 +34,17 @@ class AbstractTokenTest extends TestCase
 {
     public function setUp()
     {
-        $this->owner     = $this->createMock(TokenOwnerInterface::class);
-        $this->client    = $this->createMock(Client::class);
+        $this->owner = $this->createMock(TokenOwnerInterface::class);
+        $this->client = $this->createMock(Client::class);
         $this->expiresAt = (new \DateTime())->modify('+60 seconds');
-        $this->scopes    = ['somescope', 'otherscope'];
+        $this->scopes = ['somescope', 'otherscope'];
 
         $this->token = SomeToken::reconstitute([
-            'token'     => 'a token',
+            'token' => 'a token',
             'expiresAt' => $this->expiresAt,
-            'owner'     => $this->owner,
-            'client'    => $this->client,
-            'scopes'    => $this->scopes,
+            'owner' => $this->owner,
+            'client' => $this->client,
+            'scopes' => $this->scopes,
         ]);
     }
 
@@ -105,11 +105,11 @@ class AbstractTokenTest extends TestCase
         $this->expiresAt = (new \DateTime())->modify('-60 seconds');
 
         $this->token = SomeToken::reconstitute([
-            'token'     => 'a token',
+            'token' => 'a token',
             'expiresAt' => $this->expiresAt,
-            'owner'     => $this->owner,
-            'client'    => $this->client,
-            'scopes'    => $this->scopes,
+            'owner' => $this->owner,
+            'client' => $this->client,
+            'scopes' => $this->scopes,
         ]);
 
         $this->assertFalse($this->token->isValid('somescope'));

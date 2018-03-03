@@ -40,7 +40,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ClientCredentialsGrant extends AbstractGrant
 {
-    const GRANT_TYPE          = 'client_credentials';
+    const GRANT_TYPE = 'client_credentials';
     const GRANT_RESPONSE_TYPE = '';
 
     /**
@@ -80,7 +80,7 @@ class ClientCredentialsGrant extends AbstractGrant
         $postParams = $request->getParsedBody();
 
         // Everything is okey, we can start tokens generation!
-        $scope  = $postParams['scope'] ?? null;
+        $scope = $postParams['scope'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
         /** @var AccessToken $accessToken */

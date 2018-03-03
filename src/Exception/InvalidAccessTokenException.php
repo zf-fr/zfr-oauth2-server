@@ -36,7 +36,7 @@ class InvalidAccessTokenException extends InvalidArgumentException implements Ex
     public function __construct(string $message, string $code)
     {
         $this->message = (string) $message;
-        $this->code    = (string) $code;
+        $this->code = (string) $code;
     }
 
     public static function invalidToken(string $description): InvalidAccessTokenException

@@ -39,9 +39,9 @@ class PasswordGrantFactoryTest extends TestCase
     public function testCanCreateFromFactory()
     {
         $container = $this->createMock(ContainerInterface::class);
-        $callable  = function () {
+        $callable = function () {
         };
-        $options   = ServerOptions::fromArray(['owner_callable' => $callable]);
+        $options = ServerOptions::fromArray(['owner_callable' => $callable]);
 
         $container->expects($this->at(0))
             ->method('get')
@@ -67,9 +67,9 @@ class PasswordGrantFactoryTest extends TestCase
     public function testCanCreateFromFactoryOwnerCallableOptionsIsString()
     {
         $container = $this->createMock(ContainerInterface::class);
-        $callable  = function () {
+        $callable = function () {
         };
-        $options   = ServerOptions::fromArray(['owner_callable' => 'service_name']);
+        $options = ServerOptions::fromArray(['owner_callable' => 'service_name']);
 
         $container->expects($this->at(0))
             ->method('get')

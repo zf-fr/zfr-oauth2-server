@@ -103,15 +103,15 @@ class ClientTest extends TestCase
         return [
             [
                 [
-                    'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
-                    'name'         => 'name',
-                    'secret'       => 'secret',
+                    'id' => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                    'name' => 'name',
+                    'secret' => 'secret',
                     'redirectUris' => ['http://www.example.com'],
                 ],
                 [
-                    'id'           => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
-                    'name'         => 'name',
-                    'secret'       => '',
+                    'id' => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
+                    'name' => 'name',
+                    'secret' => '',
                     'redirectUris' => [],
                 ],
             ],
@@ -175,9 +175,9 @@ class ClientTest extends TestCase
     {
         $client = Client::reconstitute(
             [
-                'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
-                'name'         => 'name',
-                'secret'       => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
+                'id' => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                'name' => 'name',
+                'secret' => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
                 'redirectUris' => [],
             ]
         );

@@ -47,12 +47,12 @@ class RevocationRequestMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $this->middleware          = new RevocationRequestMiddleware($this->authorizationServer);
+        $this->middleware = new RevocationRequestMiddleware($this->authorizationServer);
     }
 
     public function testCanHandleRevocationRequest()
     {
-        $request  = $this->createMock(RequestInterface::class);
+        $request = $this->createMock(RequestInterface::class);
         $delegate = $this->createMock(RequestHandlerInterface::class);
 
         $this->authorizationServer->expects($this->once())

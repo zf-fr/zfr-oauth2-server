@@ -83,8 +83,8 @@ class AuthorizationServer implements AuthorizationServerInterface
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService
     ) {
-        $this->clientService       = $clientService;
-        $this->accessTokenService  = $accessTokenService;
+        $this->clientService = $clientService;
+        $this->accessTokenService = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
 
         foreach ($grants as $grant) {
@@ -161,7 +161,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         TokenOwnerInterface $owner = null
     ): ResponseInterface {
         try {
-            $queryParams  = $request->getQueryParams();
+            $queryParams = $request->getQueryParams();
             $responseType = $queryParams['response_type'] ?? null;
 
             if (null === $responseType) {
@@ -169,7 +169,7 @@ class AuthorizationServer implements AuthorizationServerInterface
             }
 
             $responseType = $this->getResponseType((string) $responseType);
-            $client       = $this->getClient($request, $responseType->allowPublicClients());
+            $client = $this->getClient($request, $responseType->allowPublicClients());
 
             if (null === $client) {
                 throw OAuth2Exception::invalidClient('No client could be authenticated');
@@ -199,7 +199,7 @@ class AuthorizationServer implements AuthorizationServerInterface
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
             }
 
-            $grant  = $this->getGrant((string) $grant);
+            $grant = $this->getGrant((string) $grant);
             $client = $this->getClient($request, $grant->allowPublicClients());
 
             $response = $grant->createTokenResponse($request, $client, $owner);
@@ -222,7 +222,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     {
         $postParams = $request->getParsedBody();
 
-        $token     = $postParams['token'] ?? null;
+        $token = $postParams['token'] ?? null;
         $tokenHint = $postParams['token_type_hint'] ?? null;
 
         if (null === $token || null === $tokenHint) {
@@ -317,7 +317,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     private function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
         $payload = [
-            'error'             => $exception->getCode(),
+            'error' => $exception->getCode(),
             'error_description' => $exception->getMessage(),
         ];
 
@@ -339,7 +339,7 @@ class AuthorizationServer implements AuthorizationServerInterface
         } else {
             $postParams = $request->getParsedBody();
 
-            $id     = $postParams['client_id'] ?? null;
+            $id = $postParams['client_id'] ?? null;
             $secret = $postParams['client_secret'] ?? null;
         }
 

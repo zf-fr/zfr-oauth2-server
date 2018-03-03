@@ -47,13 +47,13 @@ class TokenRequestMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $this->middleware          = new TokenRequestMiddleware($this->authorizationServer);
+        $this->middleware = new TokenRequestMiddleware($this->authorizationServer);
     }
 
     public function testCanHandleTokenRequest()
     {
-        $request  = $this->createMock(RequestInterface::class);
-        $handler  = $this->createMock(RequestHandlerInterface::class);
+        $request = $this->createMock(RequestInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
         $this->authorizationServer->expects($this->once())
             ->method('handleTokenRequest')

@@ -17,8 +17,7 @@ class Config extends PhpCsFixerConfig
             '@PSR2' => true,
             'array_syntax' => ['syntax' => 'short'],
             'binary_operator_spaces' => [
-                'align_double_arrow' => true,
-                'align_equals' => true,
+                'default' => 'single_space',
             ],
             'blank_line_after_opening_tag' => true,
             'blank_line_after_namespace' => true,
@@ -102,7 +101,7 @@ class Config extends PhpCsFixerConfig
 }
 
 $config = new Config();
-$config->getFinder()->in(__DIR__);//->exclude(['data', 'docs', 'etc', 'templates']);
+$config->getFinder()->in(__DIR__);
 
 $cacheDir = getenv('TRAVIS') ? getenv('HOME') . '/.php-cs-fixer' : __DIR__;
 

@@ -32,7 +32,7 @@ class ServerOptionsFactory
 {
     public function __invoke(ContainerInterface $container): ServerOptions
     {
-        $config  = $container->get('config');
+        $config = $container->get('config');
         $options = $config['zfr_oauth2_server'] ?? [];
 
         return ServerOptions::fromArray($options);

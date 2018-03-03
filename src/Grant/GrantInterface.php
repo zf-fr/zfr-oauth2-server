@@ -42,7 +42,7 @@ interface GrantInterface
     /**
      * Constants that need to be overridden for each grant
      */
-    const GRANT_TYPE          = '';
+    const GRANT_TYPE = '';
     const GRANT_RESPONSE_TYPE = '';
 
     /**

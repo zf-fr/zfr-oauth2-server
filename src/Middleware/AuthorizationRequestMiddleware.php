@@ -46,7 +46,7 @@ class AuthorizationRequestMiddleware implements MiddlewareInterface
         AuthorizationServerInterface $authorizationServer,
         string $ownerRequestAttribute = 'owner'
     ) {
-        $this->authorizationServer   = $authorizationServer;
+        $this->authorizationServer = $authorizationServer;
         $this->ownerRequestAttribute = $ownerRequestAttribute;
     }
 

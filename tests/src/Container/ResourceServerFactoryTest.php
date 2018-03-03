@@ -36,7 +36,7 @@ class ResourceServerFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory()
     {
-        $container    = $this->createMock(ContainerInterface::class);
+        $container = $this->createMock(ContainerInterface::class);
         $tokenService = $this->createMock(AccessTokenService::class);
 
         $container->expects($this->once())

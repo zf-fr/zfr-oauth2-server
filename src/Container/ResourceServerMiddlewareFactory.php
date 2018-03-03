@@ -37,7 +37,7 @@ class ResourceServerMiddlewareFactory
         /** @var ResourceServerInterface $resourceServer */
         $resourceServer = $container->get(ResourceServerInterface::class);
         /** @var ServerOptions $serverOptions */
-        $serverOptions  = $container->get(ServerOptions::class);
+        $serverOptions = $container->get(ServerOptions::class);
 
         return new ResourceServerMiddleware($resourceServer, $serverOptions->getTokenRequestAttribute());
     }

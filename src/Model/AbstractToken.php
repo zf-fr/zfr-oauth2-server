@@ -91,10 +91,10 @@ abstract class AbstractToken
 
         $token = new static();
 
-        $token->token     = bin2hex(random_bytes(20));
-        $token->owner     = $owner;
-        $token->client    = $client;
-        $token->scopes    = $scopes ?? [];
+        $token->token = bin2hex(random_bytes(20));
+        $token->owner = $owner;
+        $token->client = $client;
+        $token->scopes = $scopes ?? [];
         $token->expiresAt = $ttl ? (new DateTime('@' . time(), new DateTimeZone('UTC')))->modify("+$ttl seconds") : null;
 
         return $token;
@@ -107,11 +107,11 @@ abstract class AbstractToken
     {
         $token = new static();
 
-        $token->token     = $data['token'];
+        $token->token = $data['token'];
         $token->expiresAt = $data['expiresAt'];
-        $token->owner     = $data['owner'];
-        $token->client    = $data['client'];
-        $token->scopes    = (array) $data['scopes'];
+        $token->owner = $data['owner'];
+        $token->client = $data['client'];
+        $token->scopes = (array) $data['scopes'];
 
         return $token;
     }
@@ -188,7 +188,7 @@ abstract class AbstractToken
     public function matchScopes($scopes): bool
     {
         $scopes = is_string($scopes) ? explode(' ', $scopes) : $scopes;
-        $diff   = array_diff($scopes, $this->scopes);
+        $diff = array_diff($scopes, $this->scopes);
 
         return empty($diff);
     }

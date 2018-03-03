@@ -37,7 +37,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class RefreshTokenGrant extends AbstractGrant
 {
-    const GRANT_TYPE          = 'refresh_token';
+    const GRANT_TYPE = 'refresh_token';
     const GRANT_RESPONSE_TYPE = '';
 
     /**
@@ -60,9 +60,9 @@ class RefreshTokenGrant extends AbstractGrant
         RefreshTokenService $refreshTokenService,
         ServerOptions $serverOptions
     ) {
-        $this->accessTokenService  = $accessTokenService;
+        $this->accessTokenService = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-        $this->serverOptions       = $serverOptions;
+        $this->serverOptions = $serverOptions;
     }
 
     /**
@@ -103,7 +103,7 @@ class RefreshTokenGrant extends AbstractGrant
         // We can now create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scope  = $postParams['scope'] ?? null;
+        $scope = $postParams['scope'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : $refreshToken->getScopes();
 
         if (! $refreshToken->matchScopes($scopes)) {
@@ -112,7 +112,7 @@ class RefreshTokenGrant extends AbstractGrant
             );
         }
 
-        $owner       = $refreshToken->getOwner();
+        $owner = $refreshToken->getOwner();
         $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 
         // We may want to revoke the old refresh token
