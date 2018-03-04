@@ -45,7 +45,7 @@ class RefreshTokenTest extends TestCase
 
         $this->assertNotEmpty($refreshToken->getToken());
         $this->assertEquals(40, strlen($refreshToken->getToken()));
-        if(array($scopes)) {
+        if(is_array($scopes)) {
             $this->assertCount(count($scopes), $refreshToken->getScopes());
         }
         $this->assertSame($client, $refreshToken->getClient());
