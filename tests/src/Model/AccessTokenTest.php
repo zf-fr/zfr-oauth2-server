@@ -47,7 +47,7 @@ class AccessTokenTest extends TestCase
 
         $this->assertNotEmpty($accessToken->getToken());
         $this->assertEquals(40, strlen($accessToken->getToken()));
-        if(is_array($scopes)) {
+        if (is_array($scopes)) {
             $this->assertCount(count($scopes), $accessToken->getScopes());
         }
         $this->assertSame($client, $accessToken->getClient());
