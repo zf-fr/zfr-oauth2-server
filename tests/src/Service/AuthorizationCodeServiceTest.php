@@ -56,8 +56,8 @@ class AuthorizationCodeServiceTest extends TestCase
     public function setUp()
     {
         $this->tokenRepository = $this->createMock(AuthorizationCodeRepositoryInterface::class);
-        $this->scopeService    = $this->createMock(ScopeService::class);
-        $this->tokenService    = new AuthorizationCodeService(
+        $this->scopeService = $this->createMock(ScopeService::class);
+        $this->tokenService = new AuthorizationCodeService(
             $this->tokenRepository,
             $this->scopeService,
             ServerOptions::fromArray()
@@ -68,11 +68,11 @@ class AuthorizationCodeServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token'     => 'token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -98,11 +98,11 @@ class AuthorizationCodeServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token'     => 'Token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'Token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -120,26 +120,26 @@ class AuthorizationCodeServiceTest extends TestCase
             // With no scope
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => [],
-                'throw_exception'   => false,
+                'token_scope' => [],
+                'throw_exception' => false,
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read'],
-                'throw_exception'   => false,
+                'token_scope' => ['read'],
+                'throw_exception' => false,
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read', 'write'],
-                'throw_exception'   => false,
+                'token_scope' => ['read', 'write'],
+                'throw_exception' => false,
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read', 'write', 'delete'],
-                'throw_exception'   => true,
+                'token_scope' => ['read', 'write', 'delete'],
+                'throw_exception' => true,
             ],
         ];
     }
@@ -153,7 +153,7 @@ class AuthorizationCodeServiceTest extends TestCase
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
-        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         if (empty($tokenScope)) {
@@ -209,7 +209,7 @@ class AuthorizationCodeServiceTest extends TestCase
             ->method('save')
             ->will($this->returnArgument(0));
 
-        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         $token = $this->tokenService->createToken('http://www.example.com', $owner, $client, []);

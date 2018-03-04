@@ -46,7 +46,7 @@ class ResourceServerTest extends TestCase
 
     public function setUp()
     {
-        $this->tokenService   = $this->createMock(AccessTokenService::class);
+        $this->tokenService = $this->createMock(AccessTokenService::class);
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
@@ -115,25 +115,25 @@ class ResourceServerTest extends TestCase
             // Should return false because the token is expired
             [
                 'expired_token' => true,
-                'token_scope'   => 'read',
+                'token_scope' => 'read',
                 'desired_scope' => 'read write',
-                'match'         => false,
+                'match' => false,
             ],
 
             // Should return false because we are asking more permissions than the token scope
             [
                 'expired_token' => false,
-                'token_scope'   => 'read',
+                'token_scope' => 'read',
                 'desired_scope' => 'read write',
-                'match'         => false,
+                'match' => false,
             ],
 
             // Should return true
             [
                 'expired_token' => false,
-                'token_scope'   => 'read',
+                'token_scope' => 'read',
                 'desired_scope' => 'read',
-                'match'         => true,
+                'match' => true,
             ],
         ];
     }
@@ -144,7 +144,7 @@ class ResourceServerTest extends TestCase
     public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
     {
         $tokenScope = explode(' ', $tokenScope);
-        $request    = $this->createMock(ServerRequestInterface::class);
+        $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 

@@ -20,10 +20,10 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
-use Interop\Http\ServerMiddleware\DelegateInterface;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\TokenRequestMiddleware;
 
@@ -47,19 +47,19 @@ class TokenRequestMiddlewareTest extends TestCase
     public function setUp()
     {
         $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $this->middleware          = new TokenRequestMiddleware($this->authorizationServer);
+        $this->middleware = new TokenRequestMiddleware($this->authorizationServer);
     }
 
     public function testCanHandleTokenRequest()
     {
-        $request  = $this->createMock(RequestInterface::class);
-        $delegate = $this->createMock(DelegateInterface::class);
+        $request = $this->createMock(RequestInterface::class);
+        $handler = $this->createMock(RequestHandlerInterface::class);
 
         $this->authorizationServer->expects($this->once())
             ->method('handleTokenRequest')
             ->with($request)
             ->willReturn($this->createMock(ResponseInterface::class));
 
-        $this->middleware->process($request, $delegate);
+        $this->middleware->process($request, $handler);
     }
 }

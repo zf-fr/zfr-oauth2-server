@@ -50,15 +50,15 @@ abstract class AbstractGrant implements GrantInterface
         RefreshToken $refreshToken = null,
         bool $useRefreshTokenScopes = false
     ): ResponseInterface {
-        $owner  = $accessToken->getOwner();
+        $owner = $accessToken->getOwner();
         $scopes = $useRefreshTokenScopes ? $refreshToken->getScopes() : $accessToken->getScopes();
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
-            'token_type'   => 'Bearer',
-            'expires_in'   => $accessToken->getExpiresIn(),
-            'scope'        => implode(' ', $scopes),
-            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null,
+            'token_type' => 'Bearer',
+            'expires_in' => $accessToken->getExpiresIn(),
+            'scope' => implode(' ', $scopes),
+            'owner_id' => $owner ? $owner->getTokenOwnerId() : null,
         ];
 
         if (null !== $refreshToken) {

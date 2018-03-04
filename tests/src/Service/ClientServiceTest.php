@@ -45,15 +45,15 @@ class ClientServiceTest extends TestCase
     public function setUp()
     {
         $this->clientRepository = $this->createMock(ClientRepositoryInterface::class);
-        $this->clientService    = new ClientService($this->clientRepository);
+        $this->clientService = new ClientService($this->clientRepository);
     }
 
     public function testCanGetClient()
     {
         $client = Client::reconstitute([
-                'id'           => 'client_id',
-                'name'         => 'name',
-                'secret'       => '',
+                'id' => 'client_id',
+                'name' => 'name',
+                'secret' => '',
                 'redirectUris' => [],
             ]);
 

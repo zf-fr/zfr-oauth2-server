@@ -52,7 +52,7 @@ class AbstractGrantTest extends TestCase
     public function testMethodPrepareTokenResponse($refreshToken, $useRefreshTokenScopes, $getOwner)
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
-        $accessToken   = $this->createMock(AccessToken::class);
+        $accessToken = $this->createMock(AccessToken::class);
 
         $accessToken->expects($this->once())->method('getOwner')->willReturn($getOwner);
         $accessToken->expects($this->once())->method('getExpiresIn');

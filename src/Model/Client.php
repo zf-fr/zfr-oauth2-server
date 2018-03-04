@@ -85,8 +85,8 @@ class Client
 
         $client = new static();
 
-        $client->id           = (string) Uuid::uuid4();
-        $client->name         = $name;
+        $client->id = (string) Uuid::uuid4();
+        $client->name = $name;
         $client->redirectUris = $redirectUris ?? [];
 
         return $client;
@@ -96,9 +96,9 @@ class Client
     {
         $client = new static();
 
-        $client->id           = $data['id'];
-        $client->name         = $data['name'];
-        $client->secret       = $data['secret'];
+        $client->id = $data['id'];
+        $client->name = $data['name'];
+        $client->secret = $data['secret'];
         $client->redirectUris = $data['redirectUris'];
 
         return $client;
@@ -169,7 +169,7 @@ class Client
      */
     public function generateSecret()
     {
-        $secret       = bin2hex(random_bytes(20));
+        $secret = bin2hex(random_bytes(20));
         $this->secret = password_hash($secret, PASSWORD_DEFAULT);
 
         return $secret;

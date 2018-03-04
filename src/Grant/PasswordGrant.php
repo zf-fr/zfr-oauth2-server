@@ -42,7 +42,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
-    const GRANT_TYPE          = 'password';
+    const GRANT_TYPE = 'password';
     const GRANT_RESPONSE_TYPE = '';
 
     /**
@@ -81,9 +81,9 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         RefreshTokenService $refreshTokenService,
         callable $callback
     ) {
-        $this->accessTokenService  = $accessTokenService;
+        $this->accessTokenService = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-        $this->callback            = $callback;
+        $this->callback = $callback;
     }
 
     /**
@@ -110,15 +110,15 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         // Validate the user using its username and password
         $username = $postParams['username'] ?? null;
         $password = $postParams['password'] ?? null;
-        $scope    = $postParams['scope'] ?? null;
-        $scopes   = is_string($scope) ? explode(' ', $scope) : [];
+        $scope = $postParams['scope'] ?? null;
+        $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
         if (null === $username || null === $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
         }
 
         $callback = $this->callback;
-        $owner    = $callback($username, $password);
+        $owner = $callback($username, $password);
 
         if (! $owner instanceof TokenOwnerInterface) {
             throw OAuth2Exception::accessDenied('Either username or password are incorrect');

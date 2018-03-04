@@ -67,10 +67,10 @@ class PasswordGrantTest extends TestCase
 
     public function setUp()
     {
-        $this->accessTokenService  = $this->createMock(AccessTokenService::class);
+        $this->accessTokenService = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
-        $callable    = function () {
+        $callable = function () {
         };
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
     }
@@ -173,11 +173,11 @@ class PasswordGrantTest extends TestCase
     private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
-        $token     = RefreshToken::reconstitute([
-            'token'     => 'azerty_refresh',
-            'owner'     => $owner,
-            'client'    => null,
-            'scopes'    => $scopes ?? ['read'],
+        $token = RefreshToken::reconstitute([
+            'token' => 'azerty_refresh',
+            'owner' => $owner,
+            'client' => null,
+            'scopes' => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
 
@@ -190,11 +190,11 @@ class PasswordGrantTest extends TestCase
     private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token     = AccessToken::reconstitute([
-            'token'     => 'azerty_access',
-            'owner'     => $owner,
-            'client'    => null,
-            'scopes'    => $scopes ?? ['read'],
+        $token = AccessToken::reconstitute([
+            'token' => 'azerty_access',
+            'owner' => $owner,
+            'client' => null,
+            'scopes' => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
 

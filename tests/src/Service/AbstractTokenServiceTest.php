@@ -55,8 +55,8 @@ class AbstractTokenServiceTest extends TestCase
 
     public function setUp()
     {
-        $this->tokenRepository      = $this->createMock(AccessTokenRepositoryInterface::class);
-        $this->scopeService         = $this->createMock(ScopeService::class);
+        $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
+        $this->scopeService = $this->createMock(ScopeService::class);
         $this->abstractTokenService = $this->getMockForAbstractClass(AbstractTokenService::class, [
             $this->tokenRepository,
             $this->scopeService,
@@ -68,11 +68,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token'     => 'token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -90,11 +90,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token'     => 'token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -120,11 +120,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token'     => 'token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 

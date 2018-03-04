@@ -69,8 +69,8 @@ class AuthorizationGrantTest extends TestCase
     public function setUp()
     {
         $this->authorizationCodeService = $this->createMock(AuthorizationCodeService::class);
-        $this->accessTokenService       = $this->createMock(AccessTokenService::class);
-        $this->refreshTokenService      = $this->createMock(RefreshTokenService::class);
+        $this->accessTokenService = $this->createMock(AccessTokenService::class);
+        $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
         $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
     }
@@ -105,9 +105,9 @@ class AuthorizationGrantTest extends TestCase
     {
         $queryParams = [
             'response_type' => 'code',
-            'scope'         => '',
-            'state'         => 'xyz',
-            'redirect_uri'  => 'http://www.custom-example.com',
+            'scope' => '',
+            'state' => 'xyz',
+            'redirect_uri' => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -118,9 +118,9 @@ class AuthorizationGrantTest extends TestCase
 
         $client = Client::reconstitute(
             [
-                'id'           => 'id',
-                'name'         => 'name',
-                'secret'       => '',
+                'id' => 'id',
+                'name' => 'name',
+                'secret' => '',
                 'redirectUris' => ['http://www.example.com', 'http://www.custom-example.com'],
             ]
         );
@@ -137,9 +137,9 @@ class AuthorizationGrantTest extends TestCase
 
         $queryParams = [
             'response_type' => 'code',
-            'scope'         => '',
-            'state'         => 'xyz',
-            'redirect_uri'  => 'http://www.custom-example.com',
+            'scope' => '',
+            'state' => 'xyz',
+            'redirect_uri' => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -224,15 +224,15 @@ class AuthorizationGrantTest extends TestCase
         $time->expects($this->any())->willReturn(10000);
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code'      => '123',
+        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123',
                                                                                'client_id' => 'client_123',
         ]);
 
         $client = Client::reconstitute(
             [
-                'id'           => 'client_123',
-                'name'         => 'name',
-                'secret'       => '',
+                'id' => 'client_123',
+                'name' => 'name',
+                'secret' => '',
                 'redirectUris' => [],
             ]
         );
@@ -288,11 +288,11 @@ class AuthorizationGrantTest extends TestCase
     private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
-        $token     = RefreshToken::reconstitute([
-            'token'     => 'azerty_refresh',
-            'owner'     => $owner,
-            'client'    => null,
-            'scopes'    => $scopes ?? ['read'],
+        $token = RefreshToken::reconstitute([
+            'token' => 'azerty_refresh',
+            'owner' => $owner,
+            'client' => null,
+            'scopes' => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
 
@@ -305,11 +305,11 @@ class AuthorizationGrantTest extends TestCase
     private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token     = AccessToken::reconstitute([
-            'token'     => 'azerty_access',
-            'owner'     => $owner,
-            'client'    => null,
-            'scopes'    => $scopes ?? ['read'],
+        $token = AccessToken::reconstitute([
+            'token' => 'azerty_access',
+            'owner' => $owner,
+            'client' => null,
+            'scopes' => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
 
@@ -322,12 +322,12 @@ class AuthorizationGrantTest extends TestCase
     private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
     {
         $invalidDate = (new \DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
-        $token       = AuthorizationCode::reconstitute([
-            'token'       => 'azerty_auth',
-            'owner'       => $owner,
-            'client'      => $client,
-            'scopes'      => $scopes ?? ['read'],
-            'expiresAt'   => $invalidDate,
+        $token = AuthorizationCode::reconstitute([
+            'token' => 'azerty_auth',
+            'owner' => $owner,
+            'client' => $client,
+            'scopes' => $scopes ?? ['read'],
+            'expiresAt' => $invalidDate,
             'redirectUri' => $redirectUri ?? '',
         ]);
 
@@ -340,12 +340,12 @@ class AuthorizationGrantTest extends TestCase
     private function getValidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token     = AuthorizationCode::reconstitute([
-            'token'       => 'azerty_auth',
-            'owner'       => $owner,
-            'client'      => $client,
-            'scopes'      => $scopes ?? ['read'],
-            'expiresAt'   => $validDate,
+        $token = AuthorizationCode::reconstitute([
+            'token' => 'azerty_auth',
+            'owner' => $owner,
+            'client' => $client,
+            'scopes' => $scopes ?? ['read'],
+            'expiresAt' => $validDate,
             'redirectUri' => $redirectUri ?? '',
         ]);
 

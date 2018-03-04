@@ -61,8 +61,8 @@ abstract class AbstractTokenService
         ServerOptions $serverOptions
     ) {
         $this->tokenRepository = $tokenRepository;
-        $this->scopeService    = $scopeService;
-        $this->serverOptions   = $serverOptions;
+        $this->scopeService = $scopeService;
+        $this->serverOptions = $serverOptions;
     }
 
     /**

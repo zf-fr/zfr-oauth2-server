@@ -58,33 +58,33 @@ return [
              * Middleware
              */
             AuthorizationRequestMiddleware::class => AuthorizationRequestMiddlewareFactory::class,
-            RevocationRequestMiddleware::class    => RevocationRequestMiddlewareFactory::class,
-            TokenRequestMiddleware::class         => TokenRequestMiddlewareFactory::class,
-            ResourceServerMiddleware::class       => ResourceServerMiddlewareFactory::class,
+            RevocationRequestMiddleware::class => RevocationRequestMiddlewareFactory::class,
+            TokenRequestMiddleware::class => TokenRequestMiddlewareFactory::class,
+            ResourceServerMiddleware::class => ResourceServerMiddlewareFactory::class,
 
             /**
              * Services
              */
-            AuthorizationServerInterface::class   => AuthorizationServerFactory::class,
-            ResourceServerInterface::class        => ResourceServerFactory::class,
-            ClientService::class                  => ClientServiceFactory::class,
-            ScopeService::class                   => ScopeServiceFactory::class,
-            AuthorizationCodeService::class       => AuthorizationCodeServiceFactory::class,
-            AccessTokenService::class             => AccessTokenServiceFactory::class,
-            RefreshTokenService::class            => RefreshTokenServiceFactory::class,
+            AuthorizationServerInterface::class => AuthorizationServerFactory::class,
+            ResourceServerInterface::class => ResourceServerFactory::class,
+            ClientService::class => ClientServiceFactory::class,
+            ScopeService::class => ScopeServiceFactory::class,
+            AuthorizationCodeService::class => AuthorizationCodeServiceFactory::class,
+            AccessTokenService::class => AccessTokenServiceFactory::class,
+            RefreshTokenService::class => RefreshTokenServiceFactory::class,
 
             /**
              * Grant Services
              */
-            ClientCredentialsGrant::class         => ClientCredentialsGrantFactory::class,
-            PasswordGrant::class                  => PasswordGrantFactory::class,
-            AuthorizationGrant::class             => AuthorizationGrantFactory::class,
-            RefreshTokenGrant::class              => RefreshTokenGrantFactory::class,
+            ClientCredentialsGrant::class => ClientCredentialsGrantFactory::class,
+            PasswordGrant::class => PasswordGrantFactory::class,
+            AuthorizationGrant::class => AuthorizationGrantFactory::class,
+            RefreshTokenGrant::class => RefreshTokenGrantFactory::class,
 
             /**
              * Utils
              */
-            ServerOptions::class                  => ServerOptionsFactory::class,
+            ServerOptions::class => ServerOptionsFactory::class,
         ],
     ],
 ];

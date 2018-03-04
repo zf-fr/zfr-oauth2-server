@@ -55,8 +55,8 @@ class AccessTokenServiceTest extends TestCase
     public function setUp()
     {
         $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $this->scopeService    = $this->createMock(ScopeService::class);
-        $this->tokenService    = new AccessTokenService(
+        $this->scopeService = $this->createMock(ScopeService::class);
+        $this->tokenService = new AccessTokenService(
             $this->tokenRepository,
             $this->scopeService,
             ServerOptions::fromArray()
@@ -67,11 +67,11 @@ class AccessTokenServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token'     => 'token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -97,11 +97,11 @@ class AccessTokenServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token'     => 'Token',
-                'owner'     => $this->createMock(TokenOwnerInterface::class),
-                'client'    => $this->createMock(Client::class),
+                'token' => 'Token',
+                'owner' => $this->createMock(TokenOwnerInterface::class),
+                'client' => $this->createMock(Client::class),
                 'expiresAt' => new \DateTimeImmutable(),
-                'scopes'    => [],
+                'scopes' => [],
             ]
         );
 
@@ -119,26 +119,26 @@ class AccessTokenServiceTest extends TestCase
             // With no scope
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => [],
-                'throw_exception'   => false,
+                'token_scope' => [],
+                'throw_exception' => false,
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read'],
-                'throw_exception'   => false,
+                'token_scope' => ['read'],
+                'throw_exception' => false,
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read', 'write'],
-                'throw_exception'   => false,
+                'token_scope' => ['read', 'write'],
+                'throw_exception' => false,
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'token_scope'       => ['read', 'write', 'delete'],
-                'throw_exception'   => true,
+                'token_scope' => ['read', 'write', 'delete'],
+                'throw_exception' => true,
             ],
         ];
     }
@@ -152,7 +152,7 @@ class AccessTokenServiceTest extends TestCase
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
-        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         if (empty($tokenScope)) {
@@ -208,7 +208,7 @@ class AccessTokenServiceTest extends TestCase
             ->method('save')
             ->will($this->returnArgument(0));
 
-        $owner  = $this->createMock(TokenOwnerInterface::class);
+        $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         $token = $this->tokenService->createToken($owner, $client, []);

@@ -72,21 +72,21 @@ class AuthorizationCodeTest extends TestCase
         return [
             [
                 [
-                    'token'       => 'token',
-                    'owner'       => null,
-                    'client'      => null,
-                    'expiresAt'   => null,
-                    'scopes'      => [],
+                    'token' => 'token',
+                    'owner' => null,
+                    'client' => null,
+                    'expiresAt' => null,
+                    'scopes' => [],
                     'redirectUri' => 'http://www.example.com',
                 ],
             ],
             [
                 [
-                    'token'       => 'token',
-                    'owner'       => null,
-                    'client'      => null,
-                    'expiresAt'   => null,
-                    'scopes'      => [],
+                    'token' => 'token',
+                    'owner' => null,
+                    'client' => null,
+                    'expiresAt' => null,
+                    'scopes' => [],
                     'redirectUri' => '',
                 ],
             ],
