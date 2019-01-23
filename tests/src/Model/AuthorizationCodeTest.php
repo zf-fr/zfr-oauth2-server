@@ -22,7 +22,6 @@ namespace ZfrOAuth2Test\Server\Model;
 
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
-use ZfrOAuth2\Server\Model\Client;
 
 /**
  * @author  Michaël Gallego <mic.gallego@gmail.com>
