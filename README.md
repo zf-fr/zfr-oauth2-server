@@ -143,7 +143,7 @@ $response = $authorizationServer->handleRequest($request, $user);
 
 The AuthorizationServerMiddleware is able to do this for you and retrieve a user instance from a (configurable) request attribute. It is up to you to provide middleware which runs with a higher priority to add a TokenOwnerInterface instance to the request attribute. 
 
-Example of such a implementation which uses ZendAuthentication and a TemplateRenderer from ZendExpressive.
+Example of such a implementation which uses LaminasAuthentication and a TemplateRenderer from Mezzio.
 
 ```
 final class OAuth2AuthorizationFlow
@@ -232,7 +232,7 @@ if (!$token = $resourceServer->getAccessToken($request, ['write']) {
 
 The ResourceServerMiddleware is able to do this for you, simply have it run before any other middleware.
 
-Example zend expressive route configuration.
+Example mezzio expressive route configuration.
 
 ```
 [
