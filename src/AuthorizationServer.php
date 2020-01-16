@@ -21,10 +21,10 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server;
 
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Throwable;
-use Laminas\Diactoros\Response;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\AuthorizationServerAwareInterface;
 use ZfrOAuth2\Server\Grant\GrantInterface;
