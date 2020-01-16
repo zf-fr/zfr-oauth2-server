@@ -22,7 +22,7 @@ declare(strict_types = 1);
 namespace ZfrOAuth2\Server\Grant;
 
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
+use Laminas\Diactoros\Response;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\RefreshToken;
 
