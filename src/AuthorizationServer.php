@@ -281,10 +281,9 @@ class AuthorizationServer implements AuthorizationServerInterface
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
      *
-     * @return Client|null
      * @throws OAuth2Exception (invalid_client) When a client secret is missing or client authentication failed
      */
-    private function getClient(ServerRequestInterface $request, bool $allowPublicClients)
+    private function getClient(ServerRequestInterface $request, bool $allowPublicClients): ?Client
     {
         list($id, $secret) = $this->extractClientCredentials($request);
 

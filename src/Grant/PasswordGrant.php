@@ -137,7 +137,7 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         return $this->prepareTokenResponse($accessToken, $refreshToken);
     }
 
-    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer)
+    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer): void
     {
         $this->authorizationServer = $authorizationServer;
     }

@@ -33,7 +33,7 @@ class ScopeTest extends TestCase
     /**
      * @dataProvider providerGenerateNewScope
      */
-    public function testGenerateNewScope($id, $name, $description, $isDefault)
+    public function testGenerateNewScope($id, $name, $description, $isDefault): void
     {
         /** @var Scope $scope */
         $scope = Scope::createNewScope($id, $name, $description, $isDefault);
@@ -44,7 +44,7 @@ class ScopeTest extends TestCase
         $this->assertEquals($isDefault, $scope->isDefault());
     }
 
-    public function providerGenerateNewScope()
+    public function providerGenerateNewScope(): array
     {
         return [
             [1, 'name', 'description', false],
@@ -55,7 +55,7 @@ class ScopeTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data)
+    public function testReconstitute($data): void
     {
         $scope = Scope::reconstitute($data);
 
@@ -65,7 +65,7 @@ class ScopeTest extends TestCase
         $this->assertEquals($data['isDefault'], $scope->isDefault());
     }
 
-    public function providerReconstitute()
+    public function providerReconstitute(): array
     {
         return [
             [
@@ -75,7 +75,7 @@ class ScopeTest extends TestCase
         ];
     }
 
-    public function testToString()
+    public function testToString(): void
     {
         $scope = Scope::createNewScope(1, 'name', 'description');
 

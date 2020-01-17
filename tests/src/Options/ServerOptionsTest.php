@@ -32,7 +32,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  */
 class ServerOptionsTest extends TestCase
 {
-    public function testDefaults()
+    public function testDefaults(): void
     {
         $options = ServerOptions::fromArray();
 
@@ -47,7 +47,7 @@ class ServerOptionsTest extends TestCase
         $this->assertEquals('oauth_token', $options->getTokenRequestAttribute());
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $callable = function () {
         };

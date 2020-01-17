@@ -61,13 +61,14 @@ class ResourceServer implements ResourceServerInterface
      * @return AccessToken|null
      * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
-    public function getAccessToken(ServerRequestInterface $request, $scopes = [])
+    public function getAccessToken(ServerRequestInterface $request, $scopes = []): ?AccessToken
     {
         if (! $token = $this->extractAccessToken($request)) {
             return null;
         }
 
         $token = $this->accessTokenService->getToken($token);
+        /** @var AccessToken $token */
 
         if ($token === null || ! $token->isValid($scopes)) {
             throw InvalidAccessTokenException::invalidToken('Access token has expired or has been deleted');
@@ -78,10 +79,8 @@ class ResourceServer implements ResourceServerInterface
 
     /**
      * Extract the token either from Authorization header or query params
-     *
-     * @return string|null
      */
-    private function extractAccessToken(ServerRequestInterface $request)
+    private function extractAccessToken(ServerRequestInterface $request): ?string
     {
         // The preferred way is using Authorization header
         if ($request->hasHeader('Authorization')) {

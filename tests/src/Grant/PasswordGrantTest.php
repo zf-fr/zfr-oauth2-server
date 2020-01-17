@@ -46,12 +46,12 @@ class PasswordGrantTest extends TestCase
     use PHPMock;
 
     /**
-     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $accessTokenService;
 
     /**
-     * @var RefreshTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var RefreshTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $refreshTokenService;
 
@@ -65,7 +65,7 @@ class PasswordGrantTest extends TestCase
      */
     protected $grant;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->accessTokenService = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
@@ -75,13 +75,13 @@ class PasswordGrantTest extends TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
     }
 
-    public function testAssertDoesNotImplementAuthorization()
+    public function testAssertDoesNotImplementAuthorization(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testAssertInvalidIfNoUsernameNorPasswordIsFound()
+    public function testAssertInvalidIfNoUsernameNorPasswordIsFound(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
@@ -90,7 +90,7 @@ class PasswordGrantTest extends TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testAssertInvalidIfWrongCredentials()
+    public function testAssertInvalidIfWrongCredentials(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'access_denied');
 
@@ -109,7 +109,7 @@ class PasswordGrantTest extends TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function hasRefreshGrant()
+    public function hasRefreshGrant(): array
     {
         return [
             [true],
@@ -120,7 +120,7 @@ class PasswordGrantTest extends TestCase
     /**
      * @dataProvider hasRefreshGrant
      */
-    public function testCanCreateTokenResponse($hasRefreshGrant)
+    public function testCanCreateTokenResponse(bool $hasRefreshGrant)
     {
         $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
@@ -167,10 +167,7 @@ class PasswordGrantTest extends TestCase
         }
     }
 
-    /**
-     * @return RefreshToken
-     */
-    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
+    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null): RefreshToken
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
         $token = RefreshToken::reconstitute([
@@ -184,10 +181,7 @@ class PasswordGrantTest extends TestCase
         return $token;
     }
 
-    /**
-     * @return AccessToken
-     */
-    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
+    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null): AccessToken
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token = AccessToken::reconstitute([
@@ -201,17 +195,17 @@ class PasswordGrantTest extends TestCase
         return $token;
     }
 
-    public function testMethodGetType()
+    public function testMethodGetType(): void
     {
         $this->assertSame('password', $this->grant->getType());
     }
 
-    public function testMethodGetResponseType()
+    public function testMethodGetResponseType(): void
     {
         $this->assertSame('', $this->grant->getResponseType());
     }
 
-    public function testMethodAllowPublicClients()
+    public function testMethodAllowPublicClients(): void
     {
         $this->assertTrue($this->grant->allowPublicClients());
     }

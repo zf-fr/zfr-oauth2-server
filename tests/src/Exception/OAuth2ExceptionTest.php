@@ -33,7 +33,7 @@ class OAuth2ExceptionTest extends TestCase
     /**
      * @dataProvider dataproviderErrorsCode
      */
-    public function testErrorsCode($errorName, $expectedErrorCode)
+    public function testErrorsCode(string $errorName, string $expectedErrorCode): void
     {
         $exception = OAuth2Exception::$errorName('description');
 
@@ -42,7 +42,7 @@ class OAuth2ExceptionTest extends TestCase
         $this->assertSame($expectedErrorCode, $exception->getCode());
     }
 
-    public function dataproviderErrorsCode()
+    public function dataproviderErrorsCode(): array
     {
         return [
             ['accessDenied', 'access_denied'],

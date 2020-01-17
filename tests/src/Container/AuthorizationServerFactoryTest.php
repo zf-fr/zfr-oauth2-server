@@ -38,7 +38,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class AuthorizationServerFactoryTest extends TestCase
 {
-    public function testCanCreateFromFactory()
+    public function testCanCreateFromFactory(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $serverOptions = ServerOptions::fromArray(['grants' => ['MyGrant']]);

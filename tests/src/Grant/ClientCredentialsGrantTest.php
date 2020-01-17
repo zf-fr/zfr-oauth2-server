@@ -41,7 +41,7 @@ class ClientCredentialsGrantTest extends TestCase
     use PHPMock;
 
     /**
-     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenService;
 
@@ -50,7 +50,7 @@ class ClientCredentialsGrantTest extends TestCase
      */
     protected $grant;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tokenService = $this->createMock(AccessTokenService::class);
         $this->grant = new ClientCredentialsGrant($this->tokenService);
@@ -65,7 +65,7 @@ class ClientCredentialsGrantTest extends TestCase
         );
     }
 
-    public function testCanCreateTokenResponse()
+    public function testCanCreateTokenResponse(): void
     {
         $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
@@ -96,17 +96,17 @@ class ClientCredentialsGrantTest extends TestCase
         $this->assertEquals(1, $body['owner_id']);
     }
 
-    public function testMethodGetType()
+    public function testMethodGetType(): void
     {
         $this->assertSame('client_credentials', $this->grant->getType());
     }
 
-    public function testMethodGetResponseType()
+    public function testMethodGetResponseType(): void
     {
         $this->assertSame('', $this->grant->getResponseType());
     }
 
-    public function testMethodAllowPublicClients()
+    public function testMethodAllowPublicClients(): void
     {
         $this->assertFalse($this->grant->allowPublicClients());
     }

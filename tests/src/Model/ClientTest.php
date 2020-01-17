@@ -33,7 +33,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider providerGenerateNewClient
      */
-    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris)
+    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris): void
     {
         /** @var Client $client */
         $client = Client::createNewClient($name, $redirectUris);
@@ -57,7 +57,7 @@ class ClientTest extends TestCase
         }
     }
 
-    public function providerGenerateNewClient()
+    public function providerGenerateNewClient(): array
     {
         return [
             [1, 'name', 'secret', 'http://www.example.com'],
@@ -68,7 +68,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data)
+    public function testReconstitute(array $data): void
     {
         /** @var Client $client */
         $client = Client::reconstitute($data);
@@ -98,7 +98,7 @@ class ClientTest extends TestCase
         }
     }
 
-    public function providerReconstitute()
+    public function providerReconstitute(): array
     {
         return [
             [
@@ -118,7 +118,7 @@ class ClientTest extends TestCase
         ];
     }
 
-    public function testGetters()
+    public function testGetters(): void
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
 
@@ -132,7 +132,7 @@ class ClientTest extends TestCase
         $this->assertEquals('http://www.example.com', $client->getRedirectUris()[0]);
     }
 
-    public function testCanCheckPublicClient()
+    public function testCanCheckPublicClient(): void
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
         $this->assertTrue($client->isPublic());
@@ -143,7 +143,7 @@ class ClientTest extends TestCase
         $this->assertFalse($client->isPublic());
     }
 
-    public function testRedirectUri()
+    public function testRedirectUri(): void
     {
         $client = Client::createNewClient('name', 'http://www.example.com');
         $this->assertCount(1, $client->getRedirectUris());
@@ -157,7 +157,7 @@ class ClientTest extends TestCase
         $this->assertFalse($client->hasRedirectUri('http://www.example3.com'));
     }
 
-    public function testGenerateSecret()
+    public function testGenerateSecret(): void
     {
         $client = Client::createNewClient('name');
 
@@ -171,7 +171,7 @@ class ClientTest extends TestCase
         $this->assertFalse($client->authenticate($client->getSecret()));
     }
 
-    public function testAuthenticate()
+    public function testAuthenticate(): void
     {
         $client = Client::reconstitute(
             [

@@ -38,7 +38,7 @@ class RefreshTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewRefreshToken
      */
-    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
+    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes): void
     {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
@@ -63,7 +63,7 @@ class RefreshTokenTest extends TestCase
         }
     }
 
-    public function providerGenerateNewRefreshToken()
+    public function providerGenerateNewRefreshToken(): array
     {
         return [
             [
@@ -86,7 +86,7 @@ class RefreshTokenTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data)
+    public function testReconstitute($data): void
     {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::reconstitute($data);
@@ -106,7 +106,7 @@ class RefreshTokenTest extends TestCase
         $this->assertSame($data['scopes'], $refreshToken->getScopes());
     }
 
-    public function providerReconstitute()
+    public function providerReconstitute(): array
     {
         return [
             [
@@ -130,7 +130,7 @@ class RefreshTokenTest extends TestCase
         ];
     }
 
-    public function testCalculateExpiresIn()
+    public function testCalculateExpiresIn(): void
     {
         $refreshToken = RefreshToken::createNewRefreshToken(60);
 
@@ -138,20 +138,20 @@ class RefreshTokenTest extends TestCase
         $this->assertEquals(60, $refreshToken->getExpiresIn());
     }
 
-    public function testCanCheckIfATokenIsExpired()
+    public function testCanCheckIfATokenIsExpired(): void
     {
         $refreshToken = RefreshToken::createNewRefreshToken(-60);
 
         $this->assertTrue($refreshToken->isExpired());
     }
 
-    public function testSupportLongLiveToken()
+    public function testSupportLongLiveToken(): void
     {
         $refreshToken = RefreshToken::createNewRefreshToken(60);
         $this->assertFalse($refreshToken->isExpired());
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $accessToken = RefreshToken::createNewRefreshToken(60, null, null, ['read', 'write']);
         $this->assertTrue($accessToken->isValid('read'));

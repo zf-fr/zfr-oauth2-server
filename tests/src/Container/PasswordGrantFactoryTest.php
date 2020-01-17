@@ -36,7 +36,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class PasswordGrantFactoryTest extends TestCase
 {
-    public function testCanCreateFromFactory()
+    public function testCanCreateFromFactory(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $callable = function () {
@@ -64,7 +64,7 @@ class PasswordGrantFactoryTest extends TestCase
         $this->assertInstanceOf(PasswordGrant::class, $service);
     }
 
-    public function testCanCreateFromFactoryOwnerCallableOptionsIsString()
+    public function testCanCreateFromFactoryOwnerCallableOptionsIsString(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $callable = function () {

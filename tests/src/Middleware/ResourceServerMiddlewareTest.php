@@ -37,7 +37,7 @@ use ZfrOAuth2\Server\ResourceServer;
  */
 class ResourceServerMiddlewareTest extends TestCase
 {
-    public function testWillGetAccessTokenWithAccessTokenAsResult()
+    public function testWillGetAccessTokenWithAccessTokenAsResult(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
         $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');
@@ -67,7 +67,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $middleware->process($request, $handler);
     }
 
-    public function testWillGetAccessTokenWithNullAsResult()
+    public function testWillGetAccessTokenWithNullAsResult(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
         $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');
@@ -97,7 +97,7 @@ class ResourceServerMiddlewareTest extends TestCase
         $result = $middleware->process($request, $handler);
     }
 
-    public function testWillCallGetAccessTokenWithException()
+    public function testWillCallGetAccessTokenWithException(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
         $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');

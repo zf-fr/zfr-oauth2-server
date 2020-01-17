@@ -37,13 +37,13 @@ class ScopeServiceTest extends TestCase
      */
     protected $scopeRepository;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->scopeRepository = $this->createMock(ScopeRepositoryInterface::class);
         $this->tokenService = new ScopeService($this->scopeRepository);
     }
 
-    public function testCanCreateScope()
+    public function testCanCreateScope(): void
     {
         $scope = Scope::createNewScope(1, 'name');
         $this->scopeRepository->expects($this->once())
@@ -54,7 +54,7 @@ class ScopeServiceTest extends TestCase
         $this->tokenService->createScope($scope);
     }
 
-    public function testCanGetAllScopesFromRepository()
+    public function testCanGetAllScopesFromRepository(): void
     {
         $this->scopeRepository->expects($this->once())
             ->method('findAllScopes')
@@ -63,13 +63,13 @@ class ScopeServiceTest extends TestCase
         $this->tokenService->getAll();
     }
 
-    public function testGetDefaultScopes()
+    public function testGetDefaultScopes(): void
     {
         $this->scopeRepository->expects($this->once())
             ->method('findDefaultScopes')
             ->with()
             ->willReturn([]);
 
-        $this->assertInternalType('array', $this->tokenService->getDefaultScopes());
+        $this->assertIsArray($this->tokenService->getDefaultScopes());
     }
 }

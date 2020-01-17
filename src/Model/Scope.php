@@ -87,12 +87,7 @@ class Scope
         return $scope;
     }
 
-    /**
-     * Get the scope id
-     *
-     * @return int|null
-     */
-    public function getId()
+    public function getId(): ?int
     {
         return $this->id;
     }

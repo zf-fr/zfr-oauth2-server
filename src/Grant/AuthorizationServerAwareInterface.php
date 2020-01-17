@@ -31,11 +31,5 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
  */
 interface AuthorizationServerAwareInterface
 {
-    /**
-     * Set the authorization server
-     *
-     * @param  AuthorizationServerInterface $authorizationServer
-     * @return void
-     */
-    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer);
+    public function setAuthorizationServer(AuthorizationServerInterface $authorizationServer): void;
 }

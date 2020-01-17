@@ -34,13 +34,13 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  */
 class AbstractGrantTest extends TestCase
 {
-    public function testMethodGetType()
+    public function testMethodGetType(): void
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
         $this->assertSame('', $abstractGrant->getType());
     }
 
-    public function testMethodGetResponseType()
+    public function testMethodGetResponseType(): void
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
         $this->assertSame('', $abstractGrant->getResponseType());
@@ -49,7 +49,7 @@ class AbstractGrantTest extends TestCase
     /**
      * @dataProvider dpMethodPrepareTokenResponse
      */
-    public function testMethodPrepareTokenResponse($refreshToken, $useRefreshTokenScopes, $getOwner)
+    public function testMethodPrepareTokenResponse(?RefreshToken $refreshToken, bool $useRefreshTokenScopes, ?TokenOwnerInterface $getOwner): void
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
         $accessToken = $this->createMock(AccessToken::class);
@@ -79,7 +79,7 @@ class AbstractGrantTest extends TestCase
         $this->assertInstanceOf(ResponseInterface::class, $protectedBound($accessToken, $refreshToken, $useRefreshTokenScopes));
     }
 
-    public function dpMethodPrepareTokenResponse()
+    public function dpMethodPrepareTokenResponse(): array
     {
         return [
             [

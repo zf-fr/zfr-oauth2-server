@@ -33,7 +33,7 @@ use ZfrOAuth2\Server\Service\ClientService;
 class ClientServiceTest extends TestCase
 {
     /**
-     * @var ClientRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var ClientRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $clientRepository;
 
@@ -42,13 +42,13 @@ class ClientServiceTest extends TestCase
      */
     protected $clientService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->clientRepository = $this->createMock(ClientRepositoryInterface::class);
         $this->clientService = new ClientService($this->clientRepository);
     }
 
-    public function testCanGetClient()
+    public function testCanGetClient(): void
     {
         $client = Client::reconstitute([
                 'id' => 'client_id',
@@ -65,7 +65,7 @@ class ClientServiceTest extends TestCase
         $this->assertSame($client, $this->clientService->getClient('client_id'));
     }
 
-    public function testRegisterClient()
+    public function testRegisterClient(): void
     {
         $this->clientRepository->expects($this->once())
                             ->method('idExists')

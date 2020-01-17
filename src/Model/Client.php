@@ -164,10 +164,8 @@ class Client
 
     /**
      * Creates a strong, unique secret and crypt it on the model
-     *
-     * @return string Secret not encrypted
      */
-    public function generateSecret()
+    public function generateSecret(): string
     {
         $secret = bin2hex(random_bytes(20));
         $this->secret = password_hash($secret, PASSWORD_DEFAULT);

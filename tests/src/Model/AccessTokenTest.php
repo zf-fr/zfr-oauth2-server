@@ -40,7 +40,7 @@ class AccessTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewAccessToken
      */
-    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes)
+    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes): void
     {
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
@@ -65,7 +65,7 @@ class AccessTokenTest extends TestCase
         }
     }
 
-    public function providerGenerateNewAccessToken()
+    public function providerGenerateNewAccessToken(): array
     {
         return [
             [
@@ -88,7 +88,7 @@ class AccessTokenTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data)
+    public function testReconstitute(array $data): void
     {
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::reconstitute($data);
@@ -108,7 +108,7 @@ class AccessTokenTest extends TestCase
         $this->assertSame($data['scopes'], $accessToken->getScopes());
     }
 
-    public function providerReconstitute()
+    public function providerReconstitute(): array
     {
         return [
             [
@@ -132,7 +132,7 @@ class AccessTokenTest extends TestCase
         ];
     }
 
-    public function testCalculateExpiresIn()
+    public function testCalculateExpiresIn(): void
     {
         $accessToken = AccessToken::createNewAccessToken(60);
 
@@ -140,20 +140,20 @@ class AccessTokenTest extends TestCase
         $this->assertEquals(60, $accessToken->getExpiresIn());
     }
 
-    public function testCanCheckIfATokenIsExpired()
+    public function testCanCheckIfATokenIsExpired(): void
     {
         $accessToken = AccessToken::createNewAccessToken(-60);
 
         $this->assertTrue($accessToken->isExpired());
     }
 
-    public function testSupportLongLiveToken()
+    public function testSupportLongLiveToken(): void
     {
         $accessToken = AccessToken::createNewAccessToken(60);
         $this->assertFalse($accessToken->isExpired());
     }
 
-    public function testIsValid()
+    public function testIsValid(): void
     {
         $accessToken = AccessToken::createNewAccessToken(60, null, null, ['read', 'write']);
         $this->assertTrue($accessToken->isValid('read'));

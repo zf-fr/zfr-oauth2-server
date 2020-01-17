@@ -67,11 +67,8 @@ abstract class AbstractTokenService
 
     /**
      * Get a token using its identifier (the token itself)
-     *
-     * @param  string $token
-     * @return AbstractToken|null
      */
-    public function getToken(string $token)
+    public function getToken(string $token): ?AbstractToken
     {
         /* @var \ZfrOAuth2\Server\Model\AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->findByToken($token);
@@ -88,12 +85,12 @@ abstract class AbstractTokenService
     /**
      * Remove the abstract token from the underlying storage
      */
-    public function deleteToken(AbstractToken $token)
+    public function deleteToken(AbstractToken $token): void
     {
         $this->tokenRepository->deleteToken($token);
     }
 
-    public function purgeExpiredTokens()
+    public function purgeExpiredTokens(): void
     {
         $this->tokenRepository->purgeExpiredTokens();
     }
@@ -105,7 +102,7 @@ abstract class AbstractTokenService
      *
      * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered
      */
-    protected function validateTokenScopes(array $scopes)
+    protected function validateTokenScopes(array $scopes): void
     {
         $scopes = array_map(function ($scope) {
             return (string) $scope;
