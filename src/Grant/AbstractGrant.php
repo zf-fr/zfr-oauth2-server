@@ -21,8 +21,8 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server\Grant;
 
+use Laminas\Diactoros\Response;
 use Psr\Http\Message\ResponseInterface;
-use Zend\Diactoros\Response;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\RefreshToken;
 
