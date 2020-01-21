@@ -126,30 +126,24 @@ abstract class AbstractToken
 
     /**
      * Get the client that issued this token
-     *
-     * @return Client|null
      */
-    public function getClient()
+    public function getClient(): ?Client
     {
         return $this->client;
     }
 
     /**
      * Get the token owner
-     *
-     * @return TokenOwnerInterface|null
      */
-    public function getOwner()
+    public function getOwner(): ?TokenOwnerInterface
     {
         return $this->owner;
     }
 
     /**
      * Get when this token should expire
-     *
-     * @return DateTimeInterface|null
      */
-    public function getExpiresAt()
+    public function getExpiresAt(): ?DateTimeInterface
     {
         return $this->expiresAt ? clone $this->expiresAt : null;
     }

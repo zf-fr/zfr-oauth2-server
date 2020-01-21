@@ -28,17 +28,14 @@ use ZfrOAuth2\Server\Model\AbstractToken;
  */
 interface TokenRepositoryInterface
 {
-    /**
-     * @return AbstractToken|null
-     */
-    public function findByToken(string $token);
+    public function findByToken(string $token): ?AbstractToken;
 
     /**
      * @param AbstractToken $token
      */
     public function deleteToken(AbstractToken $token);
 
-    public function purgeExpiredTokens();
+    public function purgeExpiredTokens(): void;
 
     public function tokenExists(string $token): bool;
 }

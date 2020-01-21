@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
  */
 class AuthorizationRequestMiddlewareTest extends TestCase
 {
-    public function testWillHandleAuthorizationRequest()
+    public function testWillHandleAuthorizationRequest(): void
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $middleware = new AuthorizationRequestMiddleware($authorizationServer, 'owner');

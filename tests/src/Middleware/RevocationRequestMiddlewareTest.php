@@ -35,7 +35,7 @@ use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 class RevocationRequestMiddlewareTest extends TestCase
 {
     /**
-     * @var \PHPUnit_Framework_MockObject_MockObject|AuthorizationServerInterface
+     * @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationServerInterface
      */
     private $authorizationServer;
 
@@ -44,13 +44,13 @@ class RevocationRequestMiddlewareTest extends TestCase
      */
     private $middleware;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
         $this->middleware = new RevocationRequestMiddleware($this->authorizationServer);
     }
 
-    public function testCanHandleRevocationRequest()
+    public function testCanHandleRevocationRequest(): void
     {
         $request = $this->createMock(RequestInterface::class);
         $delegate = $this->createMock(RequestHandlerInterface::class);

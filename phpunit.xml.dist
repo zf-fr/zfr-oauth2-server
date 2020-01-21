@@ -8,9 +8,7 @@
         verbose="true"
         stopOnFailure="false"
         processIsolation="false"
-        backupGlobals="false"
-        syntaxCheck="true"
-        >
+        backupGlobals="false">
     <testsuite name="ZfrOAuth2Server tests">
         <directory>./tests</directory>
     </testsuite>

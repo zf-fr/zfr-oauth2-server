@@ -47,17 +47,17 @@ class AuthorizationGrantTest extends TestCase
     use PHPMock;
 
     /**
-     * @var AuthorizationCodeService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AuthorizationCodeService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $authorizationCodeService;
 
     /**
-     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $accessTokenService;
 
     /**
-     * @var RefreshTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var RefreshTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $refreshTokenService;
 
@@ -66,7 +66,7 @@ class AuthorizationGrantTest extends TestCase
      */
     protected $grant;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->authorizationCodeService = $this->createMock(AuthorizationCodeService::class);
         $this->accessTokenService = $this->createMock(AccessTokenService::class);
@@ -75,7 +75,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
     }
 
-    public function testAssertInvalidIfWrongResponseType()
+    public function testAssertInvalidIfWrongResponseType(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
 
@@ -85,7 +85,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testCanCreateAuthorizationCodeUsingClientRedirectUri()
+    public function testCanCreateAuthorizationCodeUsingClientRedirectUri(): void
     {
         $queryParams = ['response_type' => 'code', 'scope' => '', 'state' => 'xyz'];
 
@@ -101,7 +101,7 @@ class AuthorizationGrantTest extends TestCase
         $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
     }
 
-    public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUriInList()
+    public function testCanCreateAuthorizationCodeUsingOverriddenRedirectUriInList(): void
     {
         $queryParams = [
             'response_type' => 'code',
@@ -131,7 +131,7 @@ class AuthorizationGrantTest extends TestCase
         $this->assertEquals('http://www.custom-example.com?code=azerty_auth&state=xyz', $location);
     }
 
-    public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized()
+    public function testTriggerExceptionIfCustomRedirectUriIsNotAuthorized(): void
     {
         $this->expectException(OAuth2Exception::class);
 
@@ -151,7 +151,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', 'http://www.example.com'));
     }
 
-    public function testAssertInvalidIfNoCodeIsSet()
+    public function testAssertInvalidIfNoCodeIsSet(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
@@ -160,7 +160,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testAssertInvalidGrantIfCodeIsInvalid()
+    public function testAssertInvalidGrantIfCodeIsInvalid(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
@@ -175,7 +175,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testAssertInvalidGrantIfCodeIsExpired()
+    public function testAssertInvalidGrantIfCodeIsExpired(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
@@ -190,7 +190,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function testInvalidRequestIfAuthClientIsNotSame()
+    public function testInvalidRequestIfAuthClientIsNotSame(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
 
@@ -207,7 +207,7 @@ class AuthorizationGrantTest extends TestCase
         $this->grant->createTokenResponse($request, CLient::createNewClient('id', 'http://www.example.com'));
     }
 
-    public function hasRefreshGrant()
+    public function hasRefreshGrant(): array
     {
         return [
             [true],
@@ -218,7 +218,7 @@ class AuthorizationGrantTest extends TestCase
     /**
      * @dataProvider hasRefreshGrant
      */
-    public function testCanCreateTokenResponse($hasRefreshGrant)
+    public function testCanCreateTokenResponse(bool $hasRefreshGrant): void
     {
         $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
         $time->expects($this->any())->willReturn(10000);
@@ -282,10 +282,7 @@ class AuthorizationGrantTest extends TestCase
         }
     }
 
-    /**
-     * @return RefreshToken
-     */
-    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null)
+    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null): RefreshToken
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
         $token = RefreshToken::reconstitute([
@@ -299,10 +296,7 @@ class AuthorizationGrantTest extends TestCase
         return $token;
     }
 
-    /**
-     * @return AccessToken
-     */
-    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null)
+    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null): AccessToken
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token = AccessToken::reconstitute([
@@ -316,10 +310,7 @@ class AuthorizationGrantTest extends TestCase
         return $token;
     }
 
-    /**
-     * @return AuthorizationCode
-     */
-    private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
+    private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null): AuthorizationCode
     {
         $invalidDate = (new \DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
         $token = AuthorizationCode::reconstitute([
@@ -334,10 +325,7 @@ class AuthorizationGrantTest extends TestCase
         return $token;
     }
 
-    /**
-     * @return AuthorizationCode
-     */
-    private function getValidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null)
+    private function getValidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null): AuthorizationCode
     {
         $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         $token = AuthorizationCode::reconstitute([
@@ -352,17 +340,17 @@ class AuthorizationGrantTest extends TestCase
         return $token;
     }
 
-    public function testMethodGetType()
+    public function testMethodGetType(): void
     {
         $this->assertSame('authorization_code', $this->grant->getType());
     }
 
-    public function testMethodGetResponseType()
+    public function testMethodGetResponseType(): void
     {
         $this->assertSame('code', $this->grant->getResponseType());
     }
 
-    public function testMethodAllowPublicClients()
+    public function testMethodAllowPublicClients(): void
     {
         $this->assertTrue($this->grant->allowPublicClients());
     }

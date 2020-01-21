@@ -30,10 +30,7 @@ interface ClientRepositoryInterface
 {
     public function save(Client $client): Client;
 
-    /**
-     * @return Client|null
-     */
-    public function findById(string $id);
+    public function findById(string $id): ?Client;
 
     public function idExists(string $id): bool;
 }

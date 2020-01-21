@@ -35,7 +35,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 class ResourceServerTest extends TestCase
 {
     /**
-     * @var AccessTokenService|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenService;
 
@@ -44,13 +44,13 @@ class ResourceServerTest extends TestCase
      */
     protected $resourceServer;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tokenService = $this->createMock(AccessTokenService::class);
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
-    public function testCanExtractAccessTokenFromAuthorizationHeader()
+    public function testCanExtractAccessTokenFromAuthorizationHeader(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
@@ -67,7 +67,7 @@ class ResourceServerTest extends TestCase
         $this->assertSame($token, $this->resourceServer->getAccessToken($request));
     }
 
-    public function testCanExtractAccessTokenFromQueryString()
+    public function testCanExtractAccessTokenFromQueryString(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(false));
@@ -93,7 +93,7 @@ class ResourceServerTest extends TestCase
         $this->assertNull($this->resourceServer->getAccessToken($request));
     }
 
-    public function testThrowExceptionIfTokenDoesNotExistAnymore()
+    public function testThrowExceptionIfTokenDoesNotExistAnymore(): void
     {
         $this->expectException(InvalidAccessTokenException::class);
 
@@ -109,7 +109,7 @@ class ResourceServerTest extends TestCase
         $this->resourceServer->getAccessToken($request);
     }
 
-    public function requestProvider()
+    public function requestProvider(): array
     {
         return [
             // Should return false because the token is expired
@@ -141,7 +141,7 @@ class ResourceServerTest extends TestCase
     /**
      * @dataProvider requestProvider
      */
-    public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match)
+    public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match): void
     {
         $tokenScope = explode(' ', $tokenScope);
         $request = $this->createMock(ServerRequestInterface::class);

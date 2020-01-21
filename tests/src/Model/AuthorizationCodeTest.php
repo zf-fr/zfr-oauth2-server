@@ -34,7 +34,7 @@ class AuthorizationCodeTest extends TestCase
     /**
      * @dataProvider providerGenerateNewAuthorizationCode
      */
-    public function testGenerateNewAuthorizationCode($redirectUri)
+    public function testGenerateNewAuthorizationCode(?string $redirectUri): void
     {
         /** @var AuthorizationCode $authorizationCode */
         $authorizationCode = AuthorizationCode::createNewAuthorizationCode(3600, $redirectUri);
@@ -46,7 +46,7 @@ class AuthorizationCodeTest extends TestCase
         }
     }
 
-    public function providerGenerateNewAuthorizationCode()
+    public function providerGenerateNewAuthorizationCode(): array
     {
         return [
             [''],

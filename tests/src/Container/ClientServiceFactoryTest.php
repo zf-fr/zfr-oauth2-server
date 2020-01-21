@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Service\ClientService;
  */
 class ClientServiceFactoryTest extends TestCase
 {
-    public function testCanCreateFromFactory()
+    public function testCanCreateFromFactory(): void
     {
         $container = $this->createMock(ContainerInterface::class);
 

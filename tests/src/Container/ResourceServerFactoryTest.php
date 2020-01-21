@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  */
 class ResourceServerFactoryTest extends TestCase
 {
-    public function testCanCreateFromFactory()
+    public function testCanCreateFromFactory(): void
     {
         $container = $this->createMock(ContainerInterface::class);
         $tokenService = $this->createMock(AccessTokenService::class);

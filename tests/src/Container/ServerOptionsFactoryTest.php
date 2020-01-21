@@ -33,7 +33,7 @@ use ZfrOAuth2\Server\Options\ServerOptions;
  */
 class ServerOptionsFactoryTest extends TestCase
 {
-    public function testCanCreateFromFactory()
+    public function testCanCreateFromFactory(): void
     {
         $container = $this->createMock(ContainerInterface::class);
 

@@ -38,12 +38,12 @@ use ZfrOAuth2\Server\Service\ScopeService;
 class AccessTokenServiceTest extends TestCase
 {
     /**
-     * @var AccessTokenRepositoryInterface|\PHPUnit_Framework_MockObject_MockObject
+     * @var AccessTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $tokenRepository;
 
     /**
-     * @var ScopeService|\PHPUnit_Framework_MockObject_MockObject
+     * @var ScopeService|\PHPUnit\Framework\MockObject\MockObject
      */
     protected $scopeService;
 
@@ -52,7 +52,7 @@ class AccessTokenServiceTest extends TestCase
      */
     protected $tokenService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
         $this->scopeService = $this->createMock(ScopeService::class);
@@ -63,7 +63,7 @@ class AccessTokenServiceTest extends TestCase
         );
     }
 
-    public function testCanGetToken()
+    public function testCanGetToken(): void
     {
         $token = AccessToken::reconstitute(
             [
@@ -83,7 +83,7 @@ class AccessTokenServiceTest extends TestCase
         $this->assertSame($token, $this->tokenService->getToken('token'));
     }
 
-    public function testGetTokenReturnNullOnTokenNotFound()
+    public function testGetTokenReturnNullOnTokenNotFound(): void
     {
         $this->tokenRepository
             ->expects($this->once())
@@ -93,7 +93,7 @@ class AccessTokenServiceTest extends TestCase
         $this->assertNull($this->tokenService->getToken('token'));
     }
 
-    public function testDoesCaseSensitiveTest()
+    public function testDoesCaseSensitiveTest(): void
     {
         $token = AccessToken::reconstitute(
             [
@@ -113,7 +113,7 @@ class AccessTokenServiceTest extends TestCase
         $this->assertNull($this->tokenService->getToken('token'));
     }
 
-    public function scopeProvider()
+    public function scopeProvider(): array
     {
         return [
             // With no scope
@@ -146,7 +146,7 @@ class AccessTokenServiceTest extends TestCase
     /**
      * @dataProvider scopeProvider
      */
-    public function testCanSaveToken($registeredScopes, $tokenScope, $throwException)
+    public function testCanSaveToken($registeredScopes, $tokenScope, $throwException): void
     {
         if ($throwException) {
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
@@ -190,7 +190,7 @@ class AccessTokenServiceTest extends TestCase
         }
     }
 
-    public function testCreateNewTokenUntilOneDoesNotExist()
+    public function testCreateNewTokenUntilOneDoesNotExist(): void
     {
         $this->scopeService->expects($this->once())->method('getDefaultScopes')->will($this->returnValue(['read']));
 

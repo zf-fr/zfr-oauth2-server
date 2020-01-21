@@ -44,7 +44,7 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  */
 class AuthorizationServerTest extends TestCase
 {
-    public function testCanCheckAndGetForGrants()
+    public function testCanCheckAndGetForGrants(): void
     {
         $clientService = $this->createMock(ClientService::class);
         $grant = new PasswordGrant(
@@ -68,7 +68,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->getGrant(ClientCredentialsGrant::GRANT_TYPE);
     }
 
-    public function testCanCheckAndGetForResponseType()
+    public function testCanCheckAndGetForResponseType(): void
     {
         $clientService = $this->createMock(ClientService::class);
         $grant = new AuthorizationGrant(
@@ -91,7 +91,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->getResponseType(ClientCredentialsGrant::GRANT_RESPONSE_TYPE);
     }
 
-    public function testThrowExceptionIfNoResponseType()
+    public function testThrowExceptionIfNoResponseType(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getQueryParams')->willReturn([]);
@@ -114,7 +114,7 @@ class AuthorizationServerTest extends TestCase
      * Case for grant types that allow for public clients (such as implicit or authorization code), but don't provide
      * a client id
      */
-    public function testThrowExceptionIfNoClientIdAtHandleAuthorisationRequests()
+    public function testThrowExceptionIfNoClientIdAtHandleAuthorisationRequests(): void
     {
         $authorizationGrant = $this->createMock(AuthorizationGrant::class);
 
@@ -143,7 +143,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertArrayHasKey('error_description', $body);
     }
 
-    public function testThrowExceptionIfNoGrantType()
+    public function testThrowExceptionIfNoGrantType(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
@@ -163,7 +163,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertArrayHasKey('error_description', $body);
     }
 
-    public function testThrowExceptionIfPrivateClientDoesNotHaveSecret()
+    public function testThrowExceptionIfPrivateClientDoesNotHaveSecret(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->exactly(2))->method('getParsedBody')->willReturn(['grant_type' => 'client_credentials']);
@@ -185,7 +185,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertArrayHasKey('error_description', $body);
     }
 
-    public function testThrowExceptionForIncorrectSecret()
+    public function testThrowExceptionForIncorrectSecret(): void
     {
         $grant = $this->createMock(ClientCredentialsGrant::class);
 
@@ -228,7 +228,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertArrayHasKey('error_description', $body);
     }
 
-    public function revocationProvider()
+    public function revocationProvider(): array
     {
         return [
             ['access_token'],
@@ -239,7 +239,7 @@ class AuthorizationServerTest extends TestCase
     /**
      * @dataProvider revocationProvider
      */
-    public function testCanReturn200IfTokenDoesNotExistForRevocation($tokenType)
+    public function testCanReturn200IfTokenDoesNotExistForRevocation($tokenType): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects(static::once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
@@ -269,7 +269,7 @@ class AuthorizationServerTest extends TestCase
     /**
      * @dataProvider revocationProvider
      */
-    public function testCanRevokeToken($tokenType)
+    public function testCanRevokeToken($tokenType): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
@@ -303,7 +303,7 @@ class AuthorizationServerTest extends TestCase
     /**
      * @dataProvider revocationProvider
      */
-    public function testReturn503IfCannotRevoke($tokenType)
+    public function testReturn503IfCannotRevoke($tokenType): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => 'abc', 'token_type_hint' => $tokenType]);
@@ -340,7 +340,7 @@ class AuthorizationServerTest extends TestCase
         $this->assertEquals(503, $response->getStatusCode());
     }
 
-    public function testRevocationRequestWithoutTokenThrowsException()
+    public function testRevocationRequestWithoutTokenThrowsException(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token_type_hint' => 'access_token']);
@@ -359,7 +359,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithoutTokenHintTypeThrowsException()
+    public function testRevocationRequestWithoutTokenHintTypeThrowsException(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123']);
@@ -378,7 +378,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithInvalidTokenTypeHintThrowsException()
+    public function testRevocationRequestWithInvalidTokenTypeHintThrowsException(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'invalid_token_hint']);
@@ -397,7 +397,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleRevocationRequest($request);
     }
 
-    public function testRevocationRequestWithInvalidOtherNonPublicClientThrowsException()
+    public function testRevocationRequestWithInvalidOtherNonPublicClientThrowsException(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['token' => '123', 'token_type_hint' => 'access_token']);
@@ -452,7 +452,7 @@ class AuthorizationServerTest extends TestCase
      *
      * @dataProvider dpHandleAuthorizationRequest
      */
-    public function testHandleAuthorizationRequest(string $credentialsmethod)
+    public function testHandleAuthorizationRequest(string $credentialsmethod): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getQueryParams')->with()->willReturn(['response_type' => 'code']);
@@ -516,7 +516,7 @@ class AuthorizationServerTest extends TestCase
         $authorizationServer->handleAuthorizationRequest($request, null);
     }
 
-    public function dpHandleAuthorizationRequest()
+    public function dpHandleAuthorizationRequest(): array
     {
         return [
             ['bearer'], // use bearer for client credentials
@@ -527,7 +527,7 @@ class AuthorizationServerTest extends TestCase
     /**
      * Happy path throught handleTokenRequest
      */
-    public function testHandleTokenRequest()
+    public function testHandleTokenRequest(): void
     {
         $grant = $this->createMock(ClientCredentialsGrant::class);
 

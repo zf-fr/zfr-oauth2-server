@@ -33,7 +33,7 @@ class InvalidAccessTokenExceptionTest extends TestCase
     /**
      * @dataProvider dataproviderErrorsCode
      */
-    public function testErrorsCode($errorName, $expectedErrorCode)
+    public function testErrorsCode(string $errorName, string $expectedErrorCode): void
     {
         $exception = InvalidAccessTokenException::$errorName('description');
 
@@ -42,7 +42,7 @@ class InvalidAccessTokenExceptionTest extends TestCase
         $this->assertSame($expectedErrorCode, $exception->getCode());
     }
 
-    public function dataproviderErrorsCode()
+    public function dataproviderErrorsCode(): array
     {
         return [
             ['invalidToken', 'invalid_token'],

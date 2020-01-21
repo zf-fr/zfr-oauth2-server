@@ -53,7 +53,7 @@ class AbstractTokenServiceTest extends TestCase
      */
     protected $abstractTokenService;
 
-    public function setUp()
+    public function setUp(): void
     {
         $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
         $this->scopeService = $this->createMock(ScopeService::class);
@@ -64,7 +64,7 @@ class AbstractTokenServiceTest extends TestCase
         ]);
     }
 
-    public function testCanCallGetTokenWithTokenFound()
+    public function testCanCallGetTokenWithTokenFound(): void
     {
         $token = SomeToken::reconstitute(
             [
@@ -86,7 +86,7 @@ class AbstractTokenServiceTest extends TestCase
         $this->assertSame($token, $result);
     }
 
-    public function testCanCallGetTokenButRetrievedTokenHashDiffers()
+    public function testCanCallGetTokenButRetrievedTokenHashDiffers(): void
     {
         $token = SomeToken::reconstitute(
             [
@@ -106,7 +106,7 @@ class AbstractTokenServiceTest extends TestCase
         $this->assertNull($this->abstractTokenService->getToken('atoken'));
     }
 
-    public function testGetTokenReturnNullOnTokenNotFound()
+    public function testGetTokenReturnNullOnTokenNotFound(): void
     {
         $this->tokenRepository
             ->expects($this->once())
@@ -116,7 +116,7 @@ class AbstractTokenServiceTest extends TestCase
         $this->assertNull($this->abstractTokenService->getToken('token'));
     }
 
-    public function testCanDeleteToken()
+    public function testCanDeleteToken(): void
     {
         $token = SomeToken::reconstitute(
             [
@@ -135,7 +135,7 @@ class AbstractTokenServiceTest extends TestCase
         $this->abstractTokenService->deleteToken($token);
     }
 
-    public function testPurgeExpiredTokens()
+    public function testPurgeExpiredTokens(): void
     {
         $this->tokenRepository->expects($this->once())
             ->method('purgeExpiredTokens');
@@ -146,7 +146,7 @@ class AbstractTokenServiceTest extends TestCase
     /**
      * @dataProvider dpCanValidateScopes
      */
-    public function testCanValidateScopes(array $registeredScopes, array $scopes, bool $expectsException)
+    public function testCanValidateScopes(array $registeredScopes, array $scopes, bool $expectsException): void
     {
         $this->scopeService->expects($this->once())
             ->method('getAll')
@@ -166,7 +166,7 @@ class AbstractTokenServiceTest extends TestCase
         $protectedBound($scopes);
     }
 
-    public function dpCanValidateScopes()
+    public function dpCanValidateScopes(): array
     {
         return [
             [

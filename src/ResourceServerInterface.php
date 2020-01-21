@@ -43,5 +43,5 @@ interface ResourceServerInterface
      * @return AccessToken|null
      * @throws InvalidAccessTokenException If given access token is invalid or expired
      */
-    public function getAccessToken(ServerRequestInterface $request, $scopes = []);
+    public function getAccessToken(ServerRequestInterface $request, $scopes = []): ?AccessToken;
 }

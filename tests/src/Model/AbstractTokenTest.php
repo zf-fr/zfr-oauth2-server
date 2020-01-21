@@ -32,7 +32,7 @@ use ZfrOAuth2Test\Server\Asset\SomeToken;
  */
 class AbstractTokenTest extends TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         $this->owner = $this->createMock(TokenOwnerInterface::class);
         $this->client = $this->createMock(Client::class);
@@ -48,44 +48,44 @@ class AbstractTokenTest extends TestCase
         ]);
     }
 
-    public function testMethodGetToken()
+    public function testMethodGetToken(): void
     {
         $this->assertSame('a token', $this->token->getToken());
     }
 
-    public function testMethodGetOwner()
+    public function testMethodGetOwner(): void
     {
         $this->assertSame($this->owner, $this->token->getOwner());
     }
 
-    public function testMethodGetClient()
+    public function testMethodGetClient(): void
     {
         $this->assertSame($this->client, $this->token->getClient());
     }
 
-    public function testMethodGetExpiresAt()
+    public function testMethodGetExpiresAt(): void
     {
         $this->assertSame($this->expiresAt->format(\DateTime::ATOM), $this->token->getExpiresAt()->format(\DateTime::ATOM));
     }
 
-    public function testMethodGetExpiresIn()
+    public function testMethodGetExpiresIn(): void
     {
-        $this->assertInternalType('integer', $this->token->getExpiresIn());
+        $this->assertIsInt($this->token->getExpiresIn());
         $this->assertSame(60, $this->token->getExpiresIn());
     }
 
-    public function testMethodGetIsExpired()
+    public function testMethodGetIsExpired(): void
     {
-        $this->assertInternalType('boolean', $this->token->isExpired());
+        $this->assertIsBool($this->token->isExpired());
         $this->assertFalse($this->token->isExpired());
     }
 
-    public function testMethodGetScopes()
+    public function testMethodGetScopes(): void
     {
         $this->assertSame($this->scopes, $this->token->getScopes());
     }
 
-    public function testMethodMatchScopes()
+    public function testMethodMatchScopes(): void
     {
         $this->assertTrue($this->token->matchScopes($this->scopes));
         $this->assertTrue($this->token->matchScopes('somescope'));
@@ -93,13 +93,13 @@ class AbstractTokenTest extends TestCase
         $this->assertFalse($this->token->matchScopes('unknownscope'));
     }
 
-    public function testMethodIsValid()
+    public function testMethodIsValid(): void
     {
         $this->assertTrue($this->token->isValid($this->scopes));
         $this->assertFalse($this->token->isValid('unknownscope'));
     }
 
-    public function testMethodIsValidWithExpired()
+    public function testMethodIsValidWithExpired(): void
     {
         // expired
         $this->expiresAt = (new \DateTime())->modify('-60 seconds');
