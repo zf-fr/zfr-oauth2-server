@@ -22,7 +22,7 @@ Here are other OAuth2 library you can use:
 
 ## Requirements
 
-- PHP 7.0 or higher
+- PHP 7.2 or higher
 
 ## To-do
 
@@ -46,7 +46,7 @@ See the [CHANGELOG](CHANGELOG.md)
 use Composer to install:
 
 ```sh
-php composer.phar require zfr/zfr-oauth2-server:^0.8-beta
+php composer.phar require zfr/zfr-oauth2-server:^0.9-beta
 ```
 
 ## Support
