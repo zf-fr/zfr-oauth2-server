@@ -104,7 +104,7 @@ abstract class AbstractTokenService
      *
      * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered
      */
-    protected function validateTokenScopes(array $scopes, $client = null): void
+    public function validateTokenScopes(array $scopes, $client = null): void
     {
         $scopes = array_map(function ($scope) {
             return (string) $scope;
