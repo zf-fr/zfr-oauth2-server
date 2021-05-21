@@ -55,7 +55,8 @@ class ClientServiceTest extends TestCase
                 'name' => 'name',
                 'secret' => '',
                 'redirectUris' => [],
-            ]);
+                'scopes' => [],
+        ]);
 
         $this->clientRepository->expects($this->once())
                                ->method('findById')

@@ -122,6 +122,7 @@ class AuthorizationGrantTest extends TestCase
                 'name' => 'name',
                 'secret' => '',
                 'redirectUris' => ['http://www.example.com', 'http://www.custom-example.com'],
+                'scopes' => [],
             ]
         );
 
@@ -234,6 +235,7 @@ class AuthorizationGrantTest extends TestCase
                 'name' => 'name',
                 'secret' => '',
                 'redirectUris' => [],
+                'scopes' => [],
             ]
         );
         $token = $this->getValidAuthorizationCode(null, null, $client);

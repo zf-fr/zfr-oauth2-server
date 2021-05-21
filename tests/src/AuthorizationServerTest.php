@@ -210,6 +210,7 @@ class AuthorizationServerTest extends TestCase
             'name' => 'clientname',
             'secret' => '$2y$10$ixK8D7rBvEPkX0.d3e93h.lb3wufbavWmIyX0zK1FhP3fGp.rIK1u', // hash of 'incorrectclientsecret'
             'redirectUris' => ['http://example.com'],
+            'scopes' => [],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
@@ -415,6 +416,7 @@ class AuthorizationServerTest extends TestCase
             'name' => 'clientname',
             'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => [],
+            'scopes' => [],
         ]);
 
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);
@@ -435,6 +437,7 @@ class AuthorizationServerTest extends TestCase
             'name' => 'clientname',
             'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => ['http://example.com'],
+            'scopes' => [],
         ]);
 
         $token = AccessToken::reconstitute(['token' => '123', 'owner' => null, 'client' => $client, 'scopes' => [], 'expiresAt' => new \DateTimeImmutable()]);
@@ -491,6 +494,7 @@ class AuthorizationServerTest extends TestCase
             'name' => 'clientname',
             'secret' => 'clientsecret',
             'redirectUris' => ['http://example.com'],
+            'scopes' => [],
         ]);
 
         $clientService = $this->createMock(ClientService::class);
@@ -559,6 +563,7 @@ class AuthorizationServerTest extends TestCase
             'name' => 'clientname',
             'secret' => '$2y$10$Nhc3Wlyez2lOM3U7vGZIBOIJOi14HxZB7CWEf2ymyIWKrDEs0OCRW', // hash of 'clientsecret'
             'redirectUris' => ['http://example.com'],
+            'scopes' => [],
         ]);
         $clientService = $this->createMock(ClientService::class);
         $clientService->expects($this->once())->method('getClient')->with('clientid')->willReturn($client);

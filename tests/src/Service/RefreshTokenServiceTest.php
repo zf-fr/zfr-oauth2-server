@@ -25,6 +25,7 @@ use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
+use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
@@ -120,25 +121,36 @@ class RefreshTokenServiceTest extends TestCase
             // With no scope
             [
                 'registered_scopes' => ['read', 'write'],
+                'client_scopes' => ['read', 'write'],
                 'token_scope' => [],
                 'throw_exception' => false,
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
+                'client_scopes' => ['read', 'write'],
                 'token_scope' => ['read'],
                 'throw_exception' => false,
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
+                'client_scopes' => ['read', 'write'],
                 'token_scope' => ['read', 'write'],
                 'throw_exception' => false,
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
+                'client_scopes' => ['read', 'write'],
                 'token_scope' => ['read', 'write', 'delete'],
+                'throw_exception' => true,
+            ],
+            // With too little scopes on the client
+            [
+                'registered_scopes' => ['read', 'write'],
+                'client_scopes' => ['read'],
+                'token_scope' => ['write'],
                 'throw_exception' => true,
             ],
         ];
@@ -147,7 +159,7 @@ class RefreshTokenServiceTest extends TestCase
     /**
      * @dataProvider scopeProvider
      */
-    public function testCanSaveToken($registeredScopes, $tokenScope, $throwException): void
+    public function testCanSaveToken($registeredScopes, $clientScopes, $tokenScope, $throwException): void
     {
         if ($throwException) {
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
@@ -155,6 +167,10 @@ class RefreshTokenServiceTest extends TestCase
 
         $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
+
+        $client->expects($this->any())
+            ->method('getScopes')
+            ->will($this->returnValue($clientScopes));
 
         if (empty($tokenScope)) {
             $this->scopeService->expects($this->once())
@@ -194,6 +210,9 @@ class RefreshTokenServiceTest extends TestCase
     public function testCreateNewTokenUntilOneDoesNotExist(): void
     {
         $this->scopeService->expects($this->once())->method('getDefaultScopes')->will($this->returnValue(['read']));
+        $this->scopeService->expects($this->once())->method('getAll')->will($this->returnValue([
+            Scope::reconstitute(['id' => 1, 'name' => 'read', 'description' => 'desc', 'isDefault' => false]),
+        ]));
 
         $this->tokenRepository->expects($this->at(0))
             ->method('tokenExists')
@@ -211,6 +230,10 @@ class RefreshTokenServiceTest extends TestCase
 
         $owner = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
+
+        $client->expects($this->once())
+            ->method('getScopes')
+            ->will($this->returnValue(['read']));
 
         $token = $this->tokenService->createToken($owner, $client, []);
         $this->assertEquals(40, strlen($token->getToken()));

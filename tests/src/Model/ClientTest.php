@@ -33,7 +33,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider providerGenerateNewClient
      */
-    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris): void
+    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris, $scopes): void
     {
         /** @var Client $client */
         $client = Client::createNewClient($name, $redirectUris);
@@ -60,8 +60,8 @@ class ClientTest extends TestCase
     public function providerGenerateNewClient(): array
     {
         return [
-            [1, 'name', 'secret', 'http://www.example.com'],
-            [1, 'name', null, null],
+            [1, 'name', 'secret', 'http://www.example.com', []],
+            [1, 'name', null, null, []],
         ];
     }
 
@@ -107,13 +107,14 @@ class ClientTest extends TestCase
                     'name' => 'name',
                     'secret' => 'secret',
                     'redirectUris' => ['http://www.example.com'],
+                    'scopes' => [],
                 ],
                 [
                     'id' => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
                     'name' => 'name',
                     'secret' => '',
                     'redirectUris' => [],
-                ],
+                    'scopes' => [],                ],
             ],
         ];
     }
@@ -179,6 +180,7 @@ class ClientTest extends TestCase
                 'name' => 'name',
                 'secret' => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
                 'redirectUris' => [],
+                'scopes' => [],
             ]
         );
 
