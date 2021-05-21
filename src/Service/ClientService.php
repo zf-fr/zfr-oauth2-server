@@ -56,12 +56,13 @@ class ClientService
      *
      * @param string $name
      * @param array  $redirectUris
+     * @param array  $scopes
      * @return array [$client, $secret]
      */
-    public function registerClient(string $name, array $redirectUris): array
+    public function registerClient(string $name, array $redirectUris, array $scopes = []): array
     {
         do {
-            $client = Client::createNewClient($name, $redirectUris);
+            $client = Client::createNewClient($name, $redirectUris, $scopes);
         } while ($this->clientRepository->idExists($client->getId()));
 
         $secret = $client->generateSecret();

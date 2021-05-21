@@ -55,9 +55,9 @@ class AuthorizationCodeService extends AbstractTokenService
     {
         if (empty($scopes)) {
             $scopes = $this->scopeService->getDefaultScopes();
-        } else {
-            $this->validateTokenScopes($scopes);
         }
+
+        $this->validateTokenScopes($scopes, $client);
 
         do {
             $token = AuthorizationCode::createNewAuthorizationCode(
