@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,13 +21,13 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Model;
 
+use DateTime;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2Test\Server\Asset\SomeToken;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  */
@@ -34,17 +35,17 @@ class AbstractTokenTest extends TestCase
 {
     public function setUp(): void
     {
-        $this->owner = $this->createMock(TokenOwnerInterface::class);
-        $this->client = $this->createMock(Client::class);
-        $this->expiresAt = (new \DateTime())->modify('+60 seconds');
-        $this->scopes = ['somescope', 'otherscope'];
+        $this->owner     = $this->createMock(TokenOwnerInterface::class);
+        $this->client    = $this->createMock(Client::class);
+        $this->expiresAt = (new DateTime())->modify('+60 seconds');
+        $this->scopes    = ['somescope', 'otherscope'];
 
         $this->token = SomeToken::reconstitute([
-            'token' => 'a token',
+            'token'     => 'a token',
             'expiresAt' => $this->expiresAt,
-            'owner' => $this->owner,
-            'client' => $this->client,
-            'scopes' => $this->scopes,
+            'owner'     => $this->owner,
+            'client'    => $this->client,
+            'scopes'    => $this->scopes,
         ]);
     }
 
@@ -65,7 +66,7 @@ class AbstractTokenTest extends TestCase
 
     public function testMethodGetExpiresAt(): void
     {
-        $this->assertSame($this->expiresAt->format(\DateTime::ATOM), $this->token->getExpiresAt()->format(\DateTime::ATOM));
+        $this->assertSame($this->expiresAt->format(DateTime::ATOM), $this->token->getExpiresAt()->format(DateTime::ATOM));
     }
 
     public function testMethodGetExpiresIn(): void
@@ -102,14 +103,14 @@ class AbstractTokenTest extends TestCase
     public function testMethodIsValidWithExpired(): void
     {
         // expired
-        $this->expiresAt = (new \DateTime())->modify('-60 seconds');
+        $this->expiresAt = (new DateTime())->modify('-60 seconds');
 
         $this->token = SomeToken::reconstitute([
-            'token' => 'a token',
+            'token'     => 'a token',
             'expiresAt' => $this->expiresAt,
-            'owner' => $this->owner,
-            'client' => $this->client,
-            'scopes' => $this->scopes,
+            'owner'     => $this->owner,
+            'client'    => $this->client,
+            'scopes'    => $this->scopes,
         ]);
 
         $this->assertFalse($this->token->isValid('somescope'));

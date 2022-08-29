@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,7 +24,6 @@ namespace ZfrOAuth2\Server\Exception;
 use RuntimeException as BaseRuntimeException;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class RuntimeException extends BaseRuntimeException implements ExceptionInterface

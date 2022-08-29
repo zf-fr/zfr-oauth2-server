@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +25,6 @@ use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\AuthorizationCode;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\AuthorizationCode
@@ -58,7 +58,7 @@ class AuthorizationCodeTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data)
+    public function testReconstitute(array $data)
     {
         /** @var AuthorizationCode $authorizationCode */
         $authorizationCode = AuthorizationCode::reconstitute($data);
@@ -66,26 +66,26 @@ class AuthorizationCodeTest extends TestCase
         $this->assertSame($data['redirectUri'], $authorizationCode->getRedirectUri());
     }
 
-    public function providerReconstitute()
+    public function providerReconstitute(): array
     {
         return [
             [
                 [
-                    'token' => 'token',
-                    'owner' => null,
-                    'client' => null,
-                    'expiresAt' => null,
-                    'scopes' => [],
+                    'token'       => 'token',
+                    'owner'       => null,
+                    'client'      => null,
+                    'expiresAt'   => null,
+                    'scopes'      => [],
                     'redirectUri' => 'http://www.example.com',
                 ],
             ],
             [
                 [
-                    'token' => 'token',
-                    'owner' => null,
-                    'client' => null,
-                    'expiresAt' => null,
-                    'scopes' => [],
+                    'token'       => 'token',
+                    'owner'       => null,
+                    'client'      => null,
+                    'expiresAt'   => null,
+                    'scopes'      => [],
                     'redirectUri' => '',
                 ],
             ],

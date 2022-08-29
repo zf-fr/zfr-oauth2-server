@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,8 +24,14 @@ namespace ZfrOAuth2Test\Server\Model;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 
+use function count;
+use function explode;
+use function is_array;
+use function is_string;
+use function preg_match;
+use function strlen;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\Client
  */
@@ -33,7 +40,7 @@ class ClientTest extends TestCase
     /**
      * @dataProvider providerGenerateNewClient
      */
-    public function testGenerateNewAccessToken($id, $name, $secret, $redirectUris, $scopes): void
+    public function testGenerateNewAccessToken(int $id, string $name, ?string $secret, ?string $redirectUris, array $scopes): void
     {
         /** @var Client $client */
         $client = Client::createNewClient($name, $redirectUris);
@@ -103,18 +110,19 @@ class ClientTest extends TestCase
         return [
             [
                 [
-                    'id' => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
-                    'name' => 'name',
-                    'secret' => 'secret',
+                    'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                    'name'         => 'name',
+                    'secret'       => 'secret',
                     'redirectUris' => ['http://www.example.com'],
-                    'scopes' => [],
+                    'scopes'       => [],
                 ],
                 [
-                    'id' => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
-                    'name' => 'name',
-                    'secret' => '',
+                    'id'           => '29432c0c-fd08-46bb-a9a5-c55ccaf9ccda',
+                    'name'         => 'name',
+                    'secret'       => '',
                     'redirectUris' => [],
-                    'scopes' => [],                ],
+                    'scopes'       => [],
+                ],
             ],
         ];
     }
@@ -176,11 +184,11 @@ class ClientTest extends TestCase
     {
         $client = Client::reconstitute(
             [
-                'id' => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
-                'name' => 'name',
-                'secret' => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
+                'id'           => '325e4ffc-ff89-4558-971a-6c6a4c13e718',
+                'name'         => 'name',
+                'secret'       => '$2y$10$LHAy5E0b1Fie9NpV6KeOWeAmVdA6UnaXP82TNoMGiVl0Sy/E6PUs6',
                 'redirectUris' => [],
-                'scopes' => [],
+                'scopes'       => [],
             ]
         );
 

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,7 +32,6 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\ResourceServer;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Middleware\ResourceServerMiddleware
  */
@@ -40,11 +40,11 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithAccessTokenAsResult(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');
-        $accessToken = $this->createMock(AccessToken::class);
-        $request = $this->createMock(RequestInterface::class);
-        $response = $this->createMock(ResponseInterface::class);
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
+        $accessToken    = $this->createMock(AccessToken::class);
+        $request        = $this->createMock(RequestInterface::class);
+        $response       = $this->createMock(ResponseInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
         $handler->expects($this->once())
             ->method('handle')
@@ -70,11 +70,11 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillGetAccessTokenWithNullAsResult(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');
-        $accessToken = null;
-        $request = $this->createMock(RequestInterface::class);
-        $response = $this->createMock(ResponseInterface::class);
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
+        $accessToken    = null;
+        $request        = $this->createMock(RequestInterface::class);
+        $response       = $this->createMock(ResponseInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
         $handler->expects($this->once())
             ->method('handle')
@@ -100,9 +100,9 @@ class ResourceServerMiddlewareTest extends TestCase
     public function testWillCallGetAccessTokenWithException(): void
     {
         $resourceServer = $this->createMock(ResourceServer::class);
-        $middleware = new ResourceServerMiddleware($resourceServer, 'oauth_token');
-        $request = $this->createMock(RequestInterface::class);
-        $handler = $this->createMock(RequestHandlerInterface::class);
+        $middleware     = new ResourceServerMiddleware($resourceServer, 'oauth_token');
+        $request        = $this->createMock(RequestInterface::class);
+        $handler        = $this->createMock(RequestHandlerInterface::class);
 
         $resourceServer->expects($this->once())
             ->method('getAccessToken')

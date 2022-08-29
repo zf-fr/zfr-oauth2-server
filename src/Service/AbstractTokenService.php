@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -28,42 +28,37 @@ use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Repository\TokenRepositoryInterface;
 
+use function array_diff;
+use function array_map;
+use function count;
+use function hash_equals;
+use function implode;
+use function sprintf;
+
 /**
  * Token service
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 abstract class AbstractTokenService
 {
-    /**
-     * @var TokenRepositoryInterface
-     */
+    /** @var TokenRepositoryInterface */
     protected $tokenRepository;
 
-    /**
-     * @var ScopeService
-     */
+    /** @var ScopeService */
     protected $scopeService;
 
-    /**
-     * @var ServerOptions
-     */
+    /** @var ServerOptions */
     protected $serverOptions;
 
-    /**
-     * @param TokenRepositoryInterface $tokenRepository
-     * @param ScopeService             $scopeService
-     * @param ServerOptions            $serverOptions
-     */
     public function __construct(
         TokenRepositoryInterface $tokenRepository,
         ScopeService $scopeService,
         ServerOptions $serverOptions
     ) {
         $this->tokenRepository = $tokenRepository;
-        $this->scopeService = $scopeService;
-        $this->serverOptions = $serverOptions;
+        $this->scopeService    = $scopeService;
+        $this->serverOptions   = $serverOptions;
     }
 
     /**
@@ -71,7 +66,7 @@ abstract class AbstractTokenService
      */
     public function getToken(string $token): ?AbstractToken
     {
-        /* @var \ZfrOAuth2\Server\Model\AbstractToken $tokenFromDb */
+        /** @var AbstractToken $tokenFromDb */
         $tokenFromDb = $this->tokenRepository->findByToken($token);
 
         // Because the collation is most often case insensitive, we need to add a check here to ensure
@@ -101,8 +96,7 @@ abstract class AbstractTokenService
      *
      * @param string[]|Scope[] $scopes
      * @param Client|null $client
-     *
-     * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered
+     * @throws OAuth2Exception (invalid_scope) When one or more of the given scopes where not registered.
      */
     public function validateTokenScopes(array $scopes, $client = null): void
     {

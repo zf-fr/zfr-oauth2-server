@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,8 +21,11 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Grant;
 
+use Carbon\Carbon;
 use DateInterval;
+use DateTimeImmutable;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -37,8 +41,9 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function json_decode;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Grant\AuthorizationGrant
  */
@@ -46,35 +51,30 @@ class AuthorizationGrantTest extends TestCase
 {
     use PHPMock;
 
-    /**
-     * @var AuthorizationCodeService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AuthorizationCodeService|MockObject */
     protected $authorizationCodeService;
 
-    /**
-     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AccessTokenService|MockObject */
     protected $accessTokenService;
 
-    /**
-     * @var RefreshTokenService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RefreshTokenService|MockObject */
     protected $refreshTokenService;
 
-    /**
-     * @var AuthorizationGrant
-     */
+    /** @var AuthorizationGrant */
     protected $grant;
 
     public function setUp(): void
     {
-        $this->defineFunctionMock('ZfrOAuth2\Server\Model', "time");
-
         $this->authorizationCodeService = $this->createMock(AuthorizationCodeService::class);
-        $this->accessTokenService = $this->createMock(AccessTokenService::class);
-        $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
+        $this->accessTokenService       = $this->createMock(AccessTokenService::class);
+        $this->refreshTokenService      = $this->createMock(RefreshTokenService::class);
 
         $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
+    }
+
+    public function tearDown(): void
+    {
+        Carbon::setTestNow();
     }
 
     public function testAssertInvalidIfWrongResponseType(): void
@@ -107,9 +107,9 @@ class AuthorizationGrantTest extends TestCase
     {
         $queryParams = [
             'response_type' => 'code',
-            'scope' => '',
-            'state' => 'xyz',
-            'redirect_uri' => 'http://www.custom-example.com',
+            'scope'         => '',
+            'state'         => 'xyz',
+            'redirect_uri'  => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -120,11 +120,11 @@ class AuthorizationGrantTest extends TestCase
 
         $client = Client::reconstitute(
             [
-                'id' => 'id',
-                'name' => 'name',
-                'secret' => '',
+                'id'           => 'id',
+                'name'         => 'name',
+                'secret'       => '',
                 'redirectUris' => ['http://www.example.com', 'http://www.custom-example.com'],
-                'scopes' => [],
+                'scopes'       => [],
             ]
         );
 
@@ -140,9 +140,9 @@ class AuthorizationGrantTest extends TestCase
 
         $queryParams = [
             'response_type' => 'code',
-            'scope' => '',
-            'state' => 'xyz',
-            'redirect_uri' => 'http://www.custom-example.com',
+            'scope'         => '',
+            'state'         => 'xyz',
+            'redirect_uri'  => 'http://www.custom-example.com',
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -200,14 +200,14 @@ class AuthorizationGrantTest extends TestCase
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123', 'client_id' => 'foo']);
 
-        $token = $this->getValidAuthorizationCode(null, null, CLient::createNewClient('id', 'http://www.example.com'));
+        $token = $this->getValidAuthorizationCode(null, null, Client::createNewClient('id', 'http://www.example.com'));
 
         $this->authorizationCodeService->expects($this->once())
             ->method('getToken')
             ->with('123')
             ->will($this->returnValue($token));
 
-        $this->grant->createTokenResponse($request, CLient::createNewClient('id', 'http://www.example.com'));
+        $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
 
     public function hasRefreshGrant(): array
@@ -223,24 +223,24 @@ class AuthorizationGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse(bool $hasRefreshGrant): void
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
-        $time->expects($this->any())->willReturn(10000);
+        Carbon::setTestNow('1970-01-01 02:46:40');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['code' => '123',
-                                                                               'client_id' => 'client_123',
+        $request->expects($this->once())->method('getParsedBody')->willReturn([
+            'code'      => '123',
+            'client_id' => 'client_123',
         ]);
 
         $client = Client::reconstitute(
             [
-                'id' => 'client_123',
-                'name' => 'name',
-                'secret' => '',
+                'id'           => 'client_123',
+                'name'         => 'name',
+                'secret'       => '',
                 'redirectUris' => [],
-                'scopes' => [],
+                'scopes'       => [],
             ]
         );
-        $token = $this->getValidAuthorizationCode(null, null, $client);
+        $token  = $this->getValidAuthorizationCode(null, null, $client);
 
         $this->authorizationCodeService->expects($this->once())
             ->method('getToken')
@@ -286,62 +286,54 @@ class AuthorizationGrantTest extends TestCase
         }
     }
 
-    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null): RefreshToken
+    private function getValidRefreshToken(?TokenOwnerInterface $owner = null, ?array $scopes = null): RefreshToken
     {
-        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
-        $token = RefreshToken::reconstitute([
-            'token' => 'azerty_refresh',
-            'owner' => $owner,
-            'client' => null,
-            'scopes' => $scopes ?? ['read'],
+        $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
+        return RefreshToken::reconstitute([
+            'token'     => 'azerty_refresh',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
-
-        return $token;
     }
 
-    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null): AccessToken
+    private function getValidAccessToken(?TokenOwnerInterface $owner = null, ?array $scopes = null): AccessToken
     {
-        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token = AccessToken::reconstitute([
-            'token' => 'azerty_access',
-            'owner' => $owner,
-            'client' => null,
-            'scopes' => $scopes ?? ['read'],
+        $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
+        return AccessToken::reconstitute([
+            'token'     => 'azerty_access',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
-
-        return $token;
     }
 
-    private function getInvalidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null): AuthorizationCode
+    private function getInvalidAuthorizationCode(?string $redirectUri = null, ?string $owner = null, ?string $client = null, ?array $scopes = null): AuthorizationCode
     {
-        $invalidDate = (new \DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
-        $token = AuthorizationCode::reconstitute([
-            'token' => 'azerty_auth',
-            'owner' => $owner,
-            'client' => $client,
-            'scopes' => $scopes ?? ['read'],
-            'expiresAt' => $invalidDate,
+        $invalidDate = (new DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
+        return AuthorizationCode::reconstitute([
+            'token'       => 'azerty_auth',
+            'owner'       => $owner,
+            'client'      => $client,
+            'scopes'      => $scopes ?? ['read'],
+            'expiresAt'   => $invalidDate,
             'redirectUri' => $redirectUri ?? '',
         ]);
-
-        return $token;
     }
 
-    private function getValidAuthorizationCode($redirectUri = null, $owner = null, $client = null, $scopes = null): AuthorizationCode
+    private function getValidAuthorizationCode(?string $redirectUri = null, ?string $owner = null, ?Client $client = null, ?array $scopes = null): AuthorizationCode
     {
-        $validDate = (new \DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token = AuthorizationCode::reconstitute([
-            'token' => 'azerty_auth',
-            'owner' => $owner,
-            'client' => $client,
-            'scopes' => $scopes ?? ['read'],
-            'expiresAt' => $validDate,
+        $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
+        return AuthorizationCode::reconstitute([
+            'token'       => 'azerty_auth',
+            'owner'       => $owner,
+            'client'      => $client,
+            'scopes'      => $scopes ?? ['read'],
+            'expiresAt'   => $validDate,
             'redirectUri' => $redirectUri ?? '',
         ]);
-
-        return $token;
     }
 
     public function testMethodGetType(): void

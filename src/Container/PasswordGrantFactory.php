@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,24 +27,25 @@ use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function is_string;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class PasswordGrantFactory
 {
     public function __invoke(ContainerInterface $container): PasswordGrant
     {
-        /* @var ServerOptions $options */
+        /** @var ServerOptions $options */
         $options = $container->get(ServerOptions::class);
 
         $ownerCallable = $options->getOwnerCallable();
         $ownerCallable = is_string($ownerCallable) ? $container->get($ownerCallable) : $ownerCallable;
 
-        /* @var AccessTokenService $accessTokenService */
+        /** @var AccessTokenService $accessTokenService */
         $accessTokenService = $container->get(AccessTokenService::class);
 
-        /* @var RefreshTokenService $refreshTokenService */
+        /** @var RefreshTokenService $refreshTokenService */
         $refreshTokenService = $container->get(RefreshTokenService::class);
 
         return new PasswordGrant($accessTokenService, $refreshTokenService, $ownerCallable);

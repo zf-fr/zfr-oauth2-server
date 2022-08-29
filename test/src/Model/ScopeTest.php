@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -24,7 +25,6 @@ use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Scope;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Model\Scope
  */
@@ -33,7 +33,7 @@ class ScopeTest extends TestCase
     /**
      * @dataProvider providerGenerateNewScope
      */
-    public function testGenerateNewScope($id, $name, $description, $isDefault): void
+    public function testGenerateNewScope(int $id, string $name, string $description, bool $isDefault): void
     {
         /** @var Scope $scope */
         $scope = Scope::createNewScope($id, $name, $description, $isDefault);
@@ -55,7 +55,7 @@ class ScopeTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data): void
+    public function testReconstitute(array $data): void
     {
         $scope = Scope::reconstitute($data);
 

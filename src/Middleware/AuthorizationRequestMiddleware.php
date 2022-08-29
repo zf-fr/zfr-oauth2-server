@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -32,21 +32,17 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
  */
 class AuthorizationRequestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var AuthorizationServerInterface
-     */
+    /** @var AuthorizationServerInterface */
     private $authorizationServer;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $ownerRequestAttribute;
 
     public function __construct(
         AuthorizationServerInterface $authorizationServer,
         string $ownerRequestAttribute = 'owner'
     ) {
-        $this->authorizationServer = $authorizationServer;
+        $this->authorizationServer   = $authorizationServer;
         $this->ownerRequestAttribute = $ownerRequestAttribute;
     }
 

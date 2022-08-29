@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -23,8 +24,9 @@ namespace ZfrOAuth2Test\Server;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\ModuleConfig;
 
+use function is_callable;
+
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\ModuleConfig
  */
@@ -40,7 +42,7 @@ class ModuleConfigTest extends TestCase
     public function testGetArrayWith(): void
     {
         $moduleConfig = new ModuleConfig();
-        $config = $moduleConfig->__invoke();
+        $config       = $moduleConfig->__invoke();
 
         $this->assertIsArray($config);
         $this->assertArrayHasKey('zfr_oauth2_server', $config);

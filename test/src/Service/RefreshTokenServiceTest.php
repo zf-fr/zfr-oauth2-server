@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,6 +21,8 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use DateTimeImmutable;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\AccessToken;
@@ -32,33 +35,28 @@ use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 use ZfrOAuth2\Server\Service\ScopeService;
 
+use function strlen;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\RefreshTokenService
  */
 class RefreshTokenServiceTest extends TestCase
 {
-    /**
-     * @var RefreshTokenRepositoryInterface|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RefreshTokenRepositoryInterface|MockObject */
     protected $tokenRepository;
 
-    /**
-     * @var ScopeService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var ScopeService|MockObject */
     protected $scopeService;
 
-    /**
-     * @var RefreshTokenService
-     */
+    /** @var RefreshTokenService */
     protected $tokenService;
 
     public function setUp(): void
     {
         $this->tokenRepository = $this->createMock(RefreshTokenRepositoryInterface::class);
-        $this->scopeService = $this->createMock(ScopeService::class);
-        $this->tokenService = new RefreshTokenService(
+        $this->scopeService    = $this->createMock(ScopeService::class);
+        $this->tokenService    = new RefreshTokenService(
             $this->tokenRepository,
             $this->scopeService,
             ServerOptions::fromArray()
@@ -69,11 +67,11 @@ class RefreshTokenServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token' => 'token',
-                'owner' => $this->createMock(TokenOwnerInterface::class),
-                'client' => $this->createMock(Client::class),
-                'expiresAt' => new \DateTimeImmutable(),
-                'scopes' => [],
+                'token'     => 'token',
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
+                'expiresAt' => new DateTimeImmutable(),
+                'scopes'    => [],
             ]
         );
 
@@ -99,11 +97,11 @@ class RefreshTokenServiceTest extends TestCase
     {
         $token = AccessToken::reconstitute(
             [
-                'token' => 'Token',
-                'owner' => $this->createMock(TokenOwnerInterface::class),
-                'client' => $this->createMock(Client::class),
-                'expiresAt' => new \DateTimeImmutable(),
-                'scopes' => [],
+                'token'     => 'Token',
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
+                'expiresAt' => new DateTimeImmutable(),
+                'scopes'    => [],
             ]
         );
 
@@ -121,37 +119,37 @@ class RefreshTokenServiceTest extends TestCase
             // With no scope
             [
                 'registered_scopes' => ['read', 'write'],
-                'client_scopes' => ['read', 'write'],
-                'token_scope' => [],
-                'throw_exception' => false,
+                'client_scopes'     => ['read', 'write'],
+                'token_scope'       => [],
+                'throw_exception'   => false,
             ],
             // With less permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'client_scopes' => ['read', 'write'],
-                'token_scope' => ['read'],
-                'throw_exception' => false,
+                'client_scopes'     => ['read', 'write'],
+                'token_scope'       => ['read'],
+                'throw_exception'   => false,
             ],
             // With same permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'client_scopes' => ['read', 'write'],
-                'token_scope' => ['read', 'write'],
-                'throw_exception' => false,
+                'client_scopes'     => ['read', 'write'],
+                'token_scope'       => ['read', 'write'],
+                'throw_exception'   => false,
             ],
             // With too much permissions
             [
                 'registered_scopes' => ['read', 'write'],
-                'client_scopes' => ['read', 'write'],
-                'token_scope' => ['read', 'write', 'delete'],
-                'throw_exception' => true,
+                'client_scopes'     => ['read', 'write'],
+                'token_scope'       => ['read', 'write', 'delete'],
+                'throw_exception'   => true,
             ],
             // With too little scopes on the client
             [
                 'registered_scopes' => ['read', 'write'],
-                'client_scopes' => ['read'],
-                'token_scope' => ['write'],
-                'throw_exception' => true,
+                'client_scopes'     => ['read'],
+                'token_scope'       => ['write'],
+                'throw_exception'   => true,
             ],
         ];
     }
@@ -159,13 +157,13 @@ class RefreshTokenServiceTest extends TestCase
     /**
      * @dataProvider scopeProvider
      */
-    public function testCanSaveToken($registeredScopes, $clientScopes, $tokenScope, $throwException): void
+    public function testCanSaveToken(array $registeredScopes, array $clientScopes, array $tokenScope, bool $throwException): void
     {
         if ($throwException) {
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
         }
 
-        $owner = $this->createMock(TokenOwnerInterface::class);
+        $owner  = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         $client->expects($this->any())
@@ -228,7 +226,7 @@ class RefreshTokenServiceTest extends TestCase
             ->method('save')
             ->will($this->returnArgument(0));
 
-        $owner = $this->createMock(TokenOwnerInterface::class);
+        $owner  = $this->createMock(TokenOwnerInterface::class);
         $client = $this->createMock(Client::class);
 
         $client->expects($this->once())

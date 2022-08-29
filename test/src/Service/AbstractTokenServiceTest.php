@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,6 +21,7 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Service;
 
+use DateTimeImmutable;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Model\Client;
@@ -32,31 +34,24 @@ use ZfrOAuth2\Server\Service\ScopeService;
 use ZfrOAuth2Test\Server\Asset\SomeToken;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\AbstractTokenService
  */
 class AbstractTokenServiceTest extends TestCase
 {
-    /**
-     * @var AccessTokenRepositoryInterface
-     */
+    /** @var AccessTokenRepositoryInterface */
     protected $tokenRepository;
 
-    /**
-     * @var ScopeService
-     */
+    /** @var ScopeService */
     protected $scopeService;
 
-    /**
-     * @var AccessTokenService
-     */
+    /** @var AccessTokenService */
     protected $abstractTokenService;
 
     public function setUp(): void
     {
-        $this->tokenRepository = $this->createMock(AccessTokenRepositoryInterface::class);
-        $this->scopeService = $this->createMock(ScopeService::class);
+        $this->tokenRepository      = $this->createMock(AccessTokenRepositoryInterface::class);
+        $this->scopeService         = $this->createMock(ScopeService::class);
         $this->abstractTokenService = $this->getMockForAbstractClass(AbstractTokenService::class, [
             $this->tokenRepository,
             $this->scopeService,
@@ -68,11 +63,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token' => 'token',
-                'owner' => $this->createMock(TokenOwnerInterface::class),
-                'client' => $this->createMock(Client::class),
-                'expiresAt' => new \DateTimeImmutable(),
-                'scopes' => [],
+                'token'     => 'token',
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
+                'expiresAt' => new DateTimeImmutable(),
+                'scopes'    => [],
             ]
         );
 
@@ -90,11 +85,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token' => 'token',
-                'owner' => $this->createMock(TokenOwnerInterface::class),
-                'client' => $this->createMock(Client::class),
-                'expiresAt' => new \DateTimeImmutable(),
-                'scopes' => [],
+                'token'     => 'token',
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
+                'expiresAt' => new DateTimeImmutable(),
+                'scopes'    => [],
             ]
         );
 
@@ -120,11 +115,11 @@ class AbstractTokenServiceTest extends TestCase
     {
         $token = SomeToken::reconstitute(
             [
-                'token' => 'token',
-                'owner' => $this->createMock(TokenOwnerInterface::class),
-                'client' => $this->createMock(Client::class),
-                'expiresAt' => new \DateTimeImmutable(),
-                'scopes' => [],
+                'token'     => 'token',
+                'owner'     => $this->createMock(TokenOwnerInterface::class),
+                'client'    => $this->createMock(Client::class),
+                'expiresAt' => new DateTimeImmutable(),
+                'scopes'    => [],
             ]
         );
 

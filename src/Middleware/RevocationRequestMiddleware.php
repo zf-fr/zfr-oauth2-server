@@ -32,9 +32,7 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
  */
 class RevocationRequestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var AuthorizationServerInterface
-     */
+    /** @var AuthorizationServerInterface */
     private $authorizationServer;
 
     public function __construct(AuthorizationServerInterface $authorizationServer)

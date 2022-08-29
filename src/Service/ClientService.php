@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,21 +27,13 @@ use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
 /**
  * Client service
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ClientService
 {
-    /**
-     * @var ClientRepositoryInterface
-     */
+    /** @var ClientRepositoryInterface */
     private $clientRepository;
 
-    /**
-     * ClientService constructor.
-     *
-     * @param ClientRepositoryInterface $clientRepository
-     */
     public function __construct(ClientRepositoryInterface $clientRepository)
     {
         $this->clientRepository = $clientRepository;
@@ -54,7 +46,6 @@ class ClientService
      * authorize the client. It is returned as a result of this method, as it's already encrypted
      * in the client object
      *
-     * @param string $name
      * @param array  $redirectUris
      * @param array  $scopes
      * @return array [$client, $secret]
@@ -74,7 +65,6 @@ class ClientService
     /**
      * Get the client using its id
      *
-     * @param  string $id
      * @return Client|null
      */
     public function getClient(string $id)

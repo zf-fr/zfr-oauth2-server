@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,9 +21,11 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Grant;
 
+use Carbon\Carbon;
 use DateInterval;
 use DateTimeImmutable;
 use phpmock\phpunit\PHPMock;
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServer;
@@ -36,8 +39,9 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function json_decode;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Grant\PasswordGrant
  */
@@ -45,36 +49,31 @@ class PasswordGrantTest extends TestCase
 {
     use PHPMock;
 
-    /**
-     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AccessTokenService|MockObject */
     protected $accessTokenService;
 
-    /**
-     * @var RefreshTokenService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var RefreshTokenService|MockObject */
     protected $refreshTokenService;
 
-    /**
-     * @var callable
-     */
+    /** @var callable */
     protected $callback;
 
-    /**
-     * @var PasswordGrant
-     */
+    /** @var PasswordGrant */
     protected $grant;
 
     public function setUp(): void
     {
-        $this->defineFunctionMock('ZfrOAuth2\Server\Model', "time");
-
-        $this->accessTokenService = $this->createMock(AccessTokenService::class);
+        $this->accessTokenService  = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
-        $callable = function () {
+        $callable    = function () {
         };
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
+    }
+
+    public function tearDown(): void
+    {
+        Carbon::setTestNow();
     }
 
     public function testAssertDoesNotImplementAuthorization(): void
@@ -124,8 +123,7 @@ class PasswordGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse(bool $hasRefreshGrant)
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
-        $time->expects($this->any())->willReturn(10000);
+        Carbon::setTestNow('1970-01-01 02:46:40');
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
@@ -169,32 +167,28 @@ class PasswordGrantTest extends TestCase
         }
     }
 
-    private function getValidRefreshToken(TokenOwnerInterface $owner = null, array $scopes = null): RefreshToken
+    private function getValidRefreshToken(?TokenOwnerInterface $owner = null, ?array $scopes = null): RefreshToken
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('P1D'));
-        $token = RefreshToken::reconstitute([
-            'token' => 'azerty_refresh',
-            'owner' => $owner,
-            'client' => null,
-            'scopes' => $scopes ?? ['read'],
+        return RefreshToken::reconstitute([
+            'token'     => 'azerty_refresh',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
-
-        return $token;
     }
 
-    private function getValidAccessToken(TokenOwnerInterface $owner = null, array $scopes = null): AccessToken
+    private function getValidAccessToken(?TokenOwnerInterface $owner = null, ?array $scopes = null): AccessToken
     {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
-        $token = AccessToken::reconstitute([
-            'token' => 'azerty_access',
-            'owner' => $owner,
-            'client' => null,
-            'scopes' => $scopes ?? ['read'],
+        return AccessToken::reconstitute([
+            'token'     => 'azerty_access',
+            'owner'     => $owner,
+            'client'    => null,
+            'scopes'    => $scopes ?? ['read'],
             'expiresAt' => $validDate,
         ]);
-
-        return $token;
     }
 
     public function testMethodGetType(): void

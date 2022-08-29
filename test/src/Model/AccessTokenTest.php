@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -29,8 +30,11 @@ use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
+use function count;
+use function is_array;
+use function strlen;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\AccessToken
@@ -40,7 +44,7 @@ class AccessTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewAccessToken
      */
-    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes): void
+    public function testGenerateNewAccessToken(int $ttl, ?TokenOwnerInterface $owner, ?Client $client, ?array $scopes): void
     {
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
@@ -113,21 +117,21 @@ class AccessTokenTest extends TestCase
         return [
             [
                 [
-                    'token' => 'token',
-                    'owner' => $this->createMock(TokenOwnerInterface::class),
-                    'client' => $this->createMock(Client::class),
+                    'token'     => 'token',
+                    'owner'     => $this->createMock(TokenOwnerInterface::class),
+                    'client'    => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
-                    'scopes' => ['scope1', 'scope2'],
+                    'scopes'    => ['scope1', 'scope2'],
                 ],
             ],
             [ // test set - null values
-              [
-                  'token' => 'token',
-                  'owner' => null,
-                  'client' => null,
-                  'expiresAt' => null,
-                  'scopes' => [],
-              ],
+                [
+                    'token'     => 'token',
+                    'owner'     => null,
+                    'client'    => null,
+                    'expiresAt' => null,
+                    'scopes'    => [],
+                ],
             ],
         ];
     }

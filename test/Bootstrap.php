@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -36,7 +36,5 @@ if (! isset($loader)) {
 }
 
 $loader->add('ZfrOAuth2Test\\', __DIR__);
-
-\phpmock\phpunit\PHPMock::defineFunctionMock('ZfrOAuth2\Server\Model', 'time');
 
 unset($files, $file, $loader);

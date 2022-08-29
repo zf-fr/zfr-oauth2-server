@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -31,16 +32,14 @@ use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- *
  * @covers  \ZfrOAuth2\Server\Container\AuthorizationServerFactory
  */
 class AuthorizationServerFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $container     = $this->createMock(ContainerInterface::class);
         $serverOptions = ServerOptions::fromArray(['grants' => ['MyGrant']]);
 
         $container->expects($this->at(0))

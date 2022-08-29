@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,6 +21,7 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\InvalidAccessTokenException;
@@ -27,26 +29,23 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\ResourceServer;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
+use function explode;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\ResourceServer
  */
 class ResourceServerTest extends TestCase
 {
-    /**
-     * @var AccessTokenService|\PHPUnit\Framework\MockObject\MockObject
-     */
+    /** @var AccessTokenService|MockObject */
     protected $tokenService;
 
-    /**
-     * @var ResourceServer
-     */
+    /** @var ResourceServer */
     protected $resourceServer;
 
     public function setUp(): void
     {
-        $this->tokenService = $this->createMock(AccessTokenService::class);
+        $this->tokenService   = $this->createMock(AccessTokenService::class);
         $this->resourceServer = new ResourceServer($this->tokenService);
     }
 
@@ -115,25 +114,25 @@ class ResourceServerTest extends TestCase
             // Should return false because the token is expired
             [
                 'expired_token' => true,
-                'token_scope' => 'read',
+                'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'match' => false,
+                'match'         => false,
             ],
 
             // Should return false because we are asking more permissions than the token scope
             [
                 'expired_token' => false,
-                'token_scope' => 'read',
+                'token_scope'   => 'read',
                 'desired_scope' => 'read write',
-                'match' => false,
+                'match'         => false,
             ],
 
             // Should return true
             [
                 'expired_token' => false,
-                'token_scope' => 'read',
+                'token_scope'   => 'read',
                 'desired_scope' => 'read',
-                'match' => true,
+                'match'         => true,
             ],
         ];
     }
@@ -141,10 +140,10 @@ class ResourceServerTest extends TestCase
     /**
      * @dataProvider requestProvider
      */
-    public function testCanValidateAccessToResource($expiredToken, $tokenScope, $desiredScope, $match): void
+    public function testCanValidateAccessToResource(bool $expiredToken, string $tokenScope, string $desiredScope, bool $match): void
     {
         $tokenScope = explode(' ', $tokenScope);
-        $request = $this->createMock(ServerRequestInterface::class);
+        $request    = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));
         $request->expects($this->once())->method('getHeaderLine')->will($this->returnValue('Bearer token'));
 

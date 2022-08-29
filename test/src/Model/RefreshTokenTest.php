@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -22,13 +23,17 @@ namespace ZfrOAuth2Test\Server\Model;
 
 use DateTime;
 use DateTimeImmutable;
+use DateTimeInterface;
 use PHPUnit\Framework\TestCase;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
+use function count;
+use function is_array;
+use function strlen;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Model\AbstractToken
  * @covers  \ZfrOAuth2\Server\Model\RefreshToken
@@ -38,7 +43,7 @@ class RefreshTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewRefreshToken
      */
-    public function testGenerateNewAccessToken($ttl, $owner, $client, $scopes): void
+    public function testGenerateNewAccessToken(int $ttl, ?TokenOwnerInterface $owner, ?Client $client, ?array $scopes): void
     {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
@@ -55,10 +60,10 @@ class RefreshTokenTest extends TestCase
         if ($ttl === 0) {
             $this->assertNull($refreshToken->getExpiresAt());
         } else {
-            $this->assertInstanceOf(\DateTimeInterface::class, $refreshToken->getExpiresAt());
+            $this->assertInstanceOf(DateTimeInterface::class, $refreshToken->getExpiresAt());
             $this->assertEquals(
                 (new DateTimeImmutable())->modify("+$ttl seconds")->format(DateTime::ATOM),
-                $refreshToken->getExpiresAt()->format(\DateTime::ATOM)
+                $refreshToken->getExpiresAt()->format(DateTime::ATOM)
             );
         }
     }
@@ -86,7 +91,7 @@ class RefreshTokenTest extends TestCase
     /**
      * @dataProvider providerReconstitute
      */
-    public function testReconstitute($data): void
+    public function testReconstitute(array $data): void
     {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::reconstitute($data);
@@ -111,21 +116,21 @@ class RefreshTokenTest extends TestCase
         return [
             [
                 [
-                    'token' => 'token',
-                    'owner' => $this->createMock(TokenOwnerInterface::class),
-                    'client' => $this->createMock(Client::class),
+                    'token'     => 'token',
+                    'owner'     => $this->createMock(TokenOwnerInterface::class),
+                    'client'    => $this->createMock(Client::class),
                     'expiresAt' => new DateTimeImmutable(),
-                    'scopes' => ['scope1', 'scope2'],
+                    'scopes'    => ['scope1', 'scope2'],
                 ],
             ],
             [ // test set - null values
-              [
-                  'token' => 'token',
-                  'owner' => null,
-                  'client' => null,
-                  'expiresAt' => null,
-                  'scopes' => [],
-              ],
+                [
+                    'token'     => 'token',
+                    'owner'     => null,
+                    'client'    => null,
+                    'expiresAt' => null,
+                    'scopes'    => [],
+                ],
             ],
         ];
     }

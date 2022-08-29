@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,7 +24,6 @@ namespace ZfrOAuth2\Server\Options;
 /**
  * Options class
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 final class ServerOptions
@@ -107,15 +106,15 @@ final class ServerOptions
         string $ownerRequestAttribute,
         string $tokenRequestAttribute
     ) {
-        $this->authorizationCodeTtl = $authorizationCodeTtl;
-        $this->accessTokenTtl = $accessTokenTtl;
-        $this->refreshTokenTtl = $refreshTokenTtl;
-        $this->rotateRefreshTokens = $rotateRefreshTokens;
+        $this->authorizationCodeTtl       = $authorizationCodeTtl;
+        $this->accessTokenTtl             = $accessTokenTtl;
+        $this->refreshTokenTtl            = $refreshTokenTtl;
+        $this->rotateRefreshTokens        = $rotateRefreshTokens;
         $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
-        $this->ownerCallable = $ownerCallable;
-        $this->grants = $grants;
-        $this->ownerRequestAttribute = $ownerRequestAttribute;
-        $this->tokenRequestAttribute = $tokenRequestAttribute;
+        $this->ownerCallable              = $ownerCallable;
+        $this->grants                     = $grants;
+        $this->ownerRequestAttribute      = $ownerRequestAttribute;
+        $this->tokenRequestAttribute      = $tokenRequestAttribute;
     }
 
     /**

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,7 +28,6 @@ use ZfrOAuth2\Server\Container\RevocationRequestMiddlewareFactory;
 use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Container\RevocationRequestMiddlewareFactory
  */

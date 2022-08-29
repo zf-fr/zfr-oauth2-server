@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,7 +26,6 @@ use ZfrOAuth2\Server\Model\AbstractToken;
 /**
  * A token for testing
  *
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  */
 class SomeToken extends AbstractToken

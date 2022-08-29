@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -21,9 +21,16 @@ declare(strict_types = 1);
 
 namespace ZfrOAuth2\Server\Model;
 
-use DateTime;
+use Carbon\Carbon;
 use DateTimeInterface;
-use DateTimeZone;
+
+use function array_diff;
+use function array_map;
+use function bin2hex;
+use function explode;
+use function is_array;
+use function is_string;
+use function random_bytes;
 
 /**
  * Provide basic functionality for both access tokens, refresh tokens and authorization codes
@@ -31,39 +38,25 @@ use DateTimeZone;
  * Please note that scopes are stored as a saved as a string instead using associations to scope entities, mainly
  * for performance reasons and to avoid useless database calls
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 abstract class AbstractToken
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $token;
 
-    /**
-     * @var Client
-     */
+    /** @var Client */
     private $client;
 
-    /**
-     * @var TokenOwnerInterface
-     */
+    /** @var TokenOwnerInterface */
     private $owner;
 
-    /**
-     * @var DateTimeInterface
-     */
+    /** @var DateTimeInterface|null */
     protected $expiresAt;
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $scopes = [];
 
-    /**
-     * AbstractToken constructor.
-     */
     private function __construct()
     {
     }
@@ -71,17 +64,14 @@ abstract class AbstractToken
     /**
      * Create a new AbstractToken
      *
-     * @param int                   $ttl
-     * @param TokenOwnerInterface   $owner
-     * @param Client                $client
      * @param string[]|Scope[]|null $scopes
      * @return AbstractToken
      */
     protected static function createNew(
         int $ttl,
-        TokenOwnerInterface $owner = null,
-        Client $client = null,
-        array $scopes = null
+        ?TokenOwnerInterface $owner = null,
+        ?Client $client = null,
+        ?array $scopes = null
     ): self {
         if (is_array($scopes)) {
             $scopes = array_map(function ($scope) {
@@ -91,11 +81,11 @@ abstract class AbstractToken
 
         $token = new static();
 
-        $token->token = bin2hex(random_bytes(20));
-        $token->owner = $owner;
-        $token->client = $client;
-        $token->scopes = $scopes ?? [];
-        $token->expiresAt = $ttl ? (new DateTime('@' . time(), new DateTimeZone('UTC')))->modify("+$ttl seconds") : null;
+        $token->token     = bin2hex(random_bytes(20));
+        $token->owner     = $owner;
+        $token->client    = $client;
+        $token->scopes    = $scopes ?? [];
+        $token->expiresAt = $ttl ? (Carbon::now('UTC'))->modify("+$ttl seconds") : null;
 
         return $token;
     }
@@ -107,11 +97,11 @@ abstract class AbstractToken
     {
         $token = new static();
 
-        $token->token = $data['token'];
+        $token->token     = $data['token'];
         $token->expiresAt = $data['expiresAt'];
-        $token->owner = $data['owner'];
-        $token->client = $data['client'];
-        $token->scopes = (array) $data['scopes'];
+        $token->owner     = $data['owner'];
+        $token->client    = $data['client'];
+        $token->scopes    = (array) $data['scopes'];
 
         return $token;
     }
@@ -153,7 +143,7 @@ abstract class AbstractToken
      */
     public function getExpiresIn(): int
     {
-        return $this->expiresAt->getTimestamp() - (new DateTime('@' . time(), new DateTimeZone('UTC')))->getTimestamp();
+        return $this->expiresAt === null ? 0 : $this->expiresAt->getTimestamp() - Carbon::now('UTC')->getTimestamp();
     }
 
     /**
@@ -161,7 +151,7 @@ abstract class AbstractToken
      */
     public function isExpired(): bool
     {
-        return $this->expiresAt < new DateTime('@' . time(), new DateTimeZone('UTC'));
+        return $this->expiresAt === null || $this->expiresAt->getTimestamp() <= Carbon::now('UTC')->getTimestamp();
     }
 
     /**
@@ -182,7 +172,7 @@ abstract class AbstractToken
     public function matchScopes($scopes): bool
     {
         $scopes = is_string($scopes) ? explode(' ', $scopes) : $scopes;
-        $diff = array_diff($scopes, $this->scopes);
+        $diff   = array_diff($scopes, $this->scopes);
 
         return empty($diff);
     }

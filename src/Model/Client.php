@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -23,6 +23,18 @@ namespace ZfrOAuth2\Server\Model;
 
 use Ramsey\Uuid\Uuid;
 
+use function bin2hex;
+use function explode;
+use function in_array;
+use function is_array;
+use function is_string;
+use function password_hash;
+use function password_verify;
+use function random_bytes;
+use function trim;
+
+use const PASSWORD_DEFAULT;
+
 /**
  * Client model
  *
@@ -34,39 +46,25 @@ use Ramsey\Uuid\Uuid;
  * cannot be kept... well... secret! To create a public client, you just need to let an empty secret. More
  * info about that: http://tools.ietf.org/html/rfc6749#section-2.1
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class Client
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $id = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $name = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $secret = '';
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $redirectUris = [];
 
-    /**
-     * @var array
-     */
+    /** @var array */
     private $scopes = [];
 
-    /**
-     * Client constructor.
-     */
     private function __construct()
     {
     }
@@ -91,10 +89,10 @@ class Client
 
         $client = new static();
 
-        $client->id = (string) Uuid::uuid4();
-        $client->name = $name;
+        $client->id           = (string) Uuid::uuid4();
+        $client->name         = $name;
         $client->redirectUris = $redirectUris ?? [];
-        $client->scopes = $scopes ?? [];
+        $client->scopes       = $scopes ?? [];
 
         return $client;
     }
@@ -103,11 +101,11 @@ class Client
     {
         $client = new static();
 
-        $client->id = $data['id'];
-        $client->name = $data['name'];
-        $client->secret = $data['secret'];
+        $client->id           = $data['id'];
+        $client->name         = $data['name'];
+        $client->secret       = $data['secret'];
         $client->redirectUris = $data['redirectUris'];
-        $client->scopes = $data['scopes'];
+        $client->scopes       = $data['scopes'];
 
         return $client;
     }
@@ -183,7 +181,7 @@ class Client
      */
     public function generateSecret(): string
     {
-        $secret = bin2hex(random_bytes(20));
+        $secret       = bin2hex(random_bytes(20));
         $this->secret = password_hash($secret, PASSWORD_DEFAULT);
 
         return $secret;

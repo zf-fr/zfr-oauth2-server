@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -31,14 +31,11 @@ use ZfrOAuth2\Server\Repository\AuthorizationCodeRepositoryInterface;
 /**
  * AuthorizationCodeService
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationCodeService extends AbstractTokenService
 {
-    /**
-     * @var AuthorizationCodeRepositoryInterface
-     */
+    /** @var AuthorizationCodeRepositoryInterface */
     protected $tokenRepository;
 
     /**
@@ -48,7 +45,6 @@ class AuthorizationCodeService extends AbstractTokenService
      * @param TokenOwnerInterface $owner
      * @param Client              $client
      * @param string[]|Scope[]    $scopes
-     * @return AuthorizationCode
      * @throws OAuth2Exception
      */
     public function createToken($redirectUri, $owner, $client, array $scopes = []): AuthorizationCode

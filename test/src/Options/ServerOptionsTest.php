@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -25,9 +26,7 @@ use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- *
  * @covers  \ZfrOAuth2\Server\Options\ServerOptions
  */
 class ServerOptionsTest extends TestCase
@@ -53,15 +52,15 @@ class ServerOptionsTest extends TestCase
         };
 
         $options = ServerOptions::fromArray([
-            'authorization_code_ttl' => 300,
-            'access_token_ttl' => 3000,
-            'refresh_token_ttl' => 30000,
-            'rotate_refresh_tokens' => true,
+            'authorization_code_ttl'        => 300,
+            'access_token_ttl'              => 3000,
+            'refresh_token_ttl'             => 30000,
+            'rotate_refresh_tokens'         => true,
             'revoke_rotated_refresh_tokens' => false,
-            'owner_callable' => $callable,
-            'grants' => [ClientCredentialsGrant::class],
-            'owner_request_attribute' => 'something',
-            'token_request_attribute' => 'else',
+            'owner_callable'                => $callable,
+            'grants'                        => [ClientCredentialsGrant::class],
+            'owner_request_attribute'       => 'something',
+            'token_request_attribute'       => 'else',
         ]);
 
         $this->assertEquals(300, $options->getAuthorizationCodeTtl());

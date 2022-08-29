@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,9 +28,7 @@ use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- *
  * @covers  \ZfrOAuth2\Server\Container\ScopeServiceFactory
  */
 class ScopeServiceFactoryTest extends TestCase

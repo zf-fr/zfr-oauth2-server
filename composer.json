@@ -22,15 +22,19 @@
     }
   ],
   "config": {
-    "sort-packages": true
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
   },
   "require": {
     "php": "^7.3",
     "laminas/laminas-diactoros": "^2.6",
+    "nesbot/carbon": "^2.62",
     "psr/container": "^1.0 || ^2.0",
+    "psr/http-server-middleware": "^1.0",
     "ramsey/uuid": "^3.1 || ^4.0",
-    "roave/security-advisories": "dev-master",
-    "psr/http-server-middleware": "^1.0"
+    "roave/security-advisories": "dev-master"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.1",

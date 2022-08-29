@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,8 +26,10 @@ use Psr\Http\Message\ResponseInterface;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\RefreshToken;
 
+use function array_filter;
+use function implode;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 abstract class AbstractGrant implements GrantInterface
@@ -47,18 +49,18 @@ abstract class AbstractGrant implements GrantInterface
      */
     protected function prepareTokenResponse(
         AccessToken $accessToken,
-        RefreshToken $refreshToken = null,
+        ?RefreshToken $refreshToken = null,
         bool $useRefreshTokenScopes = false
     ): ResponseInterface {
-        $owner = $accessToken->getOwner();
+        $owner  = $accessToken->getOwner();
         $scopes = $useRefreshTokenScopes ? $refreshToken->getScopes() : $accessToken->getScopes();
 
         $responseBody = [
             'access_token' => $accessToken->getToken(),
-            'token_type' => 'Bearer',
-            'expires_in' => $accessToken->getExpiresIn(),
-            'scope' => implode(' ', $scopes),
-            'owner_id' => $owner ? $owner->getTokenOwnerId() : null,
+            'token_type'   => 'Bearer',
+            'expires_in'   => $accessToken->getExpiresIn(),
+            'scope'        => implode(' ', $scopes),
+            'owner_id'     => $owner ? $owner->getTokenOwnerId() : null,
         ];
 
         if (null !== $refreshToken) {

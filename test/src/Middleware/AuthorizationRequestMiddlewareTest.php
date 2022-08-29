@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +29,6 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Middleware\AuthorizationRequestMiddleware
  */
@@ -37,7 +37,7 @@ class AuthorizationRequestMiddlewareTest extends TestCase
     public function testWillHandleAuthorizationRequest(): void
     {
         $authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $middleware = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
+        $middleware          = new AuthorizationRequestMiddleware($authorizationServer, 'owner');
 
         $request = $this->createMock(RequestInterface::class);
         $handler = $this->createMock(RequestHandlerInterface::class);

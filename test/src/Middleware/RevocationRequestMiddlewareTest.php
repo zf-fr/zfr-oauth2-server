@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -20,6 +21,7 @@ declare(strict_types=1);
 
 namespace ZfrOAuth2Test\Server\Middleware;
 
+use PHPUnit\Framework\MockObject\MockObject;
 use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface as RequestInterface;
@@ -28,31 +30,26 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Middleware\RevocationRequestMiddleware
  */
 class RevocationRequestMiddlewareTest extends TestCase
 {
-    /**
-     * @var \PHPUnit\Framework\MockObject\MockObject|AuthorizationServerInterface
-     */
+    /** @var MockObject|AuthorizationServerInterface */
     private $authorizationServer;
 
-    /**
-     * @var RevocationRequestMiddleware
-     */
+    /** @var RevocationRequestMiddleware */
     private $middleware;
 
     public function setUp(): void
     {
         $this->authorizationServer = $this->createMock(AuthorizationServerInterface::class);
-        $this->middleware = new RevocationRequestMiddleware($this->authorizationServer);
+        $this->middleware          = new RevocationRequestMiddleware($this->authorizationServer);
     }
 
     public function testCanHandleRevocationRequest(): void
     {
-        $request = $this->createMock(RequestInterface::class);
+        $request  = $this->createMock(RequestInterface::class);
         $delegate = $this->createMock(RequestHandlerInterface::class);
 
         $this->authorizationServer->expects($this->once())

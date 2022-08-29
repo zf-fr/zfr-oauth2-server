@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -27,16 +28,14 @@ use ZfrOAuth2\Server\ResourceServerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
- *
  * @covers  \ZfrOAuth2\Server\Container\ResourceServerFactory
  */
 class ResourceServerFactoryTest extends TestCase
 {
     public function testCanCreateFromFactory(): void
     {
-        $container = $this->createMock(ContainerInterface::class);
+        $container    = $this->createMock(ContainerInterface::class);
         $tokenService = $this->createMock(AccessTokenService::class);
 
         $container->expects($this->once())

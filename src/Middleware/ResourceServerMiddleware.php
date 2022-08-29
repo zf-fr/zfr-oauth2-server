@@ -40,22 +40,15 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  */
 class ResourceServerMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var ResourceServerInterface
-     */
+    /** @var ResourceServerInterface */
     private $resourceServer;
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $tokenRequestAttribute;
 
-    /**
-     * @param ResourceServerInterface $resourceServer
-     */
     public function __construct(ResourceServerInterface $resourceServer, string $tokenRequestAttribute = 'oauth_token')
     {
-        $this->resourceServer = $resourceServer;
+        $this->resourceServer        = $resourceServer;
         $this->tokenRequestAttribute = $tokenRequestAttribute;
     }
 
@@ -66,8 +59,10 @@ class ResourceServerMiddleware implements MiddlewareInterface
         } catch (InvalidAccessTokenException $exception) {
             // If we're here, this means that there was an access token, but it's either expired or invalid. If
             // that's the case we must immediately return
-            return new JsonResponse(['error' => $exception->getCode(), 'error_description' => $exception->getMessage()],
-                401);
+            return new JsonResponse(
+                ['error' => $exception->getCode(), 'error_description' => $exception->getMessage()],
+                401
+            );
         }
 
         // Otherwise, if we actually have a token and set it as part of the request attribute for next step

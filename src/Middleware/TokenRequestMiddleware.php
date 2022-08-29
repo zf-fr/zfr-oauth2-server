@@ -32,9 +32,7 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
  */
 class TokenRequestMiddleware implements MiddlewareInterface
 {
-    /**
-     * @var AuthorizationServerInterface
-     */
+    /** @var AuthorizationServerInterface */
     private $authorizationServer;
 
     public function __construct(AuthorizationServerInterface $authorizationServer)

@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -26,21 +27,18 @@ use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Service\ScopeService
  */
 class ScopeServiceTest extends TestCase
 {
-    /**
-     * @var ScopeRepositoryInterface
-     */
+    /** @var ScopeRepositoryInterface */
     protected $scopeRepository;
 
     public function setUp(): void
     {
         $this->scopeRepository = $this->createMock(ScopeRepositoryInterface::class);
-        $this->tokenService = new ScopeService($this->scopeRepository);
+        $this->tokenService    = new ScopeService($this->scopeRepository);
     }
 
     public function testCanCreateScope(): void

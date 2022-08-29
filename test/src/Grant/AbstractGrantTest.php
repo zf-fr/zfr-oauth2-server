@@ -1,6 +1,7 @@
 <?php
 
 declare(strict_types=1);
+
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
  * "AS IS" AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
@@ -28,7 +29,6 @@ use ZfrOAuth2\Server\Model\RefreshToken;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 
 /**
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Grant\AbstractGrant
  */
@@ -52,7 +52,7 @@ class AbstractGrantTest extends TestCase
     public function testMethodPrepareTokenResponse(?RefreshToken $refreshToken, bool $useRefreshTokenScopes, ?TokenOwnerInterface $getOwner): void
     {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
-        $accessToken = $this->createMock(AccessToken::class);
+        $accessToken   = $this->createMock(AccessToken::class);
 
         $accessToken->expects($this->once())->method('getOwner')->willReturn($getOwner);
         $accessToken->expects($this->once())->method('getExpiresIn');

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -28,7 +28,6 @@ use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationCodeServiceFactory
@@ -41,7 +40,7 @@ class AuthorizationCodeServiceFactory
         /** @var AuthorizationCodeRepositoryInterface $tokenRepository */
         $tokenRepository = $container->get(AuthorizationCodeRepositoryInterface::class);
 
-        /* @var ScopeService $scopeService */
+        /** @var ScopeService $scopeService */
         $scopeService = $container->get(ScopeService::class);
 
         return new AuthorizationCodeService($tokenRepository, $scopeService, $serverOptions);
