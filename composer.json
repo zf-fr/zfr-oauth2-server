@@ -47,7 +47,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-client-scopes": "0.10-dev"
+      "dev-master": "0.10-dev"
     }
   }
 }
