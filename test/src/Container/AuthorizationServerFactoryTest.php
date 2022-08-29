@@ -42,30 +42,19 @@ class AuthorizationServerFactoryTest extends TestCase
         $container     = $this->createMock(ContainerInterface::class);
         $serverOptions = ServerOptions::fromArray(['grants' => ['MyGrant']]);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(5))
             ->method('get')
-            ->with(ClientService::class)
-            ->willReturn($this->createMock(ClientService::class));
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with('MyGrant')
-            ->willReturn($this->createMock(GrantInterface::class));
-
-        $container->expects($this->at(3))
-            ->method('get')
-            ->with(AccessTokenService::class)
-            ->willReturn($this->createMock(AccessTokenService::class));
-
-        $container->expects($this->at(4))
-            ->method('get')
-            ->with(RefreshTokenService::class)
-            ->willReturn($this->createMock(RefreshTokenService::class));
+            ->withConsecutive([ClientService::class], [ServerOptions::class], ['MyGrant'], [AccessTokenService::class], [RefreshTokenService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->createMock(ClientService::class),
+                    $serverOptions,
+                    $this->createMock(GrantInterface::class),
+                    $this->createMock(AccessTokenService::class),
+                    $this->createMock(RefreshTokenService::class),
+                )
+            );
 
         $factory = new AuthorizationServerFactory();
         $service = $factory($container);

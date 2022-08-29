@@ -548,9 +548,13 @@ class AuthorizationServerTest extends TestCase
         $grant->expects($this->once())->method('allowPublicClients')->willReturn(false);
 
         $response = $this->createMock(ResponseInterface::class);
-        $response->expects($this->at(0))->method('withHeader')->with('Content-Type', 'application/json')->willReturn($response);
-        $response->expects($this->at(1))->method('withHeader')->with('Cache-Control', 'no-store')->willReturn($response);
-        $response->expects($this->at(2))->method('withHeader')->with('Pragma', 'no-cache')->willReturn($response);
+        $response->expects($this->exactly(3))
+                ->method('withHeader')
+                ->withConsecutive(
+                    ['Content-Type', 'application/json'],
+                    ['Cache-Control', 'no-store'],
+                    ['Pragma', 'no-cache']
+                )->willReturn($response);
 
         $grant->expects($this->once())->method('createTokenResponse')->willReturn($response);
 

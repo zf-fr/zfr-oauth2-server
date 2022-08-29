@@ -41,20 +41,17 @@ class AccessTokenServiceFactoryTest extends TestCase
 
         $serverOptions = ServerOptions::fromArray();
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(3))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(AccessTokenRepositoryInterface::class)
-            ->willReturn($this->createMock(AccessTokenRepositoryInterface::class));
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(ScopeService::class)
-            ->willReturn($this->createMock(ScopeService::class));
+            ->withConsecutive([ServerOptions::class], [AccessTokenRepositoryInterface::class], [ScopeService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $serverOptions,
+                    $this->createMock(AccessTokenRepositoryInterface::class),
+                    $this->createMock(ScopeService::class),
+                )
+            );
 
         $factory = new AccessTokenServiceFactory();
         $service = $factory($container);

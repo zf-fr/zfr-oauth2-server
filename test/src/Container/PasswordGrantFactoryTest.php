@@ -42,20 +42,17 @@ class PasswordGrantFactoryTest extends TestCase
         };
         $options   = ServerOptions::fromArray(['owner_callable' => $callable]);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(3))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($options);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(AccessTokenService::class)
-            ->willReturn($this->createMock(AccessTokenService::class));
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(RefreshTokenService::class)
-            ->willReturn($this->createMock(RefreshTokenService::class));
+            ->withConsecutive([ServerOptions::class], [AccessTokenService::class], [RefreshTokenService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $options,
+                    $this->createMock(AccessTokenService::class),
+                    $this->createMock(RefreshTokenService::class)
+                )
+            );
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);
@@ -70,25 +67,18 @@ class PasswordGrantFactoryTest extends TestCase
         };
         $options   = ServerOptions::fromArray(['owner_callable' => 'service_name']);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(4))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($options);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with('service_name')
-            ->willReturn($callable);
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(AccessTokenService::class)
-            ->willReturn($this->createMock(AccessTokenService::class));
-
-        $container->expects($this->at(3))
-            ->method('get')
-            ->with(RefreshTokenService::class)
-            ->willReturn($this->createMock(RefreshTokenService::class));
+            ->withConsecutive([ServerOptions::class], ['service_name'], [AccessTokenService::class], [RefreshTokenService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $options,
+                    $callable,
+                    $this->createMock(AccessTokenService::class),
+                    $this->createMock(RefreshTokenService::class)
+                )
+            );
 
         $factory = new PasswordGrantFactory();
         $service = $factory($container);

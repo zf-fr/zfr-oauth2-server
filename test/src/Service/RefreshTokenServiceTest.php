@@ -212,17 +212,19 @@ class RefreshTokenServiceTest extends TestCase
             Scope::reconstitute(['id' => 1, 'name' => 'read', 'description' => 'desc', 'isDefault' => false]),
         ]));
 
-        $this->tokenRepository->expects($this->at(0))
+        $this->tokenRepository
+            ->expects($this->exactly(2))
             ->method('tokenExists')
             ->with($this->isType('string'))
-            ->willReturn(true);
+            ->will(
+                $this->onConsecutiveCalls(
+                    true,
+                    false
+                )
+            );
 
-        $this->tokenRepository->expects($this->at(1))
-            ->method('tokenExists')
-            ->with($this->isType('string'))
-            ->willReturn(false);
-
-        $this->tokenRepository->expects($this->once())
+        $this->tokenRepository
+            ->expects($this->once())
             ->method('save')
             ->will($this->returnArgument(0));
 
@@ -230,8 +232,8 @@ class RefreshTokenServiceTest extends TestCase
         $client = $this->createMock(Client::class);
 
         $client->expects($this->once())
-            ->method('getScopes')
-            ->will($this->returnValue(['read']));
+               ->method('getScopes')
+               ->will($this->returnValue(['read']));
 
         $token = $this->tokenService->createToken($owner, $client, []);
         $this->assertEquals(40, strlen($token->getToken()));

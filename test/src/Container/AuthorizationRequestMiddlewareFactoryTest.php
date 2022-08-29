@@ -38,14 +38,16 @@ class AuthorizationRequestMiddlewareFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with(AuthorizationServerInterface::class)
-            ->willReturn($this->createMock(AuthorizationServerInterface::class));
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn(ServerOptions::fromArray());
+            ->withConsecutive([AuthorizationServerInterface::class], [ServerOptions::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->createMock(AuthorizationServerInterface::class),
+                    ServerOptions::fromArray(),
+                )
+            );
 
         $factory = new AuthorizationRequestMiddlewareFactory();
         $service = $factory($container);

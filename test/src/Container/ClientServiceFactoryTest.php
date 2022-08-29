@@ -37,7 +37,7 @@ class ClientServiceFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects($this->once())
             ->method('get')
             ->with(ClientRepositoryInterface::class)
             ->willReturn($this->createMock(ClientRepositoryInterface::class));

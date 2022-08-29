@@ -36,7 +36,7 @@ class ServerOptionsFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects($this->once())
             ->method('get')
             ->with('config')
             ->willReturn(['zfr_oauth2_server' => []]);

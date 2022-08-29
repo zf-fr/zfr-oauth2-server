@@ -38,15 +38,16 @@ class ResourceServerMiddlewareFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(2))
             ->method('get')
-            ->with(ResourceServerInterface::class)
-            ->willReturn($this->createMock(ResourceServerInterface::class));
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn(ServerOptions::fromArray());
+            ->withConsecutive([ResourceServerInterface::class], [ServerOptions::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->createMock(ResourceServerInterface::class),
+                    ServerOptions::fromArray()
+                )
+            );
 
         $factory = new ResourceServerMiddlewareFactory();
         $service = $factory($container);

@@ -39,20 +39,17 @@ class AuthorizationGrantFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(3))
             ->method('get')
-            ->with(AuthorizationCodeService::class)
-            ->willReturn($this->createMock(AuthorizationCodeService::class));
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(AccessTokenService::class)
-            ->willReturn($this->createMock(AccessTokenService::class));
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(RefreshTokenService::class)
-            ->willReturn($this->createMock(RefreshTokenService::class));
+            ->withConsecutive([AuthorizationCodeService::class], [AccessTokenService::class], [RefreshTokenService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $this->createMock(AuthorizationCodeService::class),
+                    $this->createMock(AccessTokenService::class),
+                    $this->createMock(RefreshTokenService::class),
+                )
+            );
 
         $factory = new AuthorizationGrantFactory();
         $service = $factory($container);

@@ -37,7 +37,7 @@ class ScopeServiceFactoryTest extends TestCase
     {
         $container = $this->createMock(ContainerInterface::class);
 
-        $container->expects($this->at(0))
+        $container->expects($this->once())
             ->method('get')
             ->with(ScopeRepositoryInterface::class)
             ->willReturn($this->createMock(ScopeRepositoryInterface::class));

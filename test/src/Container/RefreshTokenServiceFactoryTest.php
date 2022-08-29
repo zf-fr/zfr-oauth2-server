@@ -41,20 +41,17 @@ class RefreshTokenServiceFactoryTest extends TestCase
 
         $serverOptions = ServerOptions::fromArray();
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(3))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(RefreshTokenRepositoryInterface::class)
-            ->willReturn($this->createMock(RefreshTokenRepositoryInterface::class));
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(ScopeService::class)
-            ->willReturn($this->createMock(ScopeService::class));
+            ->withConsecutive([ServerOptions::class], [RefreshTokenRepositoryInterface::class], [ScopeService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $serverOptions,
+                    $this->createMock(RefreshTokenRepositoryInterface::class),
+                    $this->createMock(ScopeService::class)
+                )
+            );
 
         $factory = new RefreshTokenServiceFactory();
         $service = $factory($container);

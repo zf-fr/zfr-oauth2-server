@@ -211,15 +211,16 @@ class AccessTokenServiceTest extends TestCase
             Scope::reconstitute(['id' => 1, 'name' => 'read', 'description' => 'desc', 'isDefault' => false]),
         ]));
 
-        $this->tokenRepository->expects($this->at(0))
+        $this->tokenRepository
+            ->expects($this->exactly(2))
             ->method('tokenExists')
             ->with($this->isType('string'))
-            ->willReturn(true);
-
-        $this->tokenRepository->expects($this->at(1))
-            ->method('tokenExists')
-            ->with($this->isType('string'))
-            ->willReturn(false);
+            ->will(
+                $this->onConsecutiveCalls(
+                    true,
+                    false
+                )
+            );
 
         $this->tokenRepository->expects($this->once())
             ->method('save')

@@ -41,20 +41,17 @@ class AuthorizationCodeServiceFactoryTest extends TestCase
 
         $serverOptions = ServerOptions::fromArray();
 
-        $container->expects($this->at(0))
+        $container
+            ->expects($this->exactly(3))
             ->method('get')
-            ->with(ServerOptions::class)
-            ->willReturn($serverOptions);
-
-        $container->expects($this->at(1))
-            ->method('get')
-            ->with(AuthorizationCodeRepositoryInterface::class)
-            ->willReturn($this->createMock(AuthorizationCodeRepositoryInterface::class));
-
-        $container->expects($this->at(2))
-            ->method('get')
-            ->with(ScopeService::class)
-            ->willReturn($this->createMock(ScopeService::class));
+            ->withConsecutive([ServerOptions::class], [AuthorizationCodeRepositoryInterface::class], [ScopeService::class])
+            ->will(
+                $this->onConsecutiveCalls(
+                    $serverOptions,
+                    $this->createMock(AuthorizationCodeRepositoryInterface::class),
+                    $this->createMock(ScopeService::class),
+                )
+            );
 
         $factory = new AuthorizationCodeServiceFactory();
         $service = $factory($container);
