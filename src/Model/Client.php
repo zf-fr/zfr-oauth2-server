@@ -60,6 +60,11 @@ class Client
     private $redirectUris = [];
 
     /**
+     * @var array
+     */
+    private $scopes = [];
+
+    /**
      * Client constructor.
      */
     private function __construct()
@@ -70,8 +75,9 @@ class Client
      * Create a new Client
      *
      * @param string|string[]|null $redirectUris Client allowed redirect direct url's
+     * @param string|string[]|null $scopes Scopes assigned to this client
      */
-    public static function createNewClient(string $name, $redirectUris = null): Client
+    public static function createNewClient(string $name, $redirectUris = null, $scopes = null): Client
     {
         if (isset($redirectUris) && is_string($redirectUris)) {
             $redirectUris = explode(' ', $redirectUris);
@@ -88,6 +94,7 @@ class Client
         $client->id = (string) Uuid::uuid4();
         $client->name = $name;
         $client->redirectUris = $redirectUris ?? [];
+        $client->scopes = $scopes ?? [];
 
         return $client;
     }
@@ -100,6 +107,7 @@ class Client
         $client->name = $data['name'];
         $client->secret = $data['secret'];
         $client->redirectUris = $data['redirectUris'];
+        $client->scopes = $data['scopes'];
 
         return $client;
     }
@@ -134,6 +142,14 @@ class Client
     public function getRedirectUris(): array
     {
         return $this->redirectUris;
+    }
+
+    /**
+     * Get the scopes
+     */
+    public function getScopes(): array
+    {
+        return $this->scopes;
     }
 
     /**

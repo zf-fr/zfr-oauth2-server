@@ -23,9 +23,9 @@
   ],
   "require": {
     "php": "^7.2",
-    "laminas/laminas-diactoros": "^1.1",
-    "psr/container": "^1.0",
-    "ramsey/uuid": "^3.1",
+    "laminas/laminas-diactoros": "^2.6",
+    "psr/container": "^1.0 || ^2.0",
+    "ramsey/uuid": "^3.1 || ^4.0",
     "roave/security-advisories": "dev-master",
     "psr/http-server-middleware": "^1.0"
   },
@@ -47,7 +47,7 @@
   },
   "extra": {
     "branch-alias": {
-      "dev-master": "0.9-dev"
+      "dev-master": "0.10-dev"
     }
   }
 }

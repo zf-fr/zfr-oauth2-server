@@ -54,9 +54,9 @@ class AccessTokenService extends AbstractTokenService
     {
         if (empty($scopes)) {
             $scopes = $this->scopeService->getDefaultScopes();
-        } else {
-            $this->validateTokenScopes($scopes);
         }
+
+        $this->validateTokenScopes($scopes, $client);
 
         do {
             $token = AccessToken::createNewAccessToken(
