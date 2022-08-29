@@ -1,6 +1,6 @@
 # ZfrOAuth2Server
 
-[![Build Status](https://travis-ci.org/zf-fr/zfr-oauth2-server.png)](https://travis-ci.org/zf-fr/zfr-oauth2-server)
+[![Continuous Integration](https://github.com/zf-fr/zfr-oauth2-server/actions/workflows/continuous-integration.yml/badge.svg)](https://github.com/zf-fr/zfr-oauth2-server/actions/workflows/continuous-integration.yml)
 [![Latest Stable Version](https://poser.pugx.org/zfr/zfr-oauth2-server/v/stable.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
 [![Coverage Status](https://coveralls.io/repos/github/zf-fr/zfr-oauth2-server/badge.svg?branch=master)](https://coveralls.io/github/zf-fr/zfr-oauth2-server?branch=master)
 [![Total Downloads](https://poser.pugx.org/zfr/zfr-oauth2-server/downloads.png)](https://packagist.org/packages/zfr/zfr-oauth2-server)
