@@ -26,6 +26,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
 use ZfrOAuth2\Server\Grant\RefreshTokenGrant;
+use ZfrOAuth2\Server\Model\AbstractToken;
 use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\RefreshToken;
@@ -60,6 +61,8 @@ class RefreshTokenGrantTest extends TestCase
 
     public function setUp(): void
     {
+        $this->defineFunctionMock('ZfrOAuth2\Server\Model', "time");
+
         $this->accessTokenService = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
     }
@@ -88,8 +91,7 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testAssertInvalidIfRefreshTokenIsExpired(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
-
+        
         $this->expectException(OAuth2Exception::class, null, 'invalid_grant');
 
         $request = $this->createMock(ServerRequestInterface::class);
@@ -102,6 +104,7 @@ class RefreshTokenGrantTest extends TestCase
             ->with('123')
             ->will($this->returnValue($refreshToken));
 
+        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
         $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
@@ -145,7 +148,7 @@ class RefreshTokenGrantTest extends TestCase
      */
     public function testCanCreateTokenResponse(bool $rotateRefreshToken, bool $revokeRotatedRefreshToken): void
     {
-        $time = $this->getFunctionMock('ZfrOAuth2\Server\Model', 'time');
+        $time = $this->getFunctionMock("ZfrOAuth2\Server\Model", 'time');
         $time->expects($this->any())->willReturn(10000);
 
         $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray([

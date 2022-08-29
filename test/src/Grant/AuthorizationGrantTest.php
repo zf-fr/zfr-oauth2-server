@@ -68,6 +68,8 @@ class AuthorizationGrantTest extends TestCase
 
     public function setUp(): void
     {
+        $this->defineFunctionMock('ZfrOAuth2\Server\Model', "time");
+
         $this->authorizationCodeService = $this->createMock(AuthorizationCodeService::class);
         $this->accessTokenService = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);

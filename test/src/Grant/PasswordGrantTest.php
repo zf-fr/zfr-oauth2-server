@@ -67,6 +67,8 @@ class PasswordGrantTest extends TestCase
 
     public function setUp(): void
     {
+        $this->defineFunctionMock('ZfrOAuth2\Server\Model', "time");
+
         $this->accessTokenService = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService = $this->createMock(RefreshTokenService::class);
 
