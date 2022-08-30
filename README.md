@@ -22,7 +22,7 @@ Here are other OAuth2 library you can use:
 
 ## Requirements
 
-- PHP 7.2 or higher
+- PHP 7.4 or higher
 
 ## To-do
 
