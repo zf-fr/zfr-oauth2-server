@@ -40,8 +40,13 @@ class ClientTest extends TestCase
     /**
      * @dataProvider providerGenerateNewClient
      */
-    public function testGenerateNewAccessToken(int $id, string $name, ?string $secret, ?string $redirectUris, array $scopes): void
-    {
+    public function testGenerateNewAccessToken(
+        int $id,
+        string $name,
+        ?string $secret,
+        ?string $redirectUris,
+        array $scopes
+    ): void {
         /** @var Client $client */
         $client = Client::createNewClient($name, $redirectUris);
 

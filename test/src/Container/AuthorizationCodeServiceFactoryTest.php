@@ -44,7 +44,11 @@ class AuthorizationCodeServiceFactoryTest extends TestCase
         $container
             ->expects($this->exactly(3))
             ->method('get')
-            ->withConsecutive([ServerOptions::class], [AuthorizationCodeRepositoryInterface::class], [ScopeService::class])
+            ->withConsecutive(
+                [ServerOptions::class],
+                [AuthorizationCodeRepositoryInterface::class],
+                [ScopeService::class]
+            )
             ->will(
                 $this->onConsecutiveCalls(
                     $serverOptions,

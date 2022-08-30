@@ -49,8 +49,11 @@ class AbstractGrantTest extends TestCase
     /**
      * @dataProvider dpMethodPrepareTokenResponse
      */
-    public function testMethodPrepareTokenResponse(?RefreshToken $refreshToken, bool $useRefreshTokenScopes, ?TokenOwnerInterface $getOwner): void
-    {
+    public function testMethodPrepareTokenResponse(
+        ?RefreshToken $refreshToken,
+        bool $useRefreshTokenScopes,
+        ?TokenOwnerInterface $getOwner
+    ): void {
         $abstractGrant = $this->getMockForAbstractClass(AbstractGrant::class);
         $accessToken   = $this->createMock(AccessToken::class);
 
@@ -76,7 +79,10 @@ class AbstractGrantTest extends TestCase
             return $this->prepareTokenResponse($accessToken, $refreshToken, $useRefreshTokenScopes);
         })->bindTo($abstractGrant, $abstractGrant);
 
-        $this->assertInstanceOf(ResponseInterface::class, $protectedBound($accessToken, $refreshToken, $useRefreshTokenScopes));
+        $this->assertInstanceOf(
+            ResponseInterface::class,
+            $protectedBound($accessToken, $refreshToken, $useRefreshTokenScopes)
+        );
     }
 
     public function dpMethodPrepareTokenResponse(): array

@@ -45,7 +45,13 @@ class AuthorizationServerFactoryTest extends TestCase
         $container
             ->expects($this->exactly(5))
             ->method('get')
-            ->withConsecutive([ClientService::class], [ServerOptions::class], ['MyGrant'], [AccessTokenService::class], [RefreshTokenService::class])
+            ->withConsecutive(
+                [ClientService::class],
+                [ServerOptions::class],
+                ['MyGrant'],
+                [AccessTokenService::class],
+                [RefreshTokenService::class]
+            )
             ->will(
                 $this->onConsecutiveCalls(
                     $this->createMock(ClientService::class),

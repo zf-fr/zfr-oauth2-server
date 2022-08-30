@@ -115,13 +115,31 @@ class AuthorizationCodeTest extends TestCase
 
     public function testIsValid()
     {
-        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, ['read', 'write']);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(
+            60,
+            'http://www.example.com',
+            null,
+            null,
+            ['read', 'write']
+        );
         $this->assertTrue($authorizationCode->isValid('read'));
 
-        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(-60, 'http://www.example.com', null, null, ['read', 'write']);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(
+            -60,
+            'http://www.example.com',
+            null,
+            null,
+            ['read', 'write']
+        );
         $this->assertFalse($authorizationCode->isValid('read'));
 
-        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(60, 'http://www.example.com', null, null, ['read', 'write']);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(
+            60,
+            'http://www.example.com',
+            null,
+            null,
+            ['read', 'write']
+        );
         $this->assertFalse($authorizationCode->isValid('delete'));
     }
 
@@ -130,7 +148,13 @@ class AuthorizationCodeTest extends TestCase
      */
     public function testDoNotSupportLongLiveToken()
     {
-        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(0, 'http://www.example.com', null, null, ['read', 'write']);
+        $authorizationCode = AuthorizationCode::createNewAuthorizationCode(
+            0,
+            'http://www.example.com',
+            null,
+            null,
+            ['read', 'write']
+        );
         $this->assertTrue($authorizationCode->isExpired());
     }
 }

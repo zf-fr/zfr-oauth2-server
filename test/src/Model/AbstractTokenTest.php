@@ -66,7 +66,10 @@ class AbstractTokenTest extends TestCase
 
     public function testMethodGetExpiresAt(): void
     {
-        $this->assertSame($this->expiresAt->format(DateTime::ATOM), $this->token->getExpiresAt()->format(DateTime::ATOM));
+        $this->assertSame(
+            $this->expiresAt->format(DateTime::ATOM),
+            $this->token->getExpiresAt()->format(DateTime::ATOM)
+        );
     }
 
     public function testMethodGetExpiresIn(): void

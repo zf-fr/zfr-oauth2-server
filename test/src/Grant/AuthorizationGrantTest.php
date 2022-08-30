@@ -69,7 +69,11 @@ class AuthorizationGrantTest extends TestCase
         $this->accessTokenService       = $this->createMock(AccessTokenService::class);
         $this->refreshTokenService      = $this->createMock(RefreshTokenService::class);
 
-        $this->grant = new AuthorizationGrant($this->authorizationCodeService, $this->accessTokenService, $this->refreshTokenService);
+        $this->grant = new AuthorizationGrant(
+            $this->authorizationCodeService,
+            $this->accessTokenService,
+            $this->refreshTokenService
+        );
     }
 
     public function tearDown(): void
@@ -82,7 +86,9 @@ class AuthorizationGrantTest extends TestCase
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['response_type' => 'foo']));
+        $request->expects($this->once())
+            ->method('getQueryParams')
+            ->will($this->returnValue(['response_type' => 'foo']));
 
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('id', 'http://www.example.com'));
     }
@@ -92,12 +98,20 @@ class AuthorizationGrantTest extends TestCase
         $queryParams = ['response_type' => 'code', 'scope' => '', 'state' => 'xyz'];
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
+        $request->expects($this->once())
+            ->method('getQueryParams')
+            ->will($this->returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService
+            ->expects($this->once())
+            ->method('createToken')
+            ->will($this->returnValue($token));
 
-        $response = $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', 'http://www.example.com'));
+        $response = $this->grant->createAuthorizationResponse(
+            $request,
+            Client::createNewClient('name', 'http://www.example.com')
+        );
 
         $location = $response->getHeaderLine('Location');
         $this->assertEquals('http://www.example.com?code=azerty_auth&state=xyz', $location);
@@ -116,7 +130,10 @@ class AuthorizationGrantTest extends TestCase
         $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->once())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService
+            ->expects($this->once())
+            ->method('createToken')
+            ->will($this->returnValue($token));
 
         $client = Client::reconstitute(
             [
@@ -146,10 +163,15 @@ class AuthorizationGrantTest extends TestCase
         ];
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue($queryParams));
+        $request->expects($this->once())
+            ->method('getQueryParams')
+            ->will($this->returnValue($queryParams));
 
         $token = $this->getValidAuthorizationCode();
-        $this->authorizationCodeService->expects($this->never())->method('createToken')->will($this->returnValue($token));
+        $this->authorizationCodeService
+            ->expects($this->never())
+            ->method('createToken')
+            ->will($this->returnValue($token));
 
         $this->grant->createAuthorizationResponse($request, Client::createNewClient('name', 'http://www.example.com'));
     }
@@ -251,11 +273,17 @@ class AuthorizationGrantTest extends TestCase
         $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
+        $this->accessTokenService
+            ->expects($this->once())
+            ->method('createToken')
+            ->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
+            $this->refreshTokenService
+                ->expects($this->once())
+                ->method('createToken')
+                ->will($this->returnValue($refreshToken));
         }
 
         $authorizationServer = $this->createMock(AuthorizationServer::class);
@@ -310,8 +338,12 @@ class AuthorizationGrantTest extends TestCase
         ]);
     }
 
-    private function getInvalidAuthorizationCode(?string $redirectUri = null, ?string $owner = null, ?string $client = null, ?array $scopes = null): AuthorizationCode
-    {
+    private function getInvalidAuthorizationCode(
+        ?string $redirectUri = null,
+        ?string $owner = null,
+        ?string $client = null,
+        ?array $scopes = null
+    ): AuthorizationCode {
         $invalidDate = (new DateTimeImmutable('@10000'))->sub(new DateInterval('PT1H'));
         return AuthorizationCode::reconstitute([
             'token'       => 'azerty_auth',
@@ -323,8 +355,12 @@ class AuthorizationGrantTest extends TestCase
         ]);
     }
 
-    private function getValidAuthorizationCode(?string $redirectUri = null, ?string $owner = null, ?Client $client = null, ?array $scopes = null): AuthorizationCode
-    {
+    private function getValidAuthorizationCode(
+        ?string $redirectUri = null,
+        ?string $owner = null,
+        ?Client $client = null,
+        ?array $scopes = null
+    ): AuthorizationCode {
         $validDate = (new DateTimeImmutable('@10000'))->add(new DateInterval('PT1H'));
         return AuthorizationCode::reconstitute([
             'token'       => 'azerty_auth',

@@ -156,8 +156,12 @@ class AccessTokenServiceTest extends TestCase
     /**
      * @dataProvider scopeProvider
      */
-    public function testCanSaveToken(array $registeredScopes, array $clientScopes, array $tokenScope, bool $throwException): void
-    {
+    public function testCanSaveToken(
+        array $registeredScopes,
+        array $clientScopes,
+        array $tokenScope,
+        bool $throwException
+    ): void {
         if ($throwException) {
             $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
         }

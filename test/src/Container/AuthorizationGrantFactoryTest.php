@@ -42,7 +42,11 @@ class AuthorizationGrantFactoryTest extends TestCase
         $container
             ->expects($this->exactly(3))
             ->method('get')
-            ->withConsecutive([AuthorizationCodeService::class], [AccessTokenService::class], [RefreshTokenService::class])
+            ->withConsecutive(
+                [AuthorizationCodeService::class],
+                [AccessTokenService::class],
+                [RefreshTokenService::class]
+            )
             ->will(
                 $this->onConsecutiveCalls(
                     $this->createMock(AuthorizationCodeService::class),

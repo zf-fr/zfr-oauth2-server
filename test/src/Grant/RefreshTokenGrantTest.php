@@ -70,7 +70,11 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testAssertDoesNotImplementAuthorization(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
 
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
         $grant->createAuthorizationResponse(
@@ -81,7 +85,11 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testAssertInvalidIfNoRefreshTokenIsFound(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
 
         $request = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('getParsedBody')->willReturn([]);
@@ -104,7 +112,11 @@ class RefreshTokenGrantTest extends TestCase
             ->with('123')
             ->will($this->returnValue($refreshToken));
 
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
         $grant->createTokenResponse($request, Client::createNewClient('name', []));
     }
 
@@ -112,7 +124,11 @@ class RefreshTokenGrantTest extends TestCase
     {
         Carbon::setTestNow('1970-01-01 02:46:40');
 
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
 
         $this->expectException(OAuth2Exception::class, null, 'invalid_scope');
 
@@ -175,11 +191,17 @@ class RefreshTokenGrantTest extends TestCase
                 ->with($refreshToken);
 
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
+            $this->refreshTokenService
+                ->expects($this->once())
+                ->method('createToken')
+                ->will($this->returnValue($refreshToken));
         }
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
+        $this->accessTokenService
+            ->expects($this->once())
+            ->method('createToken')
+            ->will($this->returnValue($accessToken));
 
         $response = $grant->createTokenResponse($request, Client::createNewClient('name', []));
 
@@ -231,19 +253,31 @@ class RefreshTokenGrantTest extends TestCase
 
     public function testMethodGetType(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
         $this->assertSame('refresh_token', $grant->getType());
     }
 
     public function testMethodGetResponseType(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
         $this->assertSame('', $grant->getResponseType());
     }
 
     public function testMethodAllowPublicClients(): void
     {
-        $grant = new RefreshTokenGrant($this->accessTokenService, $this->refreshTokenService, ServerOptions::fromArray());
+        $grant = new RefreshTokenGrant(
+            $this->accessTokenService,
+            $this->refreshTokenService,
+            ServerOptions::fromArray()
+        );
         $this->assertTrue($grant->allowPublicClients());
     }
 }

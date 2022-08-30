@@ -43,8 +43,12 @@ class RefreshTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewRefreshToken
      */
-    public function testGenerateNewAccessToken(int $ttl, ?TokenOwnerInterface $owner, ?Client $client, ?array $scopes): void
-    {
+    public function testGenerateNewAccessToken(
+        int $ttl,
+        ?TokenOwnerInterface $owner,
+        ?Client $client,
+        ?array $scopes
+    ): void {
         /** @var RefreshToken $refreshToken */
         $refreshToken = RefreshToken::createNewRefreshToken($ttl, $owner, $client, $scopes);
 

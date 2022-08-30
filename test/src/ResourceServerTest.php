@@ -69,11 +69,23 @@ class ResourceServerTest extends TestCase
     public function testCanExtractAccessTokenFromQueryString(): void
     {
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(false));
-        $request->expects($this->once())->method('getQueryParams')->will($this->returnValue(['access_token' => 'token']));
+
+        $request
+            ->expects($this->once())
+            ->method('hasHeader')
+            ->with('Authorization')->will($this->returnValue(false));
+
+        $request
+            ->expects($this->once())
+            ->method('getQueryParams')
+            ->will($this->returnValue(['access_token' => 'token']));
 
         $token = $this->createMock(AccessToken::class);
-        $token->expects($this->once())->method('isValid')->will($this->returnValue(true));
+
+        $token
+            ->expects($this->once())
+            ->method('isValid')
+            ->will($this->returnValue(true));
 
         $this->tokenService->expects($this->once())
                            ->method('getToken')
@@ -140,8 +152,12 @@ class ResourceServerTest extends TestCase
     /**
      * @dataProvider requestProvider
      */
-    public function testCanValidateAccessToResource(bool $expiredToken, string $tokenScope, string $desiredScope, bool $match): void
-    {
+    public function testCanValidateAccessToResource(
+        bool $expiredToken,
+        string $tokenScope,
+        string $desiredScope,
+        bool $match
+    ): void {
         $tokenScope = explode(' ', $tokenScope);
         $request    = $this->createMock(ServerRequestInterface::class);
         $request->expects($this->once())->method('hasHeader')->with('Authorization')->will($this->returnValue(true));

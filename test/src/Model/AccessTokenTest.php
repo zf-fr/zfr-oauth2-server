@@ -44,8 +44,12 @@ class AccessTokenTest extends TestCase
     /**
      * @dataProvider providerGenerateNewAccessToken
      */
-    public function testGenerateNewAccessToken(int $ttl, ?TokenOwnerInterface $owner, ?Client $client, ?array $scopes): void
-    {
+    public function testGenerateNewAccessToken(
+        int $ttl,
+        ?TokenOwnerInterface $owner,
+        ?Client $client,
+        ?array $scopes
+    ): void {
         /** @var AccessToken $accessToken */
         $accessToken = AccessToken::createNewAccessToken($ttl, $owner, $client, $scopes);
 

@@ -79,7 +79,10 @@ class PasswordGrantTest extends TestCase
     public function testAssertDoesNotImplementAuthorization(): void
     {
         $this->expectException(OAuth2Exception::class, null, 'invalid_request');
-        $this->grant->createAuthorizationResponse($this->createMock(ServerRequestInterface::class), Client::createNewClient('id', 'http://www.example.com'));
+        $this->grant->createAuthorizationResponse(
+            $this->createMock(ServerRequestInterface::class),
+            Client::createNewClient('id', 'http://www.example.com')
+        );
     }
 
     public function testAssertInvalidIfNoUsernameNorPasswordIsFound(): void
@@ -96,7 +99,9 @@ class PasswordGrantTest extends TestCase
         $this->expectException(OAuth2Exception::class, null, 'access_denied');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty']);
+        $request->expects($this->once())
+            ->method('getParsedBody')
+            ->willReturn(['username' => 'michael', 'password' => 'azerty']);
 
         $callable = function ($username, $password) {
             $this->assertEquals('michael', $username);
@@ -126,21 +131,31 @@ class PasswordGrantTest extends TestCase
         Carbon::setTestNow('1970-01-01 02:46:40');
 
         $request = $this->createMock(ServerRequestInterface::class);
-        $request->expects($this->once())->method('getParsedBody')->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
+        $request->expects($this->once())
+            ->method('getParsedBody')
+            ->willReturn(['username' => 'michael', 'password' => 'azerty', 'scope' => 'read']);
 
         $owner = $this->createMock(TokenOwnerInterface::class);
-        $owner->expects($this->once())->method('getTokenOwnerId')->will($this->returnValue(1));
+        $owner->expects($this->once())
+            ->method('getTokenOwnerId')
+            ->will($this->returnValue(1));
 
         $callable = function ($username, $password) use ($owner) {
             return $owner;
         };
 
         $accessToken = $this->getValidAccessToken($owner);
-        $this->accessTokenService->expects($this->once())->method('createToken')->will($this->returnValue($accessToken));
+        $this->accessTokenService
+            ->expects($this->once())
+            ->method('createToken')
+            ->will($this->returnValue($accessToken));
 
         if ($hasRefreshGrant) {
             $refreshToken = $this->getValidRefreshToken();
-            $this->refreshTokenService->expects($this->once())->method('createToken')->will($this->returnValue($refreshToken));
+            $this->refreshTokenService
+                ->expects($this->once())
+                ->method('createToken')
+                ->will($this->returnValue($refreshToken));
         }
 
         $authorizationServer = $this->createMock(AuthorizationServer::class);
@@ -152,7 +167,10 @@ class PasswordGrantTest extends TestCase
         $this->grant = new PasswordGrant($this->accessTokenService, $this->refreshTokenService, $callable);
         $this->grant->setAuthorizationServer($authorizationServer);
 
-        $response = $this->grant->createTokenResponse($request, Client::createNewClient('id', 'http://www.example.com'));
+        $response = $this->grant->createTokenResponse(
+            $request,
+            Client::createNewClient('id', 'http://www.example.com')
+        );
 
         $body = json_decode((string) $response->getBody(), true);
 

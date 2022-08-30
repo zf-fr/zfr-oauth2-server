@@ -70,7 +70,12 @@ class PasswordGrantFactoryTest extends TestCase
         $container
             ->expects($this->exactly(4))
             ->method('get')
-            ->withConsecutive([ServerOptions::class], ['service_name'], [AccessTokenService::class], [RefreshTokenService::class])
+            ->withConsecutive(
+                [ServerOptions::class],
+                ['service_name'],
+                [AccessTokenService::class],
+                [RefreshTokenService::class]
+            )
             ->will(
                 $this->onConsecutiveCalls(
                     $options,
