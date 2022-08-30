@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -28,20 +28,19 @@ use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationGrantFactory
 {
     public function __invoke(ContainerInterface $container): AuthorizationGrant
     {
-        /* @var AuthorizationCodeService $authorizationCodeService */
+        /** @var AuthorizationCodeService $authorizationCodeService */
         $authorizationCodeService = $container->get(AuthorizationCodeService::class);
 
-        /* @var AccessTokenService $accessTokenService */
+        /** @var AccessTokenService $accessTokenService */
         $accessTokenService = $container->get(AccessTokenService::class);
 
-        /* @var RefreshTokenService $refreshTokenService */
+        /** @var RefreshTokenService $refreshTokenService */
         $refreshTokenService = $container->get(RefreshTokenService::class);
 
         return new AuthorizationGrant($authorizationCodeService, $accessTokenService, $refreshTokenService);

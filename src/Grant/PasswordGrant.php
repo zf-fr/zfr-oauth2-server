@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -30,6 +30,9 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function explode;
+use function is_string;
+
 /**
  * Implementation of the password grant model
  *
@@ -37,34 +40,28 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
  * when you trust the client (for instance for a native app)
  *
  * @link    http://tools.ietf.org/html/rfc6749#section-4.3
- * @author  Michaël Gallego <mic.gallego@gmail.com>
+ *
  * @licence MIT
  */
 class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
-    const GRANT_TYPE = 'password';
-    const GRANT_RESPONSE_TYPE = '';
+    public const GRANT_TYPE          = 'password';
+    public const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     /**
      * An AuthorizationServer will inject itself into the grant when it is constructed
-     *
-     * @var AuthorizationServerInterface
      */
-    private $authorizationServer;
+    private ?AuthorizationServerInterface $authorizationServer = null;
 
     /**
      * Refresh token service (used to create refresh token)
-     *
-     * @var RefreshTokenService
      */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
     /**
      * Callable that is used to verify the username and password
@@ -81,18 +78,18 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
         RefreshTokenService $refreshTokenService,
         callable $callback
     ) {
-        $this->accessTokenService = $accessTokenService;
+        $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-        $this->callback = $callback;
+        $this->callback            = $callback;
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request)
+     * @throws OAuth2Exception (invalid_request).
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Password grant does not support authorization');
     }
@@ -102,23 +99,23 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
-        Client $client = null,
-        TokenOwnerInterface $owner = null
+        ?Client $client = null,
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Validate the user using its username and password
         $username = $postParams['username'] ?? null;
         $password = $postParams['password'] ?? null;
-        $scope = $postParams['scope'] ?? null;
-        $scopes = is_string($scope) ? explode(' ', $scope) : [];
+        $scope    = $postParams['scope'] ?? null;
+        $scopes   = is_string($scope) ? explode(' ', $scope) : [];
 
         if (null === $username || null === $password) {
             throw OAuth2Exception::invalidRequest('Username and/or password is missing');
         }
 
         $callback = $this->callback;
-        $owner = $callback($username, $password);
+        $owner    = $callback($username, $password);
 
         if (! $owner instanceof TokenOwnerInterface) {
             throw OAuth2Exception::accessDenied('Either username or password are incorrect');

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -31,47 +31,40 @@ use ZfrOAuth2\Server\Options\ServerOptions;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function explode;
+use function is_string;
+
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class RefreshTokenGrant extends AbstractGrant
 {
-    const GRANT_TYPE = 'refresh_token';
-    const GRANT_RESPONSE_TYPE = '';
+    public const GRANT_TYPE          = 'refresh_token';
+    public const GRANT_RESPONSE_TYPE = '';
 
-    /**
-     * @var AccessTokenService
-     */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
-    /**
-     * @var RefreshTokenService
-     */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
-    /**
-     * @var ServerOptions
-     */
-    private $serverOptions;
+    private ServerOptions $serverOptions;
 
     public function __construct(
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService,
         ServerOptions $serverOptions
     ) {
-        $this->accessTokenService = $accessTokenService;
+        $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
-        $this->serverOptions = $serverOptions;
+        $this->serverOptions       = $serverOptions;
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request)
+     * @throws OAuth2Exception (invalid_request).
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Refresh token grant does not support authorization');
     }
@@ -81,8 +74,8 @@ class RefreshTokenGrant extends AbstractGrant
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
-        Client $client = null,
-        TokenOwnerInterface $owner = null
+        ?Client $client = null,
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
@@ -103,7 +96,7 @@ class RefreshTokenGrant extends AbstractGrant
         // We can now create a new access token! First, we need to make some checks on the asked scopes,
         // because according to the spec, a refresh token can create an access token with an equal or lesser
         // scope, but not more
-        $scope = $postParams['scope'] ?? null;
+        $scope  = $postParams['scope'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : $refreshToken->getScopes();
 
         if (! $refreshToken->matchScopes($scopes)) {
@@ -112,7 +105,7 @@ class RefreshTokenGrant extends AbstractGrant
             );
         }
 
-        $owner = $refreshToken->getOwner();
+        $owner       = $refreshToken->getOwner();
         $accessToken = $this->accessTokenService->createToken($owner, $client, $scopes);
 
         // We may want to revoke the old refresh token

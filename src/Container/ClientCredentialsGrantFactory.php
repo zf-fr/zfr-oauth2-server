@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,14 +26,13 @@ use ZfrOAuth2\Server\Grant\ClientCredentialsGrant;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ClientCredentialsGrantFactory
 {
     public function __invoke(ContainerInterface $container): ClientCredentialsGrant
     {
-        /* @var AccessTokenService $accessTokenService */
+        /** @var AccessTokenService $accessTokenService */
         $accessTokenService = $container->get(AccessTokenService::class);
 
         return new ClientCredentialsGrant($accessTokenService);

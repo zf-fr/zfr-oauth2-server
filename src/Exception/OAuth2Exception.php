@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -30,7 +30,7 @@ use Exception;
  * message is the "error_description".
  *
  * @link    http://tools.ietf.org/html/rfc6749#section-5.2
- * @author  Michaël Gallego <mic.gallego@gmail.com>
+ *
  * @licence MIT
  */
 class OAuth2Exception extends Exception implements ExceptionInterface
@@ -126,7 +126,6 @@ class OAuth2Exception extends Exception implements ExceptionInterface
 
     /**
      * @link   https://tools.ietf.org/html/rfc7009#section-2.2.1
-     * @return OAuth2Exception
      */
     public static function unsupportedTokenType(string $description): OAuth2Exception
     {

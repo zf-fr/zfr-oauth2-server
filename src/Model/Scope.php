@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,34 +24,20 @@ namespace ZfrOAuth2\Server\Model;
 /**
  * A scope is associated to a token and define the permissions of the token
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class Scope
 {
-    /**
-     * @var int
-     */
+    /** @var int */
     private $id;
 
-    /**
-     * @var string
-     */
-    private $name = '';
+    private string $name = '';
 
-    /**
-     * @var string
-     */
+    /** @var string */
     private $description = '';
 
-    /**
-     * @var bool
-     */
-    private $isDefault = false;
+    private bool $isDefault = false;
 
-    /**
-     * Scope constructor.
-     */
     private function __construct()
     {
     }
@@ -62,15 +48,15 @@ class Scope
     public static function createNewScope(
         int $id,
         string $name,
-        string $description = null,
+        ?string $description = null,
         bool $isDefault = false
     ): Scope {
         $scope = new static();
 
-        $scope->id = $id;
-        $scope->name = $name;
+        $scope->id          = $id;
+        $scope->name        = $name;
         $scope->description = $description;
-        $scope->isDefault = $isDefault;
+        $scope->isDefault   = $isDefault;
 
         return $scope;
     }
@@ -79,10 +65,10 @@ class Scope
     {
         $scope = new static();
 
-        $scope->id = $data['id'];
-        $scope->name = $data['name'];
+        $scope->id          = $data['id'];
+        $scope->name        = $data['name'];
         $scope->description = $data['description'];
-        $scope->isDefault = $data['isDefault'];
+        $scope->isDefault   = $data['isDefault'];
 
         return $scope;
     }

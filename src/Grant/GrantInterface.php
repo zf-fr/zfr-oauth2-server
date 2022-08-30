@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -34,7 +34,7 @@ use ZfrOAuth2\Server\Model\TokenOwnerInterface;
  * server. You must therefore make sure that the grants are only called from the authorization server
  *
  * @link    http://tools.ietf.org/html/rfc6749#section-1.3
- * @author  Michaël Gallego <mic.gallego@gmail.com>
+ *
  * @licence MIT
  */
 interface GrantInterface
@@ -42,8 +42,8 @@ interface GrantInterface
     /**
      * Constants that need to be overridden for each grant
      */
-    const GRANT_TYPE = '';
-    const GRANT_RESPONSE_TYPE = '';
+    public const GRANT_TYPE          = '';
+    public const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Create an authorization code
@@ -53,19 +53,18 @@ interface GrantInterface
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface;
 
     /**
      * Create a token response according (this is the response to the "token endpoint")
      *
-     * @return ResponseInterface
      * @throws OAuth2Exception
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
-        Client $client = null,
-        TokenOwnerInterface $owner = null
+        ?Client $client = null,
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface;
 
     /**

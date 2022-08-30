@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -29,17 +29,16 @@ use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationServerFactory
 {
     public function __invoke(ContainerInterface $container): AuthorizationServer
     {
-        /* @var ClientService $clientService */
+        /** @var ClientService $clientService */
         $clientService = $container->get(ClientService::class);
 
-        /* @var ServerOptions $serverOptions */
+        /** @var ServerOptions $serverOptions */
         $serverOptions = $container->get(ServerOptions::class);
 
         $grants = [];

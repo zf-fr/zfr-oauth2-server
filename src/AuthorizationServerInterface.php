@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -42,25 +42,25 @@ interface AuthorizationServerInterface
     public function hasResponseType(string $responseType): bool;
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters
+     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters.
      */
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface;
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters
+     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters.
      */
     public function handleTokenRequest(
         ServerRequestInterface $request,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface;
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "token" is present
-     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported
-     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked
+     * @throws OAuth2Exception (invalid_request) If no "token" is present.
+     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported.
+     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked.
      */
     public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface;
 }

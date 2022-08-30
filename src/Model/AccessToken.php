@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,7 +24,6 @@ namespace ZfrOAuth2\Server\Model;
 /**
  * Access token model
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AccessToken extends AbstractToken
@@ -36,8 +35,8 @@ class AccessToken extends AbstractToken
      */
     public static function createNewAccessToken(
         int $ttl,
-        TokenOwnerInterface $owner = null,
-        Client $client = null,
+        ?TokenOwnerInterface $owner = null,
+        ?Client $client = null,
         $scopes = null
     ): AccessToken {
         return static::createNew($ttl, $owner, $client, $scopes);

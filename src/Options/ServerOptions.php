@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,45 +24,34 @@ namespace ZfrOAuth2\Server\Options;
 /**
  * Options class
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 final class ServerOptions
 {
     /**
      * Authorization code TTL
-     *
-     * @var int
      */
-    private $authorizationCodeTtl = 120;
+    private int $authorizationCodeTtl = 120;
 
     /**
      * Access token TTL
-     *
-     * @var int
      */
-    private $accessTokenTtl = 3600;
+    private int $accessTokenTtl = 3600;
 
     /**
      * Refresh token TTL
-     *
-     * @var int
      */
-    private $refreshTokenTtl = 86400;
+    private int $refreshTokenTtl = 86400;
 
     /**
      * Rotate refresh tokens (for RefreshTokenGrant)
-     *
-     * @var bool
      */
-    private $rotateRefreshTokens = false;
+    private bool $rotateRefreshTokens = false;
 
     /**
      * Revoke rotated refresh tokens (for RefreshTokenGrant)
-     *
-     * @var bool
      */
-    private $revokeRotatedRefreshTokens = true;
+    private bool $revokeRotatedRefreshTokens = true;
 
     /**
      * Set the owner callable
@@ -73,25 +62,19 @@ final class ServerOptions
 
     /**
      * Grants that the authorization server must support
-     *
-     * @var array
      */
-    private $grants = [];
+    private array $grants = [];
 
     /**
      * Attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface
      * to be present on
-     *
-     * @var string
      */
-    private $ownerRequestAttribute;
+    private string $ownerRequestAttribute;
 
     /**
      * Attribute that the ResourceServerMiddleware uses to access the token
-     *
-     * @var string
      */
-    private $tokenRequestAttribute;
+    private string $tokenRequestAttribute;
 
     /**
      * @param callable|string $ownerCallable either a callable or the name of a container service
@@ -107,15 +90,15 @@ final class ServerOptions
         string $ownerRequestAttribute,
         string $tokenRequestAttribute
     ) {
-        $this->authorizationCodeTtl = $authorizationCodeTtl;
-        $this->accessTokenTtl = $accessTokenTtl;
-        $this->refreshTokenTtl = $refreshTokenTtl;
-        $this->rotateRefreshTokens = $rotateRefreshTokens;
+        $this->authorizationCodeTtl       = $authorizationCodeTtl;
+        $this->accessTokenTtl             = $accessTokenTtl;
+        $this->refreshTokenTtl            = $refreshTokenTtl;
+        $this->rotateRefreshTokens        = $rotateRefreshTokens;
         $this->revokeRotatedRefreshTokens = $revokeRotatedRefreshTokens;
-        $this->ownerCallable = $ownerCallable;
-        $this->grants = $grants;
-        $this->ownerRequestAttribute = $ownerRequestAttribute;
-        $this->tokenRequestAttribute = $tokenRequestAttribute;
+        $this->ownerCallable              = $ownerCallable;
+        $this->grants                     = $grants;
+        $this->ownerRequestAttribute      = $ownerRequestAttribute;
+        $this->tokenRequestAttribute      = $tokenRequestAttribute;
     }
 
     /**

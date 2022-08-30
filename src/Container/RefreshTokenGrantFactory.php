@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -28,7 +28,6 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class RefreshTokenGrantFactory
@@ -38,10 +37,10 @@ class RefreshTokenGrantFactory
         /** @var ServerOptions $serverOptions */
         $serverOptions = $container->get(ServerOptions::class);
 
-        /* @var AccessTokenService $accessTokenService */
+        /** @var AccessTokenService $accessTokenService */
         $accessTokenService = $container->get(AccessTokenService::class);
 
-        /* @var RefreshTokenService $refreshTokenService */
+        /** @var RefreshTokenService $refreshTokenService */
         $refreshTokenService = $container->get(RefreshTokenService::class);
 
         return new RefreshTokenGrant($accessTokenService, $refreshTokenService, $serverOptions);

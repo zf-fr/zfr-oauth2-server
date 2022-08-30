@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -29,42 +29,40 @@ use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
+use function explode;
+use function is_string;
+
 /**
  * Implementation of the client credentials grant
  *
  * This is the most easy grant. It can creates an access token only by authenticating the client
  *
  * @link    http://tools.ietf.org/html/rfc6749#section-4.4
- * @author  Michaël Gallego <mic.gallego@gmail.com>
+ *
  * @licence MIT
  */
 class ClientCredentialsGrant extends AbstractGrant
 {
-    const GRANT_TYPE = 'client_credentials';
-    const GRANT_RESPONSE_TYPE = '';
+    public const GRANT_TYPE          = 'client_credentials';
+    public const GRANT_RESPONSE_TYPE = '';
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
-    /**
-     * @param AccessTokenService $accessTokenService
-     */
     public function __construct(AccessTokenService $accessTokenService)
     {
         $this->accessTokenService = $accessTokenService;
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request)
+     * @throws OAuth2Exception (invalid_request).
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         throw OAuth2Exception::invalidRequest('Client credentials grant does not support authorization');
     }
@@ -74,13 +72,13 @@ class ClientCredentialsGrant extends AbstractGrant
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
-        Client $client = null,
-        TokenOwnerInterface $owner = null
+        ?Client $client = null,
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
         // Everything is okey, we can start tokens generation!
-        $scope = $postParams['scope'] ?? null;
+        $scope  = $postParams['scope'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
         /** @var AccessToken $accessToken */

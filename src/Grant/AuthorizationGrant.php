@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,48 +26,45 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use ZfrOAuth2\Server\AuthorizationServerInterface;
 use ZfrOAuth2\Server\Exception\OAuth2Exception;
+use ZfrOAuth2\Server\Model\AuthorizationCode;
 use ZfrOAuth2\Server\Model\Client;
 use ZfrOAuth2\Server\Model\TokenOwnerInterface;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\AuthorizationCodeService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function array_filter;
+use function explode;
+use function http_build_query;
+use function is_string;
+use function sprintf;
+
 /**
  * Implementation of the authorization grant
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwareInterface
 {
-    const GRANT_TYPE = 'authorization_code';
-    const GRANT_RESPONSE_TYPE = 'code';
+    public const GRANT_TYPE          = 'authorization_code';
+    public const GRANT_RESPONSE_TYPE = 'code';
 
-    /**
-     * @var AuthorizationCodeService
-     */
-    private $authorizationCodeService;
+    private AuthorizationCodeService $authorizationCodeService;
 
     /**
      * An AuthorizationServer will inject itself into the grant when it is constructed
-     *
-     * @var AuthorizationServerInterface
      */
-    private $authorizationServer;
+    private ?AuthorizationServerInterface $authorizationServer = null;
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
-     *
-     * @var RefreshTokenService
      */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
     public function __construct(
         AuthorizationCodeService $authorizationCodeService,
@@ -75,17 +72,17 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         RefreshTokenService $refreshTokenService
     ) {
         $this->authorizationCodeService = $authorizationCodeService;
-        $this->accessTokenService = $accessTokenService;
-        $this->refreshTokenService = $refreshTokenService;
+        $this->accessTokenService       = $accessTokenService;
+        $this->refreshTokenService      = $refreshTokenService;
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request) When grant type was not 'code'
+     * @throws OAuth2Exception (invalid_request) When grant type was not 'code'.
      */
     public function createAuthorizationResponse(
         ServerRequestInterface $request,
         Client $client,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $queryParams = $request->getQueryParams();
 
@@ -110,14 +107,14 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
         }
 
         // Scope and state allow to perform additional validation
-        $scope = $queryParams['scope'] ?? null;
-        $state = $queryParams['state'] ?? null;
+        $scope  = $queryParams['scope'] ?? null;
+        $state  = $queryParams['state'] ?? null;
         $scopes = is_string($scope) ? explode(' ', $scope) : [];
 
         $authorizationCode = $this->authorizationCodeService->createToken($redirectUri, $owner, $client, $scopes);
 
         $uri = http_build_query(array_filter([
-            'code' => $authorizationCode->getToken(),
+            'code'  => $authorizationCode->getToken(),
             'state' => $state,
         ]));
 
@@ -126,12 +123,13 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
 
     /**
      * {@inheritdoc}
+     *
      * @throws OAuth2Exception
      */
     public function createTokenResponse(
         ServerRequestInterface $request,
-        Client $client = null,
-        TokenOwnerInterface $owner = null
+        ?Client $client = null,
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
@@ -141,7 +139,7 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
             throw OAuth2Exception::invalidRequest('Could not find the authorization code in the request');
         }
 
-        /* @var \ZfrOAuth2\Server\Model\AuthorizationCode $authorizationCode */
+        /** @var AuthorizationCode $authorizationCode */
         $authorizationCode = $this->authorizationCodeService->getToken($code);
 
         if (null === $authorizationCode || $authorizationCode->isExpired()) {

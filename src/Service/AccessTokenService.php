@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -31,14 +31,11 @@ use ZfrOAuth2\Server\Repository\AccessTokenRepositoryInterface;
 /**
  * AccessTokenService
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AccessTokenService extends AbstractTokenService
 {
-    /**
-     * @var AccessTokenRepositoryInterface
-     */
+    /** @var AccessTokenRepositoryInterface */
     protected $tokenRepository;
 
     /**
@@ -47,7 +44,6 @@ class AccessTokenService extends AbstractTokenService
      * @param TokenOwnerInterface $owner
      * @param Client              $client
      * @param string[]|Scope[]    $scopes
-     * @return AccessToken
      * @throws OAuth2Exception
      */
     public function createToken($owner, $client, array $scopes = []): AccessToken

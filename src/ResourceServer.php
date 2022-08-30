@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,6 +27,10 @@ use ZfrOAuth2\Server\Model\AccessToken;
 use ZfrOAuth2\Server\Model\Scope;
 use ZfrOAuth2\Server\Service\AccessTokenService;
 
+use function count;
+use function end;
+use function explode;
+
 /**
  * The resource server main role is to validate the access token and that its scope covers the
  * requested resource
@@ -34,15 +38,11 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
  * Currently, the resource server only implements the Bearer token usage, as described in the
  * RFC 6750 (http://tools.ietf.org/html/rfc6750)
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ResourceServer implements ResourceServerInterface
 {
-    /**
-     * @var AccessTokenService
-     */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     public function __construct(AccessTokenService $accessTokenService)
     {
@@ -57,9 +57,9 @@ class ResourceServer implements ResourceServerInterface
      * deleted) or is not valid, then it will trigger an exception
      *
      * @link   http://tools.ietf.org/html/rfc6750#page-5
+     *
      * @param  array|string|Scope[]   $scopes
-     * @return AccessToken|null
-     * @throws InvalidAccessTokenException If given access token is invalid or expired
+     * @throws InvalidAccessTokenException If given access token is invalid or expired.
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = []): ?AccessToken
     {

@@ -1,20 +1,24 @@
-<?xml version="1.0"?>
-<phpunit
-        bootstrap="./tests/Bootstrap.php"
-        colors="true"
-        convertErrorsToExceptions="true"
-        convertNoticesToExceptions="true"
-        convertWarningsToExceptions="true"
-        verbose="true"
-        stopOnFailure="false"
-        processIsolation="false"
-        backupGlobals="false">
-    <testsuite name="ZfrOAuth2Server tests">
-        <directory>./tests</directory>
-    </testsuite>
-    <filter>
-        <whitelist addUncoveredFilesFromWhitelist="true">
+<?xml version="1.0" encoding="UTF-8"?>
+<phpunit xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="vendor/phpunit/phpunit/phpunit.xsd" bootstrap="./test/Bootstrap.php" colors="true">
+    <testsuites>
+        <testsuite name="zfr-oauth2-server">
+            <directory>./test/</directory>
+        </testsuite>
+    </testsuites>
+
+    <groups>
+        <exclude>
+            <group>disable</group>
+        </exclude>
+    </groups>
+
+    <coverage includeUncoveredFiles="true">
+        <include>
             <directory suffix=".php">./src</directory>
-        </whitelist>
-    </filter>
+        </include>
+    </coverage>
+
+    <php>
+        <ini name="date.timezone" value="UTC"/>
+    </php>
 </phpunit>

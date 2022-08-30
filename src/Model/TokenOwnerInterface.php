@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,7 +27,6 @@ namespace ZfrOAuth2\Server\Model;
  * A token owner is someone (most likely a user) that contains the actual data. It's the model that holds
  * the data that the client is asking permission to see
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 interface TokenOwnerInterface

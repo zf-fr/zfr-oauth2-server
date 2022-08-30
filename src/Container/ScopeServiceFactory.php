@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -26,14 +26,13 @@ use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 use ZfrOAuth2\Server\Service\ScopeService;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ScopeServiceFactory
 {
     public function __invoke(ContainerInterface $container): ScopeService
     {
-        /** @var ScopeRepositoryInterface $clientRepository */
+        /** @var ScopeRepositoryInterface $scopeRepository */
         $scopeRepository = $container->get(ScopeRepositoryInterface::class);
 
         return new ScopeService($scopeRepository);

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,7 +24,6 @@ namespace ZfrOAuth2\Server\Model;
 /**
  * Refresh token model
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class RefreshToken extends AbstractToken
@@ -36,8 +35,8 @@ class RefreshToken extends AbstractToken
      */
     public static function createNewRefreshToken(
         int $ttl,
-        TokenOwnerInterface $owner = null,
-        Client $client = null,
+        ?TokenOwnerInterface $owner = null,
+        ?Client $client = null,
         $scopes = null
     ): RefreshToken {
         return static::createNew($ttl, $owner, $client, $scopes);

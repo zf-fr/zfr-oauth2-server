@@ -21,19 +21,26 @@
       "homepage": "https://baskamer.nl"
     }
   ],
+  "config": {
+    "sort-packages": true,
+    "allow-plugins": {
+      "dealerdirect/phpcodesniffer-composer-installer": true
+    }
+  },
   "require": {
-    "php": "^7.3",
+    "php": "^7.4 || ^8.0",
     "laminas/laminas-diactoros": "^2.6",
+    "nesbot/carbon": "^2.62",
     "psr/container": "^1.0 || ^2.0",
+    "psr/http-server-middleware": "^1.0",
     "ramsey/uuid": "^3.1 || ^4.0",
-    "roave/security-advisories": "dev-master",
-    "psr/http-server-middleware": "^1.0"
+    "roave/security-advisories": "dev-master"
   },
   "require-dev": {
     "friendsofphp/php-cs-fixer": "^2.1",
-    "phpunit/phpunit": "^8.5",
-    "satooshi/php-coveralls": "^1.0",
-    "php-mock/php-mock-phpunit": "^2.5"
+    "laminas/laminas-coding-standard": "^2.4",
+    "php-mock/php-mock-phpunit": "^2.6",
+    "phpunit/phpunit": "^9.5.5"
   },
   "autoload": {
     "psr-4": {
@@ -42,12 +49,22 @@
   },
   "autoload-dev": {
     "psr-4": {
-      "ZfrOAuth2Test\\Server\\": "tests/src/"
+      "ZfrOAuth2Test\\Server\\": "test/src/"
     }
   },
   "extra": {
     "branch-alias": {
       "dev-master": "0.10.x-dev"
     }
+  },
+  "scripts": {
+    "check": [
+      "@cs-check",
+      "@test"
+    ],
+    "cs-check": "phpcs",
+    "cs-fix": "phpcbf",
+    "test": "phpunit --colors=always",
+    "test-coverage": "phpunit --colors=always --coverage-clover clover.xml"
   }
 }

@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -24,8 +24,6 @@ namespace ZfrOAuth2\Server\Exception;
 use InvalidArgumentException;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
- * @author  Bas Kamer <baskamer@gmail.com>
  * @licence MIT
  */
 class InvalidAccessTokenException extends InvalidArgumentException implements ExceptionInterface

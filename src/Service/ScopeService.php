@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,19 +27,12 @@ use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
 /**
  * Scope service
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ScopeService
 {
-    /**
-     * @var ScopeRepositoryInterface
-     */
-    private $scopeRepository;
+    private ScopeRepositoryInterface $scopeRepository;
 
-    /**
-     * @param ScopeRepositoryInterface $scopeRepository
-     */
     public function __construct(ScopeRepositoryInterface $scopeRepository)
     {
         $this->scopeRepository = $scopeRepository;
@@ -47,9 +40,6 @@ class ScopeService
 
     /**
      * Create a new scope
-     *
-     * @param  Scope $scope
-     * @return Scope
      */
     public function createScope(Scope $scope): Scope
     {

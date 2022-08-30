@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -27,31 +27,23 @@ namespace ZfrOAuth2\Server\Model;
  * An authorization code is a special token that acts as an intermediary between the client and
  * the resource owner. An authorization code can then be exchanged against an access token
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationCode extends AbstractToken
 {
-    /**
-     * @var string
-     */
+    /** @var string */
     private $redirectUri;
 
     /**
      * Create a new AuthorizationCode
      *
-     * @param int                          $ttl
-     * @param string                       $redirectUri
-     * @param TokenOwnerInterface          $owner
-     * @param Client                       $client
      * @param string|string[]|Scope[]|null $scopes
-     * @return AuthorizationCode
      */
     public static function createNewAuthorizationCode(
         int $ttl,
-        string $redirectUri = null,
-        TokenOwnerInterface $owner = null,
-        Client $client = null,
+        ?string $redirectUri = null,
+        ?TokenOwnerInterface $owner = null,
+        ?Client $client = null,
         $scopes = null
     ): AuthorizationCode {
         $token = static::createNew($ttl, $owner, $client, $scopes);

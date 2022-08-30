@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -38,10 +38,8 @@ interface ResourceServerInterface
     /**
      * Get the access token
      *
-     * @param  ServerRequestInterface $request
      * @param  array|string|Scope[]   $scopes
-     * @return AccessToken|null
-     * @throws InvalidAccessTokenException If given access token is invalid or expired
+     * @throws InvalidAccessTokenException If given access token is invalid or expired.
      */
     public function getAccessToken(ServerRequestInterface $request, $scopes = []): ?AccessToken;
 }

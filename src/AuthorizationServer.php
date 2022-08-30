@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -34,48 +34,40 @@ use ZfrOAuth2\Server\Service\AccessTokenService;
 use ZfrOAuth2\Server\Service\ClientService;
 use ZfrOAuth2\Server\Service\RefreshTokenService;
 
+use function base64_decode;
+use function end;
+use function explode;
+use function sprintf;
+
 /**
  * The authorization server main role is to create access tokens or refresh tokens
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class AuthorizationServer implements AuthorizationServerInterface
 {
-    /**
-     * @var ClientService
-     */
-    private $clientService;
+    private ClientService $clientService;
 
     /**
      * A list of grant
      *
      * @var GrantInterface[]
      */
-    private $grants = [];
+    private array $grants = [];
 
     /**
      * A list of grant that can answer to an authorization request
      *
      * @var GrantInterface[]
      */
-    private $responseTypes = [];
+    private array $responseTypes = [];
+
+    private AccessTokenService $accessTokenService;
+
+    private RefreshTokenService $refreshTokenService;
 
     /**
-     * @var AccessTokenService
-     */
-    private $accessTokenService;
-
-    /**
-     * @var RefreshTokenService
-     */
-    private $refreshTokenService;
-
-    /**
-     * @param ClientService       $clientService
      * @param GrantInterface[]    $grants
-     * @param AccessTokenService  $accessTokenService
-     * @param RefreshTokenService $refreshTokenService
      */
     public function __construct(
         ClientService $clientService,
@@ -83,8 +75,8 @@ class AuthorizationServer implements AuthorizationServerInterface
         AccessTokenService $accessTokenService,
         RefreshTokenService $refreshTokenService
     ) {
-        $this->clientService = $clientService;
-        $this->accessTokenService = $accessTokenService;
+        $this->clientService       = $clientService;
+        $this->accessTokenService  = $accessTokenService;
         $this->refreshTokenService = $refreshTokenService;
 
         foreach ($grants as $grant) {
@@ -111,7 +103,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * Get the grant by its name
      *
-     * @throws OAuth2Exception (unsupported_grant_type) When grant type is not registered
+     * @throws OAuth2Exception (unsupported_grant_type) When grant type is not registered.
      */
     public function getGrant(string $grantType): GrantInterface
     {
@@ -137,7 +129,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     /**
      * Get the response type by its name
      *
-     * @throws OAuth2Exception (unsupported_grant_type) When response type is not registered
+     * @throws OAuth2Exception (unsupported_grant_type) When response type is not registered.
      */
     public function getResponseType(string $responseType): GrantInterface
     {
@@ -153,15 +145,15 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters
-     * @throws OAuth2Exception (invalid_clientt) If no client could be authenticated
+     * @throws OAuth2Exception (invalid_request) If no "response_type" could be found in the GET parameters.
+     * @throws OAuth2Exception (invalid_clientt) If no client could be authenticated.
      */
     public function handleAuthorizationRequest(
         ServerRequestInterface $request,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         try {
-            $queryParams = $request->getQueryParams();
+            $queryParams  = $request->getQueryParams();
             $responseType = $queryParams['response_type'] ?? null;
 
             if (null === $responseType) {
@@ -169,7 +161,7 @@ class AuthorizationServer implements AuthorizationServerInterface
             }
 
             $responseType = $this->getResponseType((string) $responseType);
-            $client = $this->getClient($request, $responseType->allowPublicClients());
+            $client       = $this->getClient($request, $responseType->allowPublicClients());
 
             if (null === $client) {
                 throw OAuth2Exception::invalidClient('No client could be authenticated');
@@ -184,11 +176,11 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters
+     * @throws OAuth2Exception (invalid_request) If no "grant_type" could be found in the POST parameters.
      */
     public function handleTokenRequest(
         ServerRequestInterface $request,
-        TokenOwnerInterface $owner = null
+        ?TokenOwnerInterface $owner = null
     ): ResponseInterface {
         $postParams = $request->getParsedBody();
 
@@ -199,7 +191,7 @@ class AuthorizationServer implements AuthorizationServerInterface
                 throw OAuth2Exception::invalidRequest('No grant type was found in the request');
             }
 
-            $grant = $this->getGrant((string) $grant);
+            $grant  = $this->getGrant((string) $grant);
             $client = $this->getClient($request, $grant->allowPublicClients());
 
             $response = $grant->createTokenResponse($request, $client, $owner);
@@ -214,15 +206,15 @@ class AuthorizationServer implements AuthorizationServerInterface
     }
 
     /**
-     * @throws OAuth2Exception (invalid_request) If no "token" is present
-     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported
-     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked
+     * @throws OAuth2Exception (invalid_request) If no "token" is present.
+     * @throws OAuth2Exception (unsupported_token_type) If "token" is unsupported.
+     * @throws OAuth2Exception (invalid_client) If "token" was issued for another client and cannot be revoked.
      */
     public function handleRevocationRequest(ServerRequestInterface $request): ResponseInterface
     {
         $postParams = $request->getParsedBody();
 
-        $token = $postParams['token'] ?? null;
+        $token     = $postParams['token'] ?? null;
         $tokenHint = $postParams['token_type_hint'] ?? null;
 
         if (null === $token || null === $tokenHint) {
@@ -281,11 +273,11 @@ class AuthorizationServer implements AuthorizationServerInterface
      * According to the spec (http://tools.ietf.org/html/rfc6749#section-2.3), for public clients we do
      * not need to authenticate them
      *
-     * @throws OAuth2Exception (invalid_client) When a client secret is missing or client authentication failed
+     * @throws OAuth2Exception (invalid_client) When a client secret is missing or client authentication failed.
      */
     private function getClient(ServerRequestInterface $request, bool $allowPublicClients): ?Client
     {
-        list($id, $secret) = $this->extractClientCredentials($request);
+        [$id, $secret] = $this->extractClientCredentials($request);
 
         // If the grant type we are issuing does not allow public clients, and that the secret is
         // missing, then we have an error...
@@ -316,7 +308,7 @@ class AuthorizationServer implements AuthorizationServerInterface
     private function createResponseFromOAuthException(OAuth2Exception $exception): ResponseInterface
     {
         $payload = [
-            'error' => $exception->getCode(),
+            'error'             => $exception->getCode(),
             'error_description' => $exception->getMessage(),
         ];
 
@@ -334,11 +326,11 @@ class AuthorizationServer implements AuthorizationServerInterface
             $parts = explode(' ', $request->getHeaderLine('Authorization'));
             $value = base64_decode(end($parts));
 
-            list($id, $secret) = explode(':', $value);
+            [$id, $secret] = explode(':', $value);
         } else {
             $postParams = $request->getParsedBody();
 
-            $id = $postParams['client_id'] ?? null;
+            $id     = $postParams['client_id'] ?? null;
             $secret = $postParams['client_secret'] ?? null;
         }
 

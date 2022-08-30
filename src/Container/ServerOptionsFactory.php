@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -25,14 +25,13 @@ use Psr\Container\ContainerInterface;
 use ZfrOAuth2\Server\Options\ServerOptions;
 
 /**
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class ServerOptionsFactory
 {
     public function __invoke(ContainerInterface $container): ServerOptions
     {
-        $config = $container->get('config');
+        $config  = $container->get('config');
         $options = $config['zfr_oauth2_server'] ?? [];
 
         return ServerOptions::fromArray($options);

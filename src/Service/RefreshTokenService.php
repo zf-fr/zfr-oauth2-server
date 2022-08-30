@@ -1,6 +1,6 @@
 <?php
 
-declare(strict_types = 1);
+declare(strict_types=1);
 
 /*
  * THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
@@ -31,14 +31,11 @@ use ZfrOAuth2\Server\Repository\RefreshTokenRepositoryInterface;
 /**
  * RefreshTokenService
  *
- * @author  Michaël Gallego <mic.gallego@gmail.com>
  * @licence MIT
  */
 class RefreshTokenService extends AbstractTokenService
 {
-    /**
-     * @var RefreshTokenRepositoryInterface
-     */
+    /** @var RefreshTokenRepositoryInterface */
     protected $tokenRepository;
 
     /**
@@ -47,7 +44,6 @@ class RefreshTokenService extends AbstractTokenService
      * @param TokenOwnerInterface $owner
      * @param Client|null         $client
      * @param string[]|Scope[]    $scopes
-     * @return RefreshToken
      * @throws OAuth2Exception
      */
     public function createToken($owner, $client = null, array $scopes = []): RefreshToken
