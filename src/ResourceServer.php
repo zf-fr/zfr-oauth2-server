@@ -42,8 +42,7 @@ use function explode;
  */
 class ResourceServer implements ResourceServerInterface
 {
-    /** @var AccessTokenService */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     public function __construct(AccessTokenService $accessTokenService)
     {

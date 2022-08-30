@@ -32,11 +32,9 @@ use ZfrOAuth2\Server\AuthorizationServerInterface;
  */
 class AuthorizationRequestMiddleware implements MiddlewareInterface
 {
-    /** @var AuthorizationServerInterface */
-    private $authorizationServer;
+    private AuthorizationServerInterface $authorizationServer;
 
-    /** @var string */
-    private $ownerRequestAttribute;
+    private string $ownerRequestAttribute;
 
     public function __construct(
         AuthorizationServerInterface $authorizationServer,

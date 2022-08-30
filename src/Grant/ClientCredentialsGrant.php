@@ -48,10 +48,8 @@ class ClientCredentialsGrant extends AbstractGrant
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     public function __construct(AccessTokenService $accessTokenService)
     {

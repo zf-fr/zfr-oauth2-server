@@ -31,14 +31,12 @@ class Scope
     /** @var int */
     private $id;
 
-    /** @var string */
-    private $name = '';
+    private string $name = '';
 
     /** @var string */
     private $description = '';
 
-    /** @var bool */
-    private $isDefault = false;
+    private bool $isDefault = false;
 
     private function __construct()
     {

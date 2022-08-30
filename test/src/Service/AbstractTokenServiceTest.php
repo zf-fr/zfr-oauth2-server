@@ -154,9 +154,8 @@ class AbstractTokenServiceTest extends TestCase
         }
 
         // calling protected method from abstract scope service
-        $protectedBound = (function ($token) {
-            return $this->validateTokenScopes($token);
-        })->bindTo($this->abstractTokenService, $this->abstractTokenService);
+        $protectedBound = (fn ($token) => $this->validateTokenScopes($token))
+            ->bindTo($this->abstractTokenService, $this->abstractTokenService);
 
         $protectedBound($scopes);
     }

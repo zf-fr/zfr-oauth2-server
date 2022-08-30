@@ -40,11 +40,9 @@ use ZfrOAuth2\Server\ResourceServerInterface;
  */
 class ResourceServerMiddleware implements MiddlewareInterface
 {
-    /** @var ResourceServerInterface */
-    private $resourceServer;
+    private ResourceServerInterface $resourceServer;
 
-    /** @var string */
-    private $tokenRequestAttribute;
+    private string $tokenRequestAttribute;
 
     public function __construct(ResourceServerInterface $resourceServer, string $tokenRequestAttribute = 'oauth_token')
     {

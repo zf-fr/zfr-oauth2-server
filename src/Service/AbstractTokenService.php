@@ -100,15 +100,11 @@ abstract class AbstractTokenService
      */
     public function validateTokenScopes(array $scopes, $client = null): void
     {
-        $scopes = array_map(function ($scope) {
-            return (string) $scope;
-        }, $scopes);
+        $scopes = array_map(fn($scope) => (string) $scope, $scopes);
 
         $registeredScopes = $this->scopeService->getAll();
 
-        $registeredScopes = array_map(function ($scope) {
-            return (string) $scope;
-        }, $registeredScopes);
+        $registeredScopes = array_map(fn($scope) => (string) $scope, $registeredScopes);
 
         $diff = array_diff($scopes, $registeredScopes);
 

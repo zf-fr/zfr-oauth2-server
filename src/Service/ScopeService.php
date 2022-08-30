@@ -31,8 +31,7 @@ use ZfrOAuth2\Server\Repository\ScopeRepositoryInterface;
  */
 class ScopeService
 {
-    /** @var ScopeRepositoryInterface */
-    private $scopeRepository;
+    private ScopeRepositoryInterface $scopeRepository;
 
     public function __construct(ScopeRepositoryInterface $scopeRepository)
     {

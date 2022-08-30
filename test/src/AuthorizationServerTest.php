@@ -42,6 +42,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 use function json_decode;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\AuthorizationServer
@@ -122,7 +124,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -169,7 +171,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $response = $authorizationServer->handleAuthorizationRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -194,7 +196,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -223,7 +225,7 @@ class AuthorizationServerTest extends TestCase
         );
 
         $response = $authorizationServer->handleTokenRequest($request);
-        $body     = json_decode((string) $response->getBody(), true);
+        $body     = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);
@@ -281,7 +283,7 @@ class AuthorizationServerTest extends TestCase
         );
         $response            = $authorizationServer->handleTokenRequest($request);
 
-        $body = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals(400, $response->getStatusCode());
         $this->assertArrayHasKey('error', $body);

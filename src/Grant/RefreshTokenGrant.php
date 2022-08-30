@@ -42,14 +42,11 @@ class RefreshTokenGrant extends AbstractGrant
     public const GRANT_TYPE          = 'refresh_token';
     public const GRANT_RESPONSE_TYPE = '';
 
-    /** @var AccessTokenService */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
-    /** @var RefreshTokenService */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
-    /** @var ServerOptions */
-    private $serverOptions;
+    private ServerOptions $serverOptions;
 
     public function __construct(
         AccessTokenService $accessTokenService,

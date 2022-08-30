@@ -46,28 +46,25 @@ use function sprintf;
  */
 class AuthorizationServer implements AuthorizationServerInterface
 {
-    /** @var ClientService */
-    private $clientService;
+    private ClientService $clientService;
 
     /**
      * A list of grant
      *
      * @var GrantInterface[]
      */
-    private $grants = [];
+    private array $grants = [];
 
     /**
      * A list of grant that can answer to an authorization request
      *
      * @var GrantInterface[]
      */
-    private $responseTypes = [];
+    private array $responseTypes = [];
 
-    /** @var AccessTokenService */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
-    /** @var RefreshTokenService */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
     /**
      * @param GrantInterface[]    $grants

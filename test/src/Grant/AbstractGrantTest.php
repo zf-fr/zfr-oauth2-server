@@ -75,9 +75,9 @@ class AbstractGrantTest extends TestCase
         }
 
         // calling protected method from abstract token scope
-        $protectedBound = (function ($accessToken, $refreshToken, $useRefreshTokenScopes) {
-            return $this->prepareTokenResponse($accessToken, $refreshToken, $useRefreshTokenScopes);
-        })->bindTo($abstractGrant, $abstractGrant);
+        $protectedBound = (fn ($accessToken, $refreshToken, $useRefreshTokenScopes)
+                => $this->prepareTokenResponse($accessToken, $refreshToken, $useRefreshTokenScopes))
+                    ->bindTo($abstractGrant, $abstractGrant);
 
         $this->assertInstanceOf(
             ResponseInterface::class,

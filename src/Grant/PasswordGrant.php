@@ -50,24 +50,18 @@ class PasswordGrant extends AbstractGrant implements AuthorizationServerAwareInt
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     /**
      * An AuthorizationServer will inject itself into the grant when it is constructed
-     *
-     * @var AuthorizationServerInterface
      */
-    private $authorizationServer;
+    private ?AuthorizationServerInterface $authorizationServer = null;
 
     /**
      * Refresh token service (used to create refresh token)
-     *
-     * @var RefreshTokenService
      */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
     /**
      * Callable that is used to verify the username and password

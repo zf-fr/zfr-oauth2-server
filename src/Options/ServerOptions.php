@@ -30,38 +30,28 @@ final class ServerOptions
 {
     /**
      * Authorization code TTL
-     *
-     * @var int
      */
-    private $authorizationCodeTtl = 120;
+    private int $authorizationCodeTtl = 120;
 
     /**
      * Access token TTL
-     *
-     * @var int
      */
-    private $accessTokenTtl = 3600;
+    private int $accessTokenTtl = 3600;
 
     /**
      * Refresh token TTL
-     *
-     * @var int
      */
-    private $refreshTokenTtl = 86400;
+    private int $refreshTokenTtl = 86400;
 
     /**
      * Rotate refresh tokens (for RefreshTokenGrant)
-     *
-     * @var bool
      */
-    private $rotateRefreshTokens = false;
+    private bool $rotateRefreshTokens = false;
 
     /**
      * Revoke rotated refresh tokens (for RefreshTokenGrant)
-     *
-     * @var bool
      */
-    private $revokeRotatedRefreshTokens = true;
+    private bool $revokeRotatedRefreshTokens = true;
 
     /**
      * Set the owner callable
@@ -72,25 +62,19 @@ final class ServerOptions
 
     /**
      * Grants that the authorization server must support
-     *
-     * @var array
      */
-    private $grants = [];
+    private array $grants = [];
 
     /**
      * Attribute that the AuthorizationRequestMiddleware expects the ZfrOAuth2\Server\Model\TokenOwnerInterface
      * to be present on
-     *
-     * @var string
      */
-    private $ownerRequestAttribute;
+    private string $ownerRequestAttribute;
 
     /**
      * Attribute that the ResourceServerMiddleware uses to access the token
-     *
-     * @var string
      */
-    private $tokenRequestAttribute;
+    private string $tokenRequestAttribute;
 
     /**
      * @param callable|string $ownerCallable either a callable or the name of a container service

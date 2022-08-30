@@ -50,20 +50,15 @@ use const PASSWORD_DEFAULT;
  */
 class Client
 {
-    /** @var string */
-    private $id = '';
+    private string $id = '';
 
-    /** @var string */
-    private $name = '';
+    private string $name = '';
 
-    /** @var string */
-    private $secret = '';
+    private string $secret = '';
 
-    /** @var array */
-    private $redirectUris = [];
+    private array $redirectUris = [];
 
-    /** @var array */
-    private $scopes = [];
+    private array $scopes = [];
 
     private function __construct()
     {

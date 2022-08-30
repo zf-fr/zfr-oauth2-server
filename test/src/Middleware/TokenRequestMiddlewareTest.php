@@ -38,8 +38,7 @@ class TokenRequestMiddlewareTest extends TestCase
     /** @var MockObject|AuthorizationServerInterface */
     private $authorizationServer;
 
-    /** @var TokenRequestMiddleware */
-    private $middleware;
+    private TokenRequestMiddleware $middleware;
 
     public function setUp(): void
     {

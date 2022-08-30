@@ -31,8 +31,7 @@ use ZfrOAuth2\Server\Repository\ClientRepositoryInterface;
  */
 class ClientService
 {
-    /** @var ClientRepositoryInterface */
-    private $clientRepository;
+    private ClientRepositoryInterface $clientRepository;
 
     public function __construct(ClientRepositoryInterface $clientRepository)
     {

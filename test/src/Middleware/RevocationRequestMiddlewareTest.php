@@ -38,8 +38,7 @@ class RevocationRequestMiddlewareTest extends TestCase
     /** @var MockObject|AuthorizationServerInterface */
     private $authorizationServer;
 
-    /** @var RevocationRequestMiddleware */
-    private $middleware;
+    private RevocationRequestMiddleware $middleware;
 
     public function setUp(): void
     {

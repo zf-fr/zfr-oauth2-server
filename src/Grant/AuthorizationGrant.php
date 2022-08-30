@@ -49,29 +49,22 @@ class AuthorizationGrant extends AbstractGrant implements AuthorizationServerAwa
     public const GRANT_TYPE          = 'authorization_code';
     public const GRANT_RESPONSE_TYPE = 'code';
 
-    /** @var AuthorizationCodeService */
-    private $authorizationCodeService;
+    private AuthorizationCodeService $authorizationCodeService;
 
     /**
      * An AuthorizationServer will inject itself into the grant when it is constructed
-     *
-     * @var AuthorizationServerInterface
      */
-    private $authorizationServer;
+    private ?AuthorizationServerInterface $authorizationServer = null;
 
     /**
      * Access token service (used to create access token)
-     *
-     * @var AccessTokenService
      */
-    private $accessTokenService;
+    private AccessTokenService $accessTokenService;
 
     /**
      * Refresh token service (used to create refresh token)
-     *
-     * @var RefreshTokenService
      */
-    private $refreshTokenService;
+    private RefreshTokenService $refreshTokenService;
 
     public function __construct(
         AuthorizationCodeService $authorizationCodeService,

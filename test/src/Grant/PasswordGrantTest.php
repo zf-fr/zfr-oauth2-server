@@ -41,6 +41,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 use function json_decode;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * @licence MIT
  * @covers \ZfrOAuth2\Server\Grant\PasswordGrant
@@ -140,9 +142,7 @@ class PasswordGrantTest extends TestCase
             ->method('getTokenOwnerId')
             ->will($this->returnValue(1));
 
-        $callable = function ($username, $password) use ($owner) {
-            return $owner;
-        };
+        $callable = fn($username, $password) => $owner;
 
         $accessToken = $this->getValidAccessToken($owner);
         $this->accessTokenService
@@ -172,7 +172,7 @@ class PasswordGrantTest extends TestCase
             Client::createNewClient('id', 'http://www.example.com')
         );
 
-        $body = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);

@@ -54,8 +54,7 @@ abstract class AbstractToken
     /** @var DateTimeInterface|null */
     protected $expiresAt;
 
-    /** @var array */
-    private $scopes = [];
+    private array $scopes = [];
 
     private function __construct()
     {
@@ -74,9 +73,7 @@ abstract class AbstractToken
         ?array $scopes = null
     ): self {
         if (is_array($scopes)) {
-            $scopes = array_map(function ($scope) {
-                return (string) $scope;
-            }, $scopes);
+            $scopes = array_map(fn($scope) => (string) $scope, $scopes);
         }
 
         $token = new static();

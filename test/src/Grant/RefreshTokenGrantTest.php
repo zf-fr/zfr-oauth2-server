@@ -40,6 +40,8 @@ use ZfrOAuth2\Server\Service\RefreshTokenService;
 
 use function json_decode;
 
+use const JSON_THROW_ON_ERROR;
+
 /**
  * @licence MIT
  * @covers  \ZfrOAuth2\Server\Grant\RefreshTokenGrant
@@ -205,7 +207,7 @@ class RefreshTokenGrantTest extends TestCase
 
         $response = $grant->createTokenResponse($request, Client::createNewClient('name', []));
 
-        $body = json_decode((string) $response->getBody(), true);
+        $body = json_decode((string) $response->getBody(), true, 512, JSON_THROW_ON_ERROR);
 
         $this->assertEquals('azerty_access', $body['access_token']);
         $this->assertEquals('Bearer', $body['token_type']);
